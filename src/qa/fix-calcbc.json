@@ -1,0 +1,45 @@
+{
+ "course": "calcbc",
+ "fixes": [
+  {
+   "i": "a2e6ff89bc",
+   "field": "n",
+   "old": "Rows identical means dy/dx depends only on x; columns identical means it depends only on y.",
+   "new": "Rows identical (same slope all along a horizontal row) means dy/dx depends only on y; columns identical means it depends only on x.",
+   "why": "Rows/columns are swapped, and the note contradicts the card's own answer.",
+   "severity": "error"
+  },
+  {
+   "i": "367f5f9575",
+   "field": "a",
+   "old": "Substitute an expression for x, differentiate, integrate, multiply by a power of x or a constant, and add two series. All preserve the radius of convergence.",
+   "new": "Substitute an expression for x, differentiate, integrate, multiply by a power of x or a constant, and add two series. Differentiating, integrating, and multiplying by a power of x preserve the radius; substituting an expression for x changes it (solve the original condition for the new expression).",
+   "why": "Substitution does not preserve the radius (e.g. 2x halves it); this contradicts the card on substitution and intervals.",
+   "severity": "error"
+  },
+  {
+   "i": "c1fc7fc598",
+   "field": "a",
+   "old": "It is where f'' changes from positive to negative, so f has a point of inflection there and is increasing most steeply. It is NOT a maximum of f.",
+   "new": "It is where f'' changes from positive to negative, so f has a point of inflection there; if f' is positive there, it is also where f is increasing most steeply. It is NOT a maximum of f.",
+   "why": "A relative max of f' is the steepest increase only when f' > 0 there; if f' < 0 the function is decreasing least steeply.",
+   "severity": "minor"
+  },
+  {
+   "i": "7566fdbb2d",
+   "field": "a",
+   "old": "The value L that the population approaches but never exceeds as $t \\to \\infty$; it is the nonzero equilibrium solution where $\\frac{dP}{dt} = 0$.",
+   "new": "The value L that the population approaches as $t \\to \\infty$; it is the nonzero equilibrium solution where $\\frac{dP}{dt} = 0$.",
+   "why": "'Never exceeds' is false when P(0) > L, where the population decreases toward L from above.",
+   "severity": "minor"
+  },
+  {
+   "i": "5291672702",
+   "field": "n",
+   "old": "Check whether the problem gives the diameter or the radius; using s as the radius doubles the answer wrongly.",
+   "new": "Check whether the problem gives the diameter or the radius; using s as the radius multiplies the answer by 4.",
+   "why": "Treating s as the radius gives pi/2 s^2 instead of pi/8 s^2, a factor of 4, not 2.",
+   "severity": "minor"
+  }
+ ]
+}

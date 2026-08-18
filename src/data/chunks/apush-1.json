@@ -1,0 +1,2119 @@
+{
+ "course": "apush",
+ "cards": [
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "EXPLAIN",
+   "q": "Explain how the spread of maize cultivation reshaped Native societies in the Southwest and Mesoamerica.",
+   "a": "Maize agriculture, spreading north from Mexico, produced reliable food surpluses. That allowed permanent settlement, denser populations, irrigation projects, social stratification, and economic diversification among peoples such as the Pueblo of the Rio Grande valley.",
+   "hint": "→ crop → surplus → social effects",
+   "note": "Theme GEO/NAT. The most-used P1 causation chain: agriculture → settlement → complexity.",
+   "core": true,
+   "alt": [
+    "corn"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "IDENTIFY",
+   "q": "Identify the Iroquois (Haudenosaunee) and their form of political organization.",
+   "a": "Northeastern woodland people of present-day New York who mixed maize-beans-squash farming with hunting. Five (later six) nations joined in the Iroquois Confederacy, a council-based league with matrilineal clans in which women controlled land and chose sachems.",
+   "hint": "→ region + subsistence + politics",
+   "note": "Best Native example of complex self-government before contact; evidence against the 'simple/primitive' framing.",
+   "core": false,
+   "alt": [
+    "Haudenosaunee",
+    "Iroquois Confederacy"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "IDENTIFY",
+   "q": "Identify the Algonquian peoples of the Atlantic seaboard.",
+   "a": "A large language family of eastern woodland peoples (Powhatan, Wampanoag, Pequot, Lenape) who combined farming of maize, beans, and squash with hunting, fishing, and seasonal migration. They were the first groups to meet English settlers.",
+   "hint": "→ language family + subsistence",
+   "note": "These are the peoples in the Jamestown and Plymouth stories; naming them specifically strengthens P2 essays.",
+   "core": false,
+   "alt": [
+    "Algonquin",
+    "Algonquians"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "IDENTIFY",
+   "q": "Identify the Pueblo peoples and how they adapted to the arid Southwest.",
+   "a": "Southwestern peoples (Hopi, Zuni, Acoma) who built permanent multi-story adobe and stone towns and farmed maize using complex irrigation, terracing, and dry-farming techniques in a desert environment.",
+   "hint": "→ environment + adaptation",
+   "note": "Classic GEO contrast partner with the nomadic Great Plains; also the setting for the 1680 Pueblo Revolt.",
+   "core": false,
+   "alt": [
+    "Pueblo"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "IDENTIFY",
+   "q": "Identify the subsistence pattern of Great Plains and Great Basin peoples before contact.",
+   "a": "Largely nomadic or semi-nomadic groups (Ute, Shoshone, Apache, Blackfoot) who hunted bison on foot and gathered wild plants. Dry, sparse grassland could not support large permanent farming villages, so they lived in small, mobile bands.",
+   "hint": "→ mobility + resource base",
+   "note": "Pairs with the Pueblo card for any 'compare Native societies by environment' short-answer question.",
+   "core": false,
+   "alt": [
+    "nomadic hunter-gatherers",
+    "buffalo hunting"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "IDENTIFY",
+   "q": "Identify the Chinook and other Pacific Northwest peoples.",
+   "a": "Coastal peoples of the Columbia River and Northwest coast who lived in permanent plank-house villages without agriculture, relying on abundant salmon, sea mammals, and timber. Surplus supported dense settlement, trade, and hierarchy marked by potlatch ceremonies.",
+   "hint": "→ resource + settlement type",
+   "note": "The exception that proves the rule: permanent complex society WITHOUT farming. Good counterevidence in a CCOT essay.",
+   "core": false,
+   "alt": [
+    "Chinookan",
+    "Chinook"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "IDENTIFY",
+   "q": "Identify Cahokia and the Mississippian culture.",
+   "a": "The Mississippian culture of the Mississippi River valley built the largest pre-Columbian city north of Mexico, Cahokia (near modern St. Louis), which peaked around 1100 CE with perhaps 10,000-30,000 people, huge earthen mounds, and a wide trade network.",
+   "hint": "→ city + culture + scale",
+   "note": "The go-to specific evidence that North America held urban, hierarchical societies before Europeans arrived.",
+   "core": true,
+   "alt": [
+    "Cahokia",
+    "Mississippian"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "CONTRAST",
+   "q": "Contrast Pueblo and Great Plains societies in settlement and subsistence.",
+   "a": "Pueblo peoples were sedentary irrigation farmers in permanent adobe towns; Plains peoples were mobile buffalo hunters in small bands with portable dwellings. Both adapted rationally to available water and food, not to different levels of 'advancement.'",
+   "hint": "→ two-column comparison",
+   "note": "Environment-drives-culture is the CED's core P1 argument. Never explain the difference as developmental stages.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "CONTRAST",
+   "q": "Contrast Northeast woodland and Pacific Northwest societies.",
+   "a": "Northeastern Algonquian and Iroquoian peoples farmed the three sisters and moved seasonally between fields and hunting grounds. Pacific Northwest peoples did not farm at all but drew such rich salmon harvests that they lived in permanent, socially stratified coastal villages.",
+   "hint": "→ two-column comparison",
+   "note": "Shows that surplus, not agriculture specifically, produced social complexity.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "Native societies",
+   "v": "DEFINE",
+   "q": "Define the 'three sisters' agricultural system.",
+   "a": "The intercropped planting of maize, beans, and squash. Corn stalks support bean vines, beans fix nitrogen back into the soil, and squash leaves shade out weeds and hold moisture, giving high yields without plows or draft animals.",
+   "hint": "→ three crops + why together",
+   "note": "Concrete detail that demonstrates Native agricultural sophistication.",
+   "core": false,
+   "alt": [
+    "maize, beans, squash",
+    "corn beans squash"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "European exploration",
+   "v": "EXPLAIN",
+   "q": "Explain what motivated and enabled European overseas exploration after 1450.",
+   "a": "Motives were 'God, gold, and glory': desire for Asian trade routes bypassing Muslim and Italian middlemen, national rivalry, and missionary zeal. Enabling technologies included the caravel, lateen sail, magnetic compass, astrolabe, and better cartography, backed by newly centralized monarchies.",
+   "hint": "→ motives + technologies",
+   "note": "Standard contextualization paragraph for any Period 1 DBQ.",
+   "core": false,
+   "alt": [
+    "God gold and glory"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "European exploration",
+   "v": "DATE",
+   "q": "Date Columbus's first voyage and name his sponsor.",
+   "a": "1492, sponsored by Ferdinand and Isabella of Spain following the completion of the Reconquista.",
+   "hint": "→ year + monarchs",
+   "note": "1492 opens Period 1's second half; the Reconquista link explains Spain's crusading, conversion-minded colonization.",
+   "core": false,
+   "alt": [
+    "1492"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "European exploration",
+   "v": "DEFINE",
+   "q": "Define the Treaty of Tordesillas and give its year.",
+   "a": "A 1494 papal-brokered agreement dividing newly claimed lands outside Europe between Spain and Portugal along a north-south line in the Atlantic. Spain took lands west of the line; Portugal took Africa, the route to India, and eventually Brazil.",
+   "hint": "→ year + who got what",
+   "note": "Explains why Latin America speaks Spanish but Brazil speaks Portuguese; also shows papal authority over empire.",
+   "core": false,
+   "alt": [
+    "Tordesillas",
+    "1494"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Columbian Exchange",
+   "v": "DEFINE",
+   "q": "Define the Columbian Exchange.",
+   "a": "The transatlantic transfer of plants, animals, people, precious metals, technology, and diseases between the Eastern and Western Hemispheres following 1492, permanently reshaping both.",
+   "hint": "→ definition + what moved",
+   "note": "Theme WXT/GEO. Expect at least one MC set on it; stress that it moved in BOTH directions.",
+   "core": true,
+   "alt": [
+    "Columbian Exchange"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Columbian Exchange",
+   "v": "CONTRAST",
+   "q": "Contrast what crossed the Atlantic eastward with what crossed westward in the Columbian Exchange.",
+   "a": "To the Americas: horses, cattle, pigs, sheep, wheat, sugar, rice, and smallpox, measles, and influenza. To Europe, Africa, and Asia: maize, potatoes, tomatoes, cacao, tobacco, beans, and vast quantities of silver and gold.",
+   "hint": "→ two lists",
+   "note": "Potatoes and maize drove European and Chinese population growth; horses transformed Plains Native life.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "Columbian Exchange",
+   "v": "EXPLAIN",
+   "q": "Explain why Native American populations collapsed after European contact.",
+   "a": "Native peoples had no acquired immunity to Eurasian diseases such as smallpox, measles, and influenza. Epidemics, compounded by warfare, forced labor, and social disruption, killed an estimated 50-90 percent of the Native population within a century.",
+   "hint": "→ cause + rough magnitude",
+   "note": "Trap: disease transfer was not a policy. But it created the labor vacuum Spain filled with enslaved Africans.",
+   "core": true,
+   "alt": [
+    "disease",
+    "smallpox"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Columbian Exchange",
+   "v": "EXPLAIN",
+   "q": "Explain how the horse changed Great Plains Native societies.",
+   "a": "Horses, escaped or traded from Spanish settlements after 1600, let Plains peoples such as the Comanche and Sioux hunt buffalo far more efficiently, expand territory, and build powerful mounted societies. Some farming groups abandoned villages for full nomadism.",
+   "hint": "→ technology → lifestyle change",
+   "note": "A rare case of the Columbian Exchange strengthening a Native group; use it to complicate a 'decline only' thesis.",
+   "core": false,
+   "alt": [
+    "horses"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Spanish colonization",
+   "v": "DEFINE",
+   "q": "Define the encomienda system.",
+   "a": "A Spanish labor grant giving a colonist (encomendero) the right to demand tribute and forced labor from Native people in a district, in exchange for a promise to protect and Christianize them. In practice it was legalized coerced labor in mines and on plantations.",
+   "hint": "→ who gets what from whom",
+   "note": "Theme WXT. A link in the chain from Native labor → population collapse → African slavery.",
+   "core": true,
+   "alt": [
+    "encomienda"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Spanish colonization",
+   "v": "DEFINE",
+   "q": "Define the casta system.",
+   "a": "The Spanish colonial social hierarchy based on birthplace and racial ancestry: peninsulares (Spanish-born) at the top, then criollos (American-born Spaniards), then mestizos (Spanish-Native), mulattoes (Spanish-African), and Native peoples and enslaved Africans at the bottom.",
+   "hint": "→ ranked list of categories",
+   "note": "Theme SOC. Contrast with the English colonies' sharper, more binary black-white racial line.",
+   "core": true,
+   "alt": [
+    "casta",
+    "casta system"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Spanish colonization",
+   "v": "DEFINE",
+   "q": "Define the Requerimiento.",
+   "a": "A 1513 declaration read aloud in Spanish to Native peoples, demanding they accept Catholicism and Spanish rule. Refusal or non-response legally justified war and enslavement, giving conquest a formal religious and legal cover.",
+   "hint": "→ document + its legal function",
+   "note": "Perfect sourcing exercise: a document whose PURPOSE was to manufacture legitimacy for violence.",
+   "core": false,
+   "alt": [
+    "Requerimiento"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Spanish colonization",
+   "v": "IDENTIFY",
+   "q": "Identify Bartolome de las Casas and his argument.",
+   "a": "A Dominican friar and former encomendero who denounced Spanish cruelty toward Native peoples in works such as A Short Account of the Destruction of the Indies. He argued Natives were rational human beings with souls who should be converted peacefully, not enslaved.",
+   "hint": "→ person + position",
+   "note": "He initially proposed African slaves as substitute labor, then repudiated it - a nuance graders reward.",
+   "core": false,
+   "alt": [
+    "las Casas",
+    "Bartolome de las Casas"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Spanish colonization",
+   "v": "IDENTIFY",
+   "q": "Identify Juan Gines de Sepulveda and his argument.",
+   "a": "A Spanish humanist scholar who argued at Valladolid that Native Americans were 'natural slaves' in the Aristotelian sense - barbarous, idolatrous, and incapable of self-rule - so conquest and forced labor were just and served to civilize them.",
+   "hint": "→ person + position",
+   "note": "The other half of the Valladolid pair; questions almost always ask you to place both.",
+   "core": false,
+   "alt": [
+    "Sepulveda"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Spanish colonization",
+   "v": "EXPLAIN",
+   "q": "Explain the significance of the Valladolid debate of 1550-1551.",
+   "a": "The Las Casas-Sepulveda debate forced the Spanish crown to confront whether conquest was morally justified. It produced no clear winner and little immediate change, but it shows Europeans openly contesting the humanity of Native peoples and it reinforced reform laws limiting the encomienda.",
+   "hint": "→ issue + outcome + why it matters",
+   "note": "Feeds any LEQ on European justifications for, and challenges to, empire.",
+   "core": false,
+   "alt": [
+    "Valladolid debate"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Spanish colonization",
+   "v": "IDENTIFY",
+   "q": "Identify the goals of the Spanish mission system in North America.",
+   "a": "Franciscan and Jesuit missions in Florida, New Mexico, and later California aimed to convert Native peoples to Catholicism, resettle them into mission communities, extract their labor, and suppress traditional religious practice, extending Spanish control cheaply.",
+   "hint": "→ purpose + methods",
+   "note": "Direct cause of the resentments behind the Pueblo Revolt.",
+   "core": false,
+   "alt": [
+    "missions"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native resistance",
+   "v": "DEFINE",
+   "q": "Define the Pueblo Revolt and give its year and leader.",
+   "a": "In 1680 Pueblo peoples of New Mexico, led by the religious leader Pope, rose against Spanish rule, killed hundreds of colonists and missionaries, destroyed churches, and drove the Spanish out of Santa Fe and New Mexico for about twelve years.",
+   "hint": "→ year + leader + outcome",
+   "note": "The most successful Native revolt in North American history; essential P1/P2 resistance evidence. Note the periodization: 1680 falls inside Period 2 (1607-1754) even though this card is filed with the Period 1 Spanish-colonization material.",
+   "core": true,
+   "alt": [
+    "Pueblo Revolt",
+    "Pope's Rebellion",
+    "1680"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Native resistance",
+   "v": "EXPLAIN",
+   "q": "Explain the long-term significance of the Pueblo Revolt.",
+   "a": "It proved Native peoples could unite across villages and defeat a European power. When Spain returned in 1692 it moderated its policies, tolerating some Pueblo religious practice and easing labor demands, producing a more blended, negotiated colonial society in New Mexico.",
+   "hint": "→ outcome + change in policy",
+   "note": "Use it as the counterexample when a prompt implies Native peoples were only passive victims.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "Native resistance",
+   "v": "EXPLAIN",
+   "q": "Explain the range of Native responses to European colonization in Period 1.",
+   "a": "Responses spanned accommodation and trade alliance, religious syncretism blending Catholic and traditional practice, migration away from colonial zones, diplomacy playing rival empires against each other, and armed resistance such as the Pueblo Revolt.",
+   "hint": "→ spectrum of responses",
+   "note": "Argumentation tip: 'resistance and accommodation' beats a one-sided thesis on Native agency.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "African slavery",
+   "v": "EXPLAIN",
+   "q": "Explain why the Spanish and Portuguese turned to enslaved Africans for colonial labor.",
+   "a": "Native populations collapsed from disease and could flee into familiar terrain, and Spanish reformers restricted the encomienda. Portugal already ran an African slave trade, and West Africans had farming skills, some disease resistance, and no local refuge - a labor force planters could hold permanently.",
+   "hint": "→ push and pull factors",
+   "note": "Theme WXT/MIG. Blends demographic, legal, and economic causes - the multi-cause answer graders want.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "African slavery",
+   "v": "IDENTIFY",
+   "q": "Identify the earliest form of plantation slavery in the Americas.",
+   "a": "Sugar plantations, pioneered by Portugal on Atlantic islands such as Madeira and Sao Tome and transplanted to Brazil and the Caribbean in the 1500s, used large gangs of enslaved Africans under brutal conditions and became the model for later staple-crop slavery.",
+   "hint": "→ crop + place + model",
+   "note": "The sugar model, not the Chesapeake, is the origin point of American racial slavery.",
+   "core": false,
+   "alt": [
+    "sugar plantations",
+    "sugar"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "Periodization",
+   "v": "DATE",
+   "q": "Place these early colonial events in order: Treaty of Tordesillas, Columbus's first voyage, founding of Jamestown, Pueblo Revolt.",
+   "a": "Columbus's first voyage 1492; Treaty of Tordesillas 1494; Jamestown 1607; Pueblo Revolt 1680.",
+   "hint": "→ four events, earliest first",
+   "note": "Note that the Pueblo Revolt falls inside Period 2 by date even though it belongs to the Spanish-colonization story.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "Spanish settlement",
+   "v": "DATE",
+   "q": "Date the founding of St. Augustine and Santa Fe and say why each matters.",
+   "a": "St. Augustine, Florida, 1565 - the oldest continuously occupied European settlement in the present-day United States. Santa Fe, New Mexico, 1610 - the northern capital of Spanish New Mexico and the town retaken in the Pueblo Revolt.",
+   "hint": "→ two settlements with years",
+   "note": "Both predate or nearly coincide with Jamestown (1607); use them to show Spain's head start in North America.",
+   "core": false,
+   "alt": [
+    "1565",
+    "1610"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "DATE",
+   "q": "Date the founding of Jamestown and name the company that financed it.",
+   "a": "1607, founded by the Virginia Company of London, a joint-stock company seeking profit for its investors.",
+   "hint": "→ year + sponsor",
+   "note": "Profit motive, not religion, launched the Chesapeake - the standard opening contrast with New England.",
+   "core": false,
+   "alt": [
+    "1607",
+    "Virginia Company"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "EXPLAIN",
+   "q": "Explain how tobacco saved and shaped the Virginia colony.",
+   "a": "John Rolfe's 1612 cultivation of a sweeter West Indian tobacco strain gave Virginia a profitable export. Tobacco's heavy labor demands and soil exhaustion drove constant expansion inland onto Native land and created an insatiable appetite for indentured and later enslaved labor.",
+   "hint": "→ crop → land + labor consequences",
+   "note": "Theme WXT. The cash crop explains land hunger, Native conflict, and the labor shift in one causal chain.",
+   "core": true,
+   "alt": [
+    "tobacco"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "DEFINE",
+   "q": "Define the headright system.",
+   "a": "A Virginia policy granting about 50 acres of land to anyone who paid the Atlantic passage of a settler, including for each indentured servant imported. It rewarded wealthy planters who imported many servants, concentrating land in few hands.",
+   "hint": "→ land grant + who benefits",
+   "note": "Explains why Chesapeake landholding was unequal and why freed servants found no good land - the root of Bacon's Rebellion.",
+   "core": true,
+   "alt": [
+    "headright"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "IDENTIFY",
+   "q": "Identify the House of Burgesses and give its founding year.",
+   "a": "Established in 1619 in Virginia, it was the first representative legislative assembly in English North America, elected by landowning colonists to make local laws alongside the company or royal governor.",
+   "hint": "→ year + significance",
+   "note": "1619 is a triple date: House of Burgesses, first Africans at Point Comfort, and arrival of women settlers.",
+   "core": true,
+   "alt": [
+    "House of Burgesses",
+    "1619"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "DEFINE",
+   "q": "Define indentured servitude.",
+   "a": "A labor contract in which a poor English migrant traded four to seven years of unpaid labor for Atlantic passage, food, and shelter, plus 'freedom dues' at the end. Servants were legally temporary, could sue in court, and were overwhelmingly young single men.",
+   "hint": "→ contract terms + legal status",
+   "note": "Key contrast: indenture was a status one exited; slavery became lifelong, hereditary, and racial.",
+   "core": true,
+   "alt": [
+    "indentured servitude",
+    "indentured servants"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "IDENTIFY",
+   "q": "Identify Bacon's Rebellion and give its year.",
+   "a": "In 1676 Nathaniel Bacon led frontier farmers, former indentured servants, and some enslaved and free Black Virginians against Governor William Berkeley, attacking Native villages and burning Jamestown after Berkeley refused to wage war on Natives to open more land.",
+   "hint": "→ year + who + against whom + why",
+   "note": "Note the biracial coalition of poor laborers - that is exactly what terrified the planter elite.",
+   "core": true,
+   "alt": [
+    "Bacon's Rebellion",
+    "1676"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "EXPLAIN",
+   "q": "Explain the long-term consequences of Bacon's Rebellion.",
+   "a": "Elite planters, alarmed by an armed alliance of poor whites and Black laborers, shifted decisively from indentured servants to enslaved Africans and hardened racial law. Granting poor whites racial privilege split the lower classes and stabilized planter rule.",
+   "hint": "→ causation chain to racial slavery",
+   "note": "Among the highest-yield causation arguments in P2; pairs directly with the 1705 slave codes.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Chesapeake",
+   "v": "IDENTIFY",
+   "q": "Identify the Virginia slave codes of 1705.",
+   "a": "A consolidated body of law defining enslaved people as chattel property, making slave status hereditary through the mother, stripping enslaved people of legal rights, barring interracial marriage, and granting poor whites legal privileges over all Black people.",
+   "hint": "→ what the law fixed in place",
+   "note": "Theme SOC. Shows race was constructed by law over decades, not present at the first Africans' arrival in 1619.",
+   "core": true,
+   "alt": [
+    "Virginia slave codes",
+    "slave codes"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "New England",
+   "v": "IDENTIFY",
+   "q": "Identify the Pilgrims and the Mayflower Compact.",
+   "a": "Separatists who broke entirely from the Church of England, landed at Plymouth in 1620, and, lacking a charter for that site, signed the Mayflower Compact - an agreement to form a civil body politic and obey laws made by the majority.",
+   "hint": "→ group + document + significance",
+   "note": "Early self-government by consent; often paired with the House of Burgesses on 'colonial democracy' questions.",
+   "core": false,
+   "alt": [
+    "Mayflower Compact",
+    "Pilgrims"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "New England",
+   "v": "IDENTIFY",
+   "q": "Identify the founding of Massachusetts Bay Colony.",
+   "a": "Founded in 1630 when roughly 1,000 Puritans led by John Winthrop migrated during the Great Migration. Unlike Plymouth's Separatists, they sought to purify the Church of England from within and built a Bible commonwealth centered on Boston.",
+   "hint": "→ year + leader + purpose",
+   "note": "Family-based migration gave New England balanced sex ratios and rapid natural population growth.",
+   "core": false,
+   "alt": [
+    "Massachusetts Bay",
+    "1630"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "New England",
+   "v": "EXPLAIN",
+   "q": "Explain what John Winthrop meant by a 'city upon a hill.'",
+   "a": "In his 1630 sermon A Model of Christian Charity, Winthrop told Puritan settlers their covenanted community would be watched by the world as a model of godly society - so failure would disgrace the reform cause. It was a warning of obligation, not a boast.",
+   "hint": "→ quotation + intended meaning",
+   "note": "Classic sourcing trap: modern politicians use it as triumphalism; Winthrop meant scrutiny and duty.",
+   "core": true,
+   "alt": [
+    "city upon a hill"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "New England",
+   "v": "CONTRAST",
+   "q": "Contrast Separatists and non-separating Puritans.",
+   "a": "Separatists (the Pilgrims at Plymouth) considered the Church of England beyond saving and withdrew from it completely. Non-separating Puritans (Massachusetts Bay) remained formally within the Anglican Church, intending to reform it and offer a purified model.",
+   "hint": "→ relationship to the Anglican Church",
+   "note": "A small distinction that shows precision; both were Calvinists seeking their own community, not toleration.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "New England",
+   "v": "IDENTIFY",
+   "q": "Identify Roger Williams and what he founded.",
+   "a": "A Puritan minister banished from Massachusetts in 1635 for arguing that church and state must be separated and that the king could not grant land already owned by Native peoples. He founded Providence, Rhode Island, in 1636 with religious liberty and purchased Native land.",
+   "hint": "→ person + beliefs + colony",
+   "note": "Rhode Island becomes the standard example of dissent producing religious toleration.",
+   "core": false,
+   "alt": [
+    "Roger Williams"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "New England",
+   "v": "IDENTIFY",
+   "q": "Identify Anne Hutchinson and the charges against her.",
+   "a": "A Boston woman who held religious meetings in her home and taught that believers could receive grace directly from God without clergy mediation (antinomianism). Tried and sentenced to banishment in 1637 and expelled in 1638, she challenged both Puritan orthodoxy and women's prescribed role.",
+   "hint": "→ person + doctrine + outcome",
+   "note": "Serves both the religion and SOC/gender themes; strongest P2 evidence of women challenging authority.",
+   "core": false,
+   "alt": [
+    "Anne Hutchinson"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "New England",
+   "v": "DEFINE",
+   "q": "Define the Halfway Covenant and give its year.",
+   "a": "A 1662 compromise letting the baptized but unconverted children of church members have their own children baptized, granting them partial, non-voting membership. It kept declining congregations attached to the church.",
+   "hint": "→ year + who it admitted",
+   "note": "Direct evidence of waning Puritan zeal by the second and third generations.",
+   "core": false,
+   "alt": [
+    "Halfway Covenant",
+    "1662"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Colonial-Native conflict",
+   "v": "IDENTIFY",
+   "q": "Identify the Pequot War.",
+   "a": "A 1636-1637 conflict in which Massachusetts Bay and Connecticut settlers, allied with the Narragansett and Mohegan, destroyed the Pequot as a power in southern New England - including the burning of a fortified village at Mystic that killed hundreds of non-combatants.",
+   "hint": "→ years + parties + outcome",
+   "note": "Shows English use of Native alliances and the early pattern of total war over land.",
+   "core": false,
+   "alt": [
+    "Pequot War"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Colonial-Native conflict",
+   "v": "IDENTIFY",
+   "q": "Identify King Philip's War (Metacom's War).",
+   "a": "A 1675-1676 uprising in which Metacom, called King Philip, united Wampanoag, Nipmuc, and Narragansett against expanding New England settlements. Proportionally the deadliest war in American history, it destroyed dozens of towns but ended Native military power in southern New England.",
+   "hint": "→ years + leader + outcome",
+   "note": "Pairs with Bacon's Rebellion, in the same years, as the twin land-hunger crises of the 1670s.",
+   "core": true,
+   "alt": [
+    "King Philip's War",
+    "Metacom's War",
+    "1675"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Colonial-Native conflict",
+   "v": "CONTRAST",
+   "q": "Contrast the Pequot War and King Philip's War in scale and consequence.",
+   "a": "The Pequot War destroyed a single nation and opened the Connecticut valley early in settlement. King Philip's War was a pan-Native coalition four decades later, far bloodier for both sides, and it permanently ended Native military resistance in southern New England.",
+   "hint": "→ two-column comparison",
+   "note": "Continuity of English land pressure; change in Native strategy from single nation to coalition.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Middle colonies",
+   "v": "IDENTIFY",
+   "q": "Identify the Quakers and their core beliefs.",
+   "a": "The Society of Friends believed in an 'inner light' of God in every person, which implied spiritual equality of men and women, no ordained clergy, refusal to swear oaths or defer to social superiors, pacifism, and early opposition to slavery.",
+   "hint": "→ beliefs + social implications",
+   "note": "Their egalitarianism made them persecuted everywhere else - the context for Pennsylvania's toleration.",
+   "core": false,
+   "alt": [
+    "Quakers",
+    "Society of Friends"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Middle colonies",
+   "v": "IDENTIFY",
+   "q": "Identify William Penn and the founding of Pennsylvania.",
+   "a": "A wealthy Quaker granted Pennsylvania in 1681 as a proprietary colony and 'holy experiment.' He guaranteed religious toleration and representative government, advertised widely in Europe, and initially purchased land from the Lenape rather than seizing it.",
+   "hint": "→ person + year + colony's principles",
+   "note": "Toleration plus fertile land made Philadelphia the fastest-growing and most ethnically diverse colonial city.",
+   "core": false,
+   "alt": [
+    "William Penn",
+    "Pennsylvania"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Middle colonies",
+   "v": "IDENTIFY",
+   "q": "Identify the defining economic and social features of the Middle Colonies.",
+   "a": "New York, New Jersey, Pennsylvania, and Delaware exported wheat and grain as the 'breadbasket,' held the most ethnically and religiously diverse populations (Dutch, German, Scots-Irish, Quaker, Jewish), used a mix of family farms and some slave labor, and had thriving port cities.",
+   "hint": "→ economy + demographics",
+   "note": "Their diversity is the standard contrast with homogeneous Puritan New England.",
+   "core": false,
+   "alt": [
+    "breadbasket colonies"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Colonial regions",
+   "v": "CONTRAST",
+   "q": "Contrast New England and the Chesapeake in motive, labor, and demographics.",
+   "a": "New England was settled by Puritan families for religious community, with mixed farming, fishing, shipbuilding, long life expectancy, and balanced sex ratios. The Chesapeake was settled by young single men for profit, with tobacco monoculture, indentured then enslaved labor, high mortality, and few women.",
+   "hint": "→ two-column comparison across three axes",
+   "note": "The single most tested P2 comparison; memorize both columns.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Colonial regions",
+   "v": "CONTRAST",
+   "q": "Contrast the Middle Colonies with New England in society and religion.",
+   "a": "New England was ethnically English, religiously Puritan, town-centered, and intolerant of dissent. The Middle Colonies were ethnically and religiously plural, with dispersed commercial farms, larger landholdings, and legal toleration.",
+   "hint": "→ two-column comparison",
+   "note": "Middle Colony pluralism is often cited as a root of American diversity in LEQs.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Southern colonies",
+   "v": "IDENTIFY",
+   "q": "Identify the economy and labor system of South Carolina and the British Caribbean.",
+   "a": "Rice and indigo in the Carolina lowcountry and sugar in Barbados and Jamaica used large plantations worked by enslaved Africans under brutal task and gang systems. Enslaved people formed a majority of the population, and West African rice-growing expertise was central to lowcountry success.",
+   "hint": "→ crops + labor + demographics",
+   "note": "Black majorities produced both the harshest slave codes and the strongest retention of African culture (Gullah).",
+   "core": false,
+   "alt": [
+    "rice and indigo",
+    "Carolina"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Southern colonies",
+   "v": "CONTRAST",
+   "q": "Contrast slavery in the Chesapeake with slavery in South Carolina and the West Indies.",
+   "a": "Chesapeake slavery centered on tobacco, smaller units, closer white supervision, and by the 1700s a self-reproducing enslaved population. Lowcountry and Caribbean slavery used larger sugar and rice gangs, had far higher death rates requiring constant importation, and left Black majorities greater cultural autonomy.",
+   "hint": "→ two-column comparison",
+   "note": "Guards against treating 'slavery' as one uniform institution - a sophistication point.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Mercantilism",
+   "v": "DEFINE",
+   "q": "Define mercantilism.",
+   "a": "The economic theory that global wealth is fixed, so a nation grows powerful by exporting more than it imports and hoarding bullion. Colonies existed to supply cheap raw materials and to buy the mother country's manufactured goods exclusively.",
+   "hint": "→ theory + role of colonies",
+   "note": "Theme WXT/WOR. Sets up the entire logic of imperial regulation and later colonial resentment.",
+   "core": true,
+   "alt": [
+    "mercantilism"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Mercantilism",
+   "v": "IDENTIFY",
+   "q": "Identify the Navigation Acts.",
+   "a": "A series of English laws beginning in 1651 requiring that colonial trade travel in English or colonial ships, that 'enumerated' goods such as tobacco and sugar be shipped only to England, and that most European imports pass through England first.",
+   "hint": "→ what they required",
+   "note": "They were loosely enforced before 1763; strict enforcement afterward is what felt 'new' to colonists.",
+   "core": false,
+   "alt": [
+    "Navigation Acts"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Mercantilism",
+   "v": "EXPLAIN",
+   "q": "Explain both the costs and the benefits of the Navigation Acts for the colonies.",
+   "a": "Costs: restricted markets, higher prices, and suppressed colonial manufacturing. Benefits: protected markets for tobacco and other staples, a booming colonial shipbuilding industry, and the protection of the Royal Navy. Widespread smuggling blunted the burden further.",
+   "hint": "→ two-sided evaluation",
+   "note": "A balanced answer earns complexity credit; avoid claiming the Acts alone caused the Revolution.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Atlantic trade",
+   "v": "DEFINE",
+   "q": "Define the triangular trade.",
+   "a": "The Atlantic trading pattern in which New England rum and manufactured goods went to West Africa, enslaved Africans were carried to the Caribbean and mainland colonies, and sugar, molasses, and staple crops returned to New England and Europe.",
+   "hint": "→ three legs of the route",
+   "note": "A simplified model - real routes were messier - but it correctly ties New England's economy to slavery.",
+   "core": false,
+   "alt": [
+    "triangular trade"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Atlantic trade",
+   "v": "DEFINE",
+   "q": "Define the Middle Passage.",
+   "a": "The forced Atlantic voyage of enslaved Africans from West Africa to the Americas, lasting weeks to months in packed, unsanitary holds. Roughly 15 percent died en route; about 12.5 million Africans were embarked over the trade's history.",
+   "hint": "→ the voyage + human toll",
+   "note": "Only about 4-5 percent of that total came to British North America; most went to Brazil and the Caribbean.",
+   "core": true,
+   "alt": [
+    "Middle Passage"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Resistance to slavery",
+   "v": "IDENTIFY",
+   "q": "Identify the Stono Rebellion and give its year.",
+   "a": "In 1739 about 20 enslaved people, many from Kongo and with military experience, seized weapons near the Stono River in South Carolina and marched toward Spanish Florida, which offered freedom. The largest slave uprising in the mainland colonies, it was crushed within days.",
+   "hint": "→ year + place + goal",
+   "note": "Note the Spanish Florida pull factor - an imperial-rivalry angle graders like.",
+   "core": false,
+   "alt": [
+    "Stono Rebellion",
+    "1739"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Resistance to slavery",
+   "v": "EXPLAIN",
+   "q": "Explain the consequences of the Stono Rebellion.",
+   "a": "South Carolina's Negro Act of 1740 banned enslaved people from assembling, growing food, earning money, and learning to read, tightened slave patrols, and temporarily taxed slave imports. Repression tightened precisely because a Black majority made planters fearful.",
+   "hint": "→ legal response + its logic",
+   "note": "Same pattern as Bacon's Rebellion: revolt from below produces harsher racial law from above.",
+   "core": false,
+   "alt": [
+    "Negro Act of 1740"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Resistance to slavery",
+   "v": "IDENTIFY",
+   "q": "Identify the everyday forms of resistance used by enslaved people.",
+   "a": "Beyond open revolt: work slowdowns, feigned illness, breaking tools, theft, running away, maintaining African naming, music, language, and religious practice, and building family and kinship networks despite sale.",
+   "hint": "→ list of covert tactics",
+   "note": "Essential for arguing agency when open rebellion was suicidal; strong SOC/NAT evidence.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Imperial policy",
+   "v": "DEFINE",
+   "q": "Define salutary neglect.",
+   "a": "Britain's informal policy from roughly 1690 to 1763 of loosely enforcing trade laws and letting colonial assemblies govern themselves, on the theory that prosperous, unbothered colonies enriched the empire.",
+   "hint": "→ policy + rationale + rough dates",
+   "note": "The habit of self-rule it created is why post-1763 enforcement felt like tyranny rather than ordinary rule.",
+   "core": true,
+   "alt": [
+    "salutary neglect"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Imperial policy",
+   "v": "EXPLAIN",
+   "q": "Explain why salutary neglect matters for understanding the coming Revolution.",
+   "a": "Decades of light enforcement let colonial assemblies control taxation and pay governors' salaries, building genuine self-government and an expectation of autonomy. When Britain reversed course after 1763, colonists saw the change as stripping rights they already possessed.",
+   "hint": "→ cause → expectation → later conflict",
+   "note": "The best single bridge sentence from Period 2 into Period 3.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Great Awakening",
+   "v": "DEFINE",
+   "q": "Define the First Great Awakening.",
+   "a": "A wave of emotional Protestant revivals peaking in the 1730s and 1740s that stressed personal conversion, direct emotional experience of God, and individual judgment of preaching over deference to established, educated clergy.",
+   "hint": "→ movement + core emphasis",
+   "note": "Theme SOC/PCE. The first genuinely intercolonial shared experience.",
+   "core": false,
+   "alt": [
+    "First Great Awakening",
+    "Great Awakening"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Great Awakening",
+   "v": "IDENTIFY",
+   "q": "Identify Jonathan Edwards and his most famous sermon.",
+   "a": "A Northampton, Massachusetts Congregational minister whose 1741 sermon 'Sinners in the Hands of an Angry God' used vivid imagery of damnation to provoke conversion, blending strict Calvinist theology with Enlightenment reasoning.",
+   "hint": "→ person + sermon",
+   "note": "Edwards is the intellectual pole of the Awakening; Whitefield is the popular pole.",
+   "core": false,
+   "alt": [
+    "Jonathan Edwards"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Great Awakening",
+   "v": "IDENTIFY",
+   "q": "Identify George Whitefield.",
+   "a": "An English itinerant preacher who toured the colonies repeatedly from 1739, drawing outdoor crowds of thousands with a dramatic, theatrical style, advertising aggressively in newspapers, and preaching to enslaved people and poor colonists alike.",
+   "hint": "→ person + method + reach",
+   "note": "The first true intercolonial celebrity - evidence of an emerging shared American public.",
+   "core": false,
+   "alt": [
+    "George Whitefield"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Great Awakening",
+   "v": "EXPLAIN",
+   "q": "Explain the political significance of the First Great Awakening.",
+   "a": "By encouraging ordinary people to judge ministers for themselves it undermined deference to established authority, split congregations into New Lights and Old Lights, spurred new colleges such as Princeton, spread across colonial borders, and rehearsed the questioning of authority later aimed at Britain.",
+   "hint": "→ religious change → political effects",
+   "note": "High-yield causation for LEQs on the ideological origins of the Revolution.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Great Awakening",
+   "v": "CONTRAST",
+   "q": "Contrast New Lights and Old Lights.",
+   "a": "New Lights embraced revivalism, emotional conversion, and itinerant preaching, often without formal training. Old Lights defended educated, ordained clergy, settled congregations, and orderly worship, condemning revivals as emotional excess.",
+   "hint": "→ two-column comparison",
+   "note": "The split itself matters: religious pluralism grew because neither side could suppress the other.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Enlightenment",
+   "v": "EXPLAIN",
+   "q": "Explain how Enlightenment ideas reached and influenced the colonies.",
+   "a": "Through print, colleges, and correspondence, colonists absorbed Locke's natural rights and social contract, Montesquieu's separation of powers, and a faith in reason and empirical science. Figures such as Benjamin Franklin embodied it, and these ideas supplied the vocabulary of the Declaration and the Constitution.",
+   "hint": "→ thinkers + ideas + American use",
+   "note": "Theme NAT/ARC. Name Locke specifically - graders reward the named source of 'consent of the governed.'",
+   "core": true,
+   "alt": [
+    "Enlightenment"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Enlightenment",
+   "v": "CONTRAST",
+   "q": "Contrast the Enlightenment and the First Great Awakening as forces in colonial life.",
+   "a": "The Enlightenment appealed to reason, science, and natural law, mainly among educated elites. The Great Awakening appealed to emotion, personal revelation, and mass participation. Both, however, elevated individual judgment over inherited authority and so weakened deference.",
+   "hint": "→ contrast plus shared effect",
+   "note": "The shared effect is the sophistication move: opposite methods, converging political consequence.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Colonial society",
+   "v": "IDENTIFY",
+   "q": "Identify the Salem witch trials and give the year.",
+   "a": "In 1692 accusations in Salem Village, Massachusetts led to the trials of over 150 people and the execution of 20, most of them women. Tensions between commercial Salem Town and farming Salem Village, frontier war anxiety, and Puritan gender expectations all fed the panic.",
+   "hint": "→ year + scale + causes",
+   "note": "Use it as evidence of social strain in a changing Puritan society, not merely superstition.",
+   "core": false,
+   "alt": [
+    "Salem witch trials",
+    "1692"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Colonial society",
+   "v": "EXPLAIN",
+   "q": "Explain the Anglicization and consumer revolution of the eighteenth-century colonies.",
+   "a": "Rising prosperity let colonists buy British manufactured goods - tea, cloth, ceramics, furniture - on credit, while adopting British legal forms, print culture, and gentility. Colonists became more British in taste even as they governed themselves more independently.",
+   "hint": "→ trend + its paradox",
+   "note": "This paradox explains why boycotts of British goods later became such a potent political weapon.",
+   "core": false,
+   "alt": [
+    "consumer revolution",
+    "Anglicization"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "Periodization",
+   "v": "DATE",
+   "q": "Place these Period 2 events in chronological order: Bacon's Rebellion, founding of Massachusetts Bay, Stono Rebellion, House of Burgesses, Salem witch trials.",
+   "a": "House of Burgesses 1619; Massachusetts Bay 1630; Bacon's Rebellion 1676; Salem witch trials 1692; Stono Rebellion 1739.",
+   "hint": "→ five events, earliest first",
+   "note": "Notice the 1670s cluster: Bacon's Rebellion and King Philip's War both erupt over land within a year.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Colonial founding",
+   "v": "DATE",
+   "q": "Place these colonial foundings in order with years: Pennsylvania, Plymouth, Massachusetts Bay, Jamestown.",
+   "a": "Jamestown 1607; Plymouth 1620; Massachusetts Bay 1630; Pennsylvania 1681.",
+   "hint": "→ four colonies with years",
+   "note": "The 50-year gap before Pennsylvania explains why the Middle Colonies drew a later, more diverse migration.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "Labor systems",
+   "v": "CONTRAST",
+   "q": "Contrast the Chesapeake labor force around 1650 with the labor force around 1720.",
+   "a": "Around 1650 most bound laborers were white English indentured servants on temporary contracts, with few Africans and no settled racial law. By 1720 the workforce was predominantly enslaved Africans held for life under hereditary, race-based slave codes, and indenture had faded.",
+   "hint": "→ before and after snapshot",
+   "note": "The cleanest CCOT card in P2: falling English migration, rising life expectancy, and Bacon's Rebellion all drove the shift.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "French and Indian War",
+   "v": "IDENTIFY",
+   "q": "Identify the French and Indian War and give its dates.",
+   "a": "The 1754-1763 North American theater of the global Seven Years' War, fought between Britain with its colonial and Iroquois allies and France with most Algonquian-speaking allies, chiefly over control of the Ohio River valley.",
+   "hint": "→ dates + combatants + cause",
+   "note": "Theme WOR. Everything in the imperial crisis flows from how Britain paid for and administered this victory.",
+   "core": true,
+   "alt": [
+    "French and Indian War",
+    "Seven Years' War"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "French and Indian War",
+   "v": "IDENTIFY",
+   "q": "Identify the Albany Plan of Union and its author.",
+   "a": "Benjamin Franklin's 1754 proposal at the Albany Congress for a unified colonial government with a president-general and a grand council to coordinate defense and Native diplomacy. Every colonial assembly rejected it, unwilling to surrender taxing power.",
+   "hint": "→ year + author + proposal + fate",
+   "note": "First serious plan for colonial union; its rejection shows how weak intercolonial identity still was in 1754.",
+   "core": false,
+   "alt": [
+    "Albany Plan of Union",
+    "Albany Plan"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "French and Indian War",
+   "v": "IDENTIFY",
+   "q": "Identify the terms of the Treaty of Paris of 1763.",
+   "a": "France surrendered Canada and all claims east of the Mississippi to Britain and ceded Louisiana west of the Mississippi to Spain; Spain gave Florida to Britain. France was effectively expelled from mainland North America.",
+   "hint": "→ who gained what",
+   "note": "Do not confuse with the 1783 Treaty of Paris ending the Revolution - a very common slip.",
+   "core": false,
+   "alt": [
+    "Treaty of Paris 1763"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "French and Indian War",
+   "v": "EXPLAIN",
+   "q": "Explain the consequences of the French and Indian War for Britain and its colonies.",
+   "a": "Britain doubled its national debt and had to garrison vast new territory, prompting new colonial taxes and the end of salutary neglect. Colonists gained military experience and confidence, lost the French threat that had made British protection necessary, and pressed west onto Native land.",
+   "hint": "→ British consequences + colonial consequences",
+   "note": "The highest-yield causation card in Period 3; it launches the entire imperial crisis.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "French and Indian War",
+   "v": "CONTRAST",
+   "q": "Contrast French and British relations with Native peoples in North America.",
+   "a": "The French, few in number and focused on the fur trade, built alliances through trade, gift-giving, and intermarriage. The British came as settler-farmers who wanted land, so their expansion displaced Native peoples - which is why most Native nations sided with France.",
+   "hint": "→ two-column comparison + consequence",
+   "note": "Explains Native alignment in 1754 and the collapse of Native leverage after France's defeat.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Western policy",
+   "v": "IDENTIFY",
+   "q": "Identify Pontiac's Rebellion.",
+   "a": "A 1763 pan-Native uprising in the Ohio valley and Great Lakes, inspired partly by the prophet Neolin and led by the Ottawa leader Pontiac, that captured most British western forts in response to settlement pressure and the end of French-style gift-giving.",
+   "hint": "→ year + leader + cause",
+   "note": "It directly triggered the Proclamation of 1763 - state that causal link explicitly.",
+   "core": false,
+   "alt": [
+    "Pontiac's Rebellion",
+    "Pontiac"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Western policy",
+   "v": "DEFINE",
+   "q": "Define the Proclamation of 1763.",
+   "a": "A royal order barring colonial settlement west of the Appalachian crest, reserving that land for Native peoples in order to prevent costly frontier wars after Pontiac's Rebellion.",
+   "hint": "→ year + what it forbade + why",
+   "note": "Britain's motive was cost control, not Native rights; colonists read it as a betrayal of their war prize.",
+   "core": true,
+   "alt": [
+    "Proclamation of 1763"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Western policy",
+   "v": "EXPLAIN",
+   "q": "Explain why colonists resented the Proclamation of 1763.",
+   "a": "They had fought partly to open the Ohio valley, land speculators held claims there, and settlers were already crossing the mountains. Being fenced in by a distant government that had just added new taxes looked like the empire treating them as subordinates rather than as Englishmen.",
+   "hint": "→ expectation vs policy",
+   "note": "Note the widespread defiance: the line was crossed almost immediately and proved unenforceable.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Sugar Act of 1764.",
+   "a": "Grenville's act that actually lowered the molasses duty but enforced it strictly through vice-admiralty courts without juries, targeting the smuggling that had made the old tax meaningless. It was the first law explicitly intended to raise revenue from the colonies.",
+   "hint": "→ year + what it did + why it angered colonists",
+   "note": "Trap: it LOWERED the rate. The grievance was enforcement, jury-less courts, and revenue purpose.",
+   "core": false,
+   "alt": [
+    "Sugar Act"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Stamp Act of 1765.",
+   "a": "A tax requiring an embossed stamp on all paper items in the colonies - newspapers, legal documents, licenses, playing cards. It was the first direct, internal tax Parliament levied on colonists and it hit the most vocal groups: lawyers, printers, and merchants.",
+   "hint": "→ year + what it taxed + why explosive",
+   "note": "Its choice of targets is why resistance became so loud so fast.",
+   "core": true,
+   "alt": [
+    "Stamp Act"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Stamp Act Congress and its central claim.",
+   "a": "A 1765 meeting of delegates from nine colonies in New York that petitioned the king and Parliament, conceding Parliament's authority to regulate trade but denying its right to tax colonists who elected no members - 'no taxation without representation.'",
+   "hint": "→ year + participants + argument",
+   "note": "First major intercolonial political cooperation; note how limited and loyal the claim still was in 1765.",
+   "core": false,
+   "alt": [
+    "Stamp Act Congress"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "DEFINE",
+   "q": "Define virtual representation and state the colonial counterargument.",
+   "a": "Britain's claim that every member of Parliament represented the whole empire's interests, so colonists were represented even without electing anyone. Colonists insisted on actual representation - only a legislature they elected could tax them.",
+   "hint": "→ British claim + colonial reply",
+   "note": "Precise terminology here separates strong answers from vague ones on taxation questions.",
+   "core": false,
+   "alt": [
+    "virtual representation"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Sons of Liberty.",
+   "a": "Networks of colonial artisans, merchants, and laborers formed in 1765 to resist the Stamp Act, using boycotts, propaganda, crowd action, tarring and feathering, and intimidation of stamp distributors to make the law unenforceable.",
+   "hint": "→ who + tactics",
+   "note": "Shows ordinary people, not just elites, driving resistance - a key SOC/PCE point.",
+   "core": false,
+   "alt": [
+    "Sons of Liberty"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Quartering Act of 1765.",
+   "a": "A law requiring colonial assemblies to provide barracks and supplies for British troops stationed in their colonies. New York's assembly resisted and was suspended by Parliament in 1767.",
+   "hint": "→ requirement + colonial response",
+   "note": "It reads as a hidden tax and as evidence of a standing army in peacetime, a classic Whig fear.",
+   "core": false,
+   "alt": [
+    "Quartering Act"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Declaratory Act of 1766.",
+   "a": "Passed the same day Parliament repealed the Stamp Act, it asserted Parliament's full authority to legislate for the colonies 'in all cases whatsoever,' conceding nothing in principle while retreating in practice.",
+   "hint": "→ year + assertion",
+   "note": "Colonists celebrated the repeal and largely ignored this - which is why the constitutional conflict stayed unresolved.",
+   "core": false,
+   "alt": [
+    "Declaratory Act"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Townshend Acts of 1767.",
+   "a": "Duties on imported glass, lead, paint, paper, and tea, designed as 'external' trade taxes whose revenue would pay royal governors' and judges' salaries, freeing them from colonial assemblies. They also expanded writs of assistance and customs enforcement.",
+   "hint": "→ what was taxed + the salary twist",
+   "note": "Paying officials directly attacked the assemblies' power of the purse - the deeper grievance beneath the duties.",
+   "core": false,
+   "alt": [
+    "Townshend Acts"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "EXPLAIN",
+   "q": "Explain how nonimportation agreements and the Daughters of Liberty worked as resistance.",
+   "a": "Merchants pledged not to import British goods while women organized spinning bees, produced homespun cloth, and boycotted British tea. Because colonial buying power mattered to British merchants, consumer refusal turned households into political instruments and drew women into public politics.",
+   "hint": "→ tactic + who + why effective",
+   "note": "Best P3 evidence for women's political participation before independence.",
+   "core": false,
+   "alt": [
+    "nonimportation",
+    "Daughters of Liberty"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Boston Massacre and give its date.",
+   "a": "On March 5, 1770, British soldiers guarding the Boston customs house, harassed by a crowd, fired and killed five colonists including Crispus Attucks. John Adams defended the soldiers at trial and most were acquitted.",
+   "hint": "→ date + what happened + aftermath",
+   "note": "Sourcing gold: Revere's engraving is deliberate propaganda. Adams's defense shows Patriot commitment to rule of law.",
+   "core": false,
+   "alt": [
+    "Boston Massacre",
+    "1770"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Committees of Correspondence.",
+   "a": "Networks begun in Massachusetts in 1772 under Samuel Adams and extended intercolonially by Virginia in 1773 to share news, coordinate protest, and circulate political arguments among the colonies.",
+   "hint": "→ purpose + who started them",
+   "note": "The communications infrastructure that made a unified Continental Congress possible in 1774.",
+   "core": false,
+   "alt": [
+    "Committees of Correspondence"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Tea Act of 1773 and explain the colonial objection.",
+   "a": "It let the failing East India Company sell tea directly in the colonies, making legal tea CHEAPER than smuggled Dutch tea while keeping the Townshend tea duty. Colonists objected that cheap taxed tea was a bribe to accept Parliament's right to tax, and it threatened colonial merchants.",
+   "hint": "→ what it did + why cheap tea angered them",
+   "note": "Trap: the tea got cheaper. The objection was principle plus monopoly, not price.",
+   "core": false,
+   "alt": [
+    "Tea Act"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Boston Tea Party and give its date.",
+   "a": "On December 16, 1773, Sons of Liberty disguised as Mohawks boarded three ships in Boston Harbor and destroyed 342 chests of East India Company tea worth roughly 10,000 pounds.",
+   "hint": "→ date + action",
+   "note": "Destruction of private property split colonial opinion; even Franklin urged repayment. That is why Britain responded so hard.",
+   "core": false,
+   "alt": [
+    "Boston Tea Party",
+    "1773"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Coercive (Intolerable) Acts of 1774.",
+   "a": "Britain's punishment of Massachusetts: the Boston Port Act closing the harbor until the tea was paid for, the Massachusetts Government Act gutting the charter and banning town meetings, the Administration of Justice Act moving trials of officials to Britain, and an expanded Quartering Act.",
+   "hint": "→ name each component act",
+   "note": "Naming all four is a high-value specificity move on a DBQ.",
+   "core": true,
+   "alt": [
+    "Coercive Acts",
+    "Intolerable Acts"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "IDENTIFY",
+   "q": "Identify the Quebec Act of 1774 and why colonists grouped it with the Intolerable Acts.",
+   "a": "It extended Quebec's boundary south to the Ohio River, granted Catholics religious freedom, and provided government without a representative assembly. Protestant colonists saw a Catholic, unrepresentative regime planted on land they claimed - a preview of their own possible future.",
+   "hint": "→ provisions + colonial reading",
+   "note": "Shows how religion and land hunger fused with constitutional argument.",
+   "core": false,
+   "alt": [
+    "Quebec Act"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "RANK",
+   "q": "Place these British measures in chronological order: Townshend Acts, Sugar Act, Coercive Acts, Stamp Act, Tea Act, Declaratory Act.",
+   "a": "Sugar Act 1764; Stamp Act 1765; Declaratory Act 1766; Townshend Acts 1767; Tea Act 1773; Coercive Acts 1774.",
+   "hint": "→ six measures, earliest first",
+   "note": "The escalating action-reaction sequence is itself the argument in most imperial-crisis LEQs.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Imperial crisis",
+   "v": "CONTRAST",
+   "q": "Contrast the colonial constitutional argument in 1765 with the argument by 1774.",
+   "a": "In 1765 colonists accepted Parliament's authority to regulate trade and objected only to internal taxes levied without representation. By 1774 many denied Parliament had any authority over them at all, claiming loyalty to the king alone and asserting rights as natural, not merely as English liberties.",
+   "hint": "→ before and after positions",
+   "note": "This radicalization arc is the best CCOT answer for the road to independence.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Road to independence",
+   "v": "IDENTIFY",
+   "q": "Identify the First Continental Congress and its actions.",
+   "a": "Fifty-six delegates from twelve colonies met in Philadelphia in September 1774. They endorsed the Suffolk Resolves, issued a Declaration of Rights and Grievances, created the Continental Association to enforce a comprehensive boycott, and agreed to reconvene in 1775.",
+   "hint": "→ year + who + what it did",
+   "note": "Note it still sought redress within the empire - independence was not yet the goal.",
+   "core": false,
+   "alt": [
+    "First Continental Congress"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Road to independence",
+   "v": "IDENTIFY",
+   "q": "Identify the battles of Lexington and Concord and give the date.",
+   "a": "April 19, 1775. British troops marching to seize colonial arms at Concord met militia at Lexington; the resulting fighting and the bloody British retreat to Boston were the first military engagements of the Revolution - the 'shot heard round the world.'",
+   "hint": "→ date + significance",
+   "note": "War begins more than a year before independence is declared; do not collapse the two.",
+   "core": false,
+   "alt": [
+    "Lexington and Concord",
+    "1775"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Road to independence",
+   "v": "IDENTIFY",
+   "q": "Identify the Second Continental Congress and its major decisions.",
+   "a": "Meeting from May 1775, it created the Continental Army under George Washington, printed money, conducted diplomacy, sent the Olive Branch Petition, and ultimately adopted the Declaration of Independence - functioning as a de facto national government without formal authority.",
+   "hint": "→ year + key actions",
+   "note": "It governed for years with no constitution, which is why the Articles later formalized a weak center.",
+   "core": false,
+   "alt": [
+    "Second Continental Congress"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Road to independence",
+   "v": "IDENTIFY",
+   "q": "Identify Common Sense and its author.",
+   "a": "Thomas Paine's January 1776 pamphlet, written in blunt language for a mass audience, that attacked monarchy and hereditary rule as absurd, argued that an island could not rule a continent, and demanded immediate independence. It sold well over 100,000 copies within months.",
+   "hint": "→ author + year + argument",
+   "note": "Paine shifts the target from Parliament to the KING - the last barrier to declaring independence.",
+   "core": true,
+   "alt": [
+    "Common Sense",
+    "Thomas Paine"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Road to independence",
+   "v": "EXPLAIN",
+   "q": "Explain why Common Sense was so influential.",
+   "a": "It reframed the conflict from a dispute over taxes within the empire into a rejection of monarchy itself, was written in plain speech accessible to ordinary readers rather than legal Latin, and made independence appear both morally necessary and practically achievable within weeks of publication.",
+   "hint": "→ content + style + timing",
+   "note": "Feeds any prompt on how ideas mobilized ordinary colonists.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Declaration of Independence",
+   "v": "IDENTIFY",
+   "q": "Identify the Declaration of Independence and give its date and principal author.",
+   "a": "Adopted July 4, 1776, drafted chiefly by Thomas Jefferson. It declared the united colonies free and independent states, listed grievances against George III, and justified separation by appeal to natural rights.",
+   "hint": "→ date + author + purpose",
+   "note": "Congress voted for independence on July 2; July 4 is the adoption of the text.",
+   "core": true,
+   "alt": [
+    "Declaration of Independence",
+    "1776"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Declaration of Independence",
+   "v": "EXPLAIN",
+   "q": "Explain the political theory underlying the Declaration of Independence.",
+   "a": "Drawing on Locke, it holds that people possess unalienable natural rights, that governments exist by consent to secure those rights, and that when a government becomes destructive of them the people may alter or abolish it. The grievance list is the evidence that the king breached that contract.",
+   "hint": "→ premises → conclusion",
+   "note": "Theme NAT/ARC. Its universal language later fuels abolitionists, Seneca Falls, and civil rights arguments.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "CONTRAST",
+   "q": "Contrast Patriots and Loyalists in numbers and motivation.",
+   "a": "Roughly 40-45 percent of colonists were Patriots, 15-20 percent active Loyalists, and the rest neutral. Loyalists included royal officials, Anglican clergy, some merchants, recent immigrants, backcountry settlers hostile to coastal elites, and many enslaved people and Native nations.",
+   "hint": "→ proportions + who and why",
+   "note": "The Revolution was also a civil war; naming Loyalist diversity earns complexity credit.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "IDENTIFY",
+   "q": "Identify Dunmore's Proclamation.",
+   "a": "The 1775 offer by Virginia's royal governor Lord Dunmore of freedom to enslaved men who fled Patriot masters to fight for Britain. Thousands escaped, alarming planters and pushing many wavering southern slaveholders toward the Patriot cause.",
+   "hint": "→ year + offer + effect",
+   "note": "Crucial irony: British 'tyranny' offered enslaved people a liberty that Patriot liberty did not.",
+   "core": false,
+   "alt": [
+    "Dunmore's Proclamation"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "IDENTIFY",
+   "q": "Identify the Battle of Saratoga and give its year.",
+   "a": "In October 1777 American forces under Horatio Gates surrounded and forced the surrender of General Burgoyne's army in upstate New York, defeating Britain's plan to split New England from the other colonies.",
+   "hint": "→ year + outcome",
+   "note": "Always paired with the French alliance - state that causal link.",
+   "core": false,
+   "alt": [
+    "Saratoga",
+    "1777"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "EXPLAIN",
+   "q": "Explain why Saratoga was the turning point of the Revolutionary War.",
+   "a": "The victory convinced France that the Americans could win, producing the 1778 Franco-American alliance that brought money, troops, officers, and above all a navy. Spain and the Dutch soon joined against Britain, turning a colonial rebellion into a global war Britain had to fight on many fronts.",
+   "hint": "→ battle → alliance → strategic consequence",
+   "note": "Highest-yield military causation card in Period 3.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "IDENTIFY",
+   "q": "Identify the Battle of Yorktown and give its year.",
+   "a": "In October 1781 Washington's and Rochambeau's combined armies trapped Cornwallis on the Virginia peninsula while de Grasse's French fleet blocked escape by sea, forcing the surrender of about 8,000 British troops and effectively ending major fighting.",
+   "hint": "→ year + why the British lost",
+   "note": "Note the French navy - Yorktown is the clearest demonstration that the alliance won the war.",
+   "core": false,
+   "alt": [
+    "Yorktown",
+    "1781"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "IDENTIFY",
+   "q": "Identify the terms of the Treaty of Paris of 1783.",
+   "a": "Britain recognized American independence, set boundaries at the Mississippi River in the west, Canada in the north, and Spanish Florida in the south, granted fishing rights off Newfoundland, and included promises to repay prewar debts and to recommend restoring Loyalist property.",
+   "hint": "→ recognition + boundaries + the two promises",
+   "note": "The unenforced debt and Loyalist clauses become British excuses for holding western forts - see Jay's Treaty.",
+   "core": false,
+   "alt": [
+    "Treaty of Paris 1783"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "EXPLAIN",
+   "q": "Explain how the Americans won the Revolutionary War despite British advantages.",
+   "a": "They fought a defensive war on home ground and only needed to avoid destruction, while Britain had to conquer and occupy a vast territory 3,000 miles from home. Washington preserved the army, popular support and militias controlled the countryside, and French intervention supplied money and naval power.",
+   "hint": "→ American advantages + British burdens + foreign aid",
+   "note": "Balanced multi-cause answers score highest; do not credit French help alone or American virtue alone.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "DATE",
+   "q": "Place these Revolutionary events in order: Yorktown, Lexington and Concord, Declaration of Independence, Saratoga, Treaty of Paris.",
+   "a": "Lexington and Concord April 1775; Declaration of Independence July 1776; Saratoga October 1777; Yorktown October 1781; Treaty of Paris September 1783.",
+   "hint": "→ five events, earliest first",
+   "note": "Note the two-year gap between Yorktown and the treaty - fighting stopped long before peace was formalized.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Revolution",
+   "v": "EXPLAIN",
+   "q": "Explain how the Revolution affected Native American peoples.",
+   "a": "Most nations, including four of the six Iroquois, sided with Britain to halt settler expansion. Patriot campaigns devastated Iroquois towns, the 1783 treaty ceded their lands without consulting them, and the loss of a European counterweight left them facing an expansionist United States alone.",
+   "hint": "→ alignment + wartime damage + postwar position",
+   "note": "Frequently the 'complexity' evidence in prompts asking who gained from the Revolution.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "IDENTIFY",
+   "q": "Identify the Articles of Confederation and give the year of ratification.",
+   "a": "The first United States constitution, drafted in 1777 and ratified in 1781, creating a 'firm league of friendship' - a one-house Congress in which each state had one vote, with no executive and no national judiciary, and sovereignty retained by the states.",
+   "hint": "→ year + structure",
+   "note": "Its weakness was deliberate: Americans had just fought a war against distant centralized power.",
+   "core": false,
+   "alt": [
+    "Articles of Confederation",
+    "1781"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "STATE",
+   "q": "State the major weaknesses of the Articles of Confederation.",
+   "a": "Congress could not tax or regulate interstate and foreign commerce, had no executive to enforce laws and no national courts, needed nine of thirteen states to pass major legislation and unanimity to amend, and could only request money and troops from the states.",
+   "hint": "→ list of missing powers",
+   "note": "Each weakness maps to a specific fix in the Constitution - organize your answer that way.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "STATE",
+   "q": "State the genuine achievements of the Articles of Confederation government.",
+   "a": "It won the Revolutionary War, negotiated the favorable Treaty of Paris of 1783, and established an orderly republican process for surveying western land and admitting new states through the Land Ordinance of 1785 and the Northwest Ordinance of 1787.",
+   "hint": "→ list of successes",
+   "note": "Prompts often ask whether the Articles were a failure - a balanced answer needs these successes.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "IDENTIFY",
+   "q": "Identify the Land Ordinance of 1785.",
+   "a": "A law creating a rectangular survey of western territory into townships of 36 sections of 640 acres each, to be sold to raise revenue for the government, with one section in each township reserved to support public schools.",
+   "hint": "→ year + survey system + school clause",
+   "note": "The school-section clause is an early federal commitment to public education - a favorite detail.",
+   "core": false,
+   "alt": [
+    "Land Ordinance of 1785"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "IDENTIFY",
+   "q": "Identify the Northwest Ordinance of 1787.",
+   "a": "It set the process by which territories north of the Ohio River would become states equal to the original thirteen, guaranteed civil liberties and support for education, and prohibited slavery in the territory.",
+   "hint": "→ year + three key provisions",
+   "note": "The most important act of the Confederation government; note it applied only NORTH of the Ohio.",
+   "core": true,
+   "alt": [
+    "Northwest Ordinance",
+    "1787"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "EXPLAIN",
+   "q": "Explain the long-term significance of the Northwest Ordinance.",
+   "a": "It rejected a colonial model for the West by making territories future equal states, and by banning slavery north of the Ohio it drew the first federal line between free and slave territory - the precedent behind the Missouri Compromise and the later sectional crises.",
+   "hint": "→ two legacies",
+   "note": "Strong continuity card that reaches forward into Periods 4 and 5.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "IDENTIFY",
+   "q": "Identify Shays' Rebellion and give its dates.",
+   "a": "In 1786-1787 indebted western Massachusetts farmers led by Revolutionary veteran Daniel Shays shut down courts to stop foreclosures and attacked the Springfield arsenal. Congress could raise no force; a privately funded state militia suppressed them.",
+   "hint": "→ years + who + grievance + who stopped it",
+   "note": "The detail that Congress could not respond is the point - it dramatized the Articles' impotence.",
+   "core": true,
+   "alt": [
+    "Shays' Rebellion",
+    "1786"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "EXPLAIN",
+   "q": "Explain why Shays' Rebellion led to the Constitutional Convention.",
+   "a": "It convinced nationalists such as Washington and Madison that the confederation could not protect property or keep order, and that unchecked state legislatures were themselves the danger. The alarm converted the limited Annapolis meeting into a full convention at Philadelphia in 1787.",
+   "hint": "→ event → elite reaction → convention",
+   "note": "Classic causation prompt; note the fear was of too MUCH democracy in the states.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "IDENTIFY",
+   "q": "Identify the Constitutional Convention of 1787.",
+   "a": "Fifty-five delegates from twelve states met in Philadelphia from May to September 1787, ostensibly to revise the Articles. Meeting in secret, they instead wrote an entirely new frame of government with a strong central authority, separation of powers, and federalism.",
+   "hint": "→ year + place + what it actually did",
+   "note": "Rhode Island sent no one. The secrecy itself became an Anti-Federalist grievance.",
+   "core": false,
+   "alt": [
+    "Constitutional Convention"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "IDENTIFY",
+   "q": "Identify the Virginia Plan.",
+   "a": "Madison's proposal for a strong national government with a bicameral legislature in which representation in BOTH houses was based on population, plus a national executive and judiciary chosen by the legislature. It favored large states.",
+   "hint": "→ structure + who benefits",
+   "note": "Pair with the New Jersey Plan; the clash between them produces the Great Compromise.",
+   "core": false,
+   "alt": [
+    "Virginia Plan"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "IDENTIFY",
+   "q": "Identify the New Jersey Plan.",
+   "a": "William Paterson's proposal to keep a single-house legislature with equal representation for each state, as under the Articles, while adding congressional power to tax and regulate commerce. It protected small states.",
+   "hint": "→ structure + who benefits",
+   "note": "Note it still expanded federal power - even small-state delegates agreed the Articles were too weak.",
+   "core": false,
+   "alt": [
+    "New Jersey Plan"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "DEFINE",
+   "q": "Define the Great (Connecticut) Compromise.",
+   "a": "The agreement creating a bicameral Congress: a House of Representatives apportioned by population and elected directly, and a Senate with two members per state chosen by the state legislatures. It satisfied both large and small states.",
+   "hint": "→ two chambers + basis of each",
+   "note": "The most tested compromise; know that senators were NOT popularly elected until the 17th Amendment.",
+   "core": true,
+   "alt": [
+    "Great Compromise",
+    "Connecticut Compromise"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "DEFINE",
+   "q": "Define the Three-Fifths Compromise.",
+   "a": "The agreement counting three-fifths of the enslaved population when apportioning both representation in the House and direct taxes among the states. It boosted southern political power without granting enslaved people any rights.",
+   "hint": "→ ratio + what it applied to",
+   "note": "Effect: the slaveholding South gained inflated House seats and electoral votes for decades.",
+   "core": true,
+   "alt": [
+    "Three-Fifths Compromise"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "DEFINE",
+   "q": "Define the Commerce Compromise and the slave trade clause.",
+   "a": "Congress received power to regulate interstate and foreign commerce but was barred from taxing exports, and it could not prohibit the international slave trade before 1808. Together these protected southern staple exports and the trade in enslaved people.",
+   "hint": "→ what Congress could and could not do",
+   "note": "The 1808 clause is a bargain with a deadline - Congress banned the trade the first year it was allowed to.",
+   "core": false,
+   "alt": [
+    "Commerce Compromise"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "EXPLAIN",
+   "q": "Explain how the Constitution addressed slavery without naming it.",
+   "a": "The Three-Fifths clause inflated southern representation, the twenty-year protection of the slave trade delayed abolition of importation, and the fugitive slave clause required the return of escapees - all written in euphemism ('other persons') to secure southern ratification while avoiding the word.",
+   "hint": "→ three clauses + the euphemism",
+   "note": "Frames the Constitution as a proslavery bargain, a standard sophistication argument.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Constitutional Convention",
+   "v": "DEFINE",
+   "q": "Define federalism, separation of powers, and checks and balances.",
+   "a": "Federalism divides authority between national and state governments. Separation of powers assigns legislative, executive, and judicial functions to distinct branches. Checks and balances give each branch tools - veto, override, confirmation, judicial review, impeachment - to restrain the others.",
+   "hint": "→ three definitions",
+   "note": "All three reflect the Madisonian premise that power must be set against power because people are self-interested.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "IDENTIFY",
+   "q": "Identify the Federalists and their main arguments.",
+   "a": "Supporters of ratification - Hamilton, Madison, Jay, Washington - who argued that a stronger union was necessary for defense, commerce, and order, that the structure itself checked tyranny, and that a large republic would dilute factions. They were generally urban, commercial, and coastal.",
+   "hint": "→ who + arguments + base of support",
+   "note": "Note the naming coup: they claimed the popular word 'federal' and left opponents defined negatively.",
+   "core": false,
+   "alt": [
+    "Federalists"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "IDENTIFY",
+   "q": "Identify the Anti-Federalists and their main objections.",
+   "a": "Opponents of ratification - Patrick Henry, George Mason, Richard Henry Lee - who warned that a distant central government would swallow the states, that no bill of rights protected citizens, that republics could not survive over large territory, and that the presidency resembled a monarchy.",
+   "hint": "→ who + objections + base of support",
+   "note": "Their demand produced the Bill of Rights - they lost the vote but shaped the result.",
+   "core": true,
+   "alt": [
+    "Anti-Federalists"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "CONTRAST",
+   "q": "Contrast Federalist and Anti-Federalist views of a large republic.",
+   "a": "Anti-Federalists followed Montesquieu in holding that republics survive only in small, homogeneous societies where citizens share interests and can watch their rulers. Madison argued in Federalist 10 that a large republic is SAFER because its many competing factions cannot easily combine into an oppressive majority.",
+   "hint": "→ two positions on scale",
+   "note": "The inversion of conventional wisdom in Federalist 10 is the point graders look for.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "IDENTIFY",
+   "q": "Identify the argument of Federalist No. 10.",
+   "a": "Madison argues that faction is rooted in human nature and unequal property, so it cannot be removed without destroying liberty and must instead be controlled. A large republic with representation filters popular passion and multiplies competing interests so that no majority faction can dominate.",
+   "hint": "→ problem + Madison's solution",
+   "note": "Frequently a stimulus document; know the distinction between removing the causes and controlling the effects.",
+   "core": true,
+   "alt": [
+    "Federalist 10"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "IDENTIFY",
+   "q": "Identify the argument of Federalist No. 51.",
+   "a": "Madison argues that since 'men are not angels,' government must be structured so that ambition counteracts ambition. Separation of powers and checks and balances give each branch the means and motive to resist encroachment, and the federal system adds a 'double security' for rights.",
+   "hint": "→ premise + structural remedy",
+   "note": "Pair 10 (size and faction) with 51 (structure) - they are the two halves of the Madisonian design.",
+   "core": false,
+   "alt": [
+    "Federalist 51"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "IDENTIFY",
+   "q": "Identify the Bill of Rights and give the year of ratification.",
+   "a": "The first ten amendments, ratified in 1791 and drafted largely by Madison, guaranteeing freedoms of religion, speech, press, assembly, and petition, protections for the accused, and reserving unenumerated powers to the states and the people.",
+   "hint": "→ year + core protections",
+   "note": "It was the price of ratification in Virginia, New York, and Massachusetts - a concession, not an afterthought.",
+   "core": true,
+   "alt": [
+    "Bill of Rights",
+    "1791"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "DATE",
+   "q": "Date the writing of the Constitution, its taking effect, and the Bill of Rights.",
+   "a": "Written at the Philadelphia Convention in 1787; ratified by the ninth state, New Hampshire, in June 1788 and in effect from 1789; Bill of Rights ratified 1791.",
+   "hint": "→ three years in order",
+   "note": "Students routinely write 1776 for the Constitution - eleven years separate it from the Declaration.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Washington's presidency",
+   "v": "IDENTIFY",
+   "q": "Identify the precedents set by Washington as president.",
+   "a": "He created a cabinet of department heads, accepted the title 'Mr. President' over royal alternatives, asserted executive control of foreign policy, used federal force to enforce law in the Whiskey Rebellion, and voluntarily retired after two terms.",
+   "hint": "→ list of precedents",
+   "note": "The two-term norm holds until FDR and is then written into the 22nd Amendment.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Hamilton's program",
+   "v": "IDENTIFY",
+   "q": "Identify the four main parts of Hamilton's financial plan.",
+   "a": "Fund the national debt at full face value, assume the states' war debts, charter a Bank of the United States, and pass protective tariffs plus an excise tax to raise revenue and encourage domestic manufacturing.",
+   "hint": "→ four components",
+   "note": "Theme WXT/PCE. The plan's real aim was tying wealthy creditors' interests to the new government's survival.",
+   "core": true,
+   "alt": [
+    "Hamilton's financial plan"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Hamilton's program",
+   "v": "CONTRAST",
+   "q": "Contrast loose and strict construction of the Constitution using the Bank debate.",
+   "a": "Hamilton argued loose construction: the necessary and proper clause implies powers, so a bank is constitutional as a means to enumerated fiscal ends. Jefferson argued strict construction: powers not expressly delegated are reserved to the states, and 'necessary' means indispensable, so the bank is unconstitutional.",
+   "hint": "→ two readings + the clause at issue",
+   "note": "The founding constitutional argument that recurs through McCulloch v. Maryland and beyond.",
+   "core": false,
+   "alt": [
+    "loose vs strict construction"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "First Party System",
+   "v": "CONTRAST",
+   "q": "Contrast Hamiltonian Federalists and Jeffersonian Democratic-Republicans.",
+   "a": "Federalists wanted a strong central government, commerce, manufacturing, banking, loose construction, and pro-British policy, and drew on New England merchants. Democratic-Republicans wanted limited federal power, an agrarian yeoman society, strict construction, and sympathy for France, drawing on the South and West.",
+   "hint": "→ two-column comparison across several axes",
+   "note": "The most tested comparison of the 1790s; note both sides claimed to defend the Revolution's meaning.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "First Party System",
+   "v": "EXPLAIN",
+   "q": "Explain why political parties emerged in the 1790s despite the Founders' hostility to them.",
+   "a": "Concrete disputes over Hamilton's program, the French Revolution, and treaties with Britain created durable coalitions. Once partisan newspapers, correspondence networks, and voter mobilization proved effective, each side accused the other of subverting the republic and organized permanently to win elections.",
+   "hint": "→ issues → coalitions → institutions",
+   "note": "Washington's Farewell warns against exactly what his own administration produced.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Washington's presidency",
+   "v": "IDENTIFY",
+   "q": "Identify the Whiskey Rebellion and give its year.",
+   "a": "In 1794 western Pennsylvania farmers violently resisted Hamilton's excise tax on distilled spirits, which fell heavily on grain farmers who converted crops to whiskey for transport. Washington personally led roughly 13,000 militiamen and the resistance dissolved without a battle.",
+   "hint": "→ year + grievance + federal response",
+   "note": "Washington later pardoned the convicted leaders - firmness paired with leniency.",
+   "core": false,
+   "alt": [
+    "Whiskey Rebellion",
+    "1794"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Washington's presidency",
+   "v": "CONTRAST",
+   "q": "Contrast the government's response to Shays' Rebellion and the Whiskey Rebellion.",
+   "a": "Under the Articles, Congress could raise no force against Shays and private funds paid a state militia. Under the Constitution, Washington federalized militia from several states and marched to enforce a federal tax - demonstrating that the new government could do what the old one could not.",
+   "hint": "→ two responses + the lesson",
+   "note": "The cleanest available proof of the Constitution's practical effect; ideal for a change-over-time thesis.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Foreign policy 1790s",
+   "v": "IDENTIFY",
+   "q": "Identify the Proclamation of Neutrality of 1793.",
+   "a": "Washington's declaration that the United States would remain impartial in the war between revolutionary France and Britain, despite the 1778 alliance with France. Jeffersonians objected that it betrayed an ally and that neutrality was Congress's business.",
+   "hint": "→ year + policy + objection",
+   "note": "Establishes the precedent of executive control over foreign policy and of avoiding European wars.",
+   "core": false,
+   "alt": [
+    "Proclamation of Neutrality"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Foreign policy 1790s",
+   "v": "IDENTIFY",
+   "q": "Identify Jay's Treaty and give its year.",
+   "a": "The 1794 treaty with Britain in which Britain agreed to evacuate its northwestern forts and submit some disputes to arbitration, but made no concessions on impressment or neutral shipping rights. It was widely denounced as a humiliating surrender and passed the Senate narrowly.",
+   "hint": "→ year + what was gained + what was not",
+   "note": "Its unpopularity supercharged party formation and drove France to attack American shipping.",
+   "core": false,
+   "alt": [
+    "Jay's Treaty",
+    "1794"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Foreign policy 1790s",
+   "v": "IDENTIFY",
+   "q": "Identify Pinckney's Treaty and give its year.",
+   "a": "The 1795 Treaty of San Lorenzo with Spain, which granted Americans free navigation of the Mississippi River, the right of deposit at New Orleans, and acceptance of the 31st parallel as Florida's northern boundary.",
+   "hint": "→ year + what the US gained",
+   "note": "A genuine triumph, popular in the West; Spain conceded partly out of fear of Anglo-American cooperation after Jay's Treaty.",
+   "core": false,
+   "alt": [
+    "Pinckney's Treaty",
+    "1795"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Foreign policy 1790s",
+   "v": "STATE",
+   "q": "State the main advice of Washington's Farewell Address.",
+   "a": "Avoid permanent foreign alliances and entanglement in European quarrels, beware the divisive 'baneful effects' of political parties and factions, and guard against sectionalism, since national unity underpins independence and prosperity.",
+   "hint": "→ three warnings",
+   "note": "Published in newspapers in 1796; it anchors non-intervention arguments right through the 1930s.",
+   "core": true,
+   "alt": [
+    "Farewell Address"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Adams's presidency",
+   "v": "IDENTIFY",
+   "q": "Identify the XYZ Affair.",
+   "a": "In 1797-1798 French agents identified only as X, Y, and Z demanded a bribe and a loan before negotiating with American diplomats. Publication of the insult produced an outburst of anti-French feeling and the undeclared naval Quasi-War of 1798-1800.",
+   "hint": "→ years + what happened + consequence",
+   "note": "Adams's refusal to seek a full declaration of war split his own party but kept the country out of a land war.",
+   "core": false,
+   "alt": [
+    "XYZ Affair"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Adams's presidency",
+   "v": "IDENTIFY",
+   "q": "Identify the Alien and Sedition Acts of 1798.",
+   "a": "Four Federalist laws that lengthened residency for naturalization from 5 to 14 years, allowed the president to deport or detain aliens from hostile nations, and criminalized 'false, scandalous and malicious' writing against the government - used to prosecute Republican editors.",
+   "hint": "→ year + provisions + political use",
+   "note": "Aimed at immigrant voters and the opposition press; the Sedition Act expired the day before Jefferson took office.",
+   "core": true,
+   "alt": [
+    "Alien and Sedition Acts"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Adams's presidency",
+   "v": "IDENTIFY",
+   "q": "Identify the Virginia and Kentucky Resolutions.",
+   "a": "Secretly written by Madison and Jefferson in 1798-1799, they argued that the states, as parties to the constitutional compact, could judge federal laws unconstitutional and interpose against or nullify them - the response to the Alien and Sedition Acts.",
+   "hint": "→ authors + years + doctrine",
+   "note": "The seed of nullification and states' rights arguments used by South Carolina in 1832 and by secessionists in 1860.",
+   "core": true,
+   "alt": [
+    "Virginia and Kentucky Resolutions"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Election of 1800",
+   "v": "EXPLAIN",
+   "q": "Explain why the election of 1800 is called the 'Revolution of 1800.'",
+   "a": "It produced the first peaceful transfer of national power from one party to its bitter rival, with Federalists surrendering the presidency to Jefferson without force. An electoral tie with Aaron Burr was resolved in the House and led to the 12th Amendment.",
+   "hint": "→ what changed + why 'revolution'",
+   "note": "The peaceful transfer, not any policy shift, is the point - it proved the system could survive partisanship.",
+   "core": true,
+   "alt": [
+    "Revolution of 1800"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Society after the Revolution",
+   "v": "DEFINE",
+   "q": "Define republican motherhood.",
+   "a": "The postrevolutionary idea that women's civic role was to raise sons who would be virtuous, informed citizens. It justified expanded female education while confining women's influence to the household.",
+   "hint": "→ concept + its double edge",
+   "note": "Theme SOC. Always note both sides: real gains in literacy and schooling, no political rights.",
+   "core": true,
+   "alt": [
+    "republican motherhood"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Society after the Revolution",
+   "v": "IDENTIFY",
+   "q": "Identify gradual emancipation in the northern states.",
+   "a": "Between 1777 and 1804 every state north of Delaware abolished slavery, mostly through laws freeing children born to enslaved mothers only after they reached adulthood. Vermont's 1777 constitution and Massachusetts court rulings in the 1780s acted fastest; New Jersey acted last in 1804.",
+   "hint": "→ mechanism + timeframe",
+   "note": "'Gradual' is the operative word: some people remained enslaved in the North into the 1840s.",
+   "core": false,
+   "alt": [
+    "gradual emancipation"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "Society after the Revolution",
+   "v": "CONTRAST",
+   "q": "Contrast the Revolution's effects on slavery in the North and the South.",
+   "a": "In the North, revolutionary ideology plus limited economic dependence produced gradual abolition and growing free Black communities. In the South the same ideology prompted some manumissions, but staple agriculture and rising cotton demand entrenched slavery, and states tightened manumission laws after the 1790s.",
+   "hint": "→ two-column comparison",
+   "note": "Sectional divergence begins here - essential context for Periods 4 and 5.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Society after the Revolution",
+   "v": "EXPLAIN",
+   "q": "Explain the limits of the American Revolution as a social revolution.",
+   "a": "It abolished titles of nobility, disestablished churches in most states, modestly broadened suffrage among white men, and spread republican ideology. But it left slavery intact in the South, women without political rights, property qualifications in place, and Native peoples dispossessed.",
+   "hint": "→ changes + continuities",
+   "note": "The definitive 'how revolutionary was the Revolution' answer: real but bounded change.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Ratification",
+   "v": "CONTRAST",
+   "q": "Contrast the arguments colonists made in 1776 with those Anti-Federalists made in 1787.",
+   "a": "Both feared distant, unaccountable power, standing armies, and taxation by a government the people could not effectively control. The difference is the target: in 1776 the enemy was Parliament and the Crown; in 1787 it was a proposed national government created by fellow Americans.",
+   "hint": "→ shared logic + shifted target",
+   "note": "Shows the continuity of revolutionary ideology into constitutional politics.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Periodization",
+   "v": "DATE",
+   "q": "Place these events of the 1790s in chronological order: Jay's Treaty, Whiskey Rebellion, Alien and Sedition Acts, Farewell Address, Pinckney's Treaty, XYZ Affair.",
+   "a": "Whiskey Rebellion 1794; Jay's Treaty 1794; Pinckney's Treaty 1795; Farewell Address 1796; XYZ Affair 1797-1798; Alien and Sedition Acts 1798.",
+   "hint": "→ six events, earliest first",
+   "note": "Jay's Treaty precedes and helps cause both Pinckney's Treaty and French retaliation - the sequence carries the causation.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Periodization",
+   "v": "DATE",
+   "q": "Place these founding documents in order and give each year: Constitution, Articles of Confederation ratified, Northwest Ordinance, Declaration of Independence, Bill of Rights.",
+   "a": "Declaration of Independence 1776; Articles of Confederation ratified 1781; Northwest Ordinance 1787; Constitution written 1787; Bill of Rights 1791.",
+   "hint": "→ five documents with years",
+   "note": "The Northwest Ordinance and the Constitution share 1787 but came from two different governments.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Western policy",
+   "v": "DATE",
+   "q": "Name the three developments of 1763 and put them in order.",
+   "a": "The Treaty of Paris ending the French and Indian War (February 1763); Pontiac's Rebellion (spring and summer 1763); the Proclamation of 1763 (October 1763).",
+   "hint": "→ three events in one year",
+   "note": "Compressing them into one year makes the causation obvious: peace, then Native revolt, then the settlement line.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Road to independence",
+   "v": "DATE",
+   "q": "Date the First Continental Congress, the Second Continental Congress, and the Declaration of Independence.",
+   "a": "First Continental Congress September-October 1774; Second Continental Congress convened May 1775; Declaration of Independence adopted July 4, 1776.",
+   "hint": "→ three dates in order",
+   "note": "Almost two years pass from the first Congress to independence - proof that separation was not the original goal.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "Articles of Confederation",
+   "v": "CONTRAST",
+   "q": "Contrast the Articles of Confederation with the Constitution on taxation, commerce, executive power, and amendment.",
+   "a": "Articles: no power to tax, no power to regulate commerce, no executive or national courts, and unanimous consent to amend. Constitution: Congress taxes directly, regulates interstate and foreign commerce, a president enforces law with a federal judiciary, and amendment needs three-fourths of the states.",
+   "hint": "→ four-point two-column comparison",
+   "note": "Structure your Articles-to-Constitution essays on exactly these four fixes.",
+   "core": true,
+   "alt": null
+  }
+ ]
+}

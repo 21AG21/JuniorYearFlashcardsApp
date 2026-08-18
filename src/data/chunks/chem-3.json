@@ -1,0 +1,1754 @@
+{
+ "course": "chem",
+ "cards": [
+  {
+   "u": "u7",
+   "t": "7.1",
+   "v": "DEFINE",
+   "q": "Define dynamic equilibrium for a reversible chemical reaction.",
+   "a": "The state in which the forward and reverse reactions proceed at equal rates, so the concentrations of all species stay constant even though both reactions continue at the particle level.",
+   "hint": "→ equal rates, constant concentrations",
+   "note": "Constant concentrations does not mean equal concentrations; reactants and products are usually present in different amounts.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.1",
+   "v": "EXPLAIN",
+   "q": "Explain how the forward and reverse reaction rates change as a reaction that starts with pure reactants approaches equilibrium.",
+   "a": "The forward rate starts at a maximum and falls as reactants are consumed; the reverse rate starts at zero and rises as product accumulates. Equilibrium is reached when the two rates become equal and then stay equal.",
+   "hint": "→ one falls, one rises, they meet",
+   "note": "On a rate-vs-time graph the two curves converge to the same nonzero value; they do not fall to zero.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.2",
+   "v": "EXPLAIN",
+   "q": "Explain how the equilibrium constant is related to the rate constants of an elementary reversible reaction.",
+   "a": "For an elementary step, K = k(forward)/k(reverse). A large K means the forward rate constant is much larger than the reverse, so products dominate at equilibrium.",
+   "hint": "→ ratio of two rate constants",
+   "note": "This link only holds rigorously for a single elementary step, not for an arbitrary overall reaction.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "STATE",
+   "q": "State the equilibrium constant expression Kc for the general reaction aA + bB ⇌ cC + dD.",
+   "a": "$K_{c} = \\frac{[C]^{c}[D]^{d}}{[A]^{a}[B]^{b}}$ - products over reactants, each equilibrium molar concentration raised to its balanced coefficient.",
+   "hint": "→ products over reactants, coefficients as exponents",
+   "note": "Coefficients become exponents, never multipliers. Using 2[C] instead of [C]² is the most common setup error.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "STATE",
+   "q": "State the equilibrium constant expression Kp for a gas-phase reaction.",
+   "a": "$K_{p} = \\frac{(P_{C})^{c}(P_{D})^{d}}{(P_{A})^{a}(P_{B})^{b}}$, built from the equilibrium partial pressures (usually atm) of the gaseous species only.",
+   "hint": "→ same form, partial pressures",
+   "note": "Only gases appear in Kp; solids, liquids, and aqueous species are left out.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "IDENTIFY",
+   "q": "Identify which species are left out of an equilibrium constant expression.",
+   "a": "Pure solids and pure liquids are omitted, as is the solvent water in dilute aqueous solution. Only gases and aqueous (or otherwise dissolved) species appear.",
+   "hint": "→ two phases excluded",
+   "note": "For a heterogeneous equilibrium such as CaCO3(s) ⇌ CaO(s) + CO2(g), K = P(CO2) alone.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "EXPLAIN",
+   "q": "Explain why pure solids and pure liquids do not appear in an equilibrium constant expression.",
+   "a": "Their effective concentration is fixed by their density, which does not change as the amount changes. Because that term is a constant, it is folded into K rather than written separately.",
+   "hint": "→ density is constant",
+   "note": "Adding more solid to a heterogeneous equilibrium therefore causes no shift at all.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "STATE",
+   "q": "State the relationship between Kp and Kc for a gaseous equilibrium.",
+   "a": "Kp = Kc(RT)^(Δn), where Δn = (moles of gaseous products) - (moles of gaseous reactants), R = 0.08206 L·atm/(mol·K), and T is in kelvin.",
+   "hint": "→ one equation with an exponent",
+   "note": "If Δn = 0 the two constants are numerically equal. Count only gases when finding Δn.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "COMPUTE",
+   "q": "Compute Kp for N2(g) + 3H2(g) ⇌ 2NH3(g) at 300. K given Kc = 2.0.",
+   "a": "Δn = 2 - 4 = -2, so Kp = Kc(RT)^(-2) = 2.0/(0.08206 × 300.)² = 2.0/606 = 3.3×10⁻³.",
+   "hint": "→ small number, three sig figs",
+   "note": "A negative Δn always makes Kp smaller than Kc when RT > 1.",
+   "core": false,
+   "alt": [
+    "3.3e-3",
+    "0.0033"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "STATE",
+   "q": "State the convention AP Chemistry uses for the units of an equilibrium constant.",
+   "a": "Equilibrium constants are reported as unitless numbers, because each concentration or pressure is understood to be divided by a standard reference state (1 M or 1 bar/atm).",
+   "hint": "→ one word",
+   "note": "Never write units on K, Ka, Kb, or Ksp on the free-response section.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "COMPUTE",
+   "q": "Compute Kc for H2(g) + I2(g) ⇌ 2HI(g) when the equilibrium concentrations are [H2] = 0.020 M, [I2] = 0.020 M, and [HI] = 0.10 M.",
+   "a": "Kc = [HI]²/([H2][I2]) = (0.10)²/((0.020)(0.020)) = 0.010/4.0×10⁻⁴ = 25.",
+   "hint": "→ single number, no units",
+   "note": "Every value substituted into K must be an equilibrium value, never an initial one.",
+   "core": false,
+   "alt": [
+    "25"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "EXPLAIN",
+   "q": "Explain how to find Kc when you are given initial concentrations and only one equilibrium concentration.",
+   "a": "Build an ICE table: put the initial values in the I row, use the one known equilibrium value to solve for the change x, apply x to every species using the balanced coefficients, then substitute the completed E row into the K expression.",
+   "hint": "→ three-step table procedure",
+   "note": "The change for each species is its coefficient times x, with a minus sign for whatever is being consumed.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.5",
+   "v": "EXPLAIN",
+   "q": "Explain what the magnitude of K tells you about a reaction mixture at equilibrium.",
+   "a": "K >> 1 means products are strongly favored and the equilibrium mixture is mostly product; K << 1 means reactants are favored and little product forms; K near 1 means appreciable amounts of both are present.",
+   "hint": "→ three magnitude cases",
+   "note": "A large K says the reaction goes far, not that it goes fast; extent and rate are unrelated.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.5",
+   "v": "EXPLAIN",
+   "q": "Explain why a very large equilibrium constant does not guarantee that a reaction will be observed to occur.",
+   "a": "K measures only the position of equilibrium (thermodynamic extent). A reaction with a huge K can still have an activation energy so high that the rate is immeasurably slow, so no product forms on a practical timescale.",
+   "hint": "→ extent versus rate",
+   "note": "Classic example: 2H2 + O2 ⇌ 2H2O has an enormous K but the mixture is stable without a spark.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "STATE",
+   "q": "State what happens to the equilibrium constant when a reaction is written in reverse.",
+   "a": "The new constant is the reciprocal of the original: K(reverse) = 1/K(forward).",
+   "hint": "→ reciprocal",
+   "note": "Reversing also flips the sign of ΔG° and of ΔH°, which is why K inverts.",
+   "core": true,
+   "alt": [
+    "1/K"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "STATE",
+   "q": "State what happens to K when every coefficient in a balanced equation is multiplied by n.",
+   "a": "The new constant is the original raised to the nth power: K' = K^n. Halving all coefficients gives $K^{1/2}$, the square root of K.",
+   "hint": "→ raise to a power",
+   "note": "Multiplying coefficients changes exponents in the K expression, so K is powered, not multiplied.",
+   "core": false,
+   "alt": [
+    "K^n"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "STATE",
+   "q": "State how to obtain K for an overall reaction formed by adding two reactions together.",
+   "a": "Multiply the individual constants: K(overall) = K1 × K2. Adding equations corresponds to multiplying their equilibrium constants.",
+   "hint": "→ multiply the constants",
+   "note": "This mirrors Hess's law, where the corresponding ΔG° values are added.",
+   "core": false,
+   "alt": [
+    "K1*K2",
+    "product of the K values"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "APPLY",
+   "q": "Apply the rules for manipulating K: given A ⇌ B with K1 = 4.0 and B ⇌ C with K2 = 3.0, find K for 2C ⇌ 2A.",
+   "a": "A ⇌ C has K = K1 × K2 = 12. Reversing gives 1/12, and doubling the coefficients squares it: K = (1/12)² = 6.9×10⁻³.",
+   "hint": "→ add, reverse, then square",
+   "note": "Do the operations in order and apply the matching rule at each step: multiply, invert, then power.",
+   "core": false,
+   "alt": [
+    "6.9e-3",
+    "0.0069"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.7",
+   "v": "EXPLAIN",
+   "q": "Explain the purpose and structure of an ICE table.",
+   "a": "An ICE table organizes Initial concentrations (or pressures), the Change during the approach to equilibrium expressed as coefficient × x, and the Equilibrium values (I + C). The E row is then substituted into the K expression to solve for x.",
+   "hint": "→ three labeled rows",
+   "note": "Changes must be in the coefficient ratio; a species with coefficient 2 changes by 2x, not x.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.7",
+   "v": "COMPUTE",
+   "q": "Compute the equilibrium [B] when 0.20 M A is allowed to reach equilibrium for A(aq) ⇌ B(aq) + C(aq) with Kc = 1.0×10⁻⁵.",
+   "a": "Kc = x²/(0.20 - x) ≈ x²/0.20, so x² = 2.0×10⁻⁶ and x = 1.4×10⁻³ M. So [B] = 1.4×10⁻³ M.",
+   "hint": "→ concentration near 10⁻³ M",
+   "note": "x is only 0.7% of 0.20 M, so dropping x from the denominator is justified.",
+   "core": false,
+   "alt": [
+    "1.4e-3 M",
+    "0.0014 M"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.7",
+   "v": "STATE",
+   "q": "State the 5% approximation rule used in equilibrium calculations.",
+   "a": "You may assume the initial concentration is unchanged (drop x from the I - x term) if the resulting x is less than 5% of that initial concentration. Check by computing (x/[initial]) × 100%.",
+   "hint": "→ threshold percentage plus a check",
+   "note": "If the check fails, redo the problem with the full quadratic instead of the approximation.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.7",
+   "v": "EXPLAIN",
+   "q": "Explain the conditions under which the 5% approximation is likely to fail.",
+   "a": "It fails when K is not small (roughly K > 10⁻³) or when the initial concentration is very small, because then x is a large fraction of the starting amount. In those cases the quadratic formula must be used.",
+   "hint": "→ two conditions",
+   "note": "Very dilute weak acids are the usual failure case, since percent ionization rises as concentration falls.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "DEFINE",
+   "q": "Define the reaction quotient Q.",
+   "a": "Q has exactly the same algebraic form as K but is evaluated with the concentrations or pressures present at any moment, not necessarily at equilibrium.",
+   "hint": "→ same expression, any-time values",
+   "note": "Q is the only tool that tells you which way a non-equilibrium mixture must move.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.7",
+   "v": "DECIDE",
+   "q": "Decide the direction a reaction mixture shifts by comparing Q to K.",
+   "a": "If Q < K the reaction proceeds forward (to the right) to make more product; if Q > K it proceeds in reverse (to the left); if Q = K the mixture is already at equilibrium and no net change occurs.",
+   "hint": "→ three inequality cases",
+   "note": "Q always moves toward K; memorize the direction by noting that Q must increase when Q < K.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.7",
+   "v": "COMPUTE",
+   "q": "Compute Q and predict the shift for A ⇌ 2B (Kc = 0.50) when [A] = 0.40 M and [B] = 0.20 M.",
+   "a": "Q = [B]²/[A] = (0.20)²/0.40 = 0.10. Since Q (0.10) < K (0.50), the reaction shifts to the right, producing more B.",
+   "hint": "→ number plus a direction",
+   "note": "Always compare after computing; do not guess the direction from which species looks more abundant.",
+   "core": false,
+   "alt": [
+    "Q = 0.10, shifts right"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "IDENTIFY",
+   "q": "Identify how equilibrium appears on a concentration-versus-time graph.",
+   "a": "All curves flatten to horizontal lines at different heights and stay there. The time at which the curves first become horizontal marks the onset of equilibrium.",
+   "hint": "→ flat lines at unequal heights",
+   "note": "Lines meeting at the same value is a coincidence, not a requirement, for equilibrium.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "STATE",
+   "q": "State Le Chatelier's principle.",
+   "a": "When a system at equilibrium is disturbed by a change in concentration, pressure/volume, or temperature, the system shifts in the direction that partially counteracts the disturbance and establishes a new equilibrium.",
+   "hint": "→ one sentence with the word counteracts",
+   "note": "The shift only partially offsets the stress; it never returns the system to the original concentrations.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "PREDICT",
+   "q": "Predict the effect of adding more of a reactant to a system at equilibrium.",
+   "a": "Q falls below K, so the system shifts toward the products (right) until Q = K again. More product forms, and the other reactants are partly consumed. K itself is unchanged.",
+   "hint": "→ shift direction plus K unchanged",
+   "note": "Adding a species always shifts away from that species; removing one always shifts toward it.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "PREDICT",
+   "q": "Predict the effect of continuously removing a product from an equilibrium mixture.",
+   "a": "Q drops below K, so the system shifts to the right to replace the product. Continuous removal can drive a reaction with a small K nearly to completion.",
+   "hint": "→ shift right, extent increases",
+   "note": "This is how ammonia is condensed out of a Haber-process loop to raise yield.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "PREDICT",
+   "q": "Predict the effect of decreasing the volume of a gaseous equilibrium mixture at constant temperature.",
+   "a": "All partial pressures rise, and the system shifts toward the side with fewer moles of gas to reduce the total pressure. K is unchanged.",
+   "hint": "→ toward fewer gas moles",
+   "note": "Count only gas-phase coefficients; solids, liquids, and aqueous species do not count.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "EXPLAIN",
+   "q": "Explain when a change in volume produces no shift in a gaseous equilibrium.",
+   "a": "When the number of moles of gas is the same on both sides (Δn = 0), compression raises every partial pressure by the same factor and Q stays equal to K, so no shift occurs.",
+   "hint": "→ equal gas moles condition",
+   "note": "H2(g) + I2(g) ⇌ 2HI(g) is the standard example: 2 mol gas on each side.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "EXPLAIN",
+   "q": "Explain why adding an inert gas at constant volume does not shift a gaseous equilibrium.",
+   "a": "At constant volume the partial pressures of the reacting gases are unchanged, so Q is unchanged and still equals K. Only the total pressure rises, and total pressure does not appear in the K expression.",
+   "hint": "→ partial pressures unchanged",
+   "note": "This is a favorite trap: 'increasing pressure' only shifts equilibrium when it comes from a volume change.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "PREDICT",
+   "q": "Predict the effect of adding an inert gas to a gaseous equilibrium held at constant total pressure.",
+   "a": "The container must expand, which lowers every partial pressure. The system therefore shifts toward the side with more moles of gas, exactly as it would for any volume increase.",
+   "hint": "→ same as expansion",
+   "note": "Constant pressure and constant volume give opposite answers, so read the condition carefully.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "PREDICT",
+   "q": "Predict the effect of raising the temperature of an exothermic equilibrium.",
+   "a": "Treat heat as a product: adding heat shifts the system to the left, consuming product and forming reactant, and the value of K decreases.",
+   "hint": "→ shift left, K decreases",
+   "note": "Temperature is the only disturbance that actually changes the numerical value of K.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "PREDICT",
+   "q": "Predict the effect of raising the temperature of an endothermic equilibrium.",
+   "a": "Treat heat as a reactant: adding heat shifts the system to the right, forming more product, and the value of K increases.",
+   "hint": "→ shift right, K increases",
+   "note": "Writing heat into the equation as a reactant or product makes every temperature question a concentration question.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "EXPLAIN",
+   "q": "Explain why adding a catalyst does not change the position of an equilibrium.",
+   "a": "A catalyst lowers the activation energy of the forward and reverse reactions by the same amount, so both rate constants increase by the same factor. Their ratio, and therefore K, is unchanged; only the time needed to reach equilibrium is shortened.",
+   "hint": "→ both directions sped equally",
+   "note": "A catalyst changes how fast equilibrium is reached, never how much product it contains.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "IDENTIFY",
+   "q": "Identify the only disturbance that changes the numerical value of an equilibrium constant.",
+   "a": "A change in temperature. Changes in concentration, pressure, volume, or the presence of a catalyst shift the position of equilibrium but leave K unchanged.",
+   "hint": "→ one variable",
+   "note": "If a question says K changed, the temperature must have changed.",
+   "core": false,
+   "alt": [
+    "temperature"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "EXPLAIN",
+   "q": "Explain a Le Chatelier shift using the reaction quotient rather than the principle itself.",
+   "a": "A disturbance changes concentrations or pressures so that Q no longer equals K. The reaction then proceeds in whichever direction moves Q back toward K; when Q = K again the system is at a new equilibrium.",
+   "hint": "→ Q displaced, then restored",
+   "note": "AP free-response answers earn more credit when justified with Q versus K than with the phrase 'shifts to relieve stress.'",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "DEFINE",
+   "q": "Define the solubility product constant Ksp.",
+   "a": "Ksp is the equilibrium constant for a slightly soluble ionic solid dissolving into its aqueous ions; it equals the product of the ion concentrations at saturation, each raised to its coefficient. The solid itself is omitted.",
+   "hint": "→ product of ion concentrations",
+   "note": "Ksp applies only to a saturated solution in contact with (or exactly at the point of forming) the solid.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "STATE",
+   "q": "State the Ksp expression for Ca3(PO4)2(s) ⇌ 3Ca²⁺(aq) + 2PO4³⁻(aq).",
+   "a": "Ksp = [Ca²⁺]³[PO4³⁻]². The solid is omitted, and if s is the molar solubility then Ksp = (3s)³(2s)² = 108s⁵.",
+   "hint": "→ two bracketed terms with exponents",
+   "note": "Forgetting to raise 3s and 2s to their powers is the most common molar-solubility error.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "DEFINE",
+   "q": "Define molar solubility.",
+   "a": "The number of moles of a solid that dissolve per liter of solution to make a saturated solution, expressed in mol/L. It is the quantity usually labeled s in a solubility ICE table.",
+   "hint": "→ moles per liter dissolved",
+   "note": "Molar solubility and Ksp are different quantities; convert between them with the ion stoichiometry.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "COMPUTE",
+   "q": "Compute the molar solubility of AgCl in pure water given Ksp = 1.8×10⁻¹⁰.",
+   "a": "For AgCl ⇌ Ag⁺ + Cl⁻, Ksp = s², so $s = \\sqrt{K_{sp}}$ = √(1.8×10⁻¹⁰) = 1.3×10⁻⁵ M.",
+   "hint": "→ concentration near 10⁻⁵ M",
+   "note": "The square-root shortcut works only for 1:1 salts; other stoichiometries need the full expression.",
+   "core": false,
+   "alt": [
+    "1.3e-5 M",
+    "1.3 x 10^-5 M"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "COMPUTE",
+   "q": "Compute Ksp for PbI2 given that its molar solubility is 1.5×10⁻³ M.",
+   "a": "PbI2 ⇌ Pb²⁺ + 2I⁻, so Ksp = (s)(2s)² = 4s³ = 4(1.5×10⁻³)³ = 4(3.4×10⁻⁹) = 1.4×10⁻⁸.",
+   "hint": "→ 4s³ form",
+   "note": "The 2 in 2I⁻ appears twice: once as a multiplier inside the bracket and once as an exponent.",
+   "core": false,
+   "alt": [
+    "1.4e-8",
+    "1.35e-8"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "EXPLAIN",
+   "q": "Explain why you cannot rank the solubility of two salts by comparing their Ksp values when their formulas have different ion ratios.",
+   "a": "Ksp depends on the exponents set by the stoichiometry, so a 1:1 salt and a 1:2 salt convert Ksp to molar solubility by different formulas. You must calculate the molar solubility of each before ranking.",
+   "hint": "→ convert first, then rank",
+   "note": "Direct Ksp comparison is valid only among salts of the same ion ratio, such as AgCl versus AgBr.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "DECIDE",
+   "q": "Decide whether a precipitate forms when two solutions are mixed.",
+   "a": "Compute Q using the concentrations immediately after mixing (remember the dilution). If Q > Ksp a precipitate forms; if Q = Ksp the solution is exactly saturated; if Q < Ksp no precipitate forms.",
+   "hint": "→ compare Q to Ksp",
+   "note": "Students routinely forget to correct both concentrations for the new total volume before computing Q.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "EXPLAIN",
+   "q": "Explain the common-ion effect on the solubility of a slightly soluble salt.",
+   "a": "Adding a soluble salt that supplies one of the ions already present raises Q above Ksp, so the dissolution equilibrium shifts back toward the solid. The molar solubility decreases, but Ksp is unchanged.",
+   "hint": "→ solubility down, Ksp unchanged",
+   "note": "Ksp only changes with temperature; the common ion changes the solubility, not the constant.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "COMPUTE",
+   "q": "Compute the molar solubility of AgCl (Ksp = 1.8×10⁻¹⁰) in 0.10 M NaCl.",
+   "a": "Ksp = [Ag⁺][Cl⁻] = s(0.10 + s) ≈ s(0.10), so s = 1.8×10⁻¹⁰/0.10 = 1.8×10⁻⁹ M - about 10,000 times less soluble than in pure water.",
+   "hint": "→ divide Ksp by the common ion",
+   "note": "The common ion dominates, so the s contributed by the dissolving salt can be dropped from the sum.",
+   "core": false,
+   "alt": [
+    "1.8e-9 M"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.13",
+   "v": "EXPLAIN",
+   "q": "Explain how lowering the pH affects the solubility of a salt containing a basic anion.",
+   "a": "Added H⁺ reacts with the anion (for example F⁻ + H⁺ → HF), removing it from solution. Q falls below Ksp, so the dissolution equilibrium shifts right and the salt becomes more soluble.",
+   "hint": "→ anion removed, solubility rises",
+   "note": "The stronger the conjugate base of the anion, the more dramatic the pH dependence.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.13",
+   "v": "IDENTIFY",
+   "q": "Identify which slightly soluble salts have a solubility that is essentially independent of pH.",
+   "a": "Salts whose anions are the conjugate bases of strong acids - Cl⁻, Br⁻, I⁻, NO3⁻, ClO4⁻. These anions are negligibly basic, so added H⁺ does not remove them from solution.",
+   "hint": "→ anions of strong acids",
+   "note": "AgCl solubility is unaffected by pH, while CaF2, CaCO3, and Mg(OH)2 all dissolve more in acid.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.14",
+   "v": "EXPLAIN",
+   "q": "Explain how the free energy of dissolution is related to Ksp.",
+   "a": "ΔG° = -RT ln(Ksp). A salt with Ksp > 1 has a negative ΔG° for dissolution (thermodynamically favorable), while a slightly soluble salt with Ksp << 1 has a positive ΔG°.",
+   "hint": "→ logarithmic relationship",
+   "note": "Many salts dissolve endothermically; the process is driven by the large positive ΔS of dispersing ions.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "CONTRAST",
+   "q": "Contrast the Arrhenius, Bronsted-Lowry, and Lewis definitions of an acid.",
+   "a": "Arrhenius: produces H⁺ in water. Bronsted-Lowry: donates a proton (H⁺) to another species. Lewis: accepts a pair of electrons. Each definition is broader than the one before it.",
+   "hint": "→ three definitions, increasing generality",
+   "note": "Species like BF3 and metal cations are Lewis acids without being acids by the other two definitions.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "DEFINE",
+   "q": "Define a conjugate acid-base pair.",
+   "a": "Two species whose formulas differ by exactly one H⁺. The acid becomes its conjugate base when it donates the proton; the base becomes its conjugate acid when it accepts one.",
+   "hint": "→ differ by one proton",
+   "note": "The charge also differs by one unit; the conjugate base always carries one more negative charge.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "IDENTIFY",
+   "q": "Identify the conjugate acid and the conjugate base of HCO3⁻.",
+   "a": "Conjugate acid: H2CO3 (add H⁺). Conjugate base: CO3²⁻ (remove H⁺). HCO3⁻ can act as either an acid or a base, so it is amphiprotic.",
+   "hint": "→ one gains H, one loses H",
+   "note": "HCO3⁻, HSO4⁻, H2PO4⁻, and H2O are the amphiprotic species AP questions use most.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "DEFINE",
+   "q": "Define an amphiprotic species and give an example.",
+   "a": "A species that can either donate or accept a proton, depending on its reaction partner. Water is the classic example: it acts as a base toward HCl and as an acid toward NH3.",
+   "hint": "→ can do both",
+   "note": "Amphoteric is the broader term (acts as acid or base by any definition); amphiprotic specifically involves H⁺.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "STATE",
+   "q": "State the seven strong acids that ionize essentially completely in water.",
+   "a": "HCl, HBr, HI, HNO3, H2SO4 (first proton only), HClO4, and HClO3.",
+   "hint": "→ list of seven formulas",
+   "note": "HF is NOT strong. For H2SO4 only the first ionization is complete; the second has Ka2 about 1.2×10⁻².",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "STATE",
+   "q": "State which bases are treated as strong bases in AP Chemistry.",
+   "a": "The hydroxides of Group 1 metals (LiOH, NaOH, KOH, RbOH, CsOH) and the soluble Group 2 hydroxides Ca(OH)2, Sr(OH)2, and Ba(OH)2. Group 2 hydroxides release 2 mol OH⁻ per formula unit.",
+   "hint": "→ two families of hydroxides",
+   "note": "Forgetting to double [OH⁻] for Ba(OH)2 or Ca(OH)2 is a standard pH error.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "EXPLAIN",
+   "q": "Explain the autoionization of water and write its equilibrium constant.",
+   "a": "2H2O(l) ⇌ H3O⁺(aq) + OH⁻(aq), with Kw = [H3O⁺][OH⁻] = 1.0×10⁻¹⁴ at 25 °C. Water is omitted because it is the pure liquid solvent.",
+   "hint": "→ equation plus a constant",
+   "note": "Kw holds in every aqueous solution, so knowing one of [H⁺] or [OH⁻] always gives the other.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "EXPLAIN",
+   "q": "Explain how Kw and the pH of pure water change when the temperature is raised above 25 °C.",
+   "a": "Autoionization is endothermic, so raising the temperature shifts it right: Kw increases and the pH of pure water falls below 7.00. The water is still neutral because [H3O⁺] still equals [OH⁻].",
+   "hint": "→ Kw up, pH down, still neutral",
+   "note": "Neutral means [H3O⁺] = [OH⁻], not pH = 7; pH 7 is neutral only at 25 °C.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "STATE",
+   "q": "State the definitions of pH and pOH and the relationship between them at 25 °C.",
+   "a": "pH = -log[H3O⁺] and pOH = -log[OH⁻], with [H3O⁺] = 10^(-pH). At 25 °C, pH + pOH = 14.00 and pKw = 14.00.",
+   "hint": "→ two logs and a sum",
+   "note": "pH + pOH = 14.00 only at 25 °C, since it comes from Kw = 1.0×10⁻¹⁴.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "COMPUTE",
+   "q": "Compute the pH of 0.025 M HNO3.",
+   "a": "HNO3 is a strong acid, so [H3O⁺] = 0.025 M and pH = -log(0.025) = 1.60.",
+   "hint": "→ pH between 1 and 2",
+   "note": "For a strong monoprotic acid, [H3O⁺] equals the acid molarity - no ICE table is needed.",
+   "core": false,
+   "alt": [
+    "1.60",
+    "1.6"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "COMPUTE",
+   "q": "Compute the pH of 0.010 M Ba(OH)2 at 25 °C.",
+   "a": "Ba(OH)2 is a strong base giving 2 OH⁻ per formula unit, so [OH⁻] = 0.020 M. pOH = -log(0.020) = 1.70, and pH = 14.00 - 1.70 = 12.30.",
+   "hint": "→ pH above 12",
+   "note": "The factor of 2 is the whole point of this question type; skipping it gives 12.00 instead of 12.30.",
+   "core": false,
+   "alt": [
+    "12.30",
+    "12.3"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "EXPLAIN",
+   "q": "Explain the significant-figure rule for a pH value.",
+   "a": "Only the digits to the right of the decimal point in a pH count as significant. A concentration known to 2 significant figures gives a pH written with 2 decimal places, such as 0.025 M → pH 1.60.",
+   "hint": "→ digits after the decimal",
+   "note": "Writing pH 1.6 for a 2-sig-fig concentration loses a point on free response.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "COMPUTE",
+   "q": "Compute [H3O⁺] in a solution whose pH is 4.30.",
+   "a": "[H3O⁺] = 10^(-4.30) = 5.0×10⁻⁵ M.",
+   "hint": "→ concentration near 10⁻⁵ M",
+   "note": "A pH change of 1 unit is a factor of 10 in [H3O⁺]; a change of 0.30 is a factor of 2.",
+   "core": false,
+   "alt": [
+    "5.0e-5 M",
+    "5.0 x 10^-5 M"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "STATE",
+   "q": "State the acid dissociation constant expression for a weak acid HA in water.",
+   "a": "HA + H2O ⇌ H3O⁺ + A⁻, with $K_{a} = \\frac{[H_{3}O^{+}][A^{-}]}{[HA]}$. Water is omitted as the solvent.",
+   "hint": "→ products over the undissociated acid",
+   "note": "A larger Ka means a stronger weak acid and therefore a lower pH at the same concentration.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "STATE",
+   "q": "State the base ionization constant expression for a weak base B in water.",
+   "a": "B + H2O ⇌ BH⁺ + OH⁻, with $K_{b} = \\frac{[BH^{+}][OH^{-}]}{[B]}$. Water is omitted as the solvent.",
+   "hint": "→ products over the neutral base",
+   "note": "Kb calculations give [OH⁻] and pOH first; convert to pH at the very end.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "STATE",
+   "q": "State the relationship between Ka and Kb for a conjugate acid-base pair.",
+   "a": "Ka × Kb = Kw = 1.0×10⁻¹⁴ at 25 °C, and equivalently pKa + pKb = 14.00.",
+   "hint": "→ product equals Kw",
+   "note": "This is how you get Kb for an anion like F⁻ from the Ka of HF; the pair must be conjugates.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "COMPUTE",
+   "q": "Compute the pH of 0.10 M acetic acid, Ka = 1.8×10⁻⁵.",
+   "a": "Ka = x²/(0.10 - x) ≈ x²/0.10, so x² = 1.8×10⁻⁶ and x = [H3O⁺] = 1.3×10⁻³ M. pH = -log(1.3×10⁻³) = 2.87.",
+   "hint": "→ pH between 2 and 3",
+   "note": "x is 1.3% of 0.10 M, so the approximation passes the 5% check.",
+   "core": true,
+   "alt": [
+    "2.87",
+    "2.9"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "COMPUTE",
+   "q": "Compute the pH of 0.10 M NH3, Kb = 1.8×10⁻⁵.",
+   "a": "Kb = x²/0.10 gives x = [OH⁻] = 1.3×10⁻³ M, so pOH = 2.87 and pH = 14.00 - 2.87 = 11.13.",
+   "hint": "→ pH above 11",
+   "note": "For a weak base the ICE solution gives [OH⁻]; converting straight to pH without pOH is a common slip.",
+   "core": false,
+   "alt": [
+    "11.13",
+    "11.1"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "DEFINE",
+   "q": "Define percent ionization of a weak acid and state how to calculate it.",
+   "a": "Percent ionization = ([H3O⁺] at equilibrium / [HA] initial) × 100%. It measures the fraction of acid molecules that have actually donated a proton.",
+   "hint": "→ ratio times 100",
+   "note": "Strong acids are 100% ionized by definition; weak acids at typical concentrations are usually a few percent.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "EXPLAIN",
+   "q": "Explain how the percent ionization of a weak acid changes as the solution is diluted.",
+   "a": "Percent ionization increases on dilution, even though [H3O⁺] falls and the pH rises. Ka is fixed, so as [HA] drops the fraction ionized must rise to keep the quotient constant.",
+   "hint": "→ goes up while pH also goes up",
+   "note": "Dilution raises percent ionization but never makes a weak acid strong; Ka is unchanged.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "COMPUTE",
+   "q": "Compute Ka for a 0.20 M weak acid whose measured pH is 3.00.",
+   "a": "[H3O⁺] = 10⁻³ = 1.0×10⁻³ M = x. Ka = x²/(0.20 - x) ≈ (1.0×10⁻³)²/0.20 = 5.0×10⁻⁶.",
+   "hint": "→ constant near 10⁻⁶",
+   "note": "Working backward from pH to Ka is a standard lab-based free-response task.",
+   "core": false,
+   "alt": [
+    "5.0e-6",
+    "5.0 x 10^-6"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "EXPLAIN",
+   "q": "Explain the relationship between the strength of an acid and the strength of its conjugate base.",
+   "a": "The stronger the acid, the weaker its conjugate base, because Ka × Kb = Kw is fixed. The conjugate bases of strong acids (Cl⁻, NO3⁻) are so weak they have no measurable basicity in water.",
+   "hint": "→ inverse relationship",
+   "note": "This is why NaCl solutions are neutral but NaF solutions are basic.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "EXPLAIN",
+   "q": "Explain the trend in binary acid strength (HX) down a group and across a period.",
+   "a": "Down a group, acid strength increases because the H-X bond gets longer and weaker (HF < HCl < HBr < HI). Across a period, strength increases with electronegativity, which stabilizes the conjugate base (CH4 < NH3 < H2O < HF).",
+   "hint": "→ two opposing trends",
+   "note": "Bond strength dominates within a group; conjugate-base stability (electronegativity) dominates within a period.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "EXPLAIN",
+   "q": "Explain how the number of terminal oxygen atoms affects the strength of an oxyacid.",
+   "a": "More terminal oxygens pull electron density away from the O-H bond and delocalize the negative charge of the conjugate base, stabilizing it. Acid strength therefore rises with the number of oxygens.",
+   "hint": "→ more oxygens, stronger acid",
+   "note": "HClO < HClO2 < HClO3 < HClO4 spans about ten orders of magnitude in Ka.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "EXPLAIN",
+   "q": "Explain the inductive effect on acid strength using CH3COOH and CCl3COOH.",
+   "a": "The three highly electronegative chlorines withdraw electron density through the sigma bonds, spreading out the negative charge on the carboxylate conjugate base and stabilizing it. CCl3COOH is therefore the much stronger acid.",
+   "hint": "→ electron withdrawal stabilizes the anion",
+   "note": "Any argument about acid strength should end with the stability of the conjugate base.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "RANK",
+   "q": "Rank HClO, HClO2, HClO3, and HClO4 from weakest to strongest acid and justify the order.",
+   "a": "HClO < HClO2 < HClO3 < HClO4. Each added terminal oxygen increases the oxidation number of chlorine and delocalizes charge in the conjugate base, making the O-H bond more polar and the anion more stable.",
+   "hint": "→ ordered list plus one reason",
+   "note": "Same central atom means the only variable is the number of oxygens.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "PREDICT",
+   "q": "Predict whether a salt formed from a strong acid and a strong base gives an acidic, basic, or neutral solution.",
+   "a": "Neutral. Both ions are conjugates of strong species (for example Na⁺ and Cl⁻ from NaOH and HCl), so neither hydrolyzes water. The pH is 7 at 25 °C.",
+   "hint": "→ one word plus a reason",
+   "note": "Group 1 cations and the anions of strong acids are always spectators.",
+   "core": false,
+   "alt": [
+    "neutral"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "PREDICT",
+   "q": "Predict the acid-base character of a solution of sodium acetate, NaC2H3O2.",
+   "a": "Basic. Na⁺ is a spectator, but acetate is the conjugate base of a weak acid, so C2H3O2⁻ + H2O ⇌ HC2H3O2 + OH⁻ produces hydroxide.",
+   "hint": "→ one word plus the hydrolysis equation",
+   "note": "Salt of weak acid + strong base is always basic; use Kb = Kw/Ka to find its pH.",
+   "core": false,
+   "alt": [
+    "basic"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "PREDICT",
+   "q": "Predict the acid-base character of a solution of ammonium chloride, NH4Cl.",
+   "a": "Acidic. Cl⁻ is a spectator, but NH4⁺ is the conjugate acid of the weak base NH3, so NH4⁺ + H2O ⇌ NH3 + H3O⁺ lowers the pH.",
+   "hint": "→ one word plus the hydrolysis equation",
+   "note": "Small highly charged metal cations such as Al³⁺ and Fe³⁺ also make solutions acidic.",
+   "core": false,
+   "alt": [
+    "acidic"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "COMPUTE",
+   "q": "Compute the pH of 0.10 M NaF given Ka(HF) = 7.2×10⁻⁴.",
+   "a": "Kb = Kw/Ka = 1.0×10⁻¹⁴/7.2×10⁻⁴ = 1.4×10⁻¹¹. Then x² /0.10 = 1.4×10⁻¹¹ gives [OH⁻] = 1.2×10⁻⁶ M, pOH = 5.93, pH = 8.07.",
+   "hint": "→ slightly basic pH",
+   "note": "You must convert Ka to Kb first; using Ka directly on the anion is the classic mistake.",
+   "core": false,
+   "alt": [
+    "8.07",
+    "8.1"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "DEFINE",
+   "q": "Define a buffer solution.",
+   "a": "A solution containing appreciable amounts of both a weak acid and its conjugate base (or a weak base and its conjugate acid) that resists large changes in pH when small amounts of strong acid or strong base are added.",
+   "hint": "→ conjugate pair in comparable amounts",
+   "note": "A weak acid alone is not a buffer; the conjugate base must also be present.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "EXPLAIN",
+   "q": "Explain at the particle level how a buffer resists a change in pH.",
+   "a": "Added H3O⁺ is consumed by the conjugate base (A⁻ + H3O⁺ → HA + H2O); added OH⁻ is consumed by the weak acid (HA + OH⁻ → A⁻ + H2O). Because the strong species is converted into a weak one, the ratio [A⁻]/[HA] shifts only slightly and the pH barely moves.",
+   "hint": "→ two neutralization equations",
+   "note": "Full credit requires writing both reactions, not just saying the buffer 'absorbs' the addition.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "DEFINE",
+   "q": "Define the equivalence point of a titration and contrast it with the endpoint.",
+   "a": "The equivalence point is where moles of added titrant exactly equal the stoichiometric amount needed to react with the analyte. The endpoint is where the indicator changes color - an experimental estimate of the equivalence point.",
+   "hint": "→ theoretical versus observed",
+   "note": "A well-chosen indicator makes the endpoint fall within the steep region so the two nearly coincide.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "EXPLAIN",
+   "q": "Describe the shape of a strong acid-strong base titration curve.",
+   "a": "It starts at very low pH, rises slowly, then jumps almost vertically through a very steep region, and levels off at high pH. The equivalence point is at pH = 7.00 at 25 °C, at the midpoint of the vertical section.",
+   "hint": "→ pH at the equivalence point plus curve shape",
+   "note": "Only the strong-strong case has an equivalence point at exactly pH 7.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "EXPLAIN",
+   "q": "Describe the shape of a weak acid-strong base titration curve.",
+   "a": "It starts at a moderate pH, rises quickly, then flattens into a buffer region, passes through a smaller vertical jump, and reaches an equivalence point at pH > 7 because the solution contains the weak acid's conjugate base.",
+   "hint": "→ buffer plateau plus basic equivalence point",
+   "note": "The weaker the acid, the higher the equivalence-point pH and the shorter the vertical jump.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "STATE",
+   "q": "State what is true about the pH at the half-equivalence point of a weak acid titration.",
+   "a": "At half-equivalence, exactly half the weak acid has been converted to its conjugate base, so [HA] = [A⁻] and pH = pKa.",
+   "hint": "→ pH equals a constant",
+   "note": "This is the standard way to determine Ka experimentally from a titration curve.",
+   "core": true,
+   "alt": [
+    "pH = pKa"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "EXPLAIN",
+   "q": "Explain why the equivalence point of a weak base-strong acid titration falls below pH 7.",
+   "a": "At equivalence all the weak base has been converted to its conjugate acid (for example NH3 to NH4⁺). That conjugate acid hydrolyzes water to produce H3O⁺, so the solution is acidic.",
+   "hint": "→ conjugate acid remains",
+   "note": "Whatever species remains at the equivalence point determines the pH there.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "COMPUTE",
+   "q": "Compute the molarity of an HCl solution if 25.0 mL requires 32.5 mL of 0.100 M NaOH to reach the equivalence point.",
+   "a": "mol NaOH = 0.0325 L × 0.100 M = 3.25×10⁻³ mol. The reaction is 1:1, so mol HCl = 3.25×10⁻³ mol and M = 3.25×10⁻³/0.0250 L = 0.130 M.",
+   "hint": "→ molarity near 0.1 M",
+   "note": "Always convert to moles first; the mole ratio is 1:1 only for monoprotic-monobasic pairs.",
+   "core": false,
+   "alt": [
+    "0.130 M",
+    "0.13 M"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "EXPLAIN",
+   "q": "Describe the titration curve of a diprotic weak acid with a strong base.",
+   "a": "It shows two buffer regions and two equivalence points, one for each proton, separated by a vertical jump. The second equivalence point requires twice the titrant volume of the first, and its pH is higher.",
+   "hint": "→ two plateaus, two jumps",
+   "note": "Distinct steps appear only when Ka1 is roughly 10³ times Ka2 or more; otherwise the steps blur together.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "DEFINE",
+   "q": "Define an acid-base indicator and state its useful pH range.",
+   "a": "An indicator is a weak acid (HIn) whose acid and base forms have different colors. It changes color over roughly pH = pKa ± 1, where the ratio [In⁻]/[HIn] moves from about 1:10 to 10:1.",
+   "hint": "→ weak acid plus a range formula",
+   "note": "Because the indicator is itself a weak acid, add only a couple of drops so it does not consume titrant.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "DECIDE",
+   "q": "Decide how to choose an appropriate indicator for a titration.",
+   "a": "Choose an indicator whose pKa is close to the pH at the equivalence point, so its color change (pKa ± 1) occurs inside the steep vertical portion of the curve.",
+   "hint": "→ match pKa to equivalence pH",
+   "note": "Phenolphthalein (pKa about 9) suits weak acid-strong base; methyl red (pKa about 5) suits weak base-strong acid.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "IDENTIFY",
+   "q": "Identify a suitable indicator for the titration of acetic acid with NaOH and justify the choice.",
+   "a": "Phenolphthalein. Its color change spans about pH 8.2-10.0, which brackets the equivalence-point pH (above 7) for a weak acid titrated with a strong base.",
+   "hint": "→ one indicator name plus its range",
+   "note": "Methyl orange would change color far too early, in the buffer region, and underestimate the volume.",
+   "core": false,
+   "alt": [
+    "phenolphthalein"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.7",
+   "v": "STATE",
+   "q": "State the definition of pKa and how it relates to acid strength.",
+   "a": "pKa = -log(Ka), so Ka = 10^(-pKa). A smaller pKa means a larger Ka and a stronger acid; each unit of pKa is a factor of 10 in acid strength.",
+   "hint": "→ negative log, inverse ordering",
+   "note": "Ranking acids by pKa reverses the ranking by Ka; the strongest acid has the lowest pKa.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.7",
+   "v": "PREDICT",
+   "q": "Predict which form of a conjugate pair predominates when the solution pH is below, equal to, or above the pKa.",
+   "a": "pH < pKa: the protonated acid form HA predominates. pH = pKa: the two forms are present in equal amounts. pH > pKa: the deprotonated base form A⁻ predominates.",
+   "hint": "→ three comparisons",
+   "note": "A difference of 2 pH units from pKa means roughly a 100:1 ratio of the favored form.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.9",
+   "v": "STATE",
+   "q": "State the Henderson-Hasselbalch equation and the conditions under which it applies.",
+   "a": "$pH = pK_{a} + \\log\\frac{[A^{-}]}{[HA]}$. It applies to a buffer, where both the weak acid and its conjugate base are present in appreciable, comparable amounts.",
+   "hint": "→ pKa plus a log ratio",
+   "note": "Because the volume is shared, you may substitute moles of A⁻ and HA directly for concentrations.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.9",
+   "v": "COMPUTE",
+   "q": "Compute the pH of a buffer that is 0.20 M in HC2H3O2 and 0.40 M in NaC2H3O2, given Ka = 1.8×10⁻⁵.",
+   "a": "pKa = -log(1.8×10⁻⁵) = 4.74. pH = 4.74 + log(0.40/0.20) = 4.74 + 0.30 = 5.04.",
+   "hint": "→ pH about 0.3 above pKa",
+   "note": "A 2:1 base-to-acid ratio always raises the pH exactly 0.30 unit above the pKa.",
+   "core": false,
+   "alt": [
+    "5.04",
+    "5.0"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.9",
+   "v": "COMPUTE",
+   "q": "Compute the pH after 0.010 mol NaOH is added to 1.00 L of a buffer containing 0.100 mol HA and 0.100 mol A⁻ (pKa = 4.75).",
+   "a": "OH⁻ converts HA to A⁻: HA becomes 0.090 mol and A⁻ becomes 0.110 mol. pH = 4.75 + log(0.110/0.090) = 4.75 + 0.09 = 4.84.",
+   "hint": "→ stoichiometry first, then the log",
+   "note": "Do the limiting-reactant neutralization in moles before applying Henderson-Hasselbalch.",
+   "core": false,
+   "alt": [
+    "4.84",
+    "4.8"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "PREDICT",
+   "q": "Predict the pH of a buffer in which the weak acid and its conjugate base are present in equal concentrations.",
+   "a": "pH = pKa, because the log of the ratio 1 is zero. This is also the composition of maximum buffering ability.",
+   "hint": "→ pH equals a constant",
+   "note": "Equal concentrations, not equal volumes; check the moles of each component.",
+   "core": false,
+   "alt": [
+    "pH = pKa"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "DEFINE",
+   "q": "Define buffer capacity.",
+   "a": "The amount of strong acid or strong base a buffer can neutralize before its pH changes significantly. It depends on the absolute concentrations of the buffer components, not just their ratio.",
+   "hint": "→ how much it can absorb",
+   "note": "Two buffers can share a pH yet have very different capacities if one is far more concentrated.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "EXPLAIN",
+   "q": "Explain what conditions maximize buffer capacity.",
+   "a": "High concentrations of both components and a [A⁻]/[HA] ratio close to 1, which means a pH close to the pKa. Capacity falls off sharply once the ratio passes about 10:1 either way.",
+   "hint": "→ two conditions",
+   "note": "Buffer capacity is largest at pH = pKa and is effectively exhausted outside pKa ± 1.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "DECIDE",
+   "q": "Decide how to choose a weak acid to prepare a buffer of a target pH.",
+   "a": "Pick a weak acid whose pKa is within about 1 unit of the target pH, then set the [A⁻]/[HA] ratio with Henderson-Hasselbalch to fine-tune the value.",
+   "hint": "→ match pKa to target pH",
+   "note": "Choosing an acid whose pKa is far from the target forces an extreme ratio and a very weak buffer.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "EXPLAIN",
+   "q": "Explain why diluting a buffer with water barely changes its pH.",
+   "a": "Dilution lowers [HA] and [A⁻] by the same factor, so their ratio - and therefore the log term in Henderson-Hasselbalch - is unchanged. The pH stays essentially constant while the buffer capacity drops.",
+   "hint": "→ ratio unchanged, capacity falls",
+   "note": "Dilution is the cleanest illustration that pH depends on the ratio while capacity depends on the amounts.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.1",
+   "v": "IDENTIFY",
+   "q": "Identify the Lewis acid and the Lewis base in the reaction BF3 + NH3 → F3B-NH3.",
+   "a": "NH3 is the Lewis base because it donates its lone pair; BF3 is the Lewis acid because its electron-deficient boron accepts that pair to form a coordinate covalent bond.",
+   "hint": "→ donor and acceptor",
+   "note": "No proton is transferred here, so only the Lewis definition classifies this as an acid-base reaction.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "IDENTIFY",
+   "q": "Identify two laboratory ways to prepare a buffer of a given pH.",
+   "a": "(1) Mix a weak acid with a soluble salt of its conjugate base in the desired mole ratio. (2) Partially neutralize a weak acid with a limited amount of strong base (or a weak base with limited strong acid), leaving both forms present.",
+   "hint": "→ two methods",
+   "note": "In method 2 the strong reagent must be the limiting reactant, otherwise no weak-acid form remains.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.5",
+   "v": "EXPLAIN",
+   "q": "Explain why the successive Ka values of a polyprotic acid decrease sharply.",
+   "a": "Each proton is removed from a species that is one unit more negative than the last, so the remaining protons are held more tightly by electrostatic attraction. Ka1 >> Ka2 >> Ka3, typically by factors of about 10⁵.",
+   "hint": "→ increasing negative charge",
+   "note": "Because Ka1 dominates, the pH of a polyprotic acid solution can usually be computed from the first ionization alone.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.1",
+   "v": "DEFINE",
+   "q": "Define entropy in terms of the dispersal of matter and energy.",
+   "a": "Entropy (S) measures the number of ways the energy and particles of a system can be arranged - its degree of dispersal or disorder. A larger number of accessible microstates means higher entropy.",
+   "hint": "→ dispersal or number of arrangements",
+   "note": "Unlike enthalpy, absolute entropies can be measured, and every pure substance above 0 K has S° > 0.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.1",
+   "v": "IDENTIFY",
+   "q": "Identify the changes that increase the entropy of a chemical system.",
+   "a": "Melting or vaporizing, dissolving a solid or liquid, increasing temperature, increasing the volume available to a gas, increasing the number of moles of gas, and forming larger or more complex molecules.",
+   "hint": "→ list of physical changes",
+   "note": "Increasing moles of gas is the single most reliable indicator of a positive ΔS in an AP reaction.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.1",
+   "v": "PREDICT",
+   "q": "Predict the sign of ΔS° for 2NO2(g) → N2O4(g) and justify it.",
+   "a": "Negative. Two moles of gas become one mole of gas, so the particles have fewer accessible arrangements and the system becomes more ordered.",
+   "hint": "→ sign plus a mole count",
+   "note": "Always count gas moles first; if they change, that dominates the sign of ΔS.",
+   "core": false,
+   "alt": [
+    "negative"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.1",
+   "v": "RANK",
+   "q": "Rank solid, liquid, and gas phases of the same substance by molar entropy.",
+   "a": "S(gas) >> S(liquid) > S(solid). The jump from liquid to gas is far larger than from solid to liquid because vaporization dramatically increases the volume and freedom of the particles.",
+   "hint": "→ three-term inequality",
+   "note": "Dissolving a gas in a liquid decreases entropy, which is why gas solubility falls as temperature rises.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "STATE",
+   "q": "State how to calculate the standard entropy change of a reaction from absolute entropies.",
+   "a": "ΔS°rxn = ΣnS°(products) - ΣnS°(reactants), where each standard molar entropy is multiplied by its balanced coefficient. Units are usually J/(mol·K).",
+   "hint": "→ products minus reactants, weighted",
+   "note": "S° values are absolute, not formation values, so elements in their standard states have nonzero S°.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "EXPLAIN",
+   "q": "Explain why S° of an element in its standard state is not zero, unlike ΔH°f.",
+   "a": "Standard entropy is an absolute quantity measured from the third-law reference point of a perfect crystal at 0 K, so any substance above 0 K has positive S°. ΔH°f is defined as a relative change, and forming an element from itself involves no change.",
+   "hint": "→ absolute versus relative scale",
+   "note": "Setting S° of O2 to zero is a common error that ruins a ΔS° calculation.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "COMPUTE",
+   "q": "Compute ΔS° for 2H2(g) + O2(g) → 2H2O(l) given S° values of 131, 205, and 70. J/(mol·K).",
+   "a": "ΔS° = 2(70.) - [2(131) + 205] = 140 - 467 = -327 J/(mol·K).",
+   "hint": "→ large negative value in J/(mol·K)",
+   "note": "The sign makes sense: three moles of gas become two moles of liquid.",
+   "core": false,
+   "alt": [
+    "-327 J/(mol K)",
+    "-327"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "STATE",
+   "q": "State the Gibbs free energy equation and what each term contributes.",
+   "a": "ΔG = ΔH - TΔS, where ΔH is the enthalpy change, T is the absolute temperature in kelvin, and ΔS is the entropy change. ΔG combines the enthalpy and entropy drives into a single criterion.",
+   "hint": "→ three-term equation",
+   "note": "ΔH is usually in kJ/mol while ΔS is in J/(mol·K); convert before subtracting.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "DEFINE",
+   "q": "Define a thermodynamically favorable process in terms of ΔG.",
+   "a": "A process is thermodynamically favorable when ΔG < 0. If ΔG > 0 the reverse process is favorable, and if ΔG = 0 the system is at equilibrium.",
+   "hint": "→ sign of one quantity",
+   "note": "AP says 'thermodynamically favorable', not 'spontaneous', and favorable never implies fast.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "STATE",
+   "q": "State how to calculate ΔG°rxn from standard free energies of formation.",
+   "a": "ΔG°rxn = ΣnΔG°f(products) - ΣnΔG°f(reactants). ΔG°f of any element in its standard state is zero.",
+   "hint": "→ products minus reactants",
+   "note": "You can also get ΔG° by combining ΔH° and ΔS° with ΔG° = ΔH° - TΔS°; both routes should agree.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "STATE",
+   "q": "State the temperature dependence when ΔH < 0 and ΔS > 0.",
+   "a": "ΔG is negative at all temperatures, so the reaction is thermodynamically favorable at every temperature. Both the enthalpy and entropy terms favor the products.",
+   "hint": "→ favorable at all T",
+   "note": "Combustion reactions that produce more gas moles are the standard example.",
+   "core": true,
+   "alt": [
+    "favorable at all temperatures"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "STATE",
+   "q": "State the temperature dependence when ΔH > 0 and ΔS < 0.",
+   "a": "ΔG is positive at all temperatures, so the reaction is never thermodynamically favorable; only the reverse reaction is favorable.",
+   "hint": "→ never favorable",
+   "note": "If a question shows this sign pattern, no temperature change can make the reaction go.",
+   "core": false,
+   "alt": [
+    "never favorable"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "STATE",
+   "q": "State the temperature dependence when ΔH < 0 and ΔS < 0.",
+   "a": "ΔG is negative only at low temperatures, where the favorable -ΔH term outweighs the unfavorable -TΔS term. Raising T eventually makes ΔG positive.",
+   "hint": "→ favorable at low T",
+   "note": "Freezing and condensation belong here: exothermic but entropy-decreasing.",
+   "core": false,
+   "alt": [
+    "favorable at low temperatures"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "STATE",
+   "q": "State the temperature dependence when ΔH > 0 and ΔS > 0.",
+   "a": "ΔG is negative only at high temperatures, where the -TΔS term becomes large enough to overcome the unfavorable positive ΔH.",
+   "hint": "→ favorable at high T",
+   "note": "Melting, boiling, and many dissolutions are endothermic but entropy-driven.",
+   "core": false,
+   "alt": [
+    "favorable at high temperatures"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "COMPUTE",
+   "q": "Compute the temperature at which a reaction with ΔH° = +58.0 kJ/mol and ΔS° = +176 J/(mol·K) becomes thermodynamically favorable.",
+   "a": "Set ΔG = 0: T = ΔH/ΔS = 58,000 J/mol ÷ 176 J/(mol·K) = 330. K. Above about 330 K, ΔG < 0.",
+   "hint": "→ temperature in kelvin near room temperature",
+   "note": "The crossover temperature is where ΔG = 0, which is also where K = 1.",
+   "core": false,
+   "alt": [
+    "330 K",
+    "330. K"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "EXPLAIN",
+   "q": "Explain the unit precaution required when using ΔG = ΔH - TΔS.",
+   "a": "Tabulated ΔH is in kJ/mol but ΔS is in J/(mol·K), so ΔS must be divided by 1000 (or ΔH multiplied by 1000) before subtracting. Temperature must be in kelvin, never Celsius.",
+   "hint": "→ two unit conversions",
+   "note": "A factor-of-1000 error here produces an answer off by three orders of magnitude and the wrong sign conclusion.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.4",
+   "v": "CONTRAST",
+   "q": "Contrast thermodynamic control and kinetic control of a reaction.",
+   "a": "Thermodynamic control means the outcome is determined by which products have the lowest free energy (most negative ΔG). Kinetic control means the outcome is determined by which pathway has the lowest activation energy, regardless of ΔG.",
+   "hint": "→ stability versus barrier height",
+   "note": "A reaction can be highly favorable yet not occur because its activation energy is too large.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.4",
+   "v": "EXPLAIN",
+   "q": "Explain why diamond does not visibly convert to graphite even though ΔG° for the conversion is negative.",
+   "a": "The conversion is thermodynamically favorable but under kinetic control: breaking and rearranging the covalent network requires an enormous activation energy, so the rate is effectively zero at room temperature.",
+   "hint": "→ favorable but blocked",
+   "note": "Any 'favorable but does not happen' question is answered by a large activation energy.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.5",
+   "v": "STATE",
+   "q": "State the relationship between standard free energy change and the equilibrium constant.",
+   "a": "ΔG° = -RT ln K, with R = 8.314 J/(mol·K) and T in kelvin. Equivalently, K = e^(-ΔG°/RT).",
+   "hint": "→ logarithmic relationship",
+   "note": "Use R = 8.314 J/(mol·K) here, not 0.08206 L·atm/(mol·K), and convert ΔG° to joules.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.5",
+   "v": "PREDICT",
+   "q": "Predict the sign of ΔG° from the magnitude of K.",
+   "a": "K > 1 gives ln K > 0 and therefore ΔG° < 0 (products favored). K < 1 gives ΔG° > 0 (reactants favored). K = 1 gives ΔG° = 0.",
+   "hint": "→ three cases keyed to K = 1",
+   "note": "The dividing line is K = 1, not K = 0; a small but nonzero K still means positive ΔG°.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.5",
+   "v": "STATE",
+   "q": "State the equation relating ΔG under nonstandard conditions to ΔG° and Q.",
+   "a": "ΔG = ΔG° + RT ln Q, where Q is the reaction quotient at the moment of interest.",
+   "hint": "→ standard value plus a correction term",
+   "note": "This is the thermodynamic parent of the Nernst equation.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.5",
+   "v": "EXPLAIN",
+   "q": "Explain what ΔG equals at equilibrium and what that implies about Q.",
+   "a": "At equilibrium ΔG = 0, so 0 = ΔG° + RT ln Q, which requires Q = K. ΔG° is generally not zero at equilibrium; only the instantaneous ΔG is.",
+   "hint": "→ one value and one identity",
+   "note": "Confusing ΔG with ΔG° is the most common error in this topic; ΔG° is fixed at a given temperature.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.5",
+   "v": "COMPUTE",
+   "q": "Compute K at 298 K for a reaction with ΔG° = -22.8 kJ/mol.",
+   "a": "ln K = -ΔG°/(RT) = 22,800/(8.314 × 298) = 9.20, so K = e^9.20 = 9.9×10³.",
+   "hint": "→ large K, about 10⁴",
+   "note": "Roughly, every 5.7 kJ/mol of negative ΔG° at 298 K multiplies K by about 10.",
+   "core": false,
+   "alt": [
+    "9.9e3",
+    "about 1x10^4"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "EXPLAIN",
+   "q": "Explain how coupled reactions can drive a thermodynamically unfavorable process.",
+   "a": "An unfavorable reaction (ΔG > 0) is paired with a favorable one (ΔG << 0) that shares a common intermediate. The free energies add, and if the sum is negative the overall coupled process is favorable.",
+   "hint": "→ add the free energies",
+   "note": "The two reactions must share a species so they truly combine; otherwise their ΔG values do not add.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify a common example of a coupled reaction and the source of the driving free energy.",
+   "a": "Extracting iron from Fe2O3 is unfavorable alone, but coupling it to the highly favorable oxidation of carbon to CO/CO2 makes the overall smelting reaction favorable. In biology, ATP hydrolysis is coupled to unfavorable biosynthesis.",
+   "hint": "→ one industrial and one biological case",
+   "note": "Electrolysis is a related idea: external electrical work supplies the free energy an unfavorable redox reaction lacks.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.7",
+   "v": "CONTRAST",
+   "q": "Contrast a galvanic (voltaic) cell with an electrolytic cell.",
+   "a": "A galvanic cell runs a thermodynamically favorable redox reaction (E°cell > 0, ΔG° < 0) and produces electrical energy. An electrolytic cell uses an external power supply to force an unfavorable reaction (E°cell < 0, ΔG° > 0).",
+   "hint": "→ produces versus consumes electricity",
+   "note": "In both cell types oxidation still occurs at the anode and reduction at the cathode.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.7",
+   "v": "IDENTIFY",
+   "q": "Identify which electrode is the anode and which is the cathode in any electrochemical cell.",
+   "a": "Oxidation always occurs at the anode; reduction always occurs at the cathode. This is true for both galvanic and electrolytic cells.",
+   "hint": "→ two half-reaction types",
+   "note": "Mnemonic: AN OX and RED CAT. Only the electrode signs differ between cell types, not the chemistry.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.7",
+   "v": "STATE",
+   "q": "State the direction of electron flow and of current in the external circuit of a galvanic cell.",
+   "a": "Electrons flow through the external wire from the anode to the cathode. Conventional current is defined in the opposite direction, from cathode to anode.",
+   "hint": "→ anode to cathode",
+   "note": "Electrons never travel through the salt bridge; only ions move there.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.7",
+   "v": "EXPLAIN",
+   "q": "Explain the function of the salt bridge in a galvanic cell.",
+   "a": "It completes the circuit and maintains electrical neutrality by allowing ions to migrate between half-cells. Without it, charge builds up in each compartment and current stops almost immediately.",
+   "hint": "→ neutrality and circuit completion",
+   "note": "A common free-response answer point is that the cell stops working if the salt bridge is removed.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.7",
+   "v": "IDENTIFY",
+   "q": "Identify the direction that cations and anions migrate through a salt bridge.",
+   "a": "Cations migrate toward the cathode compartment, where positive charge is being consumed by reduction. Anions migrate toward the anode compartment, where positive metal ions are being produced.",
+   "hint": "→ two ion directions",
+   "note": "Cations move toward the cathode - both words start with the same sound.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.7",
+   "v": "IDENTIFY",
+   "q": "Identify the electrode charge signs in galvanic versus electrolytic cells.",
+   "a": "Galvanic: the anode is negative and the cathode is positive. Electrolytic: the anode is positive and the cathode is negative, because the external supply drives the charges.",
+   "hint": "→ two sign pairs",
+   "note": "The signs flip between cell types even though anode = oxidation never changes.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.7",
+   "v": "STATE",
+   "q": "State the cell notation convention for a galvanic cell.",
+   "a": "Anode | anode electrolyte || cathode electrolyte | cathode, with oxidation on the left and reduction on the right. A single bar is a phase boundary and the double bar is the salt bridge. Example: Zn | Zn²⁺(1 M) || Cu²⁺(1 M) | Cu.",
+   "hint": "→ left-to-right with two bar types",
+   "note": "An inert electrode such as Pt is written at the far left or far right when no solid conductor is produced.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.8",
+   "v": "STATE",
+   "q": "State how to calculate the standard cell potential from tabulated half-cell potentials.",
+   "a": "E°cell = E°(cathode) - E°(anode), using standard reduction potentials for both half-reactions as written in the table.",
+   "hint": "→ difference of two reduction potentials",
+   "note": "Do NOT multiply a half-cell potential by the coefficient used to balance electrons; E° is intensive.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.8",
+   "v": "COMPUTE",
+   "q": "Compute E°cell for a Zn/Cu galvanic cell given E°(Cu²⁺/Cu) = +0.34 V and E°(Zn²⁺/Zn) = -0.76 V.",
+   "a": "Copper has the higher reduction potential, so it is the cathode: E°cell = 0.34 - (-0.76) = +1.10 V. Zinc is oxidized at the anode.",
+   "hint": "→ positive voltage near 1 V",
+   "note": "In a galvanic cell the species with the more positive reduction potential is always the cathode.",
+   "core": false,
+   "alt": [
+    "+1.10 V",
+    "1.10 V"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.8",
+   "v": "EXPLAIN",
+   "q": "Explain why a standard reduction potential is not multiplied when a half-reaction is scaled.",
+   "a": "E° is an intensive property - energy per unit charge - so it does not depend on how much substance reacts. Only ΔG°, which is extensive, scales with the coefficients through ΔG° = -nFE°.",
+   "hint": "→ intensive versus extensive",
+   "note": "Doubling a half-reaction doubles n and doubles ΔG°, but leaves E° unchanged.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.8",
+   "v": "STATE",
+   "q": "State the equation linking standard free energy change and standard cell potential.",
+   "a": "ΔG° = -nFE°, where n is the moles of electrons transferred in the balanced reaction and F = 96,485 C/mol e⁻. A positive E° corresponds to a negative ΔG°.",
+   "hint": "→ one equation with a constant",
+   "note": "With E° in volts and F in C/mol, ΔG° comes out in joules; divide by 1000 for kJ.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.8",
+   "v": "STATE",
+   "q": "State what the sign of E°cell tells you about a redox reaction.",
+   "a": "E°cell > 0 means the reaction is thermodynamically favorable as written and the cell is galvanic. E°cell < 0 means it is unfavorable and would require an electrolytic cell.",
+   "hint": "→ sign plus cell type",
+   "note": "E°cell > 0, ΔG° < 0, and K > 1 always travel together.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.8",
+   "v": "RANK",
+   "q": "Rank species as oxidizing or reducing agents using a table of standard reduction potentials.",
+   "a": "The more positive the standard reduction potential, the stronger the oxidizing agent (it is most easily reduced). The more negative the potential, the stronger the reducing agent in its reduced form.",
+   "hint": "→ two ends of the table",
+   "note": "F2 sits at the top as the strongest oxidizing agent; Li is the strongest common reducing agent.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.9",
+   "v": "STATE",
+   "q": "State qualitatively how cell potential responds to nonstandard concentrations (the Nernst relationship).",
+   "a": "E = E° - (RT/nF) ln Q. As Q increases (more product, less reactant) E decreases; as Q decreases E increases. When Q = K, E = 0 and the cell is dead.",
+   "hint": "→ potential falls as Q rises",
+   "note": "A battery going flat is exactly the cell reaching equilibrium, where E = 0 and ΔG = 0.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.9",
+   "v": "PREDICT",
+   "q": "Predict the effect on cell potential of increasing the concentration of a product ion in a galvanic cell.",
+   "a": "Q increases, so E decreases below E°. By Le Chatelier reasoning, adding product pushes the cell closer to equilibrium and reduces its driving force.",
+   "hint": "→ potential decreases",
+   "note": "Increasing a reactant concentration has the opposite effect and raises E above E°.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.9",
+   "v": "DEFINE",
+   "q": "Define a concentration cell.",
+   "a": "An electrochemical cell whose two half-cells contain the same species at different concentrations. The chemical reaction is the same on both sides, so E° = 0, and the potential comes entirely from the concentration difference.",
+   "hint": "→ same chemistry, different concentrations",
+   "note": "A concentration cell runs until the two concentrations become equal, at which point E = 0.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.9",
+   "v": "PREDICT",
+   "q": "Predict which half-cell of a concentration cell acts as the anode.",
+   "a": "The dilute half-cell is the anode. Oxidation there raises its ion concentration, while reduction at the concentrated cathode lowers that side, driving the two toward equality.",
+   "hint": "→ dilute or concentrated side",
+   "note": "Trace the direction the system must move to equalize the concentrations; that identifies the anode.",
+   "core": false,
+   "alt": [
+    "the dilute half-cell"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.9",
+   "v": "EXPLAIN",
+   "q": "Explain why E° for a concentration cell is exactly zero while the measured E is not.",
+   "a": "Both half-reactions are the same, so E°(cathode) - E°(anode) = 0. The measured potential comes from the -(RT/nF) ln Q term, which is nonzero whenever the two concentrations differ.",
+   "hint": "→ identical half-reactions",
+   "note": "Concentration-cell voltages are small, typically a few hundredths of a volt.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.10",
+   "v": "STATE",
+   "q": "State the equations used for electrolysis stoichiometry.",
+   "a": "q = I × t (charge in coulombs from current in amperes and time in seconds), and moles of electrons = q/F with F = 96,485 C/mol e⁻. Then use the half-reaction to convert moles of electrons to moles of substance.",
+   "hint": "→ two equations plus a mole ratio",
+   "note": "Time must be in seconds; a problem stated in minutes or hours needs conversion first.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.10",
+   "v": "COMPUTE",
+   "q": "Compute the mass of copper deposited when 2.00 A flows for 30.0 minutes through a Cu²⁺ solution.",
+   "a": "q = 2.00 A × 1800 s = 3600 C. mol e⁻ = 3600/96,485 = 0.0373. Cu²⁺ + 2e⁻ → Cu, so mol Cu = 0.0187, and mass = 0.0187 × 63.55 = 1.19 g.",
+   "hint": "→ about 1 gram",
+   "note": "The 2 in the half-reaction halves the moles of metal; forgetting it doubles the answer.",
+   "core": false,
+   "alt": [
+    "1.19 g",
+    "1.2 g"
+   ]
+  }
+ ]
+}

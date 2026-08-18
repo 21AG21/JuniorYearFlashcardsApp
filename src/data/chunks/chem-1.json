@@ -1,0 +1,1688 @@
+{
+ "course": "chem",
+ "cards": [
+  {
+   "u": "u1",
+   "t": "1.1",
+   "v": "DEFINE",
+   "q": "Define the mole and state Avogadro's number.",
+   "a": "A mole is the amount of substance containing 6.022 x 10^23 elementary particles (Avogadro's number, N_A). It is a counting unit, like a dozen.",
+   "hint": "→ count + numeric value",
+   "note": "The mole links the particulate world to lab-measurable mass; AP expects it named as a COUNT, not a mass.",
+   "core": true,
+   "alt": [
+    "6.022e23",
+    "Avogadro's number"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.1",
+   "v": "STATE",
+   "q": "State the equation relating moles, mass, and molar mass.",
+   "a": "n = m / M, where n = moles (mol), m = mass (g), and M = molar mass (g/mol).",
+   "hint": "→ one-line equation",
+   "note": "On the AP equations sheet. Units are the fastest check: g ÷ (g/mol) = mol.",
+   "core": true,
+   "alt": [
+    "n=m/M"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.1",
+   "v": "DEFINE",
+   "q": "Define molar mass and give its units.",
+   "a": "Molar mass is the mass of one mole of a substance, in g/mol. It is found by summing the atomic masses (from the periodic table) of every atom in the formula.",
+   "hint": "→ definition + units",
+   "note": null,
+   "core": false,
+   "alt": [
+    "g/mol"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.1",
+   "v": "COMPUTE",
+   "q": "Compute the number of molecules in 36.0 g of H₂O.",
+   "a": "M(H₂O) = 18.0 g/mol, so n = 36.0/18.0 = 2.00 mol. Particles = 2.00 x 6.022 x 10^23 = 1.20 x 10^24 molecules.",
+   "hint": "→ two steps: grams → mol → particles",
+   "note": "Trap: for atoms rather than molecules you must multiply again by atoms per formula unit (here x3).",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.2",
+   "v": "EXPLAIN",
+   "q": "Explain how to read a mass spectrum of a pure element.",
+   "a": "Each peak is one isotope. The horizontal axis is mass/charge (m/z), which for a 1+ ion equals the isotope's mass number. Peak height gives the relative natural abundance of that isotope.",
+   "hint": "→ what each axis and each peak means",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.2",
+   "v": "COMPUTE",
+   "q": "Compute average atomic mass from isotopic masses and abundances.",
+   "a": "Average atomic mass = Σ (isotope mass x fractional abundance). Example: 75.0% ³⁵Cl (34.97) + 25.0% ³⁷Cl (36.97) gives 0.750(34.97) + 0.250(36.97) = 35.5 amu.",
+   "hint": "→ weighted-average sum",
+   "note": "Trap: convert percentages to decimals; abundances must sum to 1. Do NOT take a simple average of the isotope masses.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.2",
+   "v": "EXPLAIN",
+   "q": "Explain why an element's average atomic mass lies closer to the mass of one particular isotope.",
+   "a": "The average is weighted by abundance, so it is pulled toward whichever isotope is most abundant. Cl averages 35.45 because ³⁵Cl is about three times as common as ³⁷Cl.",
+   "hint": "→ cause stated in one clause",
+   "note": "Useful check: if your computed average is not between the lightest and heaviest isotope mass, you made an arithmetic error.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.3",
+   "v": "DEFINE",
+   "q": "Define percent composition by mass and give the equation.",
+   "a": "Percent composition is the mass fraction of each element in a compound: %element = (mass of that element in 1 mol / molar mass of compound) x 100%.",
+   "hint": "→ ratio x 100",
+   "note": "Percent composition is identical for every sample of a pure compound - this is the law of definite proportions.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.3",
+   "v": "CONTRAST",
+   "q": "Contrast an empirical formula with a molecular formula.",
+   "a": "The empirical formula is the smallest whole-number ratio of atoms (CH₂O). The molecular formula gives the actual atom counts in one molecule (C₆H₁₂O₆) and is always a whole-number multiple of the empirical formula.",
+   "hint": "→ two definitions + how they relate",
+   "note": "Percent composition data alone can NEVER give a molecular formula; you also need the molar mass.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.3",
+   "v": "APPLY",
+   "q": "Apply the standard procedure for finding an empirical formula from percent composition.",
+   "a": "1) Assume 100 g, so percents become grams. 2) Divide each mass by that element's molar mass to get moles. 3) Divide all mole values by the smallest. 4) Multiply to clear fractions to whole numbers.",
+   "hint": "→ four ordered steps",
+   "note": "Trap: a ratio like 1:1.5 must be doubled to 2:3, not rounded to 1:2.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.3",
+   "v": "COMPUTE",
+   "q": "Compute a molecular formula given an empirical formula and molar mass.",
+   "a": "Find n = (molar mass of compound) / (empirical formula mass), then multiply every subscript in the empirical formula by n. If CH₂O (30.0) and M = 180 g/mol, n = 6, so the formula is C₆H₁₂O₆.",
+   "hint": "→ divide, then scale subscripts",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.4",
+   "v": "CONTRAST",
+   "q": "Contrast a pure substance with a mixture.",
+   "a": "A pure substance has fixed composition and identical particles throughout, so it has sharp, characteristic physical properties. A mixture contains two or more substances in variable proportion and is separated by physical means that exploit property differences.",
+   "hint": "→ composition + separability",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.4",
+   "v": "EXPLAIN",
+   "q": "Explain the physical property that filtration exploits.",
+   "a": "Filtration separates by particle size: an insoluble solid is trapped by the filter while the solution or liquid passes through. It works only when one component is not dissolved.",
+   "hint": "→ property + what passes through",
+   "note": "Trap: filtration cannot separate a dissolved solute from its solvent - the ions pass through the paper.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.4",
+   "v": "EXPLAIN",
+   "q": "Explain the physical property that distillation exploits.",
+   "a": "Distillation separates by boiling point, which is set by intermolecular force strength. The component with the weaker IMFs (lower boiling point) vaporizes first, is condensed, and is collected separately.",
+   "hint": "→ property + which component leaves first",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.4",
+   "v": "EXPLAIN",
+   "q": "Explain the principle behind chromatographic separation.",
+   "a": "Components distribute between a mobile phase and a stationary phase. A component with stronger attraction to the mobile phase (and weaker attraction to the stationary phase) travels farther; stronger stationary-phase attraction means it lags behind.",
+   "hint": "→ two competing attractions",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.5",
+   "v": "STATE",
+   "q": "State Coulomb's law as it is used to explain atomic and ionic attractions.",
+   "a": "The magnitude of the potential energy between two charges is proportional to the product of the charges divided by the distance between them: E ∝ q₁q₂ / r (the force follows an inverse-square law, F ∝ q₁q₂ / r²). Opposite charges give negative (attractive) energy.",
+   "hint": "→ proportionality with two variables",
+   "note": "Nearly every 'why' question about radius, ionization energy, and lattice energy is answered with charge and distance.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.5",
+   "v": "DEFINE",
+   "q": "Define effective nuclear charge and shielding.",
+   "a": "Effective nuclear charge (Z_eff) is the net positive charge an electron actually experiences. Inner-shell (core) electrons repel outer electrons and shield them from the nucleus, so Z_eff is less than the full nuclear charge.",
+   "hint": "→ net pull + what reduces it",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.5",
+   "v": "STATE",
+   "q": "State the maximum number of electrons in the s, p, d, and f subshells.",
+   "a": "s holds 2, p holds 6, d holds 10, f holds 14. Shell n holds up to 2n² electrons total.",
+   "hint": "→ four numbers",
+   "note": null,
+   "core": false,
+   "alt": [
+    "2, 6, 10, 14"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.5",
+   "v": "STATE",
+   "q": "State the three rules that govern the order of filling atomic orbitals.",
+   "a": "Aufbau: fill lowest-energy orbitals first. Pauli exclusion: max two electrons per orbital, with opposite spins. Hund's rule: within a degenerate subshell, place one electron in each orbital before pairing.",
+   "hint": "→ three named rules",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.5",
+   "v": "RECALL",
+   "q": "Recall the two anomalous electron configurations expected on the AP exam.",
+   "a": "Cr is [Ar]4s¹3d⁵ and Cu is [Ar]4s¹3d¹⁰, not 4s²3d⁴ / 4s²3d⁹. A half-filled or completely filled d subshell is lower in energy.",
+   "hint": "→ two elements + their configurations",
+   "note": "Mo and Ag follow the same pattern. AP asks for these mainly in PES and ionization-energy contexts.",
+   "core": true,
+   "alt": [
+    "Cr and Cu"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.5",
+   "v": "STATE",
+   "q": "State the rule for writing the electron configuration of a transition metal cation.",
+   "a": "Write the neutral atom's configuration, then remove electrons from the highest n shell first - that is, remove the s electrons before any d electrons. Fe ([Ar]4s²3d⁶) becomes Fe³⁺ = [Ar]3d⁵.",
+   "hint": "→ which subshell empties first",
+   "note": "Classic trap: students remove 3d before 4s. Fe²⁺ is [Ar]3d⁶, NOT [Ar]4s²3d⁴.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.6",
+   "v": "EXPLAIN",
+   "q": "Explain what a photoelectron spectroscopy (PES) spectrum measures and how its axes are arranged.",
+   "a": "PES measures the binding energy needed to eject electrons from each subshell. The x-axis is binding energy, conventionally increasing to the LEFT, so core electrons appear on the left and valence electrons on the right. Each peak is one subshell.",
+   "hint": "→ quantity measured + axis direction",
+   "note": "Trap: the axis runs backwards. The leftmost peak is 1s (highest binding energy), not the outermost electrons.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.6",
+   "v": "IDENTIFY",
+   "q": "Identify what the height (relative intensity) of a PES peak tells you.",
+   "a": "Peak height is proportional to the number of electrons in that subshell. A 1s peak of relative height 2 and a 2p peak of height 4 means 2 electrons in 1s and 4 in 2p.",
+   "hint": "→ proportional to a count",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.6",
+   "v": "APPLY",
+   "q": "Apply PES data to identify an element: peaks at 126, 9.07, 5.31, and 0.74 MJ/mol with relative heights 2, 2, 6, 2.",
+   "a": "The heights give 1s²2s²2p⁶3s², which totals 12 electrons, so the element is magnesium.",
+   "hint": "→ configuration, then element name",
+   "note": null,
+   "core": false,
+   "alt": [
+    "Mg",
+    "magnesium"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.6",
+   "v": "EXPLAIN",
+   "q": "Explain why the 2s peak appears at higher binding energy than the 2p peak in the same atom.",
+   "a": "2s electrons penetrate closer to the nucleus than 2p electrons, so they experience a larger effective nuclear charge and are held more tightly, requiring more energy to remove.",
+   "hint": "→ penetration → Z_eff → energy",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "EXPLAIN",
+   "q": "Explain the periodic trend in atomic radius and its cause.",
+   "a": "Radius decreases left to right across a period because Z_eff rises while electrons are added to the same shell, pulling the shell inward. Radius increases down a group because electrons occupy shells of higher n, farther from the nucleus, with more shielding.",
+   "hint": "→ two directions, each with a reason",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "CONTRAST",
+   "q": "Contrast the size of a cation and an anion with the neutral parent atom.",
+   "a": "A cation is smaller than its parent atom: fewer electrons means less repulsion and a larger Z_eff per electron (often a whole shell is lost). An anion is larger: added electrons increase electron-electron repulsion while nuclear charge is unchanged.",
+   "hint": "→ two comparisons with reasons",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "RANK",
+   "q": "Rank the isoelectronic ions N³⁻, O²⁻, F⁻, Na⁺, and Mg²⁺ by radius, largest first.",
+   "a": "N³⁻ > O²⁻ > F⁻ > Na⁺ > Mg²⁺. All have 10 electrons, so the one with the largest nuclear charge (most protons) pulls them in tightest.",
+   "hint": "→ ordered list + one-clause reason",
+   "note": "Isoelectronic series are ranked ONLY by proton count; never by position in the periodic table.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "EXPLAIN",
+   "q": "Explain the periodic trend in first ionization energy and its cause.",
+   "a": "First ionization energy increases across a period (higher Z_eff holds valence electrons more tightly) and decreases down a group (the valence electron is farther out and better shielded, so Coulombic attraction is weaker).",
+   "hint": "→ two directions, each with a reason",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "IDENTIFY",
+   "q": "Identify the two places where first ionization energy dips against the general trend.",
+   "a": "Group 2 to 13 (Be > B): boron's electron comes from a higher-energy 2p orbital. Group 15 to 16 (N > O): oxygen's fourth 2p electron must pair in an already-occupied orbital, and the added repulsion makes it easier to remove.",
+   "hint": "→ two group pairs + a reason each",
+   "note": "These dips are prime FRQ material because they force you to argue from subshell energy and electron pairing, not just Z_eff.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "EXPLAIN",
+   "q": "Explain what a large jump between successive ionization energies reveals.",
+   "a": "A large jump occurs when the next electron must come from a lower, core shell. The number of electrons removed BEFORE the jump equals the number of valence electrons, which identifies the element's group.",
+   "hint": "→ what the jump marks + what you can count",
+   "note": "AP loves giving a table of IE₁...IE₅ and asking for the group. Count the small values before the big gap.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "DEFINE",
+   "q": "Define electronegativity and state its periodic trend.",
+   "a": "Electronegativity is the tendency of an atom to attract the shared electrons in a bond toward itself. It increases across a period and decreases down a group; fluorine is the most electronegative element.",
+   "hint": "→ definition + two-direction trend",
+   "note": "Trap: electronegativity applies to atoms IN a bond; ionization energy and electron affinity apply to isolated gaseous atoms.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.7",
+   "v": "DEFINE",
+   "q": "Define electron affinity and state how it varies across a period.",
+   "a": "Electron affinity is the energy change when a gaseous atom gains an electron. It becomes more negative (more energy released) across a period as Z_eff increases; halogens have the most negative values, noble gases essentially none.",
+   "hint": "→ definition + sign convention",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "IDENTIFY",
+   "q": "Identify the number of valence electrons for main-group elements from the periodic table.",
+   "a": "For groups 1, 2, 13, 14, 15, 16, 17, 18 the valence electron counts are 1, 2, 3, 4, 5, 6, 7, 8 respectively. Valence electrons are those in the outermost shell (highest n).",
+   "hint": "→ mapping of group to a number",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "PREDICT",
+   "q": "Predict the ion charge formed by each main group: 1, 2, 13, 15, 16, 17.",
+   "a": "Group 1 forms 1+, group 2 forms 2+, group 13 forms 3+, group 15 forms 3-, group 16 forms 2-, group 17 forms 1-. Each atom gains or loses electrons to reach a noble-gas configuration.",
+   "hint": "→ six charges",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "EXPLAIN",
+   "q": "Explain why metals form cations and nonmetals form anions.",
+   "a": "Metals have low ionization energies, so their valence electrons are removed easily. Nonmetals have high Z_eff and very negative electron affinities, so gaining electrons is energetically favorable and completes their valence shell.",
+   "hint": "→ IE for one, EA for the other",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "NAME",
+   "q": "Name and give the formulas of the nitrogen oxyanions.",
+   "a": "Nitrate is NO₃⁻ and nitrite is NO₂⁻. Both carry a 1- charge; -ate has one more oxygen than -ite.",
+   "hint": "→ two names + two formulas",
+   "note": null,
+   "core": false,
+   "alt": [
+    "NO3- and NO2-"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "NAME",
+   "q": "Name and give the formulas of the sulfur oxyanions.",
+   "a": "Sulfate is SO₄²⁻ and sulfite is SO₃²⁻. Both carry a 2- charge.",
+   "hint": "→ two names + two formulas",
+   "note": null,
+   "core": false,
+   "alt": [
+    "SO4 2- and SO3 2-"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "RECALL",
+   "q": "Recall the formulas and charges of phosphate and ammonium.",
+   "a": "Phosphate is PO₄³⁻ (3-) and ammonium is NH₄⁺ (1+). Ammonium is the only common polyatomic CATION on the AP exam.",
+   "hint": "→ two formulas with charges",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "RECALL",
+   "q": "Recall the formulas and charges of carbonate and bicarbonate.",
+   "a": "Carbonate is CO₃²⁻ (2-) and bicarbonate, also called hydrogen carbonate, is HCO₃⁻ (1-). Adding H⁺ to a polyatomic ion raises its charge by one.",
+   "hint": "→ two formulas with charges",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "RECALL",
+   "q": "Recall the formulas of hydroxide, cyanide, and peroxide.",
+   "a": "Hydroxide is OH⁻, cyanide is CN⁻, and peroxide is O₂²⁻. In peroxide each oxygen has oxidation number -1 rather than the usual -2.",
+   "hint": "→ three formulas with charges",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "RECALL",
+   "q": "Recall the formula of the acetate ion.",
+   "a": "Acetate is CH₃COO⁻, also written C₂H₃O₂⁻, with a 1- charge. It is the conjugate base of acetic acid, CH₃COOH.",
+   "hint": "→ formula + parent acid",
+   "note": null,
+   "core": false,
+   "alt": [
+    "CH3COO-",
+    "C2H3O2-"
+   ]
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "RECALL",
+   "q": "Recall the formulas and charges of chromate, dichromate, and permanganate.",
+   "a": "Chromate is CrO₄²⁻ (2-), dichromate is Cr₂O₇²⁻ (2-), and permanganate is MnO₄⁻ (1-). All three are strong oxidizing agents.",
+   "hint": "→ three formulas with charges",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u1",
+   "t": "1.8",
+   "v": "STATE",
+   "q": "State the naming pattern for the four chlorine oxyanions and give their formulas.",
+   "a": "Hypochlorite ClO⁻, chlorite ClO₂⁻, chlorate ClO₃⁻, perchlorate ClO₄⁻ - all 1-. The pattern is hypo--ite (one less O than -ite), -ite, -ate, per--ate (one more O than -ate).",
+   "hint": "→ four names in order + the prefix rule",
+   "note": "The same hypo-/per- pattern works for bromine and iodine oxyanions; only the oxygen count changes.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.1",
+   "v": "CONTRAST",
+   "q": "Contrast ionic, covalent, and metallic bonding in terms of what happens to valence electrons.",
+   "a": "Ionic: electrons are transferred from metal to nonmetal, and the resulting cations and anions attract electrostatically. Covalent: electrons are shared between two nonmetals. Metallic: valence electrons are delocalized over a lattice of metal cations.",
+   "hint": "→ three bond types, one clause each",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.1",
+   "v": "PREDICT",
+   "q": "Predict bond type from an electronegativity difference (ΔEN).",
+   "a": "ΔEN below about 0.4 gives a nonpolar covalent bond; roughly 0.4 to 1.7 gives a polar covalent bond; above about 1.7 gives an ionic bond. Metal + nonmetal is the quick check for ionic.",
+   "hint": "→ three ranges with cut-offs",
+   "note": "AP prefers reasoning from position in the periodic table over memorized cut-offs; treat the numbers as a guide, not a law.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.1",
+   "v": "CONTRAST",
+   "q": "Contrast a polar covalent bond with a nonpolar covalent bond.",
+   "a": "In a polar covalent bond the atoms have different electronegativities, so the shared electron density sits closer to the more electronegative atom, creating partial charges (δ+ / δ-). In a nonpolar bond the electronegativities are equal or nearly equal and sharing is even.",
+   "hint": "→ electron-density comparison",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.2",
+   "v": "EXPLAIN",
+   "q": "Explain what the minimum of a potential energy versus internuclear distance curve represents.",
+   "a": "The minimum occurs at the equilibrium bond length, where attraction between each nucleus and the shared electrons exactly balances nuclear-nuclear and electron-electron repulsion. The depth of the well below zero is the bond energy.",
+   "hint": "→ x-value meaning + y-depth meaning",
+   "note": "Trap: at distances shorter than the minimum the energy rises steeply because of nucleus-nucleus repulsion, not because the bond weakens.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.2",
+   "v": "STATE",
+   "q": "State how bond order, bond length, and bond strength are related.",
+   "a": "Higher bond order means a shorter bond and a stronger bond (larger bond energy). C-C > C=C > C≡C in length; C≡C > C=C > C-C in strength.",
+   "hint": "→ two linked trends",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.2",
+   "v": "EXPLAIN",
+   "q": "Explain why breaking a chemical bond always requires energy input.",
+   "a": "The bonded state is lower in potential energy than the separated atoms, so energy must be added to climb out of the potential energy well. Bond breaking is always endothermic; bond forming is always exothermic.",
+   "hint": "→ energy sign + reason",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.3",
+   "v": "DEFINE",
+   "q": "Define lattice energy and list the two factors that control its magnitude.",
+   "a": "Lattice energy is the energy released when gaseous ions combine into one mole of an ionic solid (or the energy needed to separate it). By Coulomb's law it increases with larger ion charges and with smaller ionic radii.",
+   "hint": "→ definition + two Coulombic factors",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.3",
+   "v": "RANK",
+   "q": "Rank the lattice energies of NaCl, MgO, and KCl and justify the order.",
+   "a": "MgO > NaCl > KCl. MgO has 2+/2- charges rather than 1+/1-, which dominates. NaCl beats KCl because Na⁺ is smaller than K⁺, giving a shorter interionic distance.",
+   "hint": "→ ordered list + charge-then-size reasoning",
+   "note": "Charge always outweighs size on the AP exam; compare charges first, then radii only as a tiebreaker.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.3",
+   "v": "EXPLAIN",
+   "q": "Explain why ionic solids are hard but brittle.",
+   "a": "The lattice of alternating charges is held by strong electrostatic forces in all directions, so it is hard. When a layer is displaced, like charges align, and the sudden repulsion splits the crystal along that plane.",
+   "hint": "→ strength claim + shear-displacement mechanism",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.3",
+   "v": "EXPLAIN",
+   "q": "Explain why an ionic compound conducts electricity when molten or dissolved but not as a solid.",
+   "a": "Conduction requires mobile charge carriers. In the solid, ions are locked in fixed lattice positions; melting or dissolving frees the ions to move and carry current.",
+   "hint": "→ mobility of carriers",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.3",
+   "v": "EXPLAIN",
+   "q": "Explain why ionic compounds have high melting points.",
+   "a": "Melting requires overcoming strong electrostatic attractions between oppositely charged ions throughout a three-dimensional lattice. Because these Coulombic forces are far stronger than intermolecular forces, a large amount of thermal energy is needed.",
+   "hint": "→ force type + energy requirement",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.4",
+   "v": "EXPLAIN",
+   "q": "Explain metallic bonding using the sea-of-electrons model and use it to account for two metal properties.",
+   "a": "Metal atoms release valence electrons into a delocalized 'sea' surrounding a lattice of cations. The mobile electrons carry charge and heat (conductivity), and because the bonding is nondirectional the cations can slide past one another without breaking bonds (malleability and ductility).",
+   "hint": "→ model + two properties explained",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.4",
+   "v": "CONTRAST",
+   "q": "Contrast a substitutional alloy with an interstitial alloy.",
+   "a": "In a substitutional alloy, atoms of similar radius replace host atoms in the lattice (brass: Zn in Cu). In an interstitial alloy, much smaller atoms fit into the holes between host atoms (steel: C in Fe).",
+   "hint": "→ two mechanisms + an example each",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.4",
+   "v": "EXPLAIN",
+   "q": "Explain why alloys are generally harder and less malleable than the pure metal.",
+   "a": "Atoms of a different size disrupt the regular lattice, so layers of atoms can no longer slide smoothly past one another. Interstitial atoms also lock the lattice in place, which raises hardness and strength.",
+   "hint": "→ lattice disruption → slippage",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.5",
+   "v": "STATE",
+   "q": "State the procedure for drawing a Lewis structure.",
+   "a": "1) Total the valence electrons, adjusting for overall charge. 2) Place the least electronegative atom (never H) in the center and connect with single bonds. 3) Complete octets on outer atoms. 4) Put leftovers on the central atom. 5) Form double or triple bonds if the central atom is short of an octet.",
+   "hint": "→ five ordered steps",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.5",
+   "v": "APPLY",
+   "q": "Apply valence-electron counting to draw the Lewis structure of a polyatomic ion such as SO₄²⁻.",
+   "a": "Sum the group valence electrons (S = 6, four O = 24, total 30), then ADD one electron for each unit of negative charge (30 + 2 = 32) or subtract for positive charge. Distribute those 32 electrons, then enclose the structure in brackets with the charge outside.",
+   "hint": "→ adjustment for charge + bracket notation",
+   "note": "Trap: adding electrons for a cation instead of subtracting. NH₄⁺ has 5 + 4 - 1 = 8 valence electrons.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.5",
+   "v": "IDENTIFY",
+   "q": "Identify the common exceptions to the octet rule.",
+   "a": "H holds 2 electrons; Be is stable with 4 and B with 6 (electron deficient); elements in period 3 and below (P, S, Cl, Xe) can hold more than 8 by using d orbitals (expanded octet). Odd-electron species such as NO also cannot obey it.",
+   "hint": "→ deficient cases + expanded cases",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.5",
+   "v": "DEFINE",
+   "q": "State the formula for formal charge.",
+   "a": "Formal charge = (valence electrons) - (nonbonding electrons) - ½(bonding electrons). Equivalently, valence electrons minus lone-pair electrons minus number of bonds.",
+   "hint": "→ one equation",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.5",
+   "v": "APPLY",
+   "q": "Apply formal charge to decide which of several valid Lewis structures is preferred.",
+   "a": "The best structure has formal charges closest to zero, has no like charges on adjacent atoms, and places any negative formal charge on the most electronegative atom. The sum of formal charges must equal the overall charge.",
+   "hint": "→ three selection criteria",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.6",
+   "v": "DEFINE",
+   "q": "Define resonance and explain what the true structure is.",
+   "a": "Resonance occurs when more than one valid Lewis structure can be drawn by moving only electrons, not atoms. The real molecule is a single averaged hybrid of all contributors, not a mixture that flips between them.",
+   "hint": "→ definition + nature of the real species",
+   "note": "Trap: the molecule does not oscillate between structures. Use a double-headed arrow, never an equilibrium arrow.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.6",
+   "v": "PREDICT",
+   "q": "Predict the bond lengths in the carbonate ion, CO₃²⁻.",
+   "a": "All three C-O bonds are identical and intermediate between a single and a double bond, because the three resonance structures average to a bond order of 4/3 on each bond.",
+   "hint": "→ comparison + fractional bond order",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.6",
+   "v": "EXPLAIN",
+   "q": "Explain why a molecule with resonance is more stable than any single contributing structure.",
+   "a": "The electrons in the pi system are delocalized over several atoms rather than confined between two. Spreading electron density over a larger volume lowers the potential energy of the molecule, an effect called resonance stabilization.",
+   "hint": "→ delocalization → energy",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "STATE",
+   "q": "State the central principle of VSEPR theory.",
+   "a": "Electron domains around a central atom (bonding groups plus lone pairs) repel each other and arrange themselves as far apart as possible, which sets the molecular geometry. A single, double, or triple bond each counts as one domain.",
+   "hint": "→ principle + counting rule",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "CONTRAST",
+   "q": "Contrast electron-domain geometry with molecular geometry.",
+   "a": "Electron-domain (electron-pair) geometry counts ALL domains, including lone pairs. Molecular geometry describes the positions of the ATOMS only. NH₃ has tetrahedral electron-domain geometry but trigonal pyramidal molecular geometry.",
+   "hint": "→ what each counts + one example",
+   "note": "Read the question wording carefully: 'shape of the molecule' means molecular geometry, so lone pairs are invisible in the name.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry and bond angle for a central atom with 2 electron domains and no lone pairs.",
+   "a": "Linear, with a 180° bond angle. Examples: CO₂, BeCl₂, HCN.",
+   "hint": "→ shape name + angle",
+   "note": null,
+   "core": false,
+   "alt": [
+    "linear"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry and bond angle for 3 electron domains with no lone pairs.",
+   "a": "Trigonal planar, with 120° bond angles. Examples: BF₃, SO₃, CO₃²⁻.",
+   "hint": "→ shape name + angle",
+   "note": null,
+   "core": false,
+   "alt": [
+    "trigonal planar"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry for 3 electron domains with 1 lone pair.",
+   "a": "Bent (angular), with a bond angle slightly less than 120° (about 118°). Examples: SO₂, O₃, NO₂⁻.",
+   "hint": "→ shape name + angle relative to ideal",
+   "note": null,
+   "core": false,
+   "alt": [
+    "bent"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry and bond angle for 4 electron domains with no lone pairs.",
+   "a": "Tetrahedral, with 109.5° bond angles. Examples: CH₄, NH₄⁺, SO₄²⁻.",
+   "hint": "→ shape name + angle",
+   "note": null,
+   "core": false,
+   "alt": [
+    "tetrahedral"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry for 4 electron domains with 1 lone pair.",
+   "a": "Trigonal pyramidal, with bond angles of about 107°, compressed from 109.5° by the lone pair. Example: NH₃.",
+   "hint": "→ shape name + angle",
+   "note": null,
+   "core": false,
+   "alt": [
+    "trigonal pyramidal"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry for 4 electron domains with 2 lone pairs.",
+   "a": "Bent, with a bond angle of about 104.5°. Example: H₂O.",
+   "hint": "→ shape name + angle",
+   "note": "Both SO₂ (3 domains) and H₂O (4 domains) are 'bent' but have different angles; state the domain count to justify which.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry and bond angles for 5 electron domains with no lone pairs.",
+   "a": "Trigonal bipyramidal, with 120° angles in the equatorial plane and 90° between axial and equatorial positions. Example: PCl₅.",
+   "hint": "→ shape name + two angles",
+   "note": null,
+   "core": false,
+   "alt": [
+    "trigonal bipyramidal"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry for 5 electron domains with 1 lone pair.",
+   "a": "Seesaw, because the lone pair occupies a roomier equatorial position. Example: SF₄.",
+   "hint": "→ shape name + where the lone pair sits",
+   "note": null,
+   "core": false,
+   "alt": [
+    "seesaw"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometries for 5 electron domains with 2 and with 3 lone pairs.",
+   "a": "Two lone pairs gives T-shaped (ClF₃); three lone pairs gives linear (XeF₂). All lone pairs take equatorial positions.",
+   "hint": "→ two shape names",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometry and bond angle for 6 electron domains with no lone pairs.",
+   "a": "Octahedral, with 90° bond angles. Example: SF₆.",
+   "hint": "→ shape name + angle",
+   "note": null,
+   "core": false,
+   "alt": [
+    "octahedral"
+   ]
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict the geometries for 6 electron domains with 1 and with 2 lone pairs.",
+   "a": "One lone pair gives square pyramidal (BrF₅); two lone pairs gives square planar (XeF₄), with the lone pairs opposite each other at 180°.",
+   "hint": "→ two shape names",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "EXPLAIN",
+   "q": "Explain why lone pairs compress bond angles below the ideal value.",
+   "a": "A lone pair is held by only one nucleus, so its electron cloud is broader and closer to the central atom. It repels bonding pairs more strongly than bonding pairs repel each other, pushing the bonds together.",
+   "hint": "→ comparison of repulsion strengths",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "IDENTIFY",
+   "q": "Identify the hybridization of a central atom from its number of electron domains.",
+   "a": "2 domains = sp, 3 domains = sp², 4 domains = sp³. Lone pairs count as domains, so both H₂O and CH₄ are sp³.",
+   "hint": "→ three domain counts mapped to labels",
+   "note": "Since 2019 the AP CED only requires sp, sp², and sp³; sp³d and sp³d² are no longer assessed.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "CONTRAST",
+   "q": "Contrast sigma and pi bonds.",
+   "a": "A sigma bond forms by head-on (end-to-end) orbital overlap along the internuclear axis and allows free rotation. A pi bond forms by side-by-side overlap of parallel p orbitals above and below that axis, is weaker, and blocks rotation.",
+   "hint": "→ overlap geometry + rotation",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "COMPUTE",
+   "q": "Count the sigma and pi bonds in a molecule containing double and triple bonds.",
+   "a": "Every bond (single, double, or triple) contains exactly one sigma bond. A double bond adds 1 pi bond and a triple bond adds 2 pi bonds. HCN has 2 sigma and 2 pi bonds.",
+   "hint": "→ counting rule + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "PREDICT",
+   "q": "Predict whether a molecule is polar from its geometry and bond dipoles.",
+   "a": "A molecule is polar if the individual bond dipoles do not cancel. Symmetric arrangements with identical outer atoms and no lone pairs on the central atom cancel; asymmetry from lone pairs or different outer atoms leaves a net dipole.",
+   "hint": "→ vector-cancellation test",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u2",
+   "t": "2.7",
+   "v": "IDENTIFY",
+   "q": "Identify three molecules that contain polar bonds yet are nonpolar overall.",
+   "a": "CO₂ (linear), BF₃ (trigonal planar), and CCl₄ (tetrahedral). In each, the symmetric arrangement of identical outer atoms makes the bond dipoles cancel to zero.",
+   "hint": "→ three examples + one shared reason",
+   "note": "Very common MC distractor: 'has polar bonds' is not the same as 'is a polar molecule'.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "RANK",
+   "q": "Rank the intermolecular forces from strongest to weakest.",
+   "a": "Ion-dipole > hydrogen bonding > dipole-dipole > dipole-induced dipole > London dispersion (for comparable size). All IMFs are far weaker than ionic, covalent, or metallic bonds.",
+   "hint": "→ ordered list + one caveat",
+   "note": "Caveat matters: a very large nonpolar molecule (I₂) can have stronger LDFs than a small polar molecule's dipole-dipole forces.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "DEFINE",
+   "q": "Define London dispersion forces and state which substances have them.",
+   "a": "LDFs arise from instantaneous, momentary fluctuations in electron distribution that create a temporary dipole, which induces a dipole in a neighbor. Every substance has them - they are the only IMF in nonpolar molecules and noble gases.",
+   "hint": "→ origin + scope",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "EXPLAIN",
+   "q": "Explain polarizability and how it controls London dispersion strength.",
+   "a": "Polarizability is how easily an electron cloud is distorted. More electrons (larger molar mass) and a larger, more spread-out cloud mean higher polarizability and stronger LDFs. Long unbranched chains also contact more surface than compact branched isomers.",
+   "hint": "→ definition + two factors",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "STATE",
+   "q": "State the requirement for hydrogen bonding.",
+   "a": "A hydrogen atom must be covalently bonded directly to N, O, or F, and must interact with a lone pair on an N, O, or F of a neighboring molecule. It is an unusually strong dipole-dipole force, not an actual bond.",
+   "hint": "→ which atoms + on both partners",
+   "note": "Trap: CH₃OCH₃ has O but no O-H, so it cannot hydrogen bond with itself, while its isomer CH₃CH₂OH can.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "EXPLAIN",
+   "q": "Explain the ion-dipole force and name a situation where it dominates.",
+   "a": "An ion attracts the oppositely charged end of a polar molecule. It is the key force when an ionic solid dissolves in water: Na⁺ is surrounded by the oxygen ends of water molecules and Cl⁻ by the hydrogen ends.",
+   "hint": "→ description + one context",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "DEFINE",
+   "q": "Define ion-induced dipole and dipole-induced dipole forces.",
+   "a": "An ion (or a permanent dipole) distorts the electron cloud of a nearby nonpolar molecule, inducing a temporary dipole that is then attracted to it. These forces explain why O₂ and N₂ dissolve slightly in water.",
+   "hint": "→ what induces what + a consequence",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "PREDICT",
+   "q": "Predict which of two substances has the higher boiling point, and justify it.",
+   "a": "The substance with stronger intermolecular forces boils higher, because more kinetic energy is needed to separate the particles. Compare IMF type first (H-bonding beats dipole-dipole beats LDF), then molar mass or surface area within the same type.",
+   "hint": "→ decision rule in two steps",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "EXPLAIN",
+   "q": "Explain why H₂O, HF, and NH₃ boil far higher than the trend of their families predicts.",
+   "a": "Each contains H bonded to a highly electronegative small atom (O, F, N), so extensive hydrogen bonding forms. That strong IMF overrides the usual increase in boiling point with molar mass down the group.",
+   "hint": "→ named IMF + why it overrides the trend",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "CONTRAST",
+   "q": "Contrast intermolecular forces with intramolecular forces during boiling.",
+   "a": "Intramolecular forces are the covalent bonds WITHIN a molecule; intermolecular forces act BETWEEN molecules. Boiling separates molecules from one another, so it overcomes only IMFs - the covalent bonds stay intact.",
+   "hint": "→ location of each + which one breaks",
+   "note": "Very common trap: 'boiling water breaks O-H bonds' is wrong. Water vapor is still H₂O molecules.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.1",
+   "v": "EXPLAIN",
+   "q": "Explain how IMF strength affects vapor pressure, viscosity, and surface tension.",
+   "a": "Stronger IMFs mean fewer molecules can escape the liquid, so vapor pressure is LOWER, while resistance to flow (viscosity) and surface tension are HIGHER. Vapor pressure moves opposite to the other two.",
+   "hint": "→ three properties with directions",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.2",
+   "v": "CONTRAST",
+   "q": "Contrast the four types of solids by particle, force, melting point, and conductivity.",
+   "a": "Ionic: ions held by electrostatic attraction, high mp, conducts only when molten or aqueous. Molecular: molecules held by IMFs, low mp, nonconductor. Covalent network: atoms held by covalent bonds, very high mp, nonconductor (except graphite). Metallic: cations in an electron sea, variable mp, conducts as a solid.",
+   "hint": "→ four types x four properties",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.2",
+   "v": "IDENTIFY",
+   "q": "Identify three covalent network solids and explain their very high melting points.",
+   "a": "Diamond (C), silicon dioxide (SiO₂), and silicon carbide (SiC). Melting requires breaking a continuous three-dimensional array of strong covalent bonds, not merely overcoming intermolecular forces.",
+   "hint": "→ examples + what must break",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.2",
+   "v": "EXPLAIN",
+   "q": "Explain why graphite conducts electricity but diamond does not.",
+   "a": "In graphite each carbon bonds to three others in flat sheets, leaving one delocalized p electron per atom free to move through the layer. In diamond every carbon is sp³ bonded to four neighbors, so all valence electrons are localized in sigma bonds.",
+   "hint": "→ bonding count + electron mobility",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.2",
+   "v": "PREDICT",
+   "q": "Predict the type of solid from a data table of melting point and conductivity.",
+   "a": "High mp + conducts only when molten or aqueous = ionic. Low mp + never conducts = molecular. Very high mp + does not conduct = covalent network. Conducts as a solid and is malleable = metallic.",
+   "hint": "→ four property patterns matched to types",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.3",
+   "v": "IDENTIFY",
+   "q": "Identify the six phase changes and state which are endothermic.",
+   "a": "Melting (fusion), vaporization, and sublimation absorb energy (endothermic). Freezing, condensation, and deposition release energy (exothermic). Each pair is the reverse of the other with an equal magnitude of enthalpy change.",
+   "hint": "→ six names sorted by energy sign",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.3",
+   "v": "IDENTIFY",
+   "q": "Identify the axes, the triple point, and the critical point on a phase diagram.",
+   "a": "The x-axis is temperature and the y-axis is pressure; regions show the stable phase and lines show two phases in equilibrium. The triple point is where all three phases coexist; beyond the critical point liquid and gas become indistinguishable (supercritical fluid).",
+   "hint": "→ axes + two labeled points",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.3",
+   "v": "EXPLAIN",
+   "q": "Explain why the solid-liquid boundary on water's phase diagram has a negative slope.",
+   "a": "Ice is less dense than liquid water because hydrogen bonding holds the molecules in an open lattice. Increasing pressure therefore favors the denser liquid, so the melting point drops as pressure rises - the opposite of nearly every other substance.",
+   "hint": "→ density comparison + consequence",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.3",
+   "v": "DEFINE",
+   "q": "Define vapor pressure and state the condition for boiling.",
+   "a": "Vapor pressure is the pressure exerted by a vapor in dynamic equilibrium with its liquid at a given temperature. A liquid boils when its vapor pressure equals the external (atmospheric) pressure.",
+   "hint": "→ definition + equality condition",
+   "note": "This is why water boils below 100 °C at high altitude: the external pressure is lower.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.3",
+   "v": "EXPLAIN",
+   "q": "Explain why temperature stays constant during the plateaus of a heating curve.",
+   "a": "During a phase change all added energy goes into overcoming intermolecular attractions (increasing potential energy) rather than increasing the average kinetic energy of the particles, and temperature measures average kinetic energy only.",
+   "hint": "→ PE versus KE",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.4",
+   "v": "STATE",
+   "q": "State the ideal gas law and the value of R.",
+   "a": "PV = nRT, with R = 0.08206 L·atm/(mol·K) or 8.314 J/(mol·K). Temperature must always be in kelvin.",
+   "hint": "→ equation + constant with units",
+   "note": "Trap: the two R values are not interchangeable. Match R to the pressure units in the problem.",
+   "core": true,
+   "alt": [
+    "PV=nRT"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "3.4",
+   "v": "STATE",
+   "q": "State the individual gas relationships contained in the ideal gas law.",
+   "a": "Boyle: P ∝ 1/V at constant n and T. Charles: V ∝ T at constant n and P. Gay-Lussac: P ∝ T at constant n and V. Avogadro: V ∝ n at constant P and T.",
+   "hint": "→ four named proportionalities",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.4",
+   "v": "DERIVE",
+   "q": "Derive an expression for the molar mass of a gas from PV = nRT.",
+   "a": "Substitute n = m/M into PV = nRT to get PV = (m/M)RT, so M = mRT/(PV). Since density d = m/V, this is equivalently M = dRT/P.",
+   "hint": "→ rearranged equation, two forms",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.4",
+   "v": "COMPUTE",
+   "q": "Compute the volume occupied by 2.00 mol of an ideal gas at 1.50 atm and 27 °C.",
+   "a": "Convert to kelvin: T = 27 + 273 = 300. K. Then V = nRT/P = (2.00)(0.08206)(300.)/1.50 = 32.8 L.",
+   "hint": "→ unit conversion, then one substitution",
+   "note": "Trap: forgetting to convert Celsius to kelvin is the single most common gas-law error on the exam.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.4",
+   "v": "STATE",
+   "q": "State Dalton's law of partial pressures.",
+   "a": "The total pressure of a gas mixture equals the sum of the partial pressures of the individual gases: P_total = P_A + P_B + P_C + ... Each gas behaves as if it alone occupied the container.",
+   "hint": "→ sum equation",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.4",
+   "v": "DEFINE",
+   "q": "Define mole fraction and relate it to partial pressure.",
+   "a": "Mole fraction X_A = (moles of A) / (total moles of all gases). Partial pressure is P_A = X_A · P_total. Mole fractions are unitless and sum to 1.",
+   "hint": "→ ratio + one product equation",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.4",
+   "v": "APPLY",
+   "q": "Apply the correction needed when a gas is collected over water.",
+   "a": "The collected sample is a mixture of the gas and water vapor, so subtract the vapor pressure of water at that temperature: P_gas = P_total - P_H2O. Only then use PV = nRT for the dry gas.",
+   "hint": "→ one subtraction before the calculation",
+   "note": "Classic lab-based FRQ trap: forgetting this makes the calculated moles of gas too large.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.5",
+   "v": "STATE",
+   "q": "State the postulates of kinetic molecular theory for an ideal gas.",
+   "a": "1) Particle volume is negligible compared with container volume. 2) Particles are in constant, random, straight-line motion. 3) Collisions are perfectly elastic (no net KE loss). 4) There are no intermolecular attractions or repulsions. 5) Average kinetic energy is proportional to absolute temperature.",
+   "hint": "→ five numbered assumptions",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.5",
+   "v": "EXPLAIN",
+   "q": "Explain the origin of gas pressure in terms of kinetic molecular theory.",
+   "a": "Pressure results from the force of countless elastic collisions of gas particles with the container walls per unit area. More particles, higher temperature (faster collisions), or a smaller volume all increase the collision rate and therefore the pressure.",
+   "hint": "→ collision mechanism + what raises it",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.5",
+   "v": "STATE",
+   "q": "State how average kinetic energy of gas particles depends on the gas identity and temperature.",
+   "a": "Average kinetic energy depends ONLY on absolute temperature: KE_avg = (3/2)kT. At the same temperature, all gases - regardless of molar mass - have the same average kinetic energy.",
+   "hint": "→ what it depends on and what it does not",
+   "note": "Extremely common trap: same temperature means same average KE but NOT the same average speed.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.5",
+   "v": "EXPLAIN",
+   "q": "Explain how a Maxwell-Boltzmann distribution changes when temperature increases.",
+   "a": "The curve flattens and broadens, its peak shifts to higher speed, and the peak height drops. The total area under the curve is unchanged because the number of particles is constant.",
+   "hint": "→ three changes to the curve shape",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.5",
+   "v": "CONTRAST",
+   "q": "Contrast the Maxwell-Boltzmann curves of two gases with different molar masses at the same temperature.",
+   "a": "The lighter gas has a broader curve shifted to higher speeds with a lower peak; the heavier gas has a narrower, taller curve peaked at a lower speed. Both distributions correspond to the same average kinetic energy.",
+   "hint": "→ which curve is where + shared quantity",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.5",
+   "v": "STATE",
+   "q": "State the equation for root-mean-square speed of a gas.",
+   "a": "$u_{rms} = \\sqrt{\\frac{3RT}{M}}$, where M is molar mass in kg/mol, T is in kelvin, and R = 8.314 J/(mol·K).",
+   "hint": "→ one equation with a square root",
+   "note": "Trap: molar mass must be in kg/mol, not g/mol, when R is in joules.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.5",
+   "v": "PREDICT",
+   "q": "Predict the relative average speeds of He and O₂ at the same temperature.",
+   "a": "Speed varies as 1/√M, so He (4.0 g/mol) moves faster than O₂ (32.0 g/mol) by a factor of √(32/4) = √8 ≈ 2.8.",
+   "hint": "→ inverse-root relationship + a number",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.6",
+   "v": "EXPLAIN",
+   "q": "Explain the two conditions under which a real gas deviates most from ideal behavior.",
+   "a": "High pressure (particles are crowded, so their own volume is no longer negligible) and low temperature (particles move slowly enough for intermolecular attractions to matter). Ideal behavior is approached at low pressure and high temperature.",
+   "hint": "→ two conditions, each with a cause",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.6",
+   "v": "EXPLAIN",
+   "q": "Explain the effect of intermolecular attractions on the measured pressure of a real gas.",
+   "a": "Attractions pull a molecule back as it approaches the wall, softening the collision, so the measured pressure is LOWER than the ideal gas law predicts. This effect dominates at low temperature and moderate pressure.",
+   "hint": "→ direction of the error + mechanism",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.6",
+   "v": "EXPLAIN",
+   "q": "Explain the effect of finite particle volume on a real gas at very high pressure.",
+   "a": "The particles themselves occupy a significant fraction of the container, so the free volume available is less than the measured volume. This makes the observed PV/nRT rise above 1 at very high pressure.",
+   "hint": "→ direction of the error + mechanism",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.6",
+   "v": "IDENTIFY",
+   "q": "Identify which gases deviate most from ideal behavior and why.",
+   "a": "Large gases with many electrons and gases with strong IMFs (especially hydrogen bonding, such as H₂O and NH₃) deviate most. He and H₂, being small with very weak LDFs, behave most ideally.",
+   "hint": "→ two categories + a contrast case",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.7",
+   "v": "DEFINE",
+   "q": "Define molarity and give its equation.",
+   "a": "Molarity M is the concentration of a solution in moles of solute per liter of SOLUTION: M = mol solute / L solution. Units are mol/L, often written M.",
+   "hint": "→ equation + what the denominator is",
+   "note": "Trap: the volume is the final solution volume, not the volume of solvent added.",
+   "core": true,
+   "alt": [
+    "mol/L",
+    "M = mol/L"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "3.7",
+   "v": "APPLY",
+   "q": "Apply the dilution equation and state what it assumes.",
+   "a": "M₁V₁ = M₂V₂, where subscript 1 is the concentrated stock and 2 is the diluted solution. It works because adding solvent changes the volume but not the moles of solute.",
+   "hint": "→ equation + conserved quantity",
+   "note": null,
+   "core": true,
+   "alt": [
+    "M1V1=M2V2"
+   ]
+  },
+  {
+   "u": "u3",
+   "t": "3.7",
+   "v": "COMPUTE",
+   "q": "Compute the concentration of each ion in 0.20 M CaCl₂.",
+   "a": "CaCl₂ dissociates into Ca²⁺ + 2 Cl⁻, so [Ca²⁺] = 0.20 M and [Cl⁻] = 0.40 M.",
+   "hint": "→ two concentrations",
+   "note": "Frequent MC trap: forgetting the stoichiometric coefficient doubles or triples an ion's concentration.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.7",
+   "v": "STATE",
+   "q": "State how to prepare 500.0 mL of 0.250 M NaCl from solid.",
+   "a": "Moles needed = 0.250 mol/L x 0.5000 L = 0.125 mol; mass = 0.125 x 58.44 = 7.31 g. Dissolve that mass in a small amount of water in a 500.0 mL volumetric flask, then add water to the calibration mark.",
+   "hint": "→ mass calculation + glassware step",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.8",
+   "v": "EXPLAIN",
+   "q": "Explain what a correct particulate diagram of aqueous NaCl must show.",
+   "a": "Separate, fully dissociated Na⁺ and Cl⁻ ions (no NaCl units), each surrounded by water molecules oriented by ion-dipole forces: oxygen ends toward Na⁺ and hydrogen ends toward Cl⁻. The ratio of ions must match the formula.",
+   "hint": "→ particle identity + orientation",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.8",
+   "v": "CONTRAST",
+   "q": "Contrast the particulate representations of a strong electrolyte and a nonelectrolyte in water.",
+   "a": "A strong electrolyte is drawn as fully separated ions with no intact formula units. A nonelectrolyte such as glucose or ethanol is drawn as intact neutral molecules dispersed among the water molecules.",
+   "hint": "→ two drawings described",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.9",
+   "v": "DEFINE",
+   "q": "Define the retention factor (R_f) in paper or thin-layer chromatography.",
+   "a": "$R_f = \\frac{d_{spot}}{d_{solvent}}$, the distance the component traveled divided by the distance the solvent front traveled from the same origin. R_f is always between 0 and 1.",
+   "hint": "→ ratio of two distances",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.9",
+   "v": "PREDICT",
+   "q": "Predict which component travels farthest on a polar stationary phase with a nonpolar mobile phase.",
+   "a": "The least polar component travels farthest, because it interacts weakly with the polar stationary phase and is carried along by the nonpolar solvent. Polar components adsorb strongly and stay near the origin.",
+   "hint": "→ which component + the competing attraction",
+   "note": "The answer reverses if you swap the phase polarities, so always state which phase is polar in your justification.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.9",
+   "v": "DECIDE",
+   "q": "Decide which separation technique to use for: sand in water, salt in water, and two miscible liquids.",
+   "a": "Sand in water: filtration (insoluble solid, size difference). Salt in water: evaporation or distillation (large boiling-point difference). Two miscible liquids: fractional distillation (different IMF strengths, so different boiling points).",
+   "hint": "→ three techniques matched to three mixtures",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.10",
+   "v": "STATE",
+   "q": "State the 'like dissolves like' rule and explain it energetically.",
+   "a": "A solute dissolves in a solvent when solute-solvent interactions are comparable in type and strength to the solute-solute and solvent-solvent interactions being disrupted. Polar and ionic solutes dissolve in polar solvents; nonpolar solutes dissolve in nonpolar solvents.",
+   "hint": "→ rule + interaction-strength reason",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.10",
+   "v": "PREDICT",
+   "q": "Predict the solubility of NaCl, I₂, and CH₃OH in water versus in hexane.",
+   "a": "NaCl dissolves in water (ion-dipole) but not hexane. I₂ dissolves in hexane (LDF-LDF) but barely in water. CH₃OH dissolves in water because it hydrogen bonds, and only slightly in hexane.",
+   "hint": "→ three solutes x two solvents",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.10",
+   "v": "EXPLAIN",
+   "q": "Explain why the water solubility of straight-chain alcohols falls as the carbon chain lengthens.",
+   "a": "Only the -OH group can hydrogen bond with water; the growing hydrocarbon chain is nonpolar and cannot. As the nonpolar fraction of the molecule grows, it increasingly dominates and solubility drops.",
+   "hint": "→ two-part molecule argument",
+   "note": "This 'polar head, nonpolar tail' reasoning is also the AP answer for soaps and for why CH₃OH is miscible but C₈H₁₇OH is not.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.10",
+   "v": "EXPLAIN",
+   "q": "Explain the three energy steps involved in forming a solution.",
+   "a": "1) Separate solute particles (endothermic). 2) Separate solvent particles to make room (endothermic). 3) Form solute-solvent interactions (exothermic). The sign of the overall enthalpy of solution is the sum of these three.",
+   "hint": "→ three steps with energy signs",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.10",
+   "v": "DEFINE",
+   "q": "Define saturated, unsaturated, and supersaturated solutions.",
+   "a": "Unsaturated: less solute is dissolved than the maximum, so more can dissolve. Saturated: dissolved solute is in dynamic equilibrium with undissolved solid at the maximum concentration. Supersaturated: more solute is dissolved than the equilibrium amount; it is unstable and crystallizes when disturbed.",
+   "hint": "→ three definitions",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.10",
+   "v": "RECALL",
+   "q": "Recall the solubility rules for compounds that are generally SOLUBLE in water.",
+   "a": "Soluble: all Group 1 (alkali metal) and ammonium (NH₄⁺) salts; all nitrates (NO₃⁻), acetates, chlorates, and perchlorates; halides EXCEPT those of Ag⁺, Pb²⁺, and Hg₂²⁺; sulfates EXCEPT those of Ba²⁺, Pb²⁺, Ca²⁺, Sr²⁺, and Ag⁺.",
+   "hint": "→ soluble categories + their exceptions",
+   "note": "Group 1, NH₄⁺, and NO₃⁻ have NO exceptions - lean on those three when predicting a precipitate.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.10",
+   "v": "RECALL",
+   "q": "Recall the solubility rules for compounds that are generally INSOLUBLE in water.",
+   "a": "Insoluble: carbonates (CO₃²⁻), phosphates (PO₄³⁻), chromates, sulfides (S²⁻), and hydroxides (OH⁻) - except when paired with Group 1 cations or NH₄⁺. Ba(OH)₂, Sr(OH)₂, and Ca(OH)₂ are moderately soluble.",
+   "hint": "→ insoluble categories + the standard exception",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.11",
+   "v": "IDENTIFY",
+   "q": "Identify the regions of the electromagnetic spectrum in order of increasing photon energy.",
+   "a": "Radio < microwave < infrared < visible < ultraviolet < X-ray < gamma. Energy increases as wavelength decreases.",
+   "hint": "→ ordered list",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.11",
+   "v": "IDENTIFY",
+   "q": "Identify the molecular transition probed by microwave, infrared, and UV-visible radiation.",
+   "a": "Microwave excites molecular ROTATION; infrared excites bond VIBRATION (stretching and bending); ultraviolet-visible excites ELECTRONIC transitions between energy levels. Higher-energy photons drive larger energy-gap processes.",
+   "hint": "→ three regions matched to three motions",
+   "note": "AP asks this as 'which region would you use to identify the bonds present?' - the answer is IR.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.11",
+   "v": "STATE",
+   "q": "State the two equations relating photon energy, frequency, and wavelength.",
+   "a": "E = hν and c = λν, so E = hc/λ. Here h = 6.626 x 10⁻³⁴ J·s and c = 3.00 x 10⁸ m/s.",
+   "hint": "→ two equations + two constants",
+   "note": "Trap: wavelength must be in meters before using c = λν; nm values must be multiplied by 10⁻⁹.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.11",
+   "v": "EXPLAIN",
+   "q": "Explain the relationship between a photon's wavelength and its energy.",
+   "a": "They are inversely proportional: E = hc/λ, so shorter wavelength means higher frequency and higher energy per photon. Gamma rays carry far more energy per photon than radio waves.",
+   "hint": "→ direction of the relationship + equation",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.12",
+   "v": "EXPLAIN",
+   "q": "Explain the photoelectric effect and the role of the threshold frequency.",
+   "a": "Light striking a metal ejects electrons only if each photon's energy hν meets or exceeds the metal's work function (threshold frequency). Below that threshold no electrons are emitted no matter how intense or how long the light is applied.",
+   "hint": "→ condition for emission + threshold behavior",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.12",
+   "v": "COMPUTE",
+   "q": "Compute the kinetic energy of an electron ejected in the photoelectric effect.",
+   "a": "KE = hν - φ, where φ is the work function (the minimum energy to remove the electron). Any photon energy beyond the threshold becomes kinetic energy of the ejected electron.",
+   "hint": "→ difference of two energies",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.12",
+   "v": "EXPLAIN",
+   "q": "Explain why increasing light intensity below the threshold frequency ejects no electrons.",
+   "a": "Each electron absorbs one photon, so what matters is the energy PER photon, not the total energy delivered. More intense light sends more photons, but if each is too weak the electron cannot be freed - evidence that light is quantized.",
+   "hint": "→ one-photon-per-electron argument",
+   "note": "This is the classic AP argument that light is particulate; a wave model would predict that any intensity eventually works.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.13",
+   "v": "STATE",
+   "q": "State the Beer-Lambert law and define each term.",
+   "a": "A = εbc, where A is absorbance (unitless), ε is molar absorptivity (a constant for a given species at a given wavelength), b is the path length of the cell, and c is molar concentration. Absorbance is directly proportional to concentration.",
+   "hint": "→ equation + four terms defined",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.13",
+   "v": "APPLY",
+   "q": "Apply a Beer-Lambert calibration curve to find an unknown concentration.",
+   "a": "Measure absorbance of standards of known concentration at a fixed wavelength, plot A versus c, and fit a straight line through the origin. Read the unknown's concentration from its measured absorbance, or divide A by the slope (εb).",
+   "hint": "→ plotting procedure + how to read it",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.13",
+   "v": "EXPLAIN",
+   "q": "Explain why absorbance is measured at the wavelength of maximum absorbance.",
+   "a": "At λ_max the absorbance changes most per unit concentration, giving the greatest sensitivity and the smallest relative error, and the reading is least affected by small errors in wavelength setting.",
+   "hint": "→ sensitivity argument",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u3",
+   "t": "3.13",
+   "v": "PREDICT",
+   "q": "Predict what happens to absorbance when a colored solution is diluted by half.",
+   "a": "Absorbance is halved, because A is directly proportional to concentration at constant path length and wavelength. Percent transmittance, however, does not double - it is logarithmically related to A.",
+   "hint": "→ new value + the transmittance caveat",
+   "note": null,
+   "core": false,
+   "alt": null
+  }
+ ]
+}

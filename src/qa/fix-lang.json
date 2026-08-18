@@ -1,0 +1,77 @@
+{
+ "course": "lang",
+ "fixes": [
+  {
+   "i": "ab1a4b0720",
+   "field": "a",
+   "old": "0: no evidence. 1: mostly general evidence, little commentary. 2: some specific evidence, but summary rather than explanation. 3: specific evidence for most claims, with commentary that mostly explains how it supports the argument. 4: consistent specific evidence plus commentary that explains the reasoning throughout.",
+   "new": "0: no relevant evidence, or the response only restates the thesis. 1: mostly general evidence, and/or evidence summarized rather than explained. 2: some specific relevant evidence, with explanation of how some of it relates to the argument, but no line of reasoning is established or the line of reasoning is faulty. 3: specific evidence to support all claims in a line of reasoning, with explanation of how some of the evidence supports that line of reasoning. 4: specific evidence for all claims in a line of reasoning, with commentary that consistently explains how the evidence supports it.",
+   "why": "Misstates the official Row B scale: 'specific evidence but summary rather than explanation' is a 1, not a 2, and a 3 requires evidence for all claims in a line of reasoning, not most.",
+   "severity": "error"
+  },
+  {
+   "i": "ab1a4b0720",
+   "field": "n",
+   "old": "The jump from 2 to 3 is the jump from summarizing evidence to explaining it.",
+   "new": "The jump from 1 to 2 is the jump from summarizing evidence to explaining it; the jump from 2 to 3 is establishing a real line of reasoning.",
+   "why": "The summary-to-explanation jump happens at 1 to 2 on the AP rubric; 2 to 3 is where a line of reasoning appears.",
+   "severity": "error"
+  },
+  {
+   "i": "928c17ba1d",
+   "field": "n",
+   "old": "The thesis may appear anywhere, but placing it last in paragraph one is the safest way to secure Row A.",
+   "new": "The thesis must appear in the introduction or the conclusion; placing it last in paragraph one is the safest way to secure Row A.",
+   "why": "Contradicts the AP rubric (and card f4b7b18460): a thesis placed anywhere other than the intro or conclusion earns no Row A point.",
+   "severity": "error"
+  },
+  {
+   "i": "2ae093df5a",
+   "field": "n",
+   "old": "On Q2, textual evidence without commentary earns at most 2 of 4 in Row B.",
+   "new": "On Q2, textual evidence without commentary earns at most 1 of 4 in Row B.",
+   "why": "Row B 2 requires explaining how some evidence relates to the argument, so evidence with no commentary caps at 1, not 2.",
+   "severity": "minor"
+  },
+  {
+   "i": "eabb4c5974",
+   "field": "n",
+   "old": "Roughly 60% reading-analysis and 40% writing/revision questions - budget about 80 seconds per question.",
+   "new": "Roughly 23-25 reading-analysis questions and 20-22 writing/revision questions - budget about 80 seconds per question.",
+   "why": "The CED splits the 45 MC questions 23-25 reading / 20-22 writing (about 55/45), not 60/40.",
+   "severity": "minor"
+  },
+  {
+   "i": "c64bfb45b9",
+   "field": "a",
+   "old": "Each essay is scored holistically against the 6-point analytic rubric by a trained reader, independently of your other essays, and readers are instructed to reward what the response does well rather than deduct for what is missing.",
+   "new": "Each essay is scored row by row against the 6-point analytic rubric by a trained reader, independently of your other essays, and readers are instructed to reward what the response does well rather than deduct for what is missing.",
+   "why": "AP Lang essays have been scored with analytic row-by-row rubrics since 2019, not holistically; 'scored holistically against the analytic rubric' is self-contradictory and misleading.",
+   "severity": "minor"
+  },
+  {
+   "i": "f64f97285a",
+   "field": "n",
+   "old": "A syllogism can be valid but untrue: valid form plus false premise still yields a false conclusion.",
+   "new": "A syllogism can be valid but unsound: valid form plus a false premise guarantees nothing about whether the conclusion is true.",
+   "why": "A valid argument with a false premise can still have a true conclusion, so 'still yields a false conclusion' is logically wrong.",
+   "severity": "minor"
+  },
+  {
+   "i": "dd6a0bc5c1",
+   "field": "q",
+   "old": "Identify six qualifiers a writer can use to limit a claim.",
+   "new": "Identify eight qualifiers a writer can use to limit a claim.",
+   "why": "The question asks for six qualifiers but the answer lists eight, so the card can never be self-checked correctly.",
+   "severity": "minor"
+  },
+  {
+   "i": "ca5366d5f1",
+   "field": "n",
+   "old": "A composite in the low-to-mid 60s percent range typically reaches a 3; exact cut scores shift each year.",
+   "new": "A composite around half the available points typically reaches a 3; exact cut scores shift each year.",
+   "why": "A low-to-mid 60s percent composite is historically in 4 territory on AP Lang; the 3 cut sits near 50-55 percent.",
+   "severity": "minor"
+  }
+ ]
+}

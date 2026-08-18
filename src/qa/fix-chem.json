@@ -1,0 +1,37 @@
+{
+  "course": "chem",
+  "fixes": [
+    {
+      "i": "5574ba7139",
+      "field": "a",
+      "old": "The force (and magnitude of potential energy) between two charges is proportional to the product of the charges divided by the distance between them: E ∝ q₁q₂ / r. Opposite charges give negative (attractive) energy.",
+      "new": "The magnitude of the potential energy between two charges is proportional to the product of the charges divided by the distance between them: E ∝ q₁q₂ / r (the force follows an inverse-square law, F ∝ q₁q₂ / r²). Opposite charges give negative (attractive) energy.",
+      "why": "Coulomb force is inverse-SQUARE in r; only the potential energy goes as 1/r, so lumping 'force' into E ∝ q1q2/r is wrong.",
+      "severity": "error"
+    },
+    {
+      "i": "735e4c6264",
+      "field": "a",
+      "old": "Percent ionization increases on dilution, even though [H3O⁺] and the pH both fall. Ka is fixed, so as [HA] drops the fraction ionized must rise to keep the quotient constant.",
+      "new": "Percent ionization increases on dilution, even though [H3O⁺] falls and the pH rises. Ka is fixed, so as [HA] drops the fraction ionized must rise to keep the quotient constant.",
+      "why": "Diluting a weak acid RAISES pH (less acidic); the card says pH falls, contradicting its own hint and a standard MC answer.",
+      "severity": "error"
+    },
+    {
+      "i": "49d99d0b41",
+      "field": "q",
+      "old": "Apply PES data to identify an element: peaks at 690, 63.5, 37.9, and 15.9 MJ/mol with relative heights 2, 2, 6, 2.",
+      "new": "Apply PES data to identify an element: peaks at 126, 9.07, 5.31, and 0.74 MJ/mol with relative heights 2, 2, 6, 2.",
+      "why": "The listed binding energies are impossible for a 12-electron atom (no valence 3s electron is 15.9 MJ/mol); real Mg values are 126/9.07/5.31/0.74 MJ/mol.",
+      "severity": "minor"
+    },
+    {
+      "i": "49d99d0b41",
+      "field": "a",
+      "old": "The heights give 1s²2s²2p₆3s², which totals 12 electrons, so the element is magnesium.",
+      "new": "The heights give 1s²2s²2p⁶3s², which totals 12 electrons, so the element is magnesium.",
+      "why": "Electron configuration is mistyped with a subscript 6 (2p₆) instead of superscript 2p⁶.",
+      "severity": "minor"
+    }
+  ]
+}

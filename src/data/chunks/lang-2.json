@@ -1,0 +1,1753 @@
+{
+ "course": "lang",
+ "cards": [
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "DEFINE",
+   "q": "Define a claim in argumentation.",
+   "a": "A claim is a debatable statement that the writer asks the audience to accept and then supports with evidence and reasoning. If no reasonable person could disagree with it, it is a fact, not a claim.",
+   "hint": "→ definition + test",
+   "note": "The AP test for a claim is disagreement: if nobody could argue the other side, it cannot anchor an essay.",
+   "core": true,
+   "alt": [
+    "debatable statement"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "CONTRAST",
+   "q": "Contrast a claim, a thesis, and an assertion.",
+   "a": "A claim is any debatable statement. A thesis is the single overarching claim that governs a whole text. An assertion is a statement offered without support - it becomes a claim only once evidence and reasoning back it.",
+   "hint": "→ three-way distinction",
+   "note": "Readers penalize essays whose 'thesis' is really an unsupported assertion or a plain observation.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "DEFINE",
+   "q": "Define a defensible thesis.",
+   "a": "A defensible thesis is a specific, arguable position that can be supported with available evidence. It takes a stance, previews a line of reasoning, and could be reasonably contested by an informed reader.",
+   "hint": "→ three qualities",
+   "note": "Row A of every AP Lang rubric is won or lost here: defensible means arguable, not merely true.",
+   "core": true,
+   "alt": [
+    "arguable position"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "IDENTIFY",
+   "q": "Identify what makes a thesis statement NOT defensible.",
+   "a": "It restates the prompt, states an obvious fact, merely announces a topic ('This essay will discuss...'), lists rhetorical devices with no message, or is so broad ('Since the dawn of time...') that no evidence could test it.",
+   "hint": "→ list of failure modes",
+   "note": "Restating the prompt is the single most common Row A zero on the AP Lang exam.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "DEFINE",
+   "q": "Define a claim of fact and give an example.",
+   "a": "A claim of fact argues that something is, was, or will be true, and is settled by evidence. Example: 'Standardized test scores have declined nationally since 2019.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": [
+    "what is true"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "DEFINE",
+   "q": "Define a claim of value and give an example.",
+   "a": "A claim of value argues that something is good or bad, moral or immoral, better or worse, and depends on stated criteria. Example: 'Mandatory standardized testing is unfair to low-income students.'",
+   "hint": "→ definition + example",
+   "note": "A value claim is only as strong as its criteria; strong writers name the standard they are judging by.",
+   "core": false,
+   "alt": [
+    "good or bad"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "DEFINE",
+   "q": "Define a claim of policy and give an example.",
+   "a": "A claim of policy argues that a specific action should or should not be taken, and normally uses 'should' or 'must.' Example: 'States should stop requiring the SAT for public university admission.'",
+   "hint": "→ definition + example",
+   "note": "Policy claims carry a hidden burden: you must show a problem exists AND that your solution is feasible.",
+   "core": false,
+   "alt": [
+    "should statement"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "DECIDE",
+   "q": "Decide the claim type: 'Social media harms adolescent mental health more than television ever did.'",
+   "a": "A claim of fact - it asserts a causal/comparative reality that evidence (studies, data) could confirm or disconfirm, rather than judging worth or urging action.",
+   "hint": "→ type + one-line justification",
+   "note": null,
+   "core": false,
+   "alt": [
+    "fact",
+    "claim of fact"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "claims",
+   "v": "EXPLAIN",
+   "q": "Explain the role of a subclaim in an essay.",
+   "a": "A subclaim is a smaller arguable statement that supports the thesis; each body paragraph usually advances one. Together the subclaims form the line of reasoning that makes the thesis persuasive.",
+   "hint": "→ function + placement",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "DEFINE",
+   "q": "Define evidence and state what it must do in an argument.",
+   "a": "Evidence is the specific material - data, examples, testimony, texts, experience - offered to support a claim. It must be relevant to the claim, sufficient in amount, and accurate, and it must be interpreted, not just dropped in.",
+   "hint": "→ definition + three requirements",
+   "note": "Relevant, sufficient, accurate: use these three words when a prompt asks you to assess evidence.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain the strengths and limits of statistical evidence.",
+   "a": "Strength: statistics feel objective, scale up beyond one case, and persuade skeptical or data-minded audiences. Limits: they can be cherry-picked, decontextualized, or drawn from biased samples, and numbers alone do not establish causation.",
+   "hint": "→ strength + limit",
+   "note": "In MC questions, correlational data offered as proof of cause is a favorite wrong-reasoning trap.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain the strengths and limits of anecdotal evidence.",
+   "a": "Strength: an anecdote is concrete, memorable, and emotionally engaging, so it humanizes abstract claims. Limit: one story is a sample of one and cannot establish a trend, which makes it vulnerable to the charge of hasty generalization.",
+   "hint": "→ strength + limit",
+   "note": "Anecdote plus data is the strong combination: the story makes the number matter.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain the strengths and limits of expert testimony.",
+   "a": "Strength: borrowing a credentialed authority's ethos lends credibility on technical questions the audience cannot judge alone. Limit: it collapses if the expert is outside their field, biased, financially interested, or contradicted by other experts.",
+   "hint": "→ strength + limit",
+   "note": "Expert testimony is legitimate; appeal to authority is the fallacy version, where credentials replace reasons.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain the strengths and limits of analogy as evidence.",
+   "a": "Strength: an analogy makes an unfamiliar idea intelligible by mapping it onto something the audience already accepts. Limit: it proves nothing on its own, and it fails if the two cases differ in the respect that actually matters.",
+   "hint": "→ strength + limit",
+   "note": "Analogy is an illustrative move, not a probative one; treat it as clarification plus a hypothesis.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain the strengths and limits of historical example as evidence.",
+   "a": "Strength: a historical case shows that something has actually happened and supplies precedent and shared cultural weight. Limit: circumstances differ across eras, so the writer must argue that the past case is genuinely parallel.",
+   "hint": "→ strength + limit",
+   "note": "Strong AP argument essays use history but explicitly justify the comparison instead of assuming it.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain the strengths and limits of personal experience as evidence.",
+   "a": "Strength: it grants firsthand authority and immediacy, especially on questions of lived effect. Limit: it is unverifiable, unrepresentative, and easy for an audience to dismiss as atypical.",
+   "hint": "→ strength + limit",
+   "note": "AP allows personal evidence on Q3, but it must be specific and analyzed - not a vague 'I have seen this happen.'",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain the strengths and limits of textual evidence.",
+   "a": "Strength: quoted or paraphrased text lets readers verify the claim against the source itself, which is essential in rhetorical analysis. Limit: quotations can be pulled out of context, over-quoted, or left unexplained.",
+   "hint": "→ strength + limit",
+   "note": "On Q2, textual evidence without commentary earns at most 1 of 4 in Row B.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "DECIDE",
+   "q": "Decide which evidence type best persuades a skeptical policy audience and explain why.",
+   "a": "Data and expert testimony, because a skeptical policy audience wants verifiable scale and credentialed backing; anecdote is then added to make the numbers vivid rather than to carry the proof.",
+   "hint": "→ choice + audience reason",
+   "note": "Evidence selection is a rhetorical choice: the right evidence is the evidence that audience will accept.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "CONTRAST",
+   "q": "Contrast commentary and summary.",
+   "a": "Summary restates what the evidence says. Commentary explains what the evidence means, how it supports the claim, and why it matters. Commentary answers 'so what?'; summary answers only 'what?'",
+   "hint": "→ two-line contrast",
+   "note": "The most common Row B ceiling on AP Lang essays is evidence plus summary instead of evidence plus commentary.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "evidence",
+   "v": "EXPLAIN",
+   "q": "Explain what a sentence of strong commentary must do.",
+   "a": "It must connect the specific evidence to the specific claim by naming the reasoning link - why this detail makes that claim more believable - and then tie back to the thesis or the writer's purpose.",
+   "hint": "→ three moves",
+   "note": "A reliable frame: 'This suggests... which supports... because...' Avoid 'This shows how important X is.'",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "toulmin",
+   "v": "DEFINE",
+   "q": "Define a warrant.",
+   "a": "A warrant is the underlying assumption, usually unstated, that licenses the move from evidence to claim - the principle that explains why this evidence counts as support for this claim.",
+   "hint": "→ definition + function",
+   "note": "Test a warrant by asking: what would someone have to already believe for this evidence to prove this claim?",
+   "core": true,
+   "alt": [
+    "underlying assumption"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "toulmin",
+   "v": "IDENTIFY",
+   "q": "Identify the warrant: 'The bridge is 70 years old, so it should be replaced.'",
+   "a": "The warrant is the unstated assumption that bridges of about 70 years old are unsafe or beyond their design life and that unsafe infrastructure ought to be replaced.",
+   "hint": "→ unstated assumption, one sentence",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "toulmin",
+   "v": "DEFINE",
+   "q": "Define backing in the Toulmin model.",
+   "a": "Backing is additional support offered for the warrant itself - evidence or reasoning that justifies the underlying assumption when the audience is unlikely to grant it automatically.",
+   "hint": "→ support-for-the-support",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "toulmin",
+   "v": "DEFINE",
+   "q": "Define a qualifier and give three examples.",
+   "a": "A qualifier limits the strength or scope of a claim, signaling how confident the writer is. Examples: 'usually,' 'in most urban districts,' 'likely.'",
+   "hint": "→ definition + sample words",
+   "note": "Qualifiers make claims more defensible, not weaker: an unqualified absolute is easy to refute with one counterexample.",
+   "core": false,
+   "alt": [
+    "usually",
+    "likely",
+    "in most cases"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "toulmin",
+   "v": "DEFINE",
+   "q": "Define the rebuttal (reservation) element of the Toulmin model.",
+   "a": "The rebuttal names the conditions under which the claim would not hold, or anticipates and answers the strongest objection to it.",
+   "hint": "→ exception clause",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "toulmin",
+   "v": "STATE",
+   "q": "State the six elements of the Toulmin model.",
+   "a": "Claim, data (grounds/evidence), warrant, backing, qualifier, and rebuttal.",
+   "hint": "→ six-term list",
+   "note": "Claim-data-warrant is the working core; backing, qualifier, and rebuttal are the refinements.",
+   "core": true,
+   "alt": [
+    "claim data warrant backing qualifier rebuttal"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "DEFINE",
+   "q": "Define Rogerian argument.",
+   "a": "Rogerian argument seeks common ground rather than victory: it states the opposing view fairly and sympathetically first, identifies shared values and the contexts where the opponent is right, then proposes a position that serves both sides' interests.",
+   "hint": "→ definition + goal",
+   "note": "Best for hostile audiences; its signature move is genuine concession before advocacy.",
+   "core": false,
+   "alt": [
+    "common ground argument"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "CONTRAST",
+   "q": "Contrast Rogerian and classical (Aristotelian) argument.",
+   "a": "Classical argument is adversarial and linear - assert, prove, refute, and win over an undecided audience. Rogerian argument is conciliatory - understand, concede, and negotiate a shared position with a resistant audience.",
+   "hint": "→ goal + audience for each",
+   "note": "Choosing between them is itself a rhetorical decision driven by audience hostility.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "STATE",
+   "q": "State the five parts of classical (Aristotelian) arrangement in order.",
+   "a": "Exordium (introduction), narratio (statement of facts/background), confirmatio (proof of your case), refutatio (refutation of opposing views), peroratio (conclusion).",
+   "hint": "→ five Latin terms in order",
+   "note": "Notice that refutation comes before the conclusion: address the counterargument, then close.",
+   "core": true,
+   "alt": [
+    "exordium narratio confirmatio refutatio peroratio"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "DEFINE",
+   "q": "Define the exordium.",
+   "a": "The exordium is the opening that hooks the audience and establishes the speaker's credibility and goodwill, preparing listeners to be receptive before the case begins.",
+   "hint": "→ function of the opening",
+   "note": null,
+   "core": false,
+   "alt": [
+    "introduction"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "DEFINE",
+   "q": "Define the narratio.",
+   "a": "The narratio supplies the background: the facts, context, and history of the issue, told in a way that already frames the case favorably.",
+   "hint": "→ function of background section",
+   "note": null,
+   "core": false,
+   "alt": [
+    "statement of facts"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "DEFINE",
+   "q": "Define the confirmatio.",
+   "a": "The confirmatio is the main body of proof, where the speaker develops the argument by presenting claims, evidence, and reasoning in support of the thesis.",
+   "hint": "→ function of the proof section",
+   "note": null,
+   "core": false,
+   "alt": [
+    "proof"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "DEFINE",
+   "q": "Define the refutatio.",
+   "a": "The refutatio anticipates and answers opposing arguments, conceding what is reasonable and rebutting what is not, so the audience's objections are removed before the close.",
+   "hint": "→ function of the refutation",
+   "note": null,
+   "core": false,
+   "alt": [
+    "refutation"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "arrangement",
+   "v": "DEFINE",
+   "q": "Define the peroratio.",
+   "a": "The peroratio is the conclusion: it summarizes the case, amplifies its stakes, and makes the final emotional appeal or call to action.",
+   "hint": "→ function of the closing",
+   "note": null,
+   "core": false,
+   "alt": [
+    "conclusion"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "reasoning",
+   "v": "CONTRAST",
+   "q": "Contrast inductive and deductive reasoning.",
+   "a": "Induction moves from specific observations to a general, probable conclusion. Deduction moves from a general premise to a specific conclusion that must follow if the premises are true.",
+   "hint": "→ direction + certainty",
+   "note": "Induction yields probability, deduction yields necessity - a distinction MC questions test directly.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "reasoning",
+   "v": "DEFINE",
+   "q": "Define a syllogism and give an example.",
+   "a": "A syllogism is a deductive form with a major premise, a minor premise, and a conclusion. Example: All published editorials are opinion pieces (major); this column is a published editorial (minor); therefore this column is an opinion piece.",
+   "hint": "→ definition + three-line example",
+   "note": "A syllogism can be valid but unsound: valid form plus a false premise guarantees nothing about whether the conclusion is true.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "reasoning",
+   "v": "DEFINE",
+   "q": "Define an enthymeme.",
+   "a": "An enthymeme is a syllogism with a premise left unstated because the audience is assumed to share it. Example: 'She should be trusted with the budget - she has never missed a deadline,' assuming punctual people handle money responsibly.",
+   "hint": "→ definition + example",
+   "note": "Enthymemes are where warrants hide; naming the missing premise is a classic AP analysis move.",
+   "core": true,
+   "alt": [
+    "syllogism with unstated premise"
+   ]
+  },
+  {
+   "u": "cle",
+   "t": "reasoning",
+   "v": "EXPLAIN",
+   "q": "Explain why writers use enthymemes rather than full syllogisms.",
+   "a": "Leaving a premise unstated is efficient and flattering: it lets the audience supply the assumption themselves, which makes them feel they reasoned to the conclusion and makes the shared value seem obvious rather than debatable.",
+   "hint": "→ rhetorical effect",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "reasoning",
+   "v": "DEFINE",
+   "q": "Define concession and refutation as argumentative moves.",
+   "a": "Concession grants that part of the opposing view has merit; refutation then shows why that view is nonetheless inadequate or outweighed. Used together, they build ethos and defuse objections.",
+   "hint": "→ paired definition",
+   "note": "'While it is true that... , the more pressing consideration is...' is the standard concession-refutation frame.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of ad hominem and give a one-line example.",
+   "a": "Attacking the person making the argument instead of the argument itself. Example: 'You cannot take her climate proposal seriously - she flies private jets.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of straw man and give a one-line example.",
+   "a": "Misrepresenting an opponent's position as a weaker or more extreme version, then refuting that version. Example: 'My opponent wants to cut the arts budget, so apparently she thinks music is worthless.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of false dilemma (either/or) and give a one-line example.",
+   "a": "Presenting only two options when more exist. Example: 'Either we ban phones in school or we accept that students will never learn.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of slippery slope and give a one-line example.",
+   "a": "Claiming one step will inevitably trigger a chain ending in disaster, without showing the links. Example: 'If we allow late homework, soon no one will turn in anything at all.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of hasty generalization and give a one-line example.",
+   "a": "Drawing a broad conclusion from a sample too small or unrepresentative to support it. Example: 'Two students cheated on the exam, so this generation has no integrity.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of post hoc ergo propter hoc and give a one-line example.",
+   "a": "Assuming that because B followed A, A caused B. Example: 'Test scores rose after we repainted the school, so the paint improved learning.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of circular reasoning (begging the question) and give a one-line example.",
+   "a": "Assuming in the premises the very conclusion being argued for. Example: 'This novel is the greatest of the decade because no other book from the decade is as good.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of appeal to authority (fallacious) and give a one-line example.",
+   "a": "Treating a person's status as proof, when they are outside their expertise or the claim needs evidence. Example: 'A famous actor endorses this supplement, so it must be effective.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of appeal to popularity (bandwagon) and give a one-line example.",
+   "a": "Arguing something is true or right because many people believe or do it. Example: 'Millions of users can't be wrong - the app must be safe.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of appeal to fear and give a one-line example.",
+   "a": "Substituting an alarming consequence for evidence in order to force agreement. Example: 'Vote against this measure or your family will not be safe in this town.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of appeal to tradition and give a one-line example.",
+   "a": "Arguing that something is right or best because it has always been done that way. Example: 'We have opened with the same ceremony for ninety years, so it should not change.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of appeal to ignorance and give a one-line example.",
+   "a": "Claiming something is true because it has not been proven false, or false because unproven. Example: 'No study has proven the additive harmful, so it is perfectly safe.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of red herring and give a one-line example.",
+   "a": "Introducing an irrelevant issue to divert attention from the actual question. Example: 'You ask about the budget shortfall, but what about how well our team played this season?'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of non sequitur and give a one-line example.",
+   "a": "Drawing a conclusion that does not follow logically from the premises given. Example: 'She reads a great deal, so she would make an excellent treasurer.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of equivocation and give a one-line example.",
+   "a": "Shifting the meaning of a key term partway through the argument. Example: 'Only man is rational; no woman is a man; therefore no woman is rational.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of false analogy and give a one-line example.",
+   "a": "Comparing two things that differ in the respect essential to the argument. Example: 'Running a country is just like running a household budget, so the nation should never borrow.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of composition and division and give a one-line example.",
+   "a": "Composition assumes what is true of the parts is true of the whole; division assumes what is true of the whole is true of each part. Example: 'Every player is a star, so the team is unbeatable' (composition); 'It is a wealthy nation, so its citizens are wealthy' (division).",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of loaded question and give a one-line example.",
+   "a": "Asking a question that presupposes an unproven claim, so any direct answer concedes it. Example: 'Why does the administration keep wasting student fees?'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of tu quoque and give a one-line example.",
+   "a": "Deflecting criticism by charging the critic with the same fault, as if that answered the claim. Example: 'You say I should recycle, but you drive to work every day.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of no true Scotsman and give a one-line example.",
+   "a": "Rescuing a generalization from counterexamples by redefining the category to exclude them. Example: 'No serious scientist doubts this. - Dr. Vance does. - Then he is not a serious scientist.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of cherry picking and give a one-line example.",
+   "a": "Citing only the data that supports the claim while suppressing contrary evidence. Example: 'Sales rose in March and June, proving the campaign worked' - omitting the four months sales fell.",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "IDENTIFY",
+   "q": "Define the fallacy of moving the goalposts and give a one-line example.",
+   "a": "Dismissing evidence that meets the agreed standard by demanding a new, higher one. Example: 'Fine, the trial worked, but I will not accept it until it is replicated in ten countries.'",
+   "hint": "→ definition + example",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "cle",
+   "t": "fallacies",
+   "v": "EXPLAIN",
+   "q": "Explain how to write about a fallacy in an essay without simply naming it.",
+   "a": "Name the move, quote the specific words that make it, explain what the reasoning assumes or skips, and state the effect on the audience. Naming alone is labeling; the analysis is in the gap you expose.",
+   "hint": "→ four-step method",
+   "note": "MC questions rarely ask for fallacy names; they ask what a passage's reasoning fails to establish.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "line of reasoning",
+   "v": "DEFINE",
+   "q": "Define a line of reasoning.",
+   "a": "A line of reasoning is the logical sequence of claims and supporting evidence that connects the thesis to the conclusion - the order in which ideas build so that each paragraph makes the next one possible.",
+   "hint": "→ definition + function",
+   "note": "Row B rewards a line of reasoning: paragraphs in an arbitrary order cost points even when each is well written.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "line of reasoning",
+   "v": "EXPLAIN",
+   "q": "Explain how to test whether an essay has a line of reasoning.",
+   "a": "Read only the topic sentences in order. If they form a coherent argument that arrives at the thesis, the line of reasoning holds; if they read as an unordered list of observations, it does not.",
+   "hint": "→ diagnostic procedure",
+   "note": "This topic-sentence test is the fastest self-check in the final minutes of an FRQ.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "paragraphs",
+   "v": "EXPLAIN",
+   "q": "Explain the function of a topic sentence.",
+   "a": "A topic sentence states the paragraph's subclaim and links it to the thesis, telling the reader what this paragraph will prove and why it comes here. It should assert, not announce or summarize the source.",
+   "hint": "→ two jobs",
+   "note": "'In source B, the author discusses cost' is an announcement; a topic sentence must make an arguable point.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "paragraphs",
+   "v": "DEFINE",
+   "q": "Define unity in a paragraph.",
+   "a": "Unity means every sentence in the paragraph supports the single idea named in the topic sentence; nothing wanders into a different claim.",
+   "hint": "→ one-sentence definition",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "paragraphs",
+   "v": "DEFINE",
+   "q": "Define coherence in writing.",
+   "a": "Coherence means the sentences and paragraphs connect so the reader can follow the movement of thought, achieved through transitions, repeated key terms, pronoun reference, and consistent order.",
+   "hint": "→ definition + devices",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "paragraphs",
+   "v": "EXPLAIN",
+   "q": "Explain the standard structure of an argumentative body paragraph.",
+   "a": "Topic sentence stating the subclaim; specific evidence introduced with context; commentary explaining how the evidence proves the subclaim; and a link sentence tying the subclaim back to the thesis or forward to the next.",
+   "hint": "→ four-part structure",
+   "note": "Aim for at least two sentences of commentary for every one sentence of evidence.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "paragraphs",
+   "v": "DECIDE",
+   "q": "Decide when to start a new paragraph.",
+   "a": "Start a new paragraph when the subclaim changes, when a new source or piece of evidence requires its own analysis, when shifting from your case to the counterargument, or when a paragraph has grown so long the reader loses the claim.",
+   "hint": "→ list of triggers",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal addition and state what they do to the line of reasoning.",
+   "a": "Addition: furthermore, moreover, in addition, also, likewise. They signal to the reader that what follows adds another item of the same kind.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal contrast and state what they do to the line of reasoning.",
+   "a": "Contrast: however, yet, nevertheless, on the other hand, conversely. They signal to the reader that what follows opposes or turns against what came before.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal causation and state what they do to the line of reasoning.",
+   "a": "Causation: therefore, consequently, thus, as a result, because. They signal to the reader that what follows is the cause or the effect of what came before.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal concession and state what they do to the line of reasoning.",
+   "a": "Concession: admittedly, granted, of course, to be sure, while it is true that. They signal to the reader that what follows grants a point to the other side before it is answered.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal exemplification and state what they do to the line of reasoning.",
+   "a": "Exemplification: for example, for instance, specifically, to illustrate, namely. They signal to the reader that what follows is a specific instance of the general claim.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal sequence and state what they do to the line of reasoning.",
+   "a": "Sequence: first, next, subsequently, meanwhile, finally. They signal to the reader that what follows comes next in an order of steps, stages, or priority.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal emphasis and state what they do to the line of reasoning.",
+   "a": "Emphasis: indeed, above all, in fact, most significantly, especially. They signal to the reader that what follows is the most important point so far.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "IDENTIFY",
+   "q": "Identify transitions that signal conclusion and state what they do to the line of reasoning.",
+   "a": "Conclusion: in short, ultimately, on the whole, in conclusion, therefore. They signal to the reader that what follows closes the argument or sums it up.",
+   "hint": "→ sample words + relationship",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "transitions",
+   "v": "EXPLAIN",
+   "q": "Explain the most common misuse of transitions.",
+   "a": "Using a transition whose relationship the sentences do not actually have - most often 'however' between two agreeing sentences or 'therefore' where no cause was established. The word then signals a logic the paragraph never performs.",
+   "hint": "→ named error + why it hurts",
+   "note": "MC revision questions frequently test exactly this: the right answer replaces a mismatched connective.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called narration and when a writer would choose it.",
+   "a": "Narration: Tells a sequence of events as a story. It is best for making an abstract problem concrete and building emotional engagement.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called description and when a writer would choose it.",
+   "a": "Description: Renders sensory and concrete detail about a subject. It is best for making a scene or condition vivid so the audience can judge it firsthand.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called definition and when a writer would choose it.",
+   "a": "Definition: Establishes what a key term means and does not mean. It is best when the argument turns on a contested term such as 'freedom' or 'fairness'.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called exemplification and when a writer would choose it.",
+   "a": "Exemplification: Supports a generalization with a series of specific instances. It is best for showing that a pattern is real and widespread rather than isolated.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called comparison-contrast and when a writer would choose it.",
+   "a": "Comparison-contrast: Sets two subjects side by side to reveal similarity or difference. It is best for evaluating alternatives; organized point-by-point or subject-by-subject.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called cause-effect and when a writer would choose it.",
+   "a": "Cause-effect: Traces why something happened or what it produced. It is best for arguments about responsibility or consequence; must guard against post hoc reasoning.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called process analysis and when a writer would choose it.",
+   "a": "Process analysis: Explains the steps by which something happens or is done. It is best for showing feasibility or exposing where a system breaks down.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called classification and division and when a writer would choose it.",
+   "a": "Classification and division: Sorts items into categories, or breaks one subject into parts. It is best for imposing order on a sprawling issue so each part can be judged separately.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain the method of development called problem-solution and when a writer would choose it.",
+   "a": "Problem-solution: Establishes a problem, then proposes and defends a remedy. It is best for policy arguments; the solution must be shown to be both effective and feasible.",
+   "hint": "→ what it does + when to use",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "development",
+   "v": "EXPLAIN",
+   "q": "Explain why identifying a passage's method of development matters in rhetorical analysis.",
+   "a": "The method is itself a rhetorical choice: choosing to define a term, narrate a case, or classify a field shapes what the audience sees as the issue. Naming the method lets you analyze the structure rather than only the sentence-level devices.",
+   "hint": "→ reason + payoff",
+   "note": "Analyzing organization is a higher-level move than device-spotting and often supports the sophistication point.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "introductions",
+   "v": "EXPLAIN",
+   "q": "Explain what an effective introduction does on an AP Lang essay.",
+   "a": "It orients the reader to the issue in one or two sentences, narrows to the specific question at stake, and ends with a defensible thesis that previews the line of reasoning. Three to four sentences is plenty.",
+   "hint": "→ three moves",
+   "note": "The thesis must appear in the introduction or the conclusion; placing it last in paragraph one is the safest way to secure Row A.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "introductions",
+   "v": "IDENTIFY",
+   "q": "Identify introduction moves that waste time or hurt the score.",
+   "a": "'Since the beginning of time' openings, dictionary definitions of common words, restating the prompt verbatim, announcing the essay's plan ('In this essay I will'), and long summary of the passage or sources before any claim.",
+   "hint": "→ list of don'ts",
+   "note": "Every sentence spent on throat-clearing is a sentence not spent on commentary, which is where 4 of 6 points live.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "conclusions",
+   "v": "EXPLAIN",
+   "q": "Explain what an effective conclusion does.",
+   "a": "It extends rather than repeats: it states what follows from the argument, names the stakes or implications, and may broaden to a related context. Two to four sentences is enough.",
+   "hint": "→ function + length",
+   "note": "A conclusion is a fine place to earn sophistication by naming limitations or broader implications.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "conclusions",
+   "v": "IDENTIFY",
+   "q": "Identify conclusion habits to avoid.",
+   "a": "Mechanically restating the thesis and topic sentences, introducing brand-new evidence that cannot be analyzed, apologizing for the argument, or ending on a rhetorical question that undoes the position just taken.",
+   "hint": "→ list of don'ts",
+   "note": "If you are out of time, one strong implication sentence beats a full formulaic restatement.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "organization",
+   "v": "DEFINE",
+   "q": "Define the chronological organizational pattern and name a typical use.",
+   "a": "Chronological: arranges material in time order. Typical use: narratives, historical causation, and process explanations.",
+   "hint": "→ pattern + use case",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "organization",
+   "v": "DEFINE",
+   "q": "Define the spatial organizational pattern and name a typical use.",
+   "a": "Spatial: arranges material by physical position or location. Typical use: descriptions of place, scenes, and physical evidence.",
+   "hint": "→ pattern + use case",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "organization",
+   "v": "DEFINE",
+   "q": "Define the order of importance organizational pattern and name a typical use.",
+   "a": "Order of importance: arranges points from least to most (or most to least) significant. Typical use: persuasion, where ending on the strongest point leaves the final impression.",
+   "hint": "→ pattern + use case",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "organization",
+   "v": "DEFINE",
+   "q": "Define the general-to-specific organizational pattern and name a typical use.",
+   "a": "General-to-specific: moves from a broad principle down to particular cases (or the reverse). Typical use: deductive arguments and definitions applied to instances.",
+   "hint": "→ pattern + use case",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "organization",
+   "v": "EXPLAIN",
+   "q": "Explain how to signal an essay's organizational pattern to a reader.",
+   "a": "Use topic sentences that name the relationship to the previous paragraph, transitions matched to that relationship, and repeated key terms from the thesis, so the pattern is visible without announcing it ('my second point is').",
+   "hint": "→ three signaling tools",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "synthesis",
+   "v": "DEFINE",
+   "q": "Define synthesis as the term is used on the AP Lang exam.",
+   "a": "Synthesis is combining material from multiple provided sources with your own reasoning to develop and support your own argument - the sources serve your position, rather than the essay reporting what each source says in turn.",
+   "hint": "→ definition + emphasis",
+   "note": "The Q1 essay is your argument using sources, not a survey of the sources.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "synthesis",
+   "v": "EXPLAIN",
+   "q": "Explain how many sources the AP Lang synthesis essay requires and how to use them.",
+   "a": "You must incorporate and cite at least three of the provided sources in support of your argument; sources may be quoted or paraphrased, and one source can be used in more than one paragraph.",
+   "hint": "→ number + usage rule",
+   "note": "Using more than three earns nothing by itself; poor commentary on six sources scores below strong commentary on three.",
+   "core": true,
+   "alt": [
+    "three",
+    "at least three"
+   ]
+  },
+  {
+   "u": "reo",
+   "t": "synthesis",
+   "v": "EXPLAIN",
+   "q": "Explain how to cite sources in-text on the synthesis essay.",
+   "a": "Refer to each source by its given label or the author's name in parentheses or in a signal phrase - '(Source C)' or 'Chen argues that...' Full bibliographic citations and a works cited page are not required.",
+   "hint": "→ citation format",
+   "note": "Uncited source material can cost the evidence point even if the ideas are accurate.",
+   "core": true,
+   "alt": [
+    "(Source A)",
+    "Source letter"
+   ]
+  },
+  {
+   "u": "reo",
+   "t": "synthesis",
+   "v": "DEFINE",
+   "q": "Define an attributive tag (signal phrase) and give two examples.",
+   "a": "An attributive tag introduces borrowed material and names its origin, so the reader knows where the idea comes from and how to weigh it. Examples: 'As economist Dana Ruiz notes,...' / 'Source B counters that...'",
+   "hint": "→ definition + two examples",
+   "note": "Verb choice inside the tag is an argumentative move: 'concedes,' 'claims,' and 'demonstrates' position the source differently.",
+   "core": false,
+   "alt": [
+    "signal phrase"
+   ]
+  },
+  {
+   "u": "reo",
+   "t": "synthesis",
+   "v": "EXPLAIN",
+   "q": "Explain what source-dropping is and how to avoid it.",
+   "a": "Source-dropping is inserting a quotation or citation with no framing before it and no commentary after it. Avoid it by introducing the source, quoting only the necessary words, and then explaining how it advances your claim.",
+   "hint": "→ problem + fix",
+   "note": "The fix is a sandwich: set up, quote, explain. A paragraph that ends on a quotation almost always needs one more sentence.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "synthesis",
+   "v": "EXPLAIN",
+   "q": "Explain how to put two sources in conversation rather than listing them.",
+   "a": "Build the paragraph around your subclaim, then show the relationship between the sources - one extends, complicates, or answers the other - and explain what that relationship proves. The paragraph is organized by idea, not by source.",
+   "hint": "→ method + organizing principle",
+   "note": "'While Source A treats cost as decisive, Source D shows the cost falls unevenly' is a conversation; two summaries are not.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "citation",
+   "v": "STATE",
+   "q": "State the basic MLA in-text citation format for a print source.",
+   "a": "Author's last name and page number in parentheses with no comma, before the sentence's end punctuation: (Ruiz 42). If the author is named in a signal phrase, only the page number appears: (42).",
+   "hint": "→ format + variation",
+   "note": null,
+   "core": false,
+   "alt": [
+    "(Ruiz 42)"
+   ]
+  },
+  {
+   "u": "reo",
+   "t": "citation",
+   "v": "EXPLAIN",
+   "q": "Explain the MLA in-text citation when a source has no page numbers or no named author.",
+   "a": "With no page numbers (a website), cite the author's name alone. With no author, use a shortened form of the title in quotation marks or italics, matching the works cited entry.",
+   "hint": "→ two rules",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "citation",
+   "v": "EXPLAIN",
+   "q": "Explain how to integrate a quotation grammatically into your own sentence.",
+   "a": "Make the quotation a syntactic part of your sentence: introduce it with a signal phrase and comma, blend it with 'that' and no comma, or weave short phrases into your own clause. The finished sentence must parse if the quotation marks were removed.",
+   "hint": "→ three integration patterns",
+   "note": "Read the sentence aloud without the quotation marks - if it is ungrammatical, the integration failed.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "citation",
+   "v": "EXPLAIN",
+   "q": "Explain when and how to use an ellipsis in a quotation.",
+   "a": "Use three spaced periods ( ... ) to mark words omitted from the middle of a quotation, and only when the omission does not change the author's meaning. No ellipsis is needed at the start of a quoted fragment.",
+   "hint": "→ mark + rule",
+   "note": "Cutting a qualifier out of a quotation with an ellipsis is a form of cherry picking, not a mechanical fix.",
+   "core": false,
+   "alt": [
+    "..."
+   ]
+  },
+  {
+   "u": "reo",
+   "t": "citation",
+   "v": "EXPLAIN",
+   "q": "Explain when to use square brackets inside a quotation.",
+   "a": "Use square brackets to insert your own words for clarity or grammatical fit - identifying a pronoun's referent, adjusting a verb tense, or changing capitalization - so the quotation reads correctly in your sentence.",
+   "hint": "→ purpose + examples",
+   "note": "Brackets signal editing by you; anything inside them is your language, not the source's.",
+   "core": false,
+   "alt": [
+    "[ ]"
+   ]
+  },
+  {
+   "u": "reo",
+   "t": "coherence",
+   "v": "EXPLAIN",
+   "q": "Explain the 'so what' link that ends a body paragraph.",
+   "a": "The final sentence should state why the paragraph's subclaim matters to the thesis - the consequence, stake, or step it establishes - rather than restating the topic sentence in different words.",
+   "hint": "→ function of last sentence",
+   "note": "This one sentence per paragraph is the cheapest reliable way to raise a Row B score.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "reo",
+   "t": "organization",
+   "v": "EXPLAIN",
+   "q": "Explain where to place the counterargument paragraph and why.",
+   "a": "Place it after your strongest supporting paragraphs and before the conclusion, so the reader is already persuaded when the objection appears and you have the last word answering it. State the objection fairly, then refute or absorb it.",
+   "hint": "→ placement + reason",
+   "note": "Handling a genuine counterargument with nuance is one recognized route to the sophistication point.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "format",
+   "v": "STATE",
+   "q": "State the overall format of the AP English Language and Composition exam.",
+   "a": "Section I: 45 multiple-choice questions in 60 minutes, worth 45% of the score. Section II: three free-response essays in 2 hours 15 minutes (including a 15-minute reading period), worth 55%.",
+   "hint": "→ two sections with times and weights",
+   "note": "Total testing time is 3 hours 15 minutes; the FRQs are worth more than the entire MC section.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "format",
+   "v": "STATE",
+   "q": "State what Section I of the AP Lang exam contains.",
+   "a": "45 multiple-choice questions in 60 minutes across five or so passages, split between reading questions (rhetorical analysis of nonfiction passages) and writing questions (revising a draft passage for argument, evidence, and style).",
+   "hint": "→ count, time, two question types",
+   "note": "Roughly 23-25 reading-analysis questions and 20-22 writing/revision questions - budget about 80 seconds per question.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "format",
+   "v": "CONTRAST",
+   "q": "Contrast the two kinds of multiple-choice questions on the AP Lang exam.",
+   "a": "Reading questions ask what a published passage does - the writer's choices, purpose, audience, and reasoning. Writing questions present a student draft and ask which revision best achieves a stated goal, such as adding evidence or improving a transition.",
+   "hint": "→ two types + what each asks",
+   "note": "Writing questions always name a goal; the right answer is the one that serves that goal, not the prettiest sentence.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "format",
+   "v": "STATE",
+   "q": "State the structure of Section II of the AP Lang exam.",
+   "a": "Three essays in 2 hours 15 minutes: Q1 Synthesis, Q2 Rhetorical Analysis, Q3 Argument. The first 15 minutes are a suggested reading period for the synthesis source packet; each essay is then given about 40 minutes.",
+   "hint": "→ three essays + timing",
+   "note": "The essays are equally weighted, so never let one essay eat another's time.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "format",
+   "v": "EXPLAIN",
+   "q": "Explain how to use the 15-minute reading period.",
+   "a": "Read the Q1 prompt first, decide a tentative position, then skim all sources marking each one's stance and one usable quotation. Sketch a three-part line of reasoning. You may begin writing before the 15 minutes end.",
+   "hint": "→ ordered plan",
+   "note": "Reading sources without a position first is the main way students burn the reading period.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "frq",
+   "v": "IDENTIFY",
+   "q": "Identify what the synthesis question (Q1) demands.",
+   "a": "Take a defensible position on the issue and develop an argument that incorporates and cites at least three of six or seven provided sources as support. The sources are evidence for your claim, not the subject of the essay.",
+   "hint": "→ task + source requirement",
+   "note": "The prompt's phrasing is usually 'develop a position' - a summary of the debate with no position cannot earn Row A.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "frq",
+   "v": "IDENTIFY",
+   "q": "Identify what the rhetorical analysis question (Q2) demands.",
+   "a": "Read a nonfiction passage with a given rhetorical situation, then analyze the rhetorical choices the writer makes to achieve their purpose - explaining how and why the choices work on that audience, not merely which devices appear.",
+   "hint": "→ task + emphasis",
+   "note": "The thesis must name the writer's message or purpose; a list of devices alone does not earn Row A.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "frq",
+   "v": "IDENTIFY",
+   "q": "Identify what the argument question (Q3) demands.",
+   "a": "Respond to a short prompt or quotation by taking your own defensible position and supporting it with evidence you supply - personal experience, observation, reading, history, current events - developed with commentary.",
+   "hint": "→ task + evidence source",
+   "note": "No passage is provided, so evidence quality is entirely on you; specific named examples beat general assertions.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "STATE",
+   "q": "State the three rows of the AP Lang essay rubric and their point values.",
+   "a": "Row A: Thesis, 0-1 point. Row B: Evidence and Commentary, 0-4 points. Row C: Sophistication, 0-1 point. Total 6 points per essay.",
+   "hint": "→ three rows with values",
+   "note": "The same 6-point rubric applies to all three essays; Row B alone is two-thirds of the score.",
+   "core": true,
+   "alt": [
+    "6 points",
+    "thesis evidence sophistication"
+   ]
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "EXPLAIN",
+   "q": "Explain exactly what earns the Row A thesis point.",
+   "a": "One point for a defensible thesis that responds to the prompt with a position, and that may preview the line of reasoning. It must be in the introduction or conclusion and be more than a restatement of the prompt.",
+   "hint": "→ criteria for the point",
+   "note": "It is all-or-nothing: a partially defensible thesis earns zero, not a half point.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "IDENTIFY",
+   "q": "Identify the most common reasons students lose the Row A point.",
+   "a": "Restating the prompt; describing the passage or sources instead of claiming; listing devices with no message ('the author uses ethos, pathos, and logos'); an obvious, undebatable statement; or a thesis buried mid-essay with nothing in the intro or conclusion.",
+   "hint": "→ list of causes",
+   "note": "Write the thesis last in paragraph one, in one sentence, and make sure a reasonable person could disagree with it.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "EXPLAIN",
+   "q": "Explain the Row B scale from 0 to 4.",
+   "a": "0: no relevant evidence, or the response only restates the thesis. 1: mostly general evidence, and/or evidence summarized rather than explained. 2: some specific relevant evidence, with explanation of how some of it relates to the argument, but no line of reasoning is established or the line of reasoning is faulty. 3: specific evidence to support all claims in a line of reasoning, with explanation of how some of the evidence supports that line of reasoning. 4: specific evidence for all claims in a line of reasoning, with commentary that consistently explains how the evidence supports it.",
+   "hint": "→ five-level scale",
+   "note": "The jump from 1 to 2 is the jump from summarizing evidence to explaining it; the jump from 2 to 3 is establishing a real line of reasoning.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "CONTRAST",
+   "q": "Contrast a Row B score of 3 and a Row B score of 4.",
+   "a": "A 3 supports most claims with specific evidence and explains some of it. A 4 sustains it: every claim has specific, well-chosen evidence and the commentary consistently explains how the evidence supports a coherent line of reasoning.",
+   "hint": "→ what changes at 4",
+   "note": "Consistency and a visible line of reasoning are the difference; one brilliant paragraph among three thin ones is a 3.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "EXPLAIN",
+   "q": "Explain what the Row C sophistication point rewards.",
+   "a": "One point for a response that demonstrates sophistication of thought or a complex understanding of the rhetorical situation, sustained across the essay rather than shown in a single sentence.",
+   "hint": "→ criterion + scope",
+   "note": "Fewer than one in ten essays earns this point; it cannot be faked with grand-sounding closing lines.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "IDENTIFY",
+   "q": "Identify the recognized routes to earning the sophistication point.",
+   "a": "Explaining the significance or implications of the argument in a broader context; explaining the tensions, contradictions, or nuances within the issue; consistently engaging the complexity of the rhetorical situation; or writing with a vivid, persuasive style that is consistently controlled.",
+   "hint": "→ four routes",
+   "note": "Choose one route and sustain it; attempting all four superficially reads as unfocused.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "rubric",
+   "v": "IDENTIFY",
+   "q": "Identify what does NOT earn the sophistication point.",
+   "a": "Sweeping generalizations ('humans have always struggled with this'), a single fancy sentence, unsupported claims about society, dense vocabulary without substance, and hedged both-sides commentary that never commits.",
+   "hint": "→ list of non-qualifiers",
+   "note": "Readers are told to reward sustained complexity, not isolated flourishes.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "STATE",
+   "q": "State a workable timing plan for the AP Lang free-response section.",
+   "a": "15 minutes reading and planning Q1; 40 minutes writing Q1; 5 minutes planning and 35 minutes writing Q2; 5 minutes planning and 30 minutes writing Q3; 5 minutes final check. Wear a watch and switch essays on schedule even if unfinished.",
+   "hint": "→ minute-by-minute plan",
+   "note": "Three complete decent essays outscore two excellent ones plus a fragment, because each is scored independently out of 6.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "EXPLAIN",
+   "q": "Explain how to read a synthesis source set quickly.",
+   "a": "Read the prompt and take a position first. Then, for each source, read the header, the first and last paragraph, and skim the middle, jotting a two-word stance label and starring one usable line. Note which sources conflict - that tension is where sophistication lives.",
+   "hint": "→ procedure per source",
+   "note": "Charts and images count as sources and are underused; they often supply the cleanest data point.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "EXPLAIN",
+   "q": "Explain how to write a rhetorical analysis body paragraph.",
+   "a": "Name the rhetorical choice; quote the specific evidence briefly; explain the effect on the intended audience; then link that effect to the writer's overall purpose. Choice, evidence, effect, purpose - in that order, every paragraph.",
+   "hint": "→ four-step chain",
+   "note": "The 'effect' and 'purpose' steps are the ones students skip, and they are exactly where Row B points live.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "EXPLAIN",
+   "q": "Explain how to organize a rhetorical analysis essay other than device by device.",
+   "a": "Organize by the argument's movement: how the writer shifts from establishing credibility, to intensifying urgency, to demanding action - analyzing choices as they serve each stage. This foregrounds purpose instead of cataloguing techniques.",
+   "hint": "→ organizing principle",
+   "note": "Chunking the passage by rhetorical purpose is the surest structural route away from device-hunting.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "IDENTIFY",
+   "q": "Identify why 'device-hunting' lowers a rhetorical analysis score.",
+   "a": "Naming devices without explaining their effect produces evidence with no commentary, capping Row B at 1 or 2. A correct label ('this is anaphora') proves nothing about how the passage works on its audience.",
+   "hint": "→ problem + rubric consequence",
+   "note": "You may earn a 6 without naming a single device by name, as long as you explain the choices.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "IDENTIFY",
+   "q": "Identify why summarizing the passage or sources lowers a score.",
+   "a": "Summary reports content; the rubric rewards analysis of how content works. A summary-driven essay usually has no defensible thesis (Row A zero) and evidence without commentary (Row B 1-2).",
+   "hint": "→ problem + rubric consequence",
+   "note": "If your paragraph could be written by someone who agreed with nothing you believe, it is summary.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "EXPLAIN",
+   "q": "Explain why five-paragraph autopilot hurts on AP Lang.",
+   "a": "The formula forces exactly three body paragraphs whether the argument needs two or five, encourages one-source-per-paragraph listing, and spends space on formulaic intros and restating conclusions instead of commentary. Let the line of reasoning set the paragraph count.",
+   "hint": "→ named problems + alternative",
+   "note": "There is no required number of paragraphs; readers score reasoning, not shape.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "EXPLAIN",
+   "q": "Explain how to handle the argument essay's requirement to take a position.",
+   "a": "State one clear position in the thesis and hold it. You may qualify - agree with limits or under conditions - but you must be committed enough that a reader could argue against you; balanced 'both sides have points' essays fail Row A.",
+   "hint": "→ requirement + allowed nuance",
+   "note": "Qualifying is not fence-sitting: 'X is justified only when Y' is a strong, defensible position.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "prompts",
+   "v": "DEFINE",
+   "q": "Define what an AP prompt means by 'evaluate.'",
+   "a": "To evaluate is to judge the merit, validity, or effectiveness of something against criteria and to argue for that judgment - not to describe or summarize it.",
+   "hint": "→ definition + what it excludes",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "prompts",
+   "v": "EXPLAIN",
+   "q": "Explain the 'defend, challenge, or qualify' instruction on an AP Lang prompt.",
+   "a": "Defend means argue the claim is right; challenge means argue it is wrong; qualify means agree in part while specifying the conditions or limits under which it holds. You must choose one and sustain it - all three are equally scoreable.",
+   "hint": "→ three options + rule",
+   "note": "Qualify is usually the most defensible choice because it lets you use counterevidence as support.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "prompts",
+   "v": "EXPLAIN",
+   "q": "Explain how to write a strong qualified position.",
+   "a": "Name what you accept in the claim, name the conditions or cases where it fails, and state the principle that separates them. 'Civil disobedience is justified when legal channels have been exhausted, but not when the cause has not yet been argued publicly.'",
+   "hint": "→ three moves + model sentence",
+   "note": "A qualified thesis must still be one sentence with one governing position, not two claims joined by 'but.'",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "prompts",
+   "v": "EXPLAIN",
+   "q": "Explain how to use the context paragraph that precedes an FRQ passage.",
+   "a": "It supplies the rhetorical situation - writer, audience, occasion, exigence, and purpose - which the analysis must use. Mining it for audience and occasion is the fastest way to make commentary specific rather than generic.",
+   "hint": "→ what it gives + how to use",
+   "note": "Ignoring the framing paragraph is a common cause of vague, audience-free commentary on Q2.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "frq",
+   "v": "EXPLAIN",
+   "q": "Explain what a Q2 rhetorical analysis thesis must contain.",
+   "a": "It must state the writer's purpose or message and indicate the kinds of choices used to achieve it, in a way that can be developed - not a list of devices and not a summary of the passage's topic.",
+   "hint": "→ required components",
+   "note": "'Uses ethos, pathos, and logos to persuade the audience' is the classic Row A zero.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "frq",
+   "v": "EXPLAIN",
+   "q": "Explain what a Q1 synthesis thesis must contain.",
+   "a": "It must state your own defensible position on the prompt's issue, specific enough to be argued with the sources, and it should suggest the reasoning that will organize the essay. It should not simply report what the sources collectively say.",
+   "hint": "→ required components",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "frq",
+   "v": "EXPLAIN",
+   "q": "Explain what counts as acceptable evidence on the Q3 argument essay.",
+   "a": "Anything specific and accurate: history, current events, literature, film, science, personal experience, or observation. Readers do not privilege one domain; they reward specificity, accuracy, and the commentary that connects it to the claim.",
+   "hint": "→ range + criterion",
+   "note": "Two developed examples with real commentary beat five name-dropped ones.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "EXPLAIN",
+   "q": "Explain the ratio of evidence to commentary you should aim for.",
+   "a": "Roughly one sentence of evidence to two of commentary. If a paragraph is mostly quotation or mostly source summary, it is under-analyzed no matter how apt the evidence is.",
+   "hint": "→ ratio + diagnostic",
+   "note": "Highlight your quotations: if more than a third of a body paragraph is highlighted, cut evidence and add commentary.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "STATE",
+   "q": "State a 5-minute end-of-essay checklist.",
+   "a": "Does the thesis take a defensible position? Does each topic sentence make a claim? Is every quotation followed by explanation? Are at least three sources cited (Q1)? Does the last sentence of each paragraph tie back to the thesis?",
+   "hint": "→ five checks",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "mc",
+   "v": "EXPLAIN",
+   "q": "Explain the best strategy for AP Lang multiple-choice reading questions.",
+   "a": "Read the question stem before rereading the lines, return to the cited lines and their surrounding context, predict an answer in your own words, then find the choice closest to it. Eliminate choices that are true of the passage but do not answer the stem.",
+   "hint": "→ ordered strategy",
+   "note": "The most common wrong answer is accurate about the passage but irrelevant to what the question asked.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "mc",
+   "v": "EXPLAIN",
+   "q": "Explain the best strategy for AP Lang multiple-choice writing/revision questions.",
+   "a": "Identify the stated goal in the stem (add evidence, sharpen the claim, improve the transition), then judge each option only against that goal. Read the sentences before and after the insertion point, since the answer usually depends on that link.",
+   "hint": "→ goal-first strategy",
+   "note": "Grammatically fine but goal-irrelevant options are the standard distractors here.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "mc",
+   "v": "STATE",
+   "q": "State the guessing policy and pacing target for the multiple-choice section.",
+   "a": "There is no penalty for wrong answers, so answer every question. With 45 questions in 60 minutes, the pace is about 80 seconds per question, or roughly 11-12 minutes per passage set.",
+   "hint": "→ policy + pace",
+   "note": "Never leave a blank; mark and return rather than stalling on one hard question.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "mc",
+   "v": "EXPLAIN",
+   "q": "Explain how to annotate a passage efficiently during the exam.",
+   "a": "Mark the shifts (but, yet, however), the audience and occasion clues, and one or two places where tone changes; bracket the passage into two or three purpose-driven chunks. Do not underline every device you recognize.",
+   "hint": "→ what to mark + what to skip",
+   "note": "Annotation should produce a structure you can write from, not a decorated page.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "scoring",
+   "v": "STATE",
+   "q": "State how AP Lang exam scores are reported and composed.",
+   "a": "The final AP score is a 1-5 scale. It combines the multiple-choice section (45%) with the three free-response essays (55%), each essay scored 0-6 on the same rubric and weighted equally.",
+   "hint": "→ scale + weighting",
+   "note": "A composite around half the available points typically reaches a 3; exact cut scores shift each year.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "scoring",
+   "v": "EXPLAIN",
+   "q": "Explain how AP readers score the essays.",
+   "a": "Each essay is scored row by row against the 6-point analytic rubric by a trained reader, independently of your other essays, and readers are instructed to reward what the response does well rather than deduct for what is missing.",
+   "hint": "→ process + guiding principle",
+   "note": "There is no penalty carried across essays: a weak Q1 does not lower your Q2 score.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "scoring",
+   "v": "EXPLAIN",
+   "q": "Explain how grammar and mechanics affect an AP Lang essay score.",
+   "a": "There is no separate grammar row. Errors matter only when they interfere with the reader's understanding of the argument; a well-reasoned essay with imperfect surface polish can still earn 6.",
+   "hint": "→ rule + limit",
+   "note": "This is not license to ignore clarity - unreadable sentences do cost points through Row B.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "scoring",
+   "v": "EXPLAIN",
+   "q": "Explain what happens if an essay does not respond to the prompt.",
+   "a": "Responses that are off-topic, that only repeat the prompt, or that are written in a language other than English receive a score of 0. A blank or completely blank-page response receives no score at all.",
+   "hint": "→ conditions for zero",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "DECIDE",
+   "q": "Decide what to do when you have 10 minutes left and no essay started on Q3.",
+   "a": "Write a one-sentence defensible thesis immediately, then two body paragraphs with one specific example each and two sentences of commentary each. Skip the introduction beyond the thesis and skip the conclusion. Thesis plus real commentary can still earn 3-4 points.",
+   "hint": "→ triage plan",
+   "note": "A thesis with two developed paragraphs scores far above a polished intro with nothing after it.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "EXPLAIN",
+   "q": "Explain how to plan an essay in five minutes.",
+   "a": "Write the thesis in one sentence, then list two to four subclaims in the order they build, and note the single piece of evidence attached to each. That list is your topic sentences; if the subclaims do not build, reorder before writing.",
+   "hint": "→ three-step plan",
+   "note": null,
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "exam",
+   "t": "strategy",
+   "v": "IDENTIFY",
+   "q": "Identify habits that make commentary generic.",
+   "a": "Naming the audience as 'the reader' rather than the specific audience; explaining that a choice makes the argument 'more effective' or 'more persuasive' without saying how; and repeating the thesis instead of advancing it.",
+   "hint": "→ list of habits",
+   "note": "Replace 'this is effective' with 'this makes a skeptical legislator feel the cost personally.'",
+   "core": false,
+   "alt": null
+  }
+ ]
+}

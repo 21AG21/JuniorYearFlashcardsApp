@@ -1,0 +1,21 @@
+{
+  "name": "AP Decks",
+  "short_name": "AP Decks",
+  "description": "Flashcards for AP English Language, Chemistry, French, Calculus BC, and U.S. History, written to the College Board Course and Exam Descriptions.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0b",
+  "theme_color": "#f2f2f4",
+  "categories": ["education"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Review due", "url": "./index.html#/review" },
+    { "name": "Search", "url": "./index.html#/search" }
+  ]
+}

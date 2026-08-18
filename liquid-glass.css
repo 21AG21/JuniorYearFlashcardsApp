@@ -1,0 +1,292 @@
+/* ==========================================================================
+   Liquid Glass — v1 "static look"
+   Pure CSS material. No motion. Works in Safari / Chrome / Firefox.
+   Drop this file into any page, add class="lg" to an element.
+   ========================================================================== */
+
+:root {
+  /* material */
+  --lg-blur: 16px;              /* backdrop blur — bigger surfaces use more (see .lg-thick) */
+  --lg-sat: 1.8;                /* vibrancy: iOS saturates the backdrop a lot */
+  --lg-tint: 255 255 255;       /* tint colour (rgb triplet) */
+  --lg-tint-a: 0.14;            /* tint opacity */
+  --lg-rim: 1px;                /* width of the light rim */
+  --lg-rim-hi: rgba(255,255,255,.90);
+  --lg-rim-mid: rgba(255,255,255,.22);
+  --lg-rim-lo: rgba(255,255,255,.62);
+  --lg-shadow: 0 10px 28px -8px rgba(0,0,0,.28), 0 2px 5px -1px rgba(0,0,0,.10), 0 0 0 .5px rgba(0,0,0,.05);
+  --lg-pill: 120 120 128;         /* selection pill: neutral gray reads right on white/light UI */
+  --lg-pill-a: .16;
+  /* content */
+  --lg-ink: 0 0 0;
+  --lg-ink-a: .86;
+  --lg-ink-2a: .55;
+  --lg-accent: 0 122 255;       /* #007AFF */
+  --lg-green: 52 199 89;        /* #34C759 */
+  --lg-r: 999px;
+}
+[data-theme="dark"] {
+  --lg-tint: 22 22 26;
+  --lg-tint-a: 0.36;
+  --lg-rim-hi: rgba(255,255,255,.42);
+  --lg-rim-mid: rgba(255,255,255,.07);
+  --lg-rim-lo: rgba(255,255,255,.22);
+  --lg-shadow: 0 10px 28px -8px rgba(0,0,0,.55), 0 2px 5px -1px rgba(0,0,0,.25), 0 0 0 .5px rgba(255,255,255,.06);
+  --lg-pill: 255 255 255; --lg-pill-a: .14;
+  --lg-ink: 255 255 255;
+  --lg-ink-a: .94;
+  --lg-ink-2a: .60;
+  --lg-accent: 10 132 255;
+  --lg-green: 48 209 88;
+}
+
+/* --------------------------------------------------------------------------
+   The material
+   -------------------------------------------------------------------------- */
+.lg {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--lg-r);
+  color: rgb(var(--lg-ink) / var(--lg-ink-a));
+  box-shadow: var(--lg-shadow);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none; user-select: none;
+  /* the tint + blur live on the element itself, inset by the rim so the rim
+     stays "clear" like the edge of a lens */
+  background: rgb(var(--lg-tint) / var(--lg-tint-a));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+          backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+}
+/* keep real children above the pseudo layers */
+.lg > * { position: relative; z-index: 2; }
+
+/* Rim light: a 1px ring, brightest where light hits (top-left) and where it
+   exits (bottom-right) — Liquid Glass's signature edge. */
+.lg::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  border-radius: inherit;
+  padding: var(--lg-rim);
+  background:
+    linear-gradient(155deg,
+      var(--lg-rim-hi) 0%,
+      var(--lg-rim-mid) 32%,
+      var(--lg-rim-mid) 64%,
+      var(--lg-rim-lo) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask-composite: exclude;
+}
+/* Lens edge: a soft inner band — brighter/denser toward the rim, which is
+   what real refraction reads as at a glance. Also a faint bottom inner
+   shadow so the slab has thickness. */
+.lg::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 .5px rgba(255,255,255,.18),
+    inset 1.5px 2px 4px -2px rgba(255,255,255,.75),
+    inset -1.5px -2.5px 5px -2px rgba(255,255,255,.55),
+    inset 0 -10px 18px -14px rgba(0,0,0,.20),
+    inset 0 0 14px -6px rgba(255,255,255,.35);
+}
+[data-theme="dark"] .lg::after {
+  box-shadow:
+    inset 0 0 0 .5px rgba(255,255,255,.08),
+    inset 1.5px 2px 4px -2px rgba(255,255,255,.35),
+    inset -1.5px -2.5px 5px -2px rgba(255,255,255,.22),
+    inset 0 -10px 18px -14px rgba(0,0,0,.45),
+    inset 0 0 14px -6px rgba(255,255,255,.10);
+}
+
+/* Bigger surfaces read as thicker glass: more blur, more tint, deeper shadow */
+.lg-thick {
+  --lg-blur: 26px;
+  --lg-tint-a: 0.22;
+  --lg-shadow: 0 18px 40px -12px rgba(0,0,0,.35), 0 3px 8px -2px rgba(0,0,0,.10);
+}
+[data-theme="dark"] .lg-thick { --lg-tint-a: 0.48; }
+
+/* "Clear" variant: no adaptive tint, more see-through (use over bold media) */
+.lg-clear { --lg-tint-a: 0.06; --lg-blur: 8px; }
+
+/* Tinted glass (prominent / accent buttons) */
+.lg-tinted {
+  --lg-tint: var(--lg-accent);
+  --lg-tint-a: 0.82;
+  --lg-ink: 255 255 255; --lg-ink-a: 1;
+  --lg-rim-hi: rgba(255,255,255,.75); --lg-rim-mid: rgba(255,255,255,.18); --lg-rim-lo: rgba(255,255,255,.45);
+}
+
+/* Reduced transparency / contrast: go frosty */
+@media (prefers-reduced-transparency: reduce) {
+  .lg { --lg-tint-a: .82; --lg-blur: 0px; }
+  [data-theme="dark"] .lg { --lg-tint-a: .88; }
+}
+
+/* --------------------------------------------------------------------------
+   Components
+   -------------------------------------------------------------------------- */
+.lg, .lg * { box-sizing: border-box; }
+
+/* Buttons */
+.lg-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 44px; min-width: 44px; padding: 0 18px;
+  font: 600 16px/1 -apple-system, system-ui, "SF Pro Text", "Helvetica Neue", sans-serif;
+  letter-spacing: -0.01em;
+  border: 0; cursor: pointer; text-decoration: none; -webkit-appearance: none; appearance: none;
+  touch-action: manipulation;
+}
+.lg-btn.lg-icon { width: 44px; padding: 0; }
+.lg-btn.lg-sm { height: 36px; min-width: 36px; font-size: 14px; }
+.lg-btn.lg-sm.lg-icon { width: 36px; }
+.lg-btn.lg-lg { height: 52px; font-size: 17px; padding: 0 22px; }
+.lg-btn svg, .lg-tab svg, .lg-seg-item svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Cards / panels */
+.lg-card { --lg-r: 28px; padding: 18px; }
+.lg-bar  { --lg-r: 999px; }
+
+/* Tab bar ---------------------------------------------------------------- */
+.lg-tabbar {
+  /* iOS 26 layout: items are content-sized and spread space-between inside a
+     region inset 24pt from the capsule ends; the pill (label + 20pt each side)
+     therefore sits exactly 4pt inside the rounded end on the first/last tab. */
+  display: flex; align-items: stretch; justify-content: space-between; height: 62px; padding: 4px 24px;
+  --lg-blur: 22px;
+}
+.lg-tab {
+  position: relative; z-index: 2; flex: 0 0 auto; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  color: rgb(var(--lg-ink) / .92);              /* iOS 26: unselected items are full ink, not gray */
+  font: 500 12px/1 -apple-system, system-ui, sans-serif; letter-spacing: -0.005em;
+  cursor: pointer; touch-action: manipulation; border-radius: 999px;
+}
+.lg-tab svg { width: 27px; height: 27px; stroke-width: 2; }
+.lg-tab.is-active { color: rgb(var(--lg-accent)); }
+/* the selection pill: a flat, slightly denser piece of the same glass.
+   Neutral gray on light UI (default); add .lg-on-media to the bar for the
+   milky-white pill Apple uses over photos / colourful wallpapers. */
+.lg-pill {
+  position: absolute; z-index: 1; top: 4px; bottom: 4px; left: 0; width: 0;
+  border-radius: 999px;
+  background: rgb(var(--lg-pill) / var(--lg-pill-a));
+  pointer-events: none;
+}
+.lg-on-media { --lg-pill: 255 255 255; --lg-pill-a: .55; }
+.lg-on-media .lg-pill { box-shadow: 0 2px 6px -1px rgba(0,0,0,.14), inset 0 0 0 .5px rgba(255,255,255,.7), inset 0 1px 1px rgba(255,255,255,.9); }
+[data-theme="dark"] .lg-on-media { --lg-pill: 255 255 255; --lg-pill-a: .18; }
+[data-theme="dark"] .lg-on-media .lg-pill { box-shadow: 0 2px 6px -1px rgba(0,0,0,.35), inset 0 0 0 .5px rgba(255,255,255,.18); }
+
+/* Segmented control ------------------------------------------------------ */
+.lg-seg { display: flex; height: 40px; padding: 3px; }
+.lg-seg-item {
+  position: relative; z-index: 2; flex: 1 1 0; display: flex; align-items: center; justify-content: center;
+  font: 600 14px/1 -apple-system, system-ui, sans-serif; letter-spacing: -0.005em;
+  color: rgb(var(--lg-ink) / var(--lg-ink-2a)); cursor: pointer; touch-action: manipulation; border-radius: 999px;
+}
+.lg-seg-item.is-active { color: rgb(var(--lg-ink) / var(--lg-ink-a)); }
+.lg-seg .lg-pill { top: 3px; bottom: 3px; }
+
+/* Toggle ----------------------------------------------------------------- */
+.lg-toggle {
+  position: relative; width: 51px; height: 31px; flex: none;
+  --lg-tint: 120 120 128; --lg-tint-a: .28; --lg-blur: 8px;
+  --lg-shadow: inset 0 0 0 0 transparent;
+  cursor: pointer; touch-action: none;
+}
+.lg-toggle.is-on { --lg-tint: var(--lg-green); --lg-tint-a: .92; }
+.lg-knob {
+  position: absolute; z-index: 2; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,.18), 0 1px 1px rgba(0,0,0,.08), inset 0 0 0 .5px rgba(0,0,0,.04);
+  transform: translateX(calc(var(--on, 0) * 20px));
+}
+
+/* Slider (thin track + glass thumb) -------------------------------------- */
+.lg-slider {
+  --v: .5;                       /* 0..1, set by JS */
+  --thumb: 26px;
+  position: relative; height: 44px; display: flex; align-items: center;
+  touch-action: none; cursor: pointer; -webkit-user-select: none; user-select: none;
+}
+.lg-slider-track {
+  position: relative; flex: 1; height: 4px; border-radius: 999px;
+  background: rgba(120,120,128,.28);
+  box-shadow: inset 0 .5px 1px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+[data-theme="dark"] .lg-slider-track { background: rgba(120,120,128,.40); }
+.lg-slider-fill {
+  position: absolute; inset: 0 auto 0 0; width: calc(var(--v) * 100%);
+  background: rgb(var(--lg-accent)); border-radius: inherit;
+}
+.lg-slider.lg-white .lg-slider-fill { background: #fff; }
+.lg-slider-thumb {
+  position: absolute; z-index: 2; top: 50%; left: calc(var(--v) * (100% - var(--thumb)));
+  width: var(--thumb); height: var(--thumb); margin-top: calc(var(--thumb) / -2);
+  border-radius: 999px; background: rgba(255,255,255,.96);
+  box-shadow:
+    0 3px 8px rgba(0,0,0,.20), 0 1px 1px rgba(0,0,0,.10),
+    inset 0 0 0 .5px rgba(255,255,255,.9), inset 0 -1px 2px rgba(0,0,0,.05);
+}
+/* Capsule slider (Control-Center style: the whole capsule is glass) */
+.lg-slider.lg-capsule {
+  height: 44px; padding: 0; overflow: hidden; --lg-blur: 14px;
+}
+.lg-slider.lg-capsule .lg-slider-track { position: absolute; inset: 0; height: auto; border-radius: inherit; background: none; box-shadow: none; }
+.lg-slider.lg-capsule .lg-slider-fill { background: rgba(255,255,255,.90); }
+[data-theme="dark"] .lg-slider.lg-capsule .lg-slider-fill { background: rgba(255,255,255,.85); }
+.lg-slider.lg-capsule .lg-slider-thumb { display: none; }
+.lg-slider.lg-capsule .lg-slider-icon {
+  position: relative; z-index: 3; margin-left: 12px; width: 22px; height: 22px;
+  color: rgba(0,0,0,.6); mix-blend-mode: multiply;
+}
+.lg-slider.lg-capsule .lg-slider-icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lg-slider.lg-capsule.lg-tall { height: 160px; width: 64px; }
+.lg-slider.lg-capsule.lg-tall .lg-slider-fill { inset: auto 0 0 0; width: auto; height: calc(var(--v) * 100%); }
+.lg-slider.lg-capsule.lg-tall .lg-slider-icon { position: absolute; left: 50%; bottom: 14px; margin: 0 0 0 -11px; }
+
+/* Text on glass ("vibrancy": a touch heavier + tracked) ------------------ */
+.lg-title { font: 600 17px/1.2 -apple-system, system-ui, sans-serif; letter-spacing: -0.01em; }
+.lg-sub   { font: 400 13px/1.35 -apple-system, system-ui, sans-serif; color: rgb(var(--lg-ink) / var(--lg-ink-2a)); }
+
+/* ==========================================================================
+   === MOTION === (v2+)  — hooks driven by liquid-glass.js springs
+   The material "flexes and energizes with light" when touched: it scales up,
+   brightens, and its shadow lifts. All values are CSS custom properties that
+   the spring engine writes every frame; nothing here uses CSS transitions,
+   so every animation is interruptible.
+   ========================================================================== */
+.lg {
+  --lg-sx: 1; --lg-sy: 1; --lg-tx: 0px; --lg-ty: 0px; --lg-press: 0;
+  transform: translate3d(var(--lg-tx), var(--lg-ty), 0) scale(var(--lg-sx), var(--lg-sy));
+  transform-origin: var(--lg-origin, 50% 50%);
+  background: rgb(var(--lg-tint) / calc(var(--lg-tint-a) + var(--lg-press) * 0.14));
+  box-shadow: var(--lg-shadow);
+}
+.lg.is-pressed, .lg.is-moving { will-change: transform; }
+/* energize: a white glow that scales with press, plus a brighter rim */
+.lg::after {
+  background: rgba(255,255,255, calc(var(--lg-press) * 0.16));
+}
+[data-theme="dark"] .lg::after { background: rgba(255,255,255, calc(var(--lg-press) * 0.10)); }
+.lg::before { filter: brightness(calc(1 + var(--lg-press) * 0.6)); }
+.lg-tinted::after { background: rgba(255,255,255, calc(var(--lg-press) * 0.22)); }
+
+/* Selection pill: positioned by JS with transform (x, width via scaleX is
+   avoided so the corners stay round → we set left/width + scale on press) */
+.lg-pill { --lg-sx: 1; --lg-sy: 1; transform: translate3d(var(--lg-tx, 0px), 0, 0) scale(var(--lg-sx), var(--lg-sy)); will-change: transform; }
+.lg-tabbar.is-pressed .lg-pill, .lg-seg.is-pressed .lg-pill { background: rgb(var(--lg-pill) / calc(var(--lg-pill-a) * 1.5)); }
+
+/* Toggle knob is driven in px by JS (x + stretch) */
+.lg-knob { transform: translate3d(var(--kx, 0px), 0, 0); width: var(--kw, 27px); }
+.lg-toggle { --lg-sx: 1; --lg-sy: 1; }
+/* Slider thumb grows while grabbed */
+.lg-slider-thumb { transform: translate3d(var(--tx, 0px), 0, 0) scale(var(--ts, 1)); }
+.lg-slider { --lg-sx: 1; --lg-sy: 1; --lg-tx: 0px; --lg-ty: 0px; transform: translate3d(var(--lg-tx), var(--lg-ty), 0) scale(var(--lg-sx), var(--lg-sy)); transform-origin: var(--lg-origin, 50% 50%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lg, .lg-pill, .lg-knob, .lg-slider-thumb, .lg-slider { transform: none !important; }
+}

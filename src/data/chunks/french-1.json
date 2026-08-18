@@ -1,0 +1,2486 @@
+{
+ "course": "french",
+ "cards": [
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "le beau-père",
+   "a": "stepfather; also father-in-law. Mon beau-père vit avec ma mère depuis cinq ans.",
+   "hint": "→ nom masculin",
+   "note": "One word covers two relationships; context decides. Plural: les beaux-pères.",
+   "core": false,
+   "alt": [
+    "stepfather",
+    "father-in-law"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "une belle-mère",
+   "a": "a stepmother; also a mother-in-law. Ma belle-mère m'a accueilli comme son fils.",
+   "hint": "→ nom féminin",
+   "note": "Ambiguous like beau-père; marâtre exists but is strongly pejorative.",
+   "core": false,
+   "alt": [
+    "stepmother",
+    "mother-in-law"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "un demi-frère",
+   "a": "a half-brother (one parent in common). J'ai un demi-frère du premier mariage de mon père.",
+   "hint": "→ nom masculin",
+   "note": "A stepbrother with no shared parent is often called un quasi-frère.",
+   "core": false,
+   "alt": [
+    "half-brother",
+    "stepbrother"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "une demi-sœur",
+   "a": "a half-sister. Ma demi-sœur habite chez sa mère le week-end.",
+   "hint": "→ nom féminin",
+   "note": "Demi- stays invariable in the plural: des demi-sœurs.",
+   "core": false,
+   "alt": [
+    "half-sister",
+    "stepsister"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "une famille recomposée",
+   "a": "a blended family, a stepfamily. Dans une famille recomposée, il faut inventer de nouvelles habitudes.",
+   "hint": "→ nom féminin",
+   "note": "High-frequency theme-1 term; never translate literally as recomposed family.",
+   "core": true,
+   "alt": [
+    "blended family",
+    "stepfamily"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "une famille monoparentale",
+   "a": "a single-parent family. Les familles monoparentales sont le plus souvent dirigées par des femmes.",
+   "hint": "→ nom féminin",
+   "note": "Standard sociological term used in French media and in exam texts.",
+   "core": false,
+   "alt": [
+    "single-parent family",
+    "one-parent family"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "les proches",
+   "a": "close family and friends, loved ones. Il est entouré de ses proches.",
+   "hint": "→ nom masculin pluriel",
+   "note": "Wider than la famille: anyone emotionally close. Not a synonym of les parents.",
+   "core": true,
+   "alt": [
+    "loved ones",
+    "close relatives",
+    "those close to you"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "élever un enfant",
+   "a": "to raise, to bring up a child. Elle a élevé trois enfants seule.",
+   "hint": "→ verbe transitif",
+   "note": "Grandir is intransitive (the child grows); élever is what the parent does.",
+   "core": true,
+   "alt": [
+    "to raise a child",
+    "to bring up a child"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "les petits-enfants",
+   "a": "the grandchildren. Nos petits-enfants viennent tous les dimanches.",
+   "hint": "→ nom masculin pluriel",
+   "note": "Nothing to do with size; singulars are le petit-fils and la petite-fille.",
+   "core": false,
+   "alt": [
+    "grandchildren"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "l'aîné / l'aînée",
+   "a": "the eldest child, the older one. En tant qu'aînée, elle s'occupe souvent des petits.",
+   "hint": "→ nom",
+   "note": "Les aînés also means elders, older people. Circumflex on the i is required.",
+   "core": false,
+   "alt": [
+    "the eldest",
+    "the older sibling",
+    "elder"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "un enfant unique",
+   "a": "an only child. Être enfant unique n'est pas toujours facile.",
+   "hint": "→ nom",
+   "note": "No article after être: il est enfant unique. Unique here means sole, not wonderful.",
+   "core": false,
+   "alt": [
+    "only child"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "le parrain / la marraine",
+   "a": "the godfather / the godmother. Mon parrain m'offre toujours un livre.",
+   "hint": "→ nom",
+   "note": "Still common in non-practising families, where the role is purely affective.",
+   "core": false,
+   "alt": [
+    "godfather",
+    "godmother"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "divorcer",
+   "a": "to get divorced. Ses parents ont divorcé quand elle avait six ans.",
+   "hint": "→ verbe intransitif",
+   "note": "Takes avoir, not être: ils ont divorcé. The noun is le divorce.",
+   "core": false,
+   "alt": [
+    "to divorce",
+    "to get divorced"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Famille et parenté",
+   "v": "TRANSLATE",
+   "q": "s'occuper de",
+   "a": "to take care of, to look after. Elle s'occupe de sa grand-mère tous les jours.",
+   "hint": "→ verbe pronominal",
+   "note": "Always with de. Garder means to babysit; prendre soin de is warmer.",
+   "core": true,
+   "alt": [
+    "to take care of",
+    "to look after"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Étapes de la vie",
+   "v": "TRANSLATE",
+   "q": "l'enfance",
+   "a": "childhood. Il a passé son enfance à la campagne.",
+   "hint": "→ nom féminin",
+   "note": "Feminine despite the elision: une enfance heureuse.",
+   "core": false,
+   "alt": [
+    "childhood"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Étapes de la vie",
+   "v": "TRANSLATE",
+   "q": "l'adolescence",
+   "a": "adolescence, the teenage years. L'adolescence est une période de remise en question.",
+   "hint": "→ nom féminin",
+   "note": "The person is un adolescent, familiarly un ado.",
+   "core": false,
+   "alt": [
+    "adolescence",
+    "teenage years"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Étapes de la vie",
+   "v": "TRANSLATE",
+   "q": "prendre sa retraite",
+   "a": "to retire. Mon père prend sa retraite l'année prochaine.",
+   "hint": "→ expression verbale",
+   "note": "Être à la retraite = to be retired. Un retraité is a retired person.",
+   "core": false,
+   "alt": [
+    "to retire"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Étapes de la vie",
+   "v": "TRANSLATE",
+   "q": "s'épanouir",
+   "a": "to flourish, to blossom, to thrive. Elle s'épanouit dans son nouveau quartier.",
+   "hint": "→ verbe pronominal",
+   "note": "Very high-yield for essays on well-being; noun l'épanouissement personnel.",
+   "core": true,
+   "alt": [
+    "to flourish",
+    "to thrive",
+    "to blossom"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Étapes de la vie",
+   "v": "TRANSLATE",
+   "q": "le mariage",
+   "a": "marriage; also the wedding. Le mariage aura lieu en juin à la mairie.",
+   "hint": "→ nom masculin",
+   "note": "In France only the civil ceremony at la mairie is legally binding.",
+   "core": true,
+   "alt": [
+    "marriage",
+    "wedding"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Étapes de la vie",
+   "v": "TRANSLATE",
+   "q": "se pacser",
+   "a": "to enter into a PACS, a civil partnership. Ils ont préféré se pacser plutôt que se marier.",
+   "hint": "→ verbe pronominal",
+   "note": "Colloquial verb built from the acronym PACS; extremely common today.",
+   "core": false,
+   "alt": [
+    "to enter a civil partnership",
+    "to get a PACS"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Étapes de la vie",
+   "v": "TRANSLATE",
+   "q": "le baptême",
+   "a": "the christening, the baptism. Le baptême de la petite a réuni toute la famille.",
+   "hint": "→ nom masculin",
+   "note": "Circumflex on the e. Figurative use: le baptême de l'air, a first flight.",
+   "core": false,
+   "alt": [
+    "baptism",
+    "christening"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "le quartier",
+   "a": "the neighbourhood, the district. Je connais tous les commerçants de mon quartier.",
+   "hint": "→ nom masculin",
+   "note": "Core theme-1 word; le voisinage means the immediate neighbours, not the area.",
+   "core": true,
+   "alt": [
+    "neighbourhood",
+    "district",
+    "area"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "la banlieue",
+   "a": "the suburbs, the outskirts of a city. Il habite en banlieue parisienne.",
+   "hint": "→ nom féminin",
+   "note": "Not the affluent American suburb: French media often connote working-class estates.",
+   "core": true,
+   "alt": [
+    "suburbs",
+    "outskirts"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "la cité",
+   "a": "the housing estate, the projects. Elle a grandi dans une cité des années soixante.",
+   "hint": "→ nom féminin",
+   "note": "False friend: a city is la ville. Also a historic centre, as in l'île de la Cité.",
+   "core": true,
+   "alt": [
+    "housing estate",
+    "the projects"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "un HLM",
+   "a": "a subsidised flat or estate (habitation à loyer modéré). Sa famille vit dans un HLM depuis vingt ans.",
+   "hint": "→ nom masculin (sigle)",
+   "note": "Pronounced letter by letter; usually masculine in speech.",
+   "core": true,
+   "alt": [
+    "public housing",
+    "council flat",
+    "subsidised housing"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "le voisin / la voisine",
+   "a": "the neighbour. Notre voisine garde nos clés quand nous partons.",
+   "hint": "→ nom",
+   "note": "Le voisinage = the neighbours collectively; voisin is also an adjective.",
+   "core": false,
+   "alt": [
+    "neighbour",
+    "neighbor"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "déménager",
+   "a": "to move house. Nous déménageons à la fin du mois.",
+   "hint": "→ verbe intransitif",
+   "note": "Opposite: emménager, to move in. Noun: le déménagement.",
+   "core": true,
+   "alt": [
+    "to move house",
+    "to move out"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "la colocation",
+   "a": "flat-sharing, house-sharing. Elle vit en colocation avec deux étudiantes.",
+   "hint": "→ nom féminin",
+   "note": "The people are les colocataires, familiarly les colocs.",
+   "core": false,
+   "alt": [
+    "flat-share",
+    "house-sharing",
+    "shared housing"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "la campagne",
+   "a": "the countryside. Ils ont quitté la ville pour s'installer à la campagne.",
+   "hint": "→ nom féminin",
+   "note": "Same word means a campaign (une campagne électorale); context disambiguates.",
+   "core": false,
+   "alt": [
+    "countryside",
+    "the country"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "le village",
+   "a": "the village. Dans mon village, tout le monde se connaît.",
+   "hint": "→ nom masculin",
+   "note": "Un bourg is slightly larger; un hameau is a tiny cluster of houses.",
+   "core": false,
+   "alt": [
+    "village"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "la mairie",
+   "a": "the town hall, the local council. Les démarches se font à la mairie du quartier.",
+   "hint": "→ nom féminin",
+   "note": "Building and institution alike; the person is le maire. Note maire vs mère vs mer.",
+   "core": true,
+   "alt": [
+    "town hall",
+    "city hall"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Logement et quartier",
+   "v": "TRANSLATE",
+   "q": "les commerces de proximité",
+   "a": "local shops within walking distance. Les commerces de proximité font vivre le quartier.",
+   "hint": "→ nom masculin pluriel",
+   "note": "Ready-made collocation for defending neighbourhood life against big retail.",
+   "core": false,
+   "alt": [
+    "local shops",
+    "neighbourhood businesses"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Vie associative",
+   "v": "TRANSLATE",
+   "q": "le bénévolat",
+   "a": "voluntary work, volunteering. Le bénévolat occupe tous ses week-ends.",
+   "hint": "→ nom masculin",
+   "note": "The activity; the person is un bénévole. Not le volontariat, which is a formal scheme.",
+   "core": true,
+   "alt": [
+    "volunteering",
+    "voluntary work"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Vie associative",
+   "v": "TRANSLATE",
+   "q": "un bénévole",
+   "a": "a volunteer (unpaid). Les bénévoles distribuent des repas chaque soir.",
+   "hint": "→ nom",
+   "note": "Un volontaire is enrolled in a scheme such as le service civique and receives a stipend.",
+   "core": false,
+   "alt": [
+    "volunteer"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Vie associative",
+   "v": "TRANSLATE",
+   "q": "une association",
+   "a": "a non-profit organisation, a club. Il a créé une association de quartier.",
+   "hint": "→ nom féminin",
+   "note": "The loi 1901 framework; do not read it as association in the vague English sense.",
+   "core": true,
+   "alt": [
+    "non-profit",
+    "association",
+    "club"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Vie associative",
+   "v": "TRANSLATE",
+   "q": "l'engagement associatif",
+   "a": "involvement in voluntary organisations. L'engagement associatif attire de plus en plus de retraités.",
+   "hint": "→ nom masculin",
+   "note": "Also l'engagement citoyen. The matching verb takes a preposition: s'engager pour or dans une cause.",
+   "core": true,
+   "alt": [
+    "community involvement",
+    "volunteering commitment",
+    "involvement in associations"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Vie associative",
+   "v": "TRANSLATE",
+   "q": "l'entraide",
+   "a": "mutual aid, helping one another. L'entraide entre voisins a sauvé le village.",
+   "hint": "→ nom féminin",
+   "note": "Built on aider; pairs naturally with la solidarité in argumentative writing.",
+   "core": false,
+   "alt": [
+    "mutual aid",
+    "mutual help"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Vie associative",
+   "v": "TRANSLATE",
+   "q": "le lien social",
+   "a": "the social bond, connection between people. Les associations créent du lien social dans le quartier.",
+   "hint": "→ nom masculin",
+   "note": "Collocations: créer, tisser, maintenir du lien social. Very frequent in essays on community.",
+   "core": true,
+   "alt": [
+    "social bond",
+    "social connection",
+    "social ties"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Vie associative",
+   "v": "TRANSLATE",
+   "q": "le vivre-ensemble",
+   "a": "living together, social cohesion. Le vivre-ensemble se construit au quotidien.",
+   "hint": "→ nom masculin (invariable)",
+   "note": "Fixed hyphenated noun, ubiquitous in French debates on community.",
+   "core": false,
+   "alt": [
+    "social cohesion",
+    "living together"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Politesse et relations",
+   "v": "TRANSLATE",
+   "q": "faire la bise",
+   "a": "to greet with a kiss on each cheek. On fait la bise à ses amis, pas à son patron.",
+   "hint": "→ expression verbale",
+   "note": "The number of kisses varies by region, from two to four.",
+   "core": true,
+   "alt": [
+    "to kiss on the cheek in greeting",
+    "to give a peck on each cheek"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Politesse et relations",
+   "v": "TRANSLATE",
+   "q": "tutoyer",
+   "a": "to address someone as tu. On peut se tutoyer, si tu veux.",
+   "hint": "→ verbe transitif",
+   "note": "Se tutoyer = to be on tu terms with each other. Noun: le tutoiement.",
+   "core": false,
+   "alt": [
+    "to use tu with someone",
+    "to address as tu"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Politesse et relations",
+   "v": "TRANSLATE",
+   "q": "vouvoyer",
+   "a": "to address someone as vous. Il vouvoie encore ses beaux-parents.",
+   "hint": "→ verbe transitif",
+   "note": "Default with strangers, elders and at work; switching too early sounds rude.",
+   "core": false,
+   "alt": [
+    "to use vous with someone",
+    "to address as vous"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Politesse et relations",
+   "v": "TRANSLATE",
+   "q": "un pote",
+   "a": "a mate, a buddy. Je sors avec mes potes ce soir.",
+   "hint": "→ expression familière",
+   "note": "Familiar register: fine in speech, avoid it in the argumentative essay.",
+   "core": false,
+   "alt": [
+    "mate",
+    "buddy",
+    "pal"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Politesse et relations",
+   "v": "TRANSLATE",
+   "q": "s'entendre bien avec",
+   "a": "to get along well with. Je m'entends bien avec mes voisins.",
+   "hint": "→ verbe pronominal",
+   "note": "Literally to hear each other; opposite mal s'entendre or se disputer.",
+   "core": false,
+   "alt": [
+    "to get along with",
+    "to get on with"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Politesse et relations",
+   "v": "TRANSLATE",
+   "q": "se disputer",
+   "a": "to argue, to quarrel. Ils se disputent pour des broutilles.",
+   "hint": "→ verbe pronominal",
+   "note": "Not to dispute a claim: for that use contester. Une dispute is a row.",
+   "core": false,
+   "alt": [
+    "to argue",
+    "to quarrel"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Politesse et relations",
+   "v": "TRANSLATE",
+   "q": "le fossé des générations",
+   "a": "the generation gap. Le numérique a creusé le fossé des générations.",
+   "hint": "→ nom masculin",
+   "note": "Collocations: creuser or combler le fossé. Un fossé is literally a ditch.",
+   "core": false,
+   "alt": [
+    "generation gap"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Immigration et intégration",
+   "v": "TRANSLATE",
+   "q": "un immigré / une immigrée",
+   "a": "an immigrant, someone settled in a new country. Ses grands-parents sont des immigrés portugais.",
+   "hint": "→ nom",
+   "note": "Un migrant is on the move; un immigré has arrived and settled.",
+   "core": false,
+   "alt": [
+    "immigrant"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Immigration et intégration",
+   "v": "TRANSLATE",
+   "q": "s'intégrer",
+   "a": "to fit in, to become part of a community. Elle s'est vite intégrée dans le village.",
+   "hint": "→ verbe pronominal",
+   "note": "Followed by dans or à. The noun l'intégration is the key word in French debates on immigration.",
+   "core": true,
+   "alt": [
+    "to fit in",
+    "to integrate",
+    "to become part of a community"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Immigration et intégration",
+   "v": "TRANSLATE",
+   "q": "les racines",
+   "a": "roots, origins. Elle est retournée au Maroc pour retrouver ses racines.",
+   "hint": "→ nom féminin pluriel",
+   "note": "Common metaphor; the opposite state is le déracinement, uprooting.",
+   "core": false,
+   "alt": [
+    "roots",
+    "origins"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Immigration et intégration",
+   "v": "TRANSLATE",
+   "q": "le métissage",
+   "a": "cultural or ethnic mixing, blending. Le métissage culturel enrichit la cuisine française.",
+   "hint": "→ nom masculin",
+   "note": "Usually positive in cultural contexts, including music and language.",
+   "core": false,
+   "alt": [
+    "cultural mixing",
+    "blending"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Immigration et intégration",
+   "v": "TRANSLATE",
+   "q": "la naturalisation",
+   "a": "naturalisation, acquiring French nationality. Elle a obtenu la naturalisation après huit ans.",
+   "hint": "→ nom féminin",
+   "note": "Ends with a ceremony at la préfecture and the singing of la Marseillaise.",
+   "core": false,
+   "alt": [
+    "naturalisation",
+    "naturalization"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Immigration et intégration",
+   "v": "TRANSLATE",
+   "q": "un préjugé",
+   "a": "a prejudice, a preconceived idea. Il faut lutter contre les préjugés sur la banlieue.",
+   "hint": "→ nom masculin",
+   "note": "Lutter contre les préjugés is a ready-made essay collocation.",
+   "core": false,
+   "alt": [
+    "prejudice",
+    "preconception"
+   ]
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la famille",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce qu'une famille recomposée ?",
+   "a": "C'est une famille formée par un couple dont l'un des partenaires au moins a des enfants d'une union précédente. Demi-frères, demi-sœurs et beaux-parents y vivent ensemble.",
+   "hint": "→ définition en français",
+   "note": "Now a mainstream family model in France; expect it in listening texts on family life.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la famille",
+   "v": "EXPLAIN",
+   "q": "Explique ce qu'est le PACS.",
+   "a": "Le pacte civil de solidarité est un contrat signé en mairie par deux personnes majeures qui organisent leur vie commune. Il donne des droits fiscaux et sociaux, mais il est plus simple à rompre que le mariage.",
+   "hint": "→ explication en français",
+   "note": "Created in 1999, open to all couples; today almost as frequent as marriage.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la ville",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la banlieue en France ?",
+   "a": "La banlieue désigne les communes qui entourent une grande ville. Dans les médias, le mot évoque souvent les grands ensembles populaires où vivent beaucoup de familles d'origine immigrée.",
+   "hint": "→ explication en français",
+   "note": "Do not map it onto the American suburb: the social connotation is usually the opposite.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la ville",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce qu'un HLM ?",
+   "a": "Un HLM est une habitation à loyer modéré, un logement social construit par des organismes publics. Il permet aux familles modestes de se loger pour un loyer inférieur au prix du marché.",
+   "hint": "→ explication en français",
+   "note": "Roughly one French household in six lives in social housing.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la convivialité",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que l'apéro ?",
+   "a": "L'apéritif, familièrement l'apéro, est le moment de boisson et de petites choses à grignoter avant le repas. C'est surtout une occasion de se retrouver entre amis, voisins ou collègues.",
+   "hint": "→ explication en français",
+   "note": "Un apéro dînatoire replaces dinner entirely; the ritual is social, not culinary.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: le calendrier",
+   "v": "EXPLAIN",
+   "q": "Que sont les grandes vacances ?",
+   "a": "Ce sont les vacances d'été des élèves, en juillet et en août. Beaucoup de familles partent alors en vacances : les villes se vident et les régions touristiques se remplissent.",
+   "hint": "→ explication en français",
+   "note": "The school calendar splits France into zones A, B and C to stagger holiday traffic.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la politesse",
+   "v": "EXPLAIN",
+   "q": "Explique la coutume de la bise.",
+   "a": "Faire la bise consiste à s'embrasser sur les joues pour se saluer. Le nombre de bises varie selon les régions, de deux à quatre, et on la réserve aux proches, aux amis et parfois aux collègues.",
+   "hint": "→ explication en français",
+   "note": "With strangers or in professional settings a handshake remains safer.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: le quartier",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la Fête des voisins ?",
+   "a": "C'est une journée, au printemps, où les habitants d'un immeuble ou d'une rue se réunissent pour partager un repas. L'objectif est de créer du lien social et de lutter contre l'anonymat des villes.",
+   "hint": "→ explication en français",
+   "note": "Launched in Paris in 1999; a perfect example for essays on le vivre-ensemble.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la solidarité",
+   "v": "EXPLAIN",
+   "q": "Explique ce que sont les Restos du Cœur.",
+   "a": "C'est une association caritative fondée par l'humoriste Coluche en 1985. Grâce à des milliers de bénévoles, elle distribue des repas gratuits et aide les personnes en difficulté, surtout en hiver.",
+   "hint": "→ explication en français",
+   "note": "The annual concert des Enfoirés funds much of its budget; a go-to example for le bénévolat.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: l'engagement",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce qu'une association loi 1901 ?",
+   "a": "C'est une association à but non lucratif : deux personnes suffisent pour la déclarer en préfecture. Sport, culture, aide aux plus démunis, la vie associative française repose sur ce statut.",
+   "hint": "→ explication en français",
+   "note": "France counts well over a million such associations, run mainly by des bénévoles.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t1",
+   "t": "Culture: la famille",
+   "v": "EXPLAIN",
+   "q": "Explique pourquoi le mariage civil a lieu à la mairie en France.",
+   "a": "Parce que l'État français est laïque, seul le mariage civil, célébré par le maire, a une valeur légale. La cérémonie religieuse reste possible, mais elle doit avoir lieu après le passage à la mairie.",
+   "hint": "→ explication en français",
+   "note": "The rule dates from the Revolution (1792), which secularised civil status; the 1905 law later separated Church and State.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "la langue maternelle",
+   "a": "the mother tongue, the first language. Sa langue maternelle est le wolof, mais il étudie en français.",
+   "hint": "→ nom féminin",
+   "note": "Distinguish from une langue seconde and une langue étrangère.",
+   "core": true,
+   "alt": [
+    "mother tongue",
+    "native language",
+    "first language"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "bilingue",
+   "a": "bilingual. Elle est parfaitement bilingue français-anglais.",
+   "hint": "→ adjectif",
+   "note": "Invariable in gender: un enfant bilingue, une classe bilingue. Plurilingue for three or more.",
+   "core": false,
+   "alt": [
+    "bilingual"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "un locuteur / une locutrice",
+   "a": "a speaker of a language. Le français compte plus de trois cents millions de locuteurs.",
+   "hint": "→ nom",
+   "note": "Standard term in statistics about la Francophonie; un locuteur natif is a native speaker.",
+   "core": false,
+   "alt": [
+    "speaker"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "la francophonie",
+   "a": "the French-speaking world. La francophonie s'étend sur les cinq continents.",
+   "hint": "→ nom féminin",
+   "note": "Lower case = all French speakers; capital Francophonie = the official organisation.",
+   "core": true,
+   "alt": [
+    "the French-speaking world",
+    "Francophonie"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "une langue régionale",
+   "a": "a regional language. Le breton et le corse sont des langues régionales.",
+   "hint": "→ nom féminin",
+   "note": "Also called langues de France; they have no official status alongside French.",
+   "core": false,
+   "alt": [
+    "regional language"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "le breton",
+   "a": "Breton, the Celtic language of Brittany. Le breton s'enseigne aujourd'hui dans les écoles Diwan.",
+   "hint": "→ nom masculin",
+   "note": "A Celtic language, related to Welsh, not to French; speakers are les bretonnants.",
+   "core": false,
+   "alt": [
+    "Breton"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "l'occitan",
+   "a": "Occitan, the historic language of southern France. L'occitan a donné sa poésie aux troubadours.",
+   "hint": "→ nom masculin",
+   "note": "Also called la langue d'oc, opposed to la langue d'oïl in the north.",
+   "core": false,
+   "alt": [
+    "Occitan"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "le créole",
+   "a": "Creole, a language born of contact between French and other languages. En Martinique, on parle créole à la maison et français à l'école.",
+   "hint": "→ nom masculin",
+   "note": "Spoken in the Antilles, Haiti and La Réunion; a full language, not broken French.",
+   "core": false,
+   "alt": [
+    "Creole"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "un anglicisme",
+   "a": "an anglicism, a word borrowed from English. Le mot week-end est un anglicisme entré dans le dictionnaire.",
+   "hint": "→ nom masculin",
+   "note": "Official French equivalents exist: courriel for e-mail, mot-dièse for hashtag.",
+   "core": true,
+   "alt": [
+    "anglicism",
+    "English borrowing"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "le verlan",
+   "a": "verlan, French back-slang that inverts syllables. En verlan, femme devient meuf et fête devient teuf.",
+   "hint": "→ nom masculin",
+   "note": "The word itself is l'envers inverted; strongly marked as youth and banlieue speech.",
+   "core": true,
+   "alt": [
+    "verlan",
+    "French back-slang"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "l'argot",
+   "a": "slang. Le mot boulot appartient à l'argot courant.",
+   "hint": "→ nom masculin",
+   "note": "Adjective argotique. Keep it out of the argumentative essay unless you are quoting.",
+   "core": true,
+   "alt": [
+    "slang"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "le registre de langue",
+   "a": "the level or register of language. Il faut adapter son registre de langue à son interlocuteur.",
+   "hint": "→ nom masculin",
+   "note": "Three levels to name in an exam: soutenu, courant, familier.",
+   "core": true,
+   "alt": [
+    "register",
+    "level of language"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "un faux ami",
+   "a": "a false friend, a deceptively similar word. Actuellement est un faux ami : il signifie currently.",
+   "hint": "→ nom masculin",
+   "note": "Classic traps: sensible (sensitive), librairie (bookshop), assister à (to attend).",
+   "core": true,
+   "alt": [
+    "false friend",
+    "false cognate"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Langue et identité",
+   "v": "TRANSLATE",
+   "q": "maîtriser une langue",
+   "a": "to master a language, to have a strong command of it. Il maîtrise trois langues à l'écrit comme à l'oral.",
+   "hint": "→ verbe transitif",
+   "note": "Circumflex on the i. Noun: la maîtrise de la langue, a phrase used on report cards.",
+   "core": false,
+   "alt": [
+    "to master a language",
+    "to have command of a language"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "avoir le cafard",
+   "a": "to feel down, to have the blues. Depuis son départ, j'ai le cafard. Literally: to have the cockroach.",
+   "hint": "→ expression idiomatique",
+   "note": "Interchangeable with avoir le blues; not the same as être déprimé, which is clinical.",
+   "core": false,
+   "alt": [
+    "to feel down",
+    "to have the blues"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "poser un lapin à quelqu'un",
+   "a": "to stand someone up. Il m'a posé un lapin hier soir. Literally: to place a rabbit on someone.",
+   "hint": "→ expression idiomatique",
+   "note": "Always with à + person; nothing to do with rabbits or with posing.",
+   "core": false,
+   "alt": [
+    "to stand someone up"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "coûter les yeux de la tête",
+   "a": "to cost a fortune, to cost an arm and a leg. Ce tableau a coûté les yeux de la tête. Literally: to cost the eyes in your head.",
+   "hint": "→ expression idiomatique",
+   "note": "Synonym: coûter une fortune, or the familiar coûter la peau des fesses.",
+   "core": false,
+   "alt": [
+    "to cost a fortune",
+    "to cost an arm and a leg"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "tomber dans les pommes",
+   "a": "to faint, to pass out. Elle est tombée dans les pommes en plein cours. Literally: to fall into the apples.",
+   "hint": "→ expression idiomatique",
+   "note": "Familiar register; the neutral verb is s'évanouir.",
+   "core": false,
+   "alt": [
+    "to faint",
+    "to pass out"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "avoir un chat dans la gorge",
+   "a": "to have a frog in one's throat. Excusez-moi, j'ai un chat dans la gorge. Literally: to have a cat in the throat.",
+   "hint": "→ expression idiomatique",
+   "note": "The animal changes across languages: cat in French, frog in English.",
+   "core": false,
+   "alt": [
+    "to have a frog in one's throat"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "il pleut des cordes",
+   "a": "it is pouring, it is raining hard. Prends un parapluie, il pleut des cordes. Literally: it is raining ropes.",
+   "hint": "→ expression idiomatique",
+   "note": "Impersonal, only with il. Familiar variant: il pleut comme vache qui pisse.",
+   "core": false,
+   "alt": [
+    "it is pouring",
+    "it is raining cats and dogs"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "donner sa langue au chat",
+   "a": "to give up guessing. Je donne ma langue au chat, dis-moi la réponse. Literally: to give one's tongue to the cat.",
+   "hint": "→ expression idiomatique",
+   "note": "Only used about riddles and guessing games, never about quitting a task.",
+   "core": false,
+   "alt": [
+    "to give up guessing",
+    "to give up trying to guess"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "avoir le coup de foudre",
+   "a": "to fall in love at first sight. Ils ont eu le coup de foudre à Cannes. Literally: to have the lightning strike.",
+   "hint": "→ expression idiomatique",
+   "note": "Also used of things: j'ai eu un coup de foudre pour cette maison.",
+   "core": false,
+   "alt": [
+    "to fall in love at first sight",
+    "love at first sight"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "faire la grasse matinée",
+   "a": "to sleep in, to have a lie-in. Le dimanche, je fais la grasse matinée. Literally: to make the fat morning.",
+   "hint": "→ expression idiomatique",
+   "note": "Fixed phrase with faire; do not say dormir tard, which suggests going to bed late.",
+   "core": false,
+   "alt": [
+    "to sleep in",
+    "to have a lie-in"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "en faire tout un fromage",
+   "a": "to make a big deal out of nothing. Ce n'est qu'un retard, n'en fais pas tout un fromage. Literally: to make a whole cheese of it.",
+   "hint": "→ expression idiomatique",
+   "note": "Familiar; the English equivalent uses a mountain rather than a cheese.",
+   "core": false,
+   "alt": [
+    "to make a big deal out of it",
+    "to make a mountain out of a molehill"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "avoir d'autres chats à fouetter",
+   "a": "to have other things to worry about. Je n'ai pas le temps, j'ai d'autres chats à fouetter. Literally: to have other cats to whip.",
+   "hint": "→ expression idiomatique",
+   "note": "English says bigger fish to fry; the register is familiar but not rude.",
+   "core": false,
+   "alt": [
+    "to have bigger fish to fry",
+    "to have other things to deal with"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "être dans la lune",
+   "a": "to be daydreaming, to have one's head in the clouds. Cet élève est toujours dans la lune. Literally: to be in the moon.",
+   "hint": "→ expression idiomatique",
+   "note": "Describes a lasting tendency as well as a passing moment of inattention.",
+   "core": false,
+   "alt": [
+    "to be daydreaming",
+    "to have one's head in the clouds"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "casser les pieds à quelqu'un",
+   "a": "to annoy someone, to get on someone's nerves. Tu me casses les pieds avec tes questions. Literally: to break someone's feet.",
+   "hint": "→ expression familière",
+   "note": "Familiar but acceptable; the vulgar version replaces pieds with another word.",
+   "core": false,
+   "alt": [
+    "to annoy someone",
+    "to get on someone's nerves"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "raconter des salades",
+   "a": "to tell tall tales, to talk nonsense. Ne l'écoute pas, il raconte des salades. Literally: to tell salads.",
+   "hint": "→ expression familière",
+   "note": "Implies invention rather than error; a liar tells salades, a mistaken person does not.",
+   "core": false,
+   "alt": [
+    "to tell tall tales",
+    "to talk nonsense"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "avoir la pêche",
+   "a": "to be full of energy, to feel great. Ce matin, j'ai la pêche ! Literally: to have the peach.",
+   "hint": "→ expression familière",
+   "note": "Synonyms: avoir la frite, être en forme. The opposite is ne pas avoir le moral.",
+   "core": false,
+   "alt": [
+    "to be full of energy",
+    "to feel great"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "mettre les pieds dans le plat",
+   "a": "to put one's foot in it, to blunder tactlessly. Il a mis les pieds dans le plat en parlant du divorce. Literally: to put one's feet in the dish.",
+   "hint": "→ expression idiomatique",
+   "note": "Can also mean to raise the awkward subject deliberately.",
+   "core": false,
+   "alt": [
+    "to put one's foot in it",
+    "to blunder"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "appeler un chat un chat",
+   "a": "to call a spade a spade, to speak plainly. Appelons un chat un chat : c'est une erreur. Literally: to call a cat a cat.",
+   "hint": "→ expression idiomatique",
+   "note": "Useful for signalling frankness in the argumentative essay.",
+   "core": false,
+   "alt": [
+    "to call a spade a spade",
+    "to speak plainly"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "jeter l'éponge",
+   "a": "to throw in the towel, to give up. Après trois échecs, il a jeté l'éponge. Literally: to throw the sponge.",
+   "hint": "→ expression idiomatique",
+   "note": "From boxing, like the English idiom, but with a sponge instead of a towel.",
+   "core": false,
+   "alt": [
+    "to throw in the towel",
+    "to give up"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "sauter du coq à l'âne",
+   "a": "to jump from one subject to another. Elle saute du coq à l'âne et on la suit mal. Literally: to jump from the rooster to the donkey.",
+   "hint": "→ expression idiomatique",
+   "note": "A useful criticism of disorganised speech; the noun is un coq-à-l'âne.",
+   "core": false,
+   "alt": [
+    "to jump from one subject to another",
+    "to change the subject abruptly"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "filer à l'anglaise",
+   "a": "to slip away without saying goodbye. Il a filé à l'anglaise avant la fin du dîner. Literally: to slip away English-style.",
+   "hint": "→ expression idiomatique",
+   "note": "English returns the compliment with to take French leave.",
+   "core": false,
+   "alt": [
+    "to slip away unnoticed",
+    "to leave without saying goodbye"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Expressions idiomatiques",
+   "v": "TRANSLATE",
+   "q": "avoir le bras long",
+   "a": "to have influence, to have connections. Son oncle a le bras long à la mairie. Literally: to have a long arm.",
+   "hint": "→ expression idiomatique",
+   "note": "About influence, never about physical reach.",
+   "core": false,
+   "alt": [
+    "to have influence",
+    "to be well connected"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Proverbes",
+   "v": "TRANSLATE",
+   "q": "L'habit ne fait pas le moine.",
+   "a": "Do not judge by appearances. Literally: the habit does not make the monk.",
+   "hint": "→ proverbe",
+   "note": "A ready-made conclusion for essays on stereotypes and first impressions.",
+   "core": true,
+   "alt": [
+    "do not judge a book by its cover",
+    "appearances can be deceiving"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Proverbes",
+   "v": "TRANSLATE",
+   "q": "Petit à petit, l'oiseau fait son nid.",
+   "a": "Little by little, progress adds up. Literally: little by little, the bird builds its nest.",
+   "hint": "→ proverbe",
+   "note": "Ideal when arguing for patience and steady effort, e.g. in language learning.",
+   "core": false,
+   "alt": [
+    "little by little you get there",
+    "slow and steady wins the race"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Proverbes",
+   "v": "TRANSLATE",
+   "q": "Qui vivra verra.",
+   "a": "Time will tell; we shall see. Literally: whoever lives will see.",
+   "hint": "→ proverbe",
+   "note": "Note the future tense in both halves, a classic French proverb structure.",
+   "core": false,
+   "alt": [
+    "time will tell",
+    "we shall see"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Proverbes",
+   "v": "TRANSLATE",
+   "q": "Mieux vaut tard que jamais.",
+   "a": "Better late than never.",
+   "hint": "→ proverbe",
+   "note": "Impersonal mieux vaut + infinitive; no subject pronoun.",
+   "core": false,
+   "alt": [
+    "better late than never"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "le bac",
+   "a": "the baccalauréat, the school-leaving exam at the end of lycée. Elle a eu son bac avec mention très bien.",
+   "hint": "→ nom masculin (abréviation)",
+   "note": "Avoir son bac = to pass it. Une mention is a distinction: assez bien, bien, très bien.",
+   "core": true,
+   "alt": [
+    "the baccalaureate",
+    "the school-leaving exam"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "la fac",
+   "a": "university, uni. Il entre à la fac de droit en septembre.",
+   "hint": "→ expression familière",
+   "note": "Short for la faculté; the neutral word is l'université. Not a college in the US sense.",
+   "core": true,
+   "alt": [
+    "university",
+    "uni"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "la rentrée",
+   "a": "the return to school or work after the summer. La rentrée a lieu début septembre.",
+   "hint": "→ nom féminin",
+   "note": "Also la rentrée littéraire and la rentrée politique: the whole country restarts at once.",
+   "core": true,
+   "alt": [
+    "the start of the school year",
+    "back-to-school"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "le lycée",
+   "a": "the upper secondary school, for roughly ages 15 to 18. Au lycée, on prépare le bac.",
+   "hint": "→ nom masculin",
+   "note": "Not a lyceum. Students are les lycéens; the three years are seconde, première, terminale.",
+   "core": true,
+   "alt": [
+    "high school",
+    "upper secondary school"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "le collège",
+   "a": "the lower secondary school, for roughly ages 11 to 15. Mon frère entre au collège cette année.",
+   "hint": "→ nom masculin",
+   "note": "Major false friend: never translate as college. Years run from la sixième to la troisième.",
+   "core": true,
+   "alt": [
+    "middle school",
+    "lower secondary school"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "l'école maternelle",
+   "a": "nursery school, preschool, from age three. Les enfants entrent à l'école maternelle à trois ans.",
+   "hint": "→ nom féminin",
+   "note": "Free, public and now compulsory from age three in France.",
+   "core": false,
+   "alt": [
+    "nursery school",
+    "preschool",
+    "kindergarten"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "une grande école",
+   "a": "a selective higher-education institution entered by competitive exam. Polytechnique, HEC et Normale sup sont des grandes écoles.",
+   "hint": "→ nom féminin",
+   "note": "Distinct from l'université; entry goes through une classe préparatoire and un concours.",
+   "core": false,
+   "alt": [
+    "elite higher-education school",
+    "grande école"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "redoubler",
+   "a": "to repeat a school year. Il a dû redoubler sa seconde.",
+   "hint": "→ verbe transitif",
+   "note": "Common in France, unlike in many systems; also redoubler d'efforts, to redouble one's efforts.",
+   "core": false,
+   "alt": [
+    "to repeat a year",
+    "to be held back"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "la moyenne",
+   "a": "the average grade, out of twenty. Il faut dix sur vingt pour avoir la moyenne.",
+   "hint": "→ nom féminin",
+   "note": "French marks run from 0 to 20; a 16 is excellent, and a 20 is almost unheard of.",
+   "core": false,
+   "alt": [
+    "average",
+    "passing grade"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "réussir un examen",
+   "a": "to pass an exam. Il a réussi son bac du premier coup.",
+   "hint": "→ verbe transitif",
+   "note": "The classic false-friend trap: passer un examen only means to sit it. Échouer is to fail.",
+   "core": true,
+   "alt": [
+    "to pass an exam"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "École et études",
+   "v": "TRANSLATE",
+   "q": "une classe préparatoire",
+   "a": "an intensive two-year course preparing the entrance exams for the grandes écoles. Il est en classe préparatoire depuis septembre.",
+   "hint": "→ nom féminin",
+   "note": "Familiarly la prépa; it ends with un concours, a competitive exam with limited places.",
+   "core": false,
+   "alt": [
+    "preparatory class",
+    "prep class for the grandes écoles"
+   ]
+  },
+  {
+   "u": "t2",
+   "t": "Culture: la langue",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la Francophonie ?",
+   "a": "C'est l'ensemble des pays et des peuples qui ont le français en partage, ainsi que l'organisation internationale qui les réunit. On parle français en Europe, en Afrique, en Amérique du Nord, dans les Caraïbes et dans l'océan Indien.",
+   "hint": "→ explication en français",
+   "note": "Most French speakers today live in Africa, not in France; the OIF has over eighty member states.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: la langue",
+   "v": "EXPLAIN",
+   "q": "Explique le rôle de l'Académie française.",
+   "a": "Fondée en 1635 par Richelieu, l'Académie française réunit quarante membres, appelés les Immortels. Elle publie le dictionnaire officiel de la langue et donne son avis sur le bon usage et sur les nouveaux mots.",
+   "hint": "→ explication en français",
+   "note": "Its rulings carry prestige but no legal force; usage often ignores them.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: la langue",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la loi Toubon ?",
+   "a": "C'est une loi de 1994 qui impose l'usage du français dans la publicité, le travail, l'enseignement et les services publics en France. Elle vise à protéger la langue face à la progression de l'anglais.",
+   "hint": "→ explication en français",
+   "note": "Nicknamed la loi Allgood, a joking translation of the minister's name.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: la langue",
+   "v": "EXPLAIN",
+   "q": "Explique ce que sont les langues régionales en France.",
+   "a": "Ce sont les langues historiques parlées dans certaines régions, comme le breton, l'occitan, l'alsacien, le corse, le basque et le créole. Longtemps découragées à l'école, elles sont aujourd'hui enseignées en option ou dans des écoles bilingues.",
+   "hint": "→ explication en français",
+   "note": "The Constitution still names French as the only language of the Republic.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: la société",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la laïcité en France ?",
+   "a": "C'est le principe de séparation des Églises et de l'État, établi par la loi de 1905. L'État reste neutre, garantit la liberté de conscience, et l'école publique ne fait aucune place aux signes religieux ostensibles.",
+   "hint": "→ explication en français",
+   "note": "Not the same as American separation of church and state: laïcité constrains public space too.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: les fêtes",
+   "v": "EXPLAIN",
+   "q": "Que célèbre-t-on le 14 juillet ?",
+   "a": "C'est la fête nationale française, qui commémore la prise de la Bastille en 1789 et la Fête de la Fédération de 1790. On assiste au défilé militaire sur les Champs-Élysées, puis aux feux d'artifice et aux bals populaires.",
+   "hint": "→ explication en français",
+   "note": "Never call it Bastille Day in French; say la fête nationale or le quatorze juillet.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: les fêtes",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la Toussaint ?",
+   "a": "C'est la fête de tous les saints, le premier novembre. Les familles se rendent au cimetière pour fleurir les tombes, souvent avec des chrysanthèmes, et les élèves ont une semaine de vacances.",
+   "hint": "→ explication en français",
+   "note": "Never offer chrysanthemums as a gift in France: they belong to graves.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: les fêtes",
+   "v": "EXPLAIN",
+   "q": "Explique la tradition de la galette des Rois.",
+   "a": "Le six janvier, pour l'Épiphanie, on partage une galette dans laquelle est cachée une fève. Celui ou celle qui la trouve devient le roi ou la reine et porte la couronne.",
+   "hint": "→ explication en français",
+   "note": "The youngest person traditionally hides under the table and assigns each slice.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: les fêtes",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la Chandeleur ?",
+   "a": "C'est la fête du deux février, où l'on fait sauter des crêpes en famille. La tradition veut qu'on tienne une pièce de monnaie dans la main gauche pour s'assurer une année prospère.",
+   "hint": "→ explication en français",
+   "note": "Crêpe Day: a favourite listening-comprehension topic because the ritual is so visual.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: les fêtes",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que le Réveillon ?",
+   "a": "C'est le grand repas de fête pris tard le soir, la veille de Noël ou du Nouvel An. On y sert souvent des huîtres, du foie gras et une bûche, et le repas se prolonge après minuit.",
+   "hint": "→ explication en français",
+   "note": "Two réveillons: le réveillon de Noël on 24 December and le réveillon de la Saint-Sylvestre on 31 December.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: les fêtes",
+   "v": "EXPLAIN",
+   "q": "Explique ce qu'est le Carnaval en France.",
+   "a": "C'est une fête d'hiver, avant le Carême, avec des défilés, des chars, des masques et des déguisements. Les carnavals de Nice et de Dunkerque sont les plus célèbres, et celui de la Martinique attire des milliers de participants.",
+   "hint": "→ explication en français",
+   "note": "Ends on Mardi gras, the last day before Lent.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t2",
+   "t": "Culture: l'école",
+   "v": "EXPLAIN",
+   "q": "Explique ce qu'est le baccalauréat.",
+   "a": "C'est l'examen national qui termine le lycée et qui ouvre l'entrée à l'université. Il combine un contrôle continu, des épreuves écrites de spécialité, une épreuve de philosophie et un grand oral.",
+   "hint": "→ explication en français",
+   "note": "University admission now runs through the Parcoursup platform, chosen before the results.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "un tableau",
+   "a": "a painting, a picture. Ce tableau de Monet attire des foules.",
+   "hint": "→ nom masculin",
+   "note": "Also a blackboard and a table of figures; plural tableaux.",
+   "core": true,
+   "alt": [
+    "painting",
+    "picture"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "la toile",
+   "a": "the canvas; by extension a painting. L'artiste tend sa toile avant de peindre.",
+   "hint": "→ nom féminin",
+   "note": "Also means the web: la Toile is an older French word for the internet.",
+   "core": false,
+   "alt": [
+    "canvas",
+    "painting"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "un chef-d'œuvre",
+   "a": "a masterpiece. La Joconde reste le chef-d'œuvre le plus visité au monde.",
+   "hint": "→ nom masculin",
+   "note": "Plural des chefs-d'œuvre; the ligature œ is expected in careful writing.",
+   "core": true,
+   "alt": [
+    "masterpiece"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "une œuvre",
+   "a": "a work of art; an artist's whole output. Il a consacré son œuvre à la lumière.",
+   "hint": "→ nom féminin",
+   "note": "Feminine in normal use, including l'œuvre de Camus for a whole body of work; masculine only in fixed expressions such as le grand œuvre, le gros œuvre and l'œuvre gravé de Rembrandt.",
+   "core": false,
+   "alt": [
+    "work",
+    "work of art",
+    "body of work"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "une exposition",
+   "a": "an exhibition, a show. L'exposition Picasso dure jusqu'en janvier.",
+   "hint": "→ nom féminin",
+   "note": "Familiarly une expo. Do not use exhibition of the English kind of display of emotion.",
+   "core": true,
+   "alt": [
+    "exhibition",
+    "show"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "le vernissage",
+   "a": "the private view, the opening night of an exhibition. Le vernissage a lieu jeudi à dix-huit heures.",
+   "hint": "→ nom masculin",
+   "note": "From the varnishing of paintings the day before an opening; now means the launch party.",
+   "core": false,
+   "alt": [
+    "opening night",
+    "private view"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "le musée",
+   "a": "the museum. Le musée est gratuit le premier dimanche du mois.",
+   "hint": "→ nom masculin",
+   "note": "Masculine despite the -ée ending. Un musée d'art, un musée des beaux-arts.",
+   "core": true,
+   "alt": [
+    "museum"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "la sculpture",
+   "a": "sculpture; a sculpted work. Cette sculpture en bronze pèse trois tonnes.",
+   "hint": "→ nom féminin",
+   "note": "The artist is un sculpteur or une sculptrice; the p is silent.",
+   "core": false,
+   "alt": [
+    "sculpture"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "le peintre / la peintre",
+   "a": "the painter. Ce peintre travaille surtout la lumière du Sud.",
+   "hint": "→ nom",
+   "note": "Same form for both genders; la peinture is the paint, the painting or the art itself.",
+   "core": true,
+   "alt": [
+    "painter"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Arts visuels",
+   "v": "TRANSLATE",
+   "q": "le paysage",
+   "a": "the landscape; a landscape painting. Les impressionnistes ont peint des paysages en plein air.",
+   "hint": "→ nom masculin",
+   "note": "Genre word alongside le portrait, la nature morte and l'autoportrait.",
+   "core": false,
+   "alt": [
+    "landscape"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mouvements artistiques",
+   "v": "TRANSLATE",
+   "q": "l'impressionnisme",
+   "a": "Impressionism. L'impressionnisme cherche à saisir la lumière d'un instant.",
+   "hint": "→ nom masculin",
+   "note": "Named mockingly after Monet's Impression, soleil levant (1872).",
+   "core": true,
+   "alt": [
+    "Impressionism"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mouvements artistiques",
+   "v": "TRANSLATE",
+   "q": "le cubisme",
+   "a": "Cubism. Le cubisme décompose les objets en formes géométriques.",
+   "hint": "→ nom masculin",
+   "note": "Born around 1907 with Picasso and Braque, both working in Paris.",
+   "core": false,
+   "alt": [
+    "Cubism"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mouvements artistiques",
+   "v": "TRANSLATE",
+   "q": "le surréalisme",
+   "a": "Surrealism. Le surréalisme explore le rêve et l'inconscient.",
+   "hint": "→ nom masculin",
+   "note": "André Breton published its manifesto in 1924; the adjective is surréaliste.",
+   "core": false,
+   "alt": [
+    "Surrealism"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mouvements artistiques",
+   "v": "TRANSLATE",
+   "q": "le romantisme",
+   "a": "Romanticism. Le romantisme met en avant le sentiment et la nature.",
+   "hint": "→ nom masculin",
+   "note": "False friend risk: romantisme is the artistic movement, not being romantic in love.",
+   "core": false,
+   "alt": [
+    "Romanticism"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Architecture et patrimoine",
+   "v": "TRANSLATE",
+   "q": "le patrimoine",
+   "a": "heritage, cultural inheritance. La France protège son patrimoine architectural.",
+   "hint": "→ nom masculin",
+   "note": "Also means personal assets in a financial context; le patrimoine mondial is world heritage.",
+   "core": true,
+   "alt": [
+    "heritage",
+    "cultural heritage"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Architecture et patrimoine",
+   "v": "TRANSLATE",
+   "q": "la cathédrale",
+   "a": "the cathedral. La cathédrale de Chartres est célèbre pour ses vitraux.",
+   "hint": "→ nom féminin",
+   "note": "Gothic vocabulary to have ready: les vitraux, les voûtes, la flèche, la rosace.",
+   "core": false,
+   "alt": [
+    "cathedral"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Architecture et patrimoine",
+   "v": "TRANSLATE",
+   "q": "un gratte-ciel",
+   "a": "a skyscraper. Les gratte-ciel de la Défense dominent l'ouest de Paris.",
+   "hint": "→ nom masculin",
+   "note": "Invariable in the plural: des gratte-ciel. Literally: it scratches the sky.",
+   "core": false,
+   "alt": [
+    "skyscraper"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Architecture et patrimoine",
+   "v": "TRANSLATE",
+   "q": "la rénovation",
+   "a": "renovation, refurbishment. La rénovation du quartier a duré trois ans.",
+   "hint": "→ nom féminin",
+   "note": "Restaurer means to return a monument to its original state; rénover modernises it.",
+   "core": false,
+   "alt": [
+    "renovation",
+    "refurbishment"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Architecture et patrimoine",
+   "v": "TRANSLATE",
+   "q": "un monument historique",
+   "a": "a listed historic building. Ce château est classé monument historique depuis 1930.",
+   "hint": "→ nom masculin",
+   "note": "Key verb: classé or inscrit. Listing brings protection and strict rules on any work.",
+   "core": false,
+   "alt": [
+    "listed building",
+    "historic monument"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Architecture et patrimoine",
+   "v": "TRANSLATE",
+   "q": "un vitrail",
+   "a": "a stained-glass window. Les vitraux colorent la nef en fin d'après-midi.",
+   "hint": "→ nom masculin",
+   "note": "Irregular plural: des vitraux.",
+   "core": false,
+   "alt": [
+    "stained-glass window"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "le roman",
+   "a": "the novel. Ce roman raconte l'exil d'une famille algérienne.",
+   "hint": "→ nom masculin",
+   "note": "False friend: not romance. Un roman policier is a detective novel, familiarly un polar.",
+   "core": true,
+   "alt": [
+    "novel"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "la nouvelle",
+   "a": "the short story. Maupassant a écrit plus de trois cents nouvelles.",
+   "hint": "→ nom féminin",
+   "note": "Also means a piece of news; les nouvelles in the plural are the news.",
+   "core": true,
+   "alt": [
+    "short story"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "la poésie",
+   "a": "poetry; a poem in the school sense. Elle apprend une poésie par cœur chaque semaine.",
+   "hint": "→ nom féminin",
+   "note": "The individual text is normally un poème, masculine; the writer is un poète.",
+   "core": false,
+   "alt": [
+    "poetry",
+    "poem"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "le récit",
+   "a": "the narrative, the account. Son récit de voyage mêle souvenirs et photographies.",
+   "hint": "→ nom masculin",
+   "note": "Broader than une histoire: it stresses the act of telling. Le récit autobiographique is a frequent genre.",
+   "core": false,
+   "alt": [
+    "narrative",
+    "account",
+    "story"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "l'intrigue",
+   "a": "the plot, the storyline. L'intrigue se noue dès le premier chapitre.",
+   "hint": "→ nom féminin",
+   "note": "Also means an intrigue or scheme; the verb intriguer means to puzzle someone.",
+   "core": true,
+   "alt": [
+    "plot",
+    "storyline"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "le personnage",
+   "a": "the character in a work. Le personnage principal ne dit presque rien.",
+   "hint": "→ nom masculin",
+   "note": "False friend: le caractère is a personality trait, never a fictional character.",
+   "core": true,
+   "alt": [
+    "character"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "l'auteur / l'autrice",
+   "a": "the author. L'autrice a reçu le prix Goncourt cette année.",
+   "hint": "→ nom",
+   "note": "Both une auteure and une autrice are now used; un écrivain, une écrivaine also works.",
+   "core": false,
+   "alt": [
+    "author",
+    "writer"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "un recueil",
+   "a": "a collection of poems, stories or essays. Ce recueil rassemble vingt ans de poèmes.",
+   "hint": "→ nom masculin",
+   "note": "Never used for a novel; recueillir means to gather or to take someone in.",
+   "core": false,
+   "alt": [
+    "collection",
+    "anthology"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Littérature",
+   "v": "TRANSLATE",
+   "q": "le dénouement",
+   "a": "the resolution, the ending of a plot. Le dénouement surprend jusqu'à la dernière page.",
+   "hint": "→ nom masculin",
+   "note": "Literally the untying of the knot set up by l'intrigue.",
+   "core": false,
+   "alt": [
+    "resolution",
+    "ending",
+    "denouement"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "une pièce de théâtre",
+   "a": "a play. Nous allons voir une pièce de Molière ce soir.",
+   "hint": "→ nom féminin",
+   "note": "Une pièce alone can mean a room or a coin, so keep de théâtre when unclear.",
+   "core": false,
+   "alt": [
+    "play"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "la mise en scène",
+   "a": "the staging, the direction of a play or film. La mise en scène transpose la pièce à notre époque.",
+   "hint": "→ nom féminin",
+   "note": "The person is le metteur en scène in theatre, le réalisateur in cinema.",
+   "core": true,
+   "alt": [
+    "staging",
+    "direction",
+    "production"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "le tournage",
+   "a": "the shooting, the filming. Le tournage a duré six semaines en Bretagne.",
+   "hint": "→ nom masculin",
+   "note": "Verb tourner un film, literally to turn, from the hand-cranked camera.",
+   "core": false,
+   "alt": [
+    "shooting",
+    "filming"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "le réalisateur / la réalisatrice",
+   "a": "the film director. La réalisatrice a présenté son film à Cannes.",
+   "hint": "→ nom",
+   "note": "False friend: not a realiser and not le producteur, who finds the money.",
+   "core": true,
+   "alt": [
+    "film director"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "un court-métrage",
+   "a": "a short film. Son court-métrage dure douze minutes.",
+   "hint": "→ nom masculin",
+   "note": "Opposite: un long-métrage, a feature film. Plural des courts-métrages.",
+   "core": false,
+   "alt": [
+    "short film"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "les sous-titres",
+   "a": "the subtitles. Je regarde les films en VO avec des sous-titres.",
+   "hint": "→ nom masculin pluriel",
+   "note": "VO = version originale, VF = version française doublée. Sous-titrer is the verb.",
+   "core": true,
+   "alt": [
+    "subtitles"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "le scénario",
+   "a": "the screenplay, the script. Le scénario s'inspire d'un fait divers.",
+   "hint": "→ nom masculin",
+   "note": "The writer is un scénariste; also used figuratively for a possible course of events.",
+   "core": false,
+   "alt": [
+    "screenplay",
+    "script"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Théâtre et cinéma",
+   "v": "TRANSLATE",
+   "q": "un comédien / une comédienne",
+   "a": "an actor / an actress, on stage or screen. Cette comédienne joue aussi au cinéma.",
+   "hint": "→ nom",
+   "note": "Not restricted to comedy; un acteur is equally correct, le public prefers comédien for theatre.",
+   "core": false,
+   "alt": [
+    "actor",
+    "actress"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Musique et danse",
+   "v": "TRANSLATE",
+   "q": "la chanson",
+   "a": "the song. Cette chanson est devenue un classique de la variété française.",
+   "hint": "→ nom féminin",
+   "note": "La chanson française is a genre in itself, valued for its lyrics.",
+   "core": false,
+   "alt": [
+    "song"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Musique et danse",
+   "v": "TRANSLATE",
+   "q": "les paroles",
+   "a": "the lyrics of a song. Les paroles parlent de l'exil et du retour.",
+   "hint": "→ nom féminin pluriel",
+   "note": "Always plural in this sense; une parole alone means a word or an utterance.",
+   "core": false,
+   "alt": [
+    "lyrics",
+    "words of a song"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Musique et danse",
+   "v": "TRANSLATE",
+   "q": "la danse contemporaine",
+   "a": "contemporary dance. La danse contemporaine mêle geste quotidien et improvisation.",
+   "hint": "→ nom féminin",
+   "note": "Contrast with le ballet classique; the dancer is un danseur or une danseuse.",
+   "core": false,
+   "alt": [
+    "contemporary dance"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mode et design",
+   "v": "TRANSLATE",
+   "q": "la haute couture",
+   "a": "haute couture, made-to-measure luxury fashion. La haute couture emploie des artisans hautement qualifiés.",
+   "hint": "→ nom féminin",
+   "note": "A legally protected label in France; ready-to-wear is le prêt-à-porter.",
+   "core": false,
+   "alt": [
+    "haute couture",
+    "high fashion"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mode et design",
+   "v": "TRANSLATE",
+   "q": "un défilé",
+   "a": "a fashion show; also a parade. Le défilé de printemps a lieu au Grand Palais.",
+   "hint": "→ nom masculin",
+   "note": "Same word as the 14 July military parade: le défilé du quatorze juillet.",
+   "core": false,
+   "alt": [
+    "fashion show",
+    "parade"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mode et design",
+   "v": "TRANSLATE",
+   "q": "un créateur / une créatrice",
+   "a": "a designer, a creator. Cette créatrice travaille des tissus recyclés.",
+   "hint": "→ nom",
+   "note": "Un couturier is specifically a fashion designer; un dessinateur draws.",
+   "core": false,
+   "alt": [
+    "designer",
+    "creator"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Mode et design",
+   "v": "TRANSLATE",
+   "q": "une tendance",
+   "a": "a trend. Cette couleur est la grande tendance de la saison.",
+   "hint": "→ nom féminin",
+   "note": "Used adjectivally and invariably in speech: un sac très tendance.",
+   "core": false,
+   "alt": [
+    "trend"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Esthétique",
+   "v": "TRANSLATE",
+   "q": "le beau",
+   "a": "beauty, the beautiful as a concept. Les philosophes s'interrogent sur le beau depuis l'Antiquité.",
+   "hint": "→ nom masculin (adjectif substantivé)",
+   "note": "Adjective turned noun with le; la beauté names the quality of a particular thing.",
+   "core": false,
+   "alt": [
+    "the beautiful",
+    "beauty"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Esthétique",
+   "v": "TRANSLATE",
+   "q": "le laid",
+   "a": "ugliness, the ugly as a concept. L'art moderne a fait une place au laid.",
+   "hint": "→ nom masculin (adjectif substantivé)",
+   "note": "Adjective laid, laide. Do not confuse with le lait, milk, which sounds identical.",
+   "core": false,
+   "alt": [
+    "the ugly",
+    "ugliness"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Esthétique",
+   "v": "TRANSLATE",
+   "q": "émouvant",
+   "a": "moving, touching. La dernière scène est particulièrement émouvante.",
+   "hint": "→ adjectif",
+   "note": "From émouvoir; the stronger degree is bouleversant.",
+   "core": false,
+   "alt": [
+    "moving",
+    "touching"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Esthétique",
+   "v": "TRANSLATE",
+   "q": "saisissant",
+   "a": "striking, gripping. Le contraste entre l'ombre et la lumière est saisissant.",
+   "hint": "→ adjectif",
+   "note": "From saisir, to seize: it stops you in your tracks. Useful in art commentary.",
+   "core": false,
+   "alt": [
+    "striking",
+    "gripping"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Esthétique",
+   "v": "TRANSLATE",
+   "q": "bouleversant",
+   "a": "deeply moving, overwhelming. Ce documentaire est bouleversant du début à la fin.",
+   "hint": "→ adjectif",
+   "note": "Stronger than émouvant; the verb bouleverser means to turn upside down.",
+   "core": false,
+   "alt": [
+    "deeply moving",
+    "overwhelming"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Esthétique",
+   "v": "TRANSLATE",
+   "q": "esthétique",
+   "a": "aesthetic; also the noun aesthetics. Le réalisateur a une esthétique très personnelle.",
+   "hint": "→ adjectif et nom féminin",
+   "note": "Same form for both genders as an adjective; as a noun it is feminine.",
+   "core": false,
+   "alt": [
+    "aesthetic",
+    "aesthetics"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Esthétique",
+   "v": "TRANSLATE",
+   "q": "un coup de cœur",
+   "a": "a favourite, something one instantly loves. Ce roman est mon coup de cœur de l'année.",
+   "hint": "→ expression",
+   "note": "Bookshops label recommendations coup de cœur; distinct from le coup de foudre, for people.",
+   "core": false,
+   "alt": [
+    "a favourite",
+    "an instant favourite"
+   ]
+  },
+  {
+   "u": "t3",
+   "t": "Culture: les musées",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que le Louvre ?",
+   "a": "C'est le plus grand musée d'art de Paris, installé dans un ancien palais royal. Il conserve la Joconde et la Vénus de Milo, et son entrée se fait par la pyramide de verre de Ieoh Ming Pei.",
+   "hint": "→ explication en français",
+   "note": "The pyramid dates from 1989 and was fiercely debated; useful for essays on tradition vs modernity.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: les musées",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que le Centre Pompidou ?",
+   "a": "C'est un centre culturel parisien, ouvert en 1977, qui abrite le Musée national d'art moderne et une grande bibliothèque publique. Son architecture montre à l'extérieur les tuyaux et les escaliers, ce qui choqua à l'époque.",
+   "hint": "→ explication en français",
+   "note": "Its inside-out design by Piano and Rogers is itself a standard example of modern architecture.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: le théâtre",
+   "v": "EXPLAIN",
+   "q": "Explique le lien entre Molière et la Comédie-Française.",
+   "a": "Molière, auteur et comédien du XVIIe siècle, a écrit des comédies comme Le Malade imaginaire et Tartuffe. Sa troupe est à l'origine de la Comédie-Française, fondée en 1680, que l'on appelle encore la maison de Molière.",
+   "hint": "→ explication en français",
+   "note": "French itself is nicknamed la langue de Molière, a phrase worth using in an essay.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: le cinéma",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que le festival de Cannes ?",
+   "a": "C'est le plus célèbre festival de cinéma au monde, qui se tient chaque année en mai sur la Côte d'Azur. Un jury international y décerne la Palme d'or au meilleur film de la sélection officielle.",
+   "hint": "→ explication en français",
+   "note": "La Palme d'or is the top prize; do not call it un Oscar.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: le cinéma",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la Cinémathèque française ?",
+   "a": "C'est une institution parisienne qui conserve, restaure et projette des films du monde entier. Fondée par Henri Langlois en 1936, elle a formé les jeunes cinéastes de la Nouvelle Vague.",
+   "hint": "→ explication en français",
+   "note": "Langlois's dismissal in 1968 provoked protests that fed into the May events.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: politique culturelle",
+   "v": "EXPLAIN",
+   "q": "Explique ce qu'est l'exception culturelle française.",
+   "a": "C'est l'idée que les œuvres culturelles ne sont pas des marchandises comme les autres. La France défend donc des quotas de chansons françaises à la radio, des aides publiques au cinéma et un prix unique du livre.",
+   "hint": "→ explication en français",
+   "note": "The strongest argument-essay example for state support of the arts.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: la bande dessinée",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la BD franco-belge ?",
+   "a": "C'est une tradition de bande dessinée née en France et en Belgique, avec des héros comme Tintin, Astérix et Lucky Luke. Considérée comme le neuvième art, elle est publiée en albums cartonnés et étudiée sérieusement.",
+   "hint": "→ explication en français",
+   "note": "The Angoulême festival each January is its main showcase.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: la littérature",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que le prix Goncourt ?",
+   "a": "C'est le prix littéraire français le plus prestigieux, décerné chaque automne à un roman écrit en français. Il rapporte peu d'argent à l'auteur, mais il garantit des ventes considérables.",
+   "hint": "→ explication en français",
+   "note": "Awarded since 1903; the winner is announced at the restaurant Drouant in Paris.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: la musique",
+   "v": "EXPLAIN",
+   "q": "Qu'est-ce que la Fête de la Musique ?",
+   "a": "C'est une fête gratuite qui a lieu le vingt et un juin, jour du solstice d'été. Des musiciens amateurs et professionnels jouent dans les rues, les cafés et les places de toute la France.",
+   "hint": "→ explication en français",
+   "note": "Created in 1982 by the ministre de la Culture Jack Lang and now copied worldwide.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "t3",
+   "t": "Culture: le patrimoine",
+   "v": "EXPLAIN",
+   "q": "Que sont les Journées européennes du patrimoine ?",
+   "a": "Ce sont deux journées de septembre pendant lesquelles des monuments, des ministères et des lieux habituellement fermés ouvrent gratuitement au public. Elles visent à faire découvrir le patrimoine à tous.",
+   "hint": "→ explication en français",
+   "note": "A French initiative from 1984, later adopted across Europe.",
+   "core": false,
+   "alt": null
+  }
+ ]
+}

@@ -1,0 +1,138 @@
+{
+ "course": "apush",
+ "fixes": [
+  {
+   "i": "7ef9627894",
+   "field": "a",
+   "old": "The Marshall Court refused Marbury's commission by ruling that the section of the Judiciary Act of 1789 giving the Court that power was unconstitutional, establishing the Supreme Court's power of judicial review over acts of Congress.",
+   "new": "The Marshall Court held that Marbury was legally entitled to his commission, but that it could not order its delivery: the section of the Judiciary Act of 1789 that gave the Court original jurisdiction to issue such writs of mandamus conflicted with Article III and was unconstitutional. This established the Supreme Court's power of judicial review over acts of Congress.",
+   "why": "Misstates the disposition: the Court did not deny Marbury's right to the commission, it denied itself jurisdiction to compel delivery.",
+   "severity": "error"
+  },
+  {
+   "i": "e8dc6047d7",
+   "field": "a",
+   "old": "A Boston woman who held religious meetings in her home and taught that believers could receive grace directly from God without clergy mediation (antinomianism). Tried and banished in 1638, she challenged both Puritan orthodoxy and women's prescribed role.",
+   "new": "A Boston woman who held religious meetings in her home and taught that believers could receive grace directly from God without clergy mediation (antinomianism). Tried and sentenced to banishment in 1637 and expelled in 1638, she challenged both Puritan orthodoxy and women's prescribed role.",
+   "why": "Hutchinson's trial and sentence were November 1637; only her departure and excommunication fall in 1638.",
+   "severity": "minor"
+  },
+  {
+   "i": "955402e37e",
+   "field": "a",
+   "old": "A Puritan minister banished from Massachusetts in 1636 for arguing that church and state must be separated and that the king could not grant land already owned by Native peoples. He founded Providence, Rhode Island, with religious liberty and purchased Native land.",
+   "new": "A Puritan minister banished from Massachusetts in 1635 for arguing that church and state must be separated and that the king could not grant land already owned by Native peoples. He founded Providence, Rhode Island, in 1636 with religious liberty and purchased Native land.",
+   "why": "The General Court ordered Williams's banishment in October 1635; 1636 is the founding of Providence, not the banishment.",
+   "severity": "minor"
+  },
+  {
+   "i": "5f35aefd27",
+   "field": "q",
+   "old": "Place these Period 1 events in order: Treaty of Tordesillas, Columbus's first voyage, founding of Jamestown, Pueblo Revolt.",
+   "new": "Place these early colonial events in order: Treaty of Tordesillas, Columbus's first voyage, founding of Jamestown, Pueblo Revolt.",
+   "why": "Front calls all four 'Period 1 events,' but Jamestown (1607) and the Pueblo Revolt (1680) are Period 2 - and the card's own note says so.",
+   "severity": "minor"
+  },
+  {
+   "i": "7565683445",
+   "field": "a",
+   "old": "Largely nomadic or semi-nomadic groups (Ute, Apache, Sioux) who followed buffalo herds and gathered wild plants. Dry, sparse grassland could not support large permanent farming villages, so they lived in small, mobile bands.",
+   "new": "Largely nomadic or semi-nomadic groups (Ute, Shoshone, Apache, Blackfoot) who hunted bison on foot and gathered wild plants. Dry, sparse grassland could not support large permanent farming villages, so they lived in small, mobile bands.",
+   "why": "Before contact the Sioux were woodland people in Minnesota, not Plains buffalo nomads; mounted Plains culture postdates the horse (see card a666d50191).",
+   "severity": "minor"
+  },
+  {
+   "i": "f6388c2a12",
+   "field": "a",
+   "old": "The Union Pacific building west and the Central Pacific building east met at Promontory Point, Utah, in 1869. Federal land grants and loans funded it, and the labor came largely from Chinese immigrants in the West and Irish immigrants and veterans in the East.",
+   "new": "The Union Pacific building west and the Central Pacific building east met at Promontory Summit, Utah, in 1869. Federal land grants and loans funded it, and the labor came largely from Chinese immigrants in the West and Irish immigrants and veterans in the East.",
+   "why": "The 1869 golden spike was driven at Promontory Summit; Promontory Point is a different location on the Great Salt Lake.",
+   "severity": "minor"
+  },
+  {
+   "i": "2d9f4f3bd9",
+   "field": "q",
+   "old": "Define utopian communities and name three examples.",
+   "new": "Define utopian communities and name several examples.",
+   "why": "Front asks for three examples but the answer supplies four, so the expected response is ambiguous.",
+   "severity": "minor"
+  },
+  {
+   "i": "b4db0694fb",
+   "field": "q",
+   "old": "Define muckrakers and name three of them with their targets.",
+   "new": "Define muckrakers and name several of them with their targets.",
+   "why": "Front asks for three muckrakers but the answer names four.",
+   "severity": "minor"
+  },
+  {
+   "i": "0b6e794ba2",
+   "field": "q",
+   "old": "Define the Harlem Renaissance and name three figures.",
+   "new": "Define the Harlem Renaissance and name several figures.",
+   "why": "Front asks for three figures but the answer names five.",
+   "severity": "minor"
+  },
+  {
+   "i": "2c03f9e908",
+   "field": "q",
+   "old": "Date the Seneca Falls Convention and the first Female Anti-Slavery Society conventions.",
+   "new": "Date the Seneca Falls Convention and the founding of the American Anti-Slavery Society and its female auxiliaries.",
+   "why": "Front asks for 'the first Female Anti-Slavery Society conventions,' which the answer never dates; wording makes the target answer ambiguous.",
+   "severity": "minor"
+  },
+  {
+   "i": "af85f4b864",
+   "field": "n",
+   "old": "The most successful Native revolt in North American history; essential P1/P2 resistance evidence.",
+   "new": "The most successful Native revolt in North American history; essential P1/P2 resistance evidence. Note the periodization: 1680 falls inside Period 2 (1607-1754) even though this card is filed with the Period 1 Spanish-colonization material.",
+   "why": "Card is filed in Period 1 (1491-1607) but the event is 1680, i.e. Period 2; note should warn the student.",
+   "severity": "minor"
+  },
+  {
+   "i": "60f1153c56",
+   "field": "n",
+   "old": "The state action doctrine left private segregation untouched until the Civil Rights Act of 1964 used the commerce clause instead.",
+   "new": "The state action doctrine left private segregation untouched until the Civil Rights Act of 1964 used the commerce clause instead. Note the periodization: 1883 falls in Period 6 (1865-1898) even though this card sits with the Period 5 Reconstruction material.",
+   "why": "Card is filed in Period 5 (1844-1877) but the Civil Rights Cases were decided in 1883, i.e. Period 6.",
+   "severity": "minor"
+  }
+ ],
+ "dupes": [
+  [
+   "ec0298bb8e",
+   "d7f88cc311",
+   "Same prompt - why the election of 1800 is called the 'Revolution of 1800' - asked once in Period 3 and again in Period 4."
+  ],
+  [
+   "c504263a15",
+   "45cfae5433",
+   "'Identify the settlement house movement and Jane Addams' vs 'Identify Jane Addams and the settlement house movement'; answers and notes are near word-for-word."
+  ],
+  [
+   "1cea75df7f",
+   "6a060357cf",
+   "'Contrast Booker T. Washington and W.E.B. Du Bois' duplicated in u6 and u7 with the same Atlanta Compromise / Talented Tenth / NAACP content."
+  ],
+  [
+   "c634eb72c1",
+   "8eff8721de",
+   "Ida B. Wells and her anti-lynching campaign asked twice (u6 and u7); both answers make the same 'lynching punished Black economic success' point."
+  ],
+  [
+   "211568528b",
+   "6fca0f005c",
+   "Populism vs. Progressivism comparison duplicated in u6 ('Differentiate') and u7 ('Compare'); same base/region/remedies answer."
+  ],
+  [
+   "5fd7bf51f9",
+   "c494956670",
+   "Schenck's clear-and-present-danger test: the u7 EXPLAIN card restates the test already given in full on the IDENTIFY card."
+  ],
+  [
+   "fedc29d87d",
+   "e45d7bee18",
+   "Great Migration: the DEFINE card already supplies the push/pull drivers that the EXPLAIN card asks for."
+  ]
+ ]
+}

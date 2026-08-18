@@ -1,0 +1,69 @@
+{
+  "course": "french",
+  "fixes": [
+    {
+      "i": "ce1ca9303d",
+      "field": "n",
+      "old": "The il/elle form has no ending at all: the stem simply stands alone (il vend, il attend, il repond).",
+      "new": "The il/elle form has no ending at all: the stem simply stands alone (il vend, il attend, il répond).",
+      "why": "Missing acute accent on répond in the note.",
+      "severity": "error"
+    },
+    {
+      "i": "6711818ef3",
+      "field": "n",
+      "old": "The v surfaces in the plural; decrire and s'inscrire follow.",
+      "new": "The v surfaces in the plural; décrire and s'inscrire follow.",
+      "why": "Missing acute accent on décrire in the note.",
+      "severity": "error"
+    },
+    {
+      "i": "df87383191",
+      "field": "n",
+      "old": "Plural stem lis-, so nous lisons has one s sound, not a z.",
+      "new": "Plural stem lis-, and a single s between two vowels is voiced: nous lisons sounds like li-zon.",
+      "why": "Pronunciation stated backwards - nous lisons is [lizɔ̃], the s IS a z sound.",
+      "severity": "error"
+    },
+    {
+      "i": "09f77213d7",
+      "field": "n",
+      "old": "Direct consequence of the 1905 law separating Church and State.",
+      "new": "The rule dates from the Revolution (1792), which secularised civil status; the 1905 law later separated Church and State.",
+      "why": "Compulsory civil marriage predates 1905 - it comes from the 1791-92 secularisation of état civil.",
+      "severity": "minor"
+    },
+    {
+      "i": "1797e5e589",
+      "field": "a",
+      "old": "the high-speed train (train à grande vitesse). Ex. : On met deux heures en TGV entre Paris et Marseille.",
+      "new": "the high-speed train (train à grande vitesse). Ex. : On met trois heures en TGV entre Paris et Marseille.",
+      "why": "Paris-Marseille by TGV takes about three hours, not two (two hours is Paris-Lyon).",
+      "severity": "minor"
+    },
+    {
+      "i": "7d82f9feec",
+      "field": "n",
+      "old": "The free-response half is now entirely built around your own project, so preparation you do in advance is worth 35% of the exam.",
+      "new": "Two of the three free-response tasks are built around your own project, so preparation you do in advance is worth 35% of the exam.",
+      "why": "The Argumentative Essay (15%) is not project-based, so the free-response half is not 'entirely' project-built.",
+      "severity": "minor"
+    },
+    {
+      "i": "67bede4ba2",
+      "field": "a",
+      "old": "1) Politeness (je voudrais, pourriez-vous); 2) a hypothetical result after a si + imperfect clause; 3) unvérified or reported information in journalism (le nombre de victimes serait de dix); 4) wishes and suggestions (on pourrait, il faudrait).",
+      "new": "1) Politeness (je voudrais, pourriez-vous); 2) a hypothetical result after a si + imperfect clause; 3) unverified or reported information in journalism (le nombre de victimes serait de dix); 4) wishes and suggestions (on pourrait, il faudrait).",
+      "why": "English word 'unverified' carries a stray French accent.",
+      "severity": "minor"
+    },
+    {
+      "i": "e8a45e8897",
+      "field": "n",
+      "old": "Feminine as a single work; masculine when it means the complete body of work: le grand œuvre.",
+      "new": "Feminine in normal use, including l'œuvre de Camus for a whole body of work; masculine only in fixed expressions such as le grand œuvre, le gros œuvre and l'œuvre gravé de Rembrandt.",
+      "why": "Note contradicts the card's own answer: 'an artist's whole output' is normally feminine (l'œuvre de Hugo); the masculine is restricted to fixed art/building phrases.",
+      "severity": "minor"
+    }
+  ]
+}

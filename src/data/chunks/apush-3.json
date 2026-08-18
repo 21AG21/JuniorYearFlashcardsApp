@@ -1,0 +1,2196 @@
+{
+ "course": "apush",
+ "cards": [
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "DEFINE",
+   "q": "Define muckrakers and name several of them with their targets.",
+   "a": "Investigative journalists of the early 1900s who exposed corruption and abuse to spur reform. Upton Sinclair (meatpacking, The Jungle), Ida Tarbell (Standard Oil), Jacob Riis (tenement poverty, How the Other Half Lives), Lincoln Steffens (city machines).",
+   "hint": "→ role + names",
+   "note": "Muckrakers are the classic DBQ example of press pressure producing federal regulation.",
+   "core": true,
+   "alt": [
+    "Sinclair",
+    "Tarbell",
+    "Riis",
+    "Steffens"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "IDENTIFY",
+   "q": "Identify the two 1906 laws that followed publication of The Jungle.",
+   "a": "The Pure Food and Drug Act (banned mislabeled and adulterated food and medicine, basis of the FDA) and the Meat Inspection Act (federal inspection of meatpacking plants).",
+   "hint": "→ two law names",
+   "note": "Sinclair aimed at workers and hit consumers instead: he said he aimed at the public's heart and hit its stomach.",
+   "core": false,
+   "alt": [
+    "Pure Food and Drug Act",
+    "Meat Inspection Act"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "DEFINE",
+   "q": "Define Theodore Roosevelt's Square Deal and list its three C's.",
+   "a": "TR's domestic program promising fairness to labor, business, and consumers. The three C's: control of corporations (trust-busting bad trusts), consumer protection, and conservation of natural resources.",
+   "hint": "→ program + three terms",
+   "note": "TR distinguished good trusts from bad trusts; he regulated far more than he broke up.",
+   "core": false,
+   "alt": [
+    "control of corporations, consumer protection, conservation"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "NAME",
+   "q": "Name the direct-democracy reforms Progressives used to weaken party machines.",
+   "a": "The initiative (voters propose laws), the referendum (voters approve or reject laws), the recall (voters remove officials), the secret ballot, direct primaries, and the direct election of senators.",
+   "hint": "→ list of mechanisms",
+   "note": "Pioneered at the state level, especially Wisconsin under Robert La Follette (the Wisconsin Idea).",
+   "core": false,
+   "alt": [
+    "initiative, referendum, recall"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "IDENTIFY",
+   "q": "Identify the Federal Reserve Act (1913) and its purpose.",
+   "a": "Wilson-era law creating a central banking system of twelve regional Federal Reserve banks under a national board, empowered to set interest rates and issue currency to stabilize the money supply and prevent panics.",
+   "hint": "→ law + function",
+   "note": "The most durable New Freedom reform; it answers the long Populist demand for a flexible currency.",
+   "core": false,
+   "alt": [
+    "Federal Reserve"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "IDENTIFY",
+   "q": "Identify the Clayton Antitrust Act (1914).",
+   "a": "It strengthened the Sherman Act by banning price discrimination and interlocking directorates, and exempted labor unions and farm organizations from antitrust prosecution, legalizing strikes, boycotts, and peaceful picketing.",
+   "hint": "→ law + provisions",
+   "note": "Samuel Gompers called it labor's Magna Carta, though the courts later narrowed the exemption.",
+   "core": false,
+   "alt": [
+    "Clayton Act"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "IDENTIFY",
+   "q": "Identify the Triangle Shirtwaist Factory fire and its consequence.",
+   "a": "A 1911 New York factory fire that killed 146 workers, mostly young immigrant women, who were trapped behind locked exit doors. It produced state fire-safety codes, factory inspection laws, and stronger workers' compensation rules.",
+   "hint": "→ event + reform result",
+   "note": "Prime evidence that much Progressive labor reform happened at the state, not the federal, level.",
+   "core": false,
+   "alt": [
+    "Triangle fire"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "STATE",
+   "q": "State what the 16th Amendment (1913) established.",
+   "a": "It authorized Congress to levy a federal income tax without apportioning it among the states by population.",
+   "hint": "→ one-clause power",
+   "note": "The income tax made a large federal state financially possible, from the New Deal to WWII mobilization.",
+   "core": true,
+   "alt": [
+    "income tax"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "STATE",
+   "q": "State what the 17th Amendment (1913) changed.",
+   "a": "It provided for the direct popular election of U.S. senators, who had previously been chosen by state legislatures.",
+   "hint": "→ one-clause change",
+   "note": "Textbook Progressive answer to machine politics and to a Senate mocked as the millionaires' club.",
+   "core": false,
+   "alt": [
+    "direct election of senators"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "STATE",
+   "q": "State what the 18th Amendment (1919) did and what enforced it.",
+   "a": "It prohibited the manufacture, sale, and transportation of intoxicating liquors nationwide. The Volstead Act supplied the enforcement machinery. The 21st Amendment repealed it in 1933.",
+   "hint": "→ ban + enforcement act",
+   "note": "Prohibition bridges Progressive moral reform and 1920s cultural conflict, and it fed organized crime.",
+   "core": false,
+   "alt": [
+    "Prohibition",
+    "Volstead Act"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "STATE",
+   "q": "State what the 19th Amendment (1920) guaranteed.",
+   "a": "It barred the states and the federal government from denying the right to vote on account of sex, granting women nationwide suffrage.",
+   "hint": "→ one-clause right",
+   "note": "Capstone of a movement running from Seneca Falls in 1848; wartime service gave the final push.",
+   "core": true,
+   "alt": [
+    "woman suffrage",
+    "women's suffrage"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "DEFINE",
+   "q": "Define yellow journalism and name its two leading practitioners.",
+   "a": "Sensational, exaggerated reporting designed to sell newspapers. William Randolph Hearst (New York Journal) and Joseph Pulitzer (New York World) inflamed public anger over Spanish rule in Cuba before 1898.",
+   "hint": "→ practice + two names",
+   "note": "Classic sourcing question: yellow-press coverage shows how purpose and audience shape evidence.",
+   "core": false,
+   "alt": [
+    "Hearst",
+    "Pulitzer"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "IDENTIFY",
+   "q": "Identify the Teller Amendment and the Platt Amendment.",
+   "a": "The Teller Amendment (1898) pledged that the U.S. would not annex Cuba. The Platt Amendment (1901) then forced Cuba to permit U.S. intervention, to limit its treaty-making and debt, and to lease Guantanamo Bay to the United States.",
+   "hint": "→ two pledges compared",
+   "note": "The pair is the sharpest evidence of the gap between anti-imperialist rhetoric and imperial practice.",
+   "core": false,
+   "alt": [
+    "Teller",
+    "Platt"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "IDENTIFY",
+   "q": "Identify the Philippine-American War and the Anti-Imperialist League.",
+   "a": "After annexation in 1898, Emilio Aguinaldo's forces fought a brutal U.S. counterinsurgency (1899-1902) that killed hundreds of thousands of Filipinos. The Anti-Imperialist League (Twain, Carnegie, Bryan, Addams) opposed annexation as a betrayal of self-government.",
+   "hint": "→ conflict + opposition group",
+   "note": "Shows that empire was contested at home; the war undercut the civilizing-mission justification.",
+   "core": false,
+   "alt": [
+    "Aguinaldo"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "DEFINE",
+   "q": "Define the Open Door Policy.",
+   "a": "Secretary of State John Hay's 1899-1900 notes asking the imperial powers to keep equal trading access to all of China and to preserve Chinese territorial integrity, protecting U.S. commercial opportunity without colonies.",
+   "hint": "→ policy + goal",
+   "note": "The economic model of U.S. expansion: markets and access rather than territory.",
+   "core": true,
+   "alt": [
+    "Open Door notes",
+    "John Hay"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "STATE",
+   "q": "State the Roosevelt Corollary to the Monroe Doctrine (1904).",
+   "a": "TR asserted that chronic wrongdoing or instability in Latin America could compel the United States to act as an international police power, intervening to preempt European debt collection in the hemisphere.",
+   "hint": "→ doctrine sentence",
+   "note": "It turns Monroe's defensive warning into a claimed right to intervene; cite it for Big Stick diplomacy.",
+   "core": true,
+   "alt": [
+    "international police power"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.5",
+   "v": "IDENTIFY",
+   "q": "Identify the Zimmermann Telegram.",
+   "a": "A secret 1917 German message, intercepted by the British, offering Mexico an alliance and the recovery of Texas, New Mexico, and Arizona if the U.S. entered the war. Its publication enraged American opinion.",
+   "hint": "→ document + offer",
+   "note": "Combined with unrestricted submarine warfare, it is the standard proximate cause of U.S. entry.",
+   "core": false,
+   "alt": [
+    "Zimmermann note"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "IDENTIFY",
+   "q": "Identify the Espionage Act (1917) and the Sedition Act (1918).",
+   "a": "Wartime laws criminalizing interference with the draft or military operations (Espionage) and disloyal, profane, or abusive speech about the government, flag, or armed forces (Sedition). Socialist Eugene Debs was imprisoned under them.",
+   "hint": "→ two laws + effect",
+   "note": "The best evidence for wartime contraction of civil liberties; pair them with Schenck.",
+   "core": true,
+   "alt": [
+    "Espionage Act",
+    "Sedition Act"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "IDENTIFY",
+   "q": "Identify Schenck v. United States (1919) and its legal test.",
+   "a": "The Supreme Court unanimously upheld an Espionage Act conviction for anti-draft leaflets. Justice Holmes held that speech creating a clear and present danger of substantive evils Congress may prevent is unprotected, especially in wartime.",
+   "hint": "→ case + doctrine",
+   "note": "Holmes's falsely shouting fire in a theater line comes from this case; the test stood until Brandenburg (1969).",
+   "core": true,
+   "alt": [
+    "clear and present danger"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "IDENTIFY",
+   "q": "Identify the Committee on Public Information.",
+   "a": "The federal propaganda agency under George Creel that mobilized opinion for WWI through posters, films, press releases, and Four Minute Men speakers, promoting patriotism and anti-German sentiment.",
+   "hint": "→ agency + method",
+   "note": "It fed the wave of anti-German hysteria and pressure for conformity on the home front.",
+   "core": false,
+   "alt": [
+    "CPI",
+    "Creel Committee"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.6",
+   "v": "DEFINE",
+   "q": "Define the Great Migration.",
+   "a": "The movement of roughly one and a half million African Americans out of the rural South to Northern and Midwestern cities from about 1910 to 1940, driven by wartime industrial jobs, boll weevil crop failures, and escape from Jim Crow and lynching.",
+   "hint": "→ movement + drivers",
+   "note": "Push-pull migration card: it reshaped Northern politics, produced the Harlem Renaissance, and sparked race riots.",
+   "core": true,
+   "alt": [
+    "Great Migration"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.5",
+   "v": "STATE",
+   "q": "State the purpose and key elements of Wilson's Fourteen Points.",
+   "a": "Wilson's 1918 peace program: open diplomacy, freedom of the seas, free trade, arms reduction, national self-determination, adjustment of colonial claims, and above all Point 14, a general association of nations, the League.",
+   "hint": "→ program + signature point",
+   "note": "Only self-determination and the League survived at Versailles; the rest lost out to Allied demands for reparations.",
+   "core": true,
+   "alt": [
+    "Fourteen Points",
+    "League of Nations"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "DEFINE",
+   "q": "Define the First Red Scare and identify the Palmer Raids.",
+   "a": "The 1919-1920 panic over communism, anarchism, and labor radicalism after the Bolshevik Revolution and a wave of strikes and bombings. Attorney General A. Mitchell Palmer's raids arrested thousands of suspected radicals and deported hundreds without due process.",
+   "hint": "→ panic + government action",
+   "note": "Sacco and Vanzetti's 1921 trial and 1927 execution is the standard illustration of nativist and anti-radical bias.",
+   "core": false,
+   "alt": [
+    "Palmer Raids",
+    "Sacco and Vanzetti"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "IDENTIFY",
+   "q": "Identify the Emergency Quota Act (1921) and the National Origins Act (1924).",
+   "a": "Immigration laws that imposed national-origins quotas pegged to earlier census counts, sharply restricting southern and eastern Europeans, and barring most Asian immigration entirely. Western Hemisphere migration was left unrestricted.",
+   "hint": "→ laws + who was targeted",
+   "note": "The 1924 quotas used the 1890 census on purpose, to favor northern and western Europeans; repealed in 1965.",
+   "core": false,
+   "alt": [
+    "National Origins Act",
+    "Johnson-Reed Act"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "IDENTIFY",
+   "q": "Identify the Scopes Trial (1925) and what it symbolized.",
+   "a": "The Tennessee prosecution of teacher John Scopes for teaching evolution. William Jennings Bryan argued for the state and Clarence Darrow for the defense. Scopes was convicted, but the trial dramatized the clash between fundamentalism and modern science.",
+   "hint": "→ trial + cultural conflict",
+   "note": "Use it as evidence of the urban-rural, modernist-fundamentalist divide of the 1920s.",
+   "core": false,
+   "alt": [
+    "Scopes",
+    "monkey trial"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "DEFINE",
+   "q": "Define the Harlem Renaissance and name several figures.",
+   "a": "The 1920s flowering of African American literature, art, and music centered in Harlem, asserting racial pride and a distinct Black cultural identity. Figures: Langston Hughes, Zora Neale Hurston, Claude McKay, Duke Ellington, Louis Armstrong.",
+   "hint": "→ movement + names",
+   "note": "Direct product of the Great Migration; connect culture to demographic change on the exam.",
+   "core": false,
+   "alt": [
+    "Langston Hughes",
+    "Zora Neale Hurston"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "DEFINE",
+   "q": "Define the Lost Generation.",
+   "a": "Postwar American writers disillusioned by WWI and by 1920s materialism and conformity, many of them expatriates in Paris. Key figures: Ernest Hemingway, F. Scott Fitzgerald, Gertrude Stein, T.S. Eliot.",
+   "hint": "→ group + attitude",
+   "note": "Cultural evidence that WWI shattered Progressive confidence in reform and progress.",
+   "core": false,
+   "alt": [
+    "Hemingway",
+    "Fitzgerald"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.7",
+   "v": "DEFINE",
+   "q": "Define 1920s consumer culture and the credit practice that fueled it.",
+   "a": "Mass production (Ford's assembly line), national advertising, radio, and chain stores created a market for cars, appliances, and radios. Installment buying let consumers purchase on credit, sustaining demand but building household debt.",
+   "hint": "→ system + credit term",
+   "note": "Buying on the installment plan and stock buying on margin are the two debt habits that made 1929 worse.",
+   "core": false,
+   "alt": [
+    "installment buying",
+    "buying on credit"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "IDENTIFY",
+   "q": "Identify the Dust Bowl and its human consequence.",
+   "a": "Severe drought plus deep-plow farming stripped the southern Plains of topsoil in the 1930s, creating enormous dust storms. Hundreds of thousands of displaced farm families, called Okies, migrated west to California as farm laborers.",
+   "hint": "→ environmental event + migration",
+   "note": "Steinbeck's The Grapes of Wrath is the classic source; links environment, migration, and the Depression.",
+   "core": false,
+   "alt": [
+    "Okies"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "NAME",
+   "q": "Name the three R's that organize the New Deal and give one program for each.",
+   "a": "Relief (immediate aid: CCC, WPA, FERA), Recovery (restart the economy: AAA, NRA, TVA), Reform (prevent recurrence: FDIC, SEC, Social Security, Wagner Act).",
+   "hint": "→ three categories + examples",
+   "note": "The fastest way to sort alphabet agencies on an MC question or in an LEQ paragraph.",
+   "core": true,
+   "alt": [
+    "relief, recovery, reform"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "IDENTIFY",
+   "q": "Identify the AAA, the NRA, and the TVA.",
+   "a": "AAA (1933) paid farmers to cut production to raise prices. NRA set industry codes on prices, wages, and hours under the Blue Eagle. TVA built dams in the Tennessee Valley for flood control, public power, and regional development.",
+   "hint": "→ three agencies + jobs",
+   "note": "All First New Deal recovery programs; the Court struck down the NRA (Schechter, 1935) and the original AAA (1936).",
+   "core": false,
+   "alt": [
+    "AAA",
+    "NRA",
+    "TVA"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "IDENTIFY",
+   "q": "Identify the CCC and the WPA.",
+   "a": "The Civilian Conservation Corps put young unmarried men to work on reforestation, parks, and erosion control, sending most of their pay home. The Works Progress Administration (1935) employed millions on roads, schools, and public buildings, and paid artists, writers, and musicians.",
+   "hint": "→ two agencies + who worked",
+   "note": "Work relief, not a dole: FDR insisted on jobs, and WPA murals and guidebooks are common stimulus documents.",
+   "core": false,
+   "alt": [
+    "Civilian Conservation Corps",
+    "Works Progress Administration"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "IDENTIFY",
+   "q": "Identify the FDIC, the Glass-Steagall Act, and the SEC.",
+   "a": "Glass-Steagall (1933) separated commercial from investment banking and created the FDIC to insure bank deposits. The Securities and Exchange Commission (1934) regulates the stock market, requiring disclosure and policing fraud and margin abuse.",
+   "hint": "→ banking + market regulators",
+   "note": "These are the Reform pillar and the New Deal's most lasting structural legacy in finance.",
+   "core": false,
+   "alt": [
+    "FDIC",
+    "SEC",
+    "Glass-Steagall"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "IDENTIFY",
+   "q": "Identify the Social Security Act (1935) and its major provisions.",
+   "a": "It created old-age pensions funded by payroll taxes on workers and employers, unemployment insurance, and aid to dependent children and the disabled. Farm and domestic workers were excluded, leaving out most African Americans and many women.",
+   "hint": "→ law + who was covered",
+   "note": "The exclusion of agricultural and domestic labor is the standard limits-of-the-New-Deal evidence.",
+   "core": true,
+   "alt": [
+    "Social Security"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "IDENTIFY",
+   "q": "Identify the Wagner Act (1935).",
+   "a": "The National Labor Relations Act guaranteed workers the right to organize and bargain collectively, banned unfair employer labor practices, and created the NLRB to supervise union elections. Union membership surged, especially through the CIO.",
+   "hint": "→ law + right created",
+   "note": "The single most important pro-labor law in U.S. history; explains labor's place in the New Deal coalition.",
+   "core": true,
+   "alt": [
+    "National Labor Relations Act",
+    "NLRA"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "NAME",
+   "q": "Name the three leading popular critics who pushed FDR from the left and state each one's demand.",
+   "a": "Huey Long (Share Our Wealth: confiscatory taxes on the rich and a guaranteed family income), Father Charles Coughlin (radio priest demanding nationalized banking and currency inflation), and Dr. Francis Townsend (a monthly pension for the elderly).",
+   "hint": "→ three names + programs",
+   "note": "Their pressure helps explain the more redistributive Second New Deal, especially Social Security.",
+   "core": false,
+   "alt": [
+    "Huey Long",
+    "Coughlin",
+    "Townsend"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.11",
+   "v": "IDENTIFY",
+   "q": "Identify the Lend-Lease Act (1941) and the Atlantic Charter.",
+   "a": "Lend-Lease let the U.S. lend or lease war material to Britain and later the USSR without payment, making America the arsenal of democracy. The Atlantic Charter (FDR and Churchill, 1941) stated shared war aims: self-determination, free trade, and collective security.",
+   "hint": "→ policy + declaration",
+   "note": "Both show the U.S. abandoning neutrality before Pearl Harbor; the Charter previews the UN.",
+   "core": false,
+   "alt": [
+    "Lend-Lease",
+    "Atlantic Charter"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "IDENTIFY",
+   "q": "Identify Executive Order 9066 and its effect.",
+   "a": "FDR's 1942 order authorizing the military to designate exclusion zones, used to remove about 110,000 people of Japanese ancestry, two-thirds of them U.S. citizens, from the West Coast into inland internment camps. Redress and an apology came in 1988.",
+   "hint": "→ order + population affected",
+   "note": "Contrast with the far milder treatment of German and Italian Americans to make a race-based argument.",
+   "core": true,
+   "alt": [
+    "EO 9066",
+    "Japanese internment"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "IDENTIFY",
+   "q": "Identify Korematsu v. United States (1944) and its holding.",
+   "a": "The Supreme Court upheld Japanese American exclusion as a wartime military necessity, ruling 6-3 that national security justified the order. The dissents called it the legalization of racism; the Court repudiated the decision in 2018.",
+   "hint": "→ case + holding",
+   "note": "The wartime bookend to Schenck: rights contract under claimed military necessity.",
+   "core": true,
+   "alt": [
+    "Korematsu"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "DEFINE",
+   "q": "Define the Double V campaign and identify A. Philip Randolph's achievement.",
+   "a": "Double V was the Black wartime demand for victory over fascism abroad and over racism at home. Randolph's threatened 1941 March on Washington pushed FDR to issue Executive Order 8802, banning discrimination in defense industries and creating the FEPC.",
+   "hint": "→ slogan + executive order",
+   "note": "This is the direct seedbed of the postwar civil rights movement, and Randolph's tactic returns in 1963.",
+   "core": false,
+   "alt": [
+    "Double V",
+    "Executive Order 8802"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "DEFINE",
+   "q": "Define the Bracero Program.",
+   "a": "A 1942 agreement with Mexico admitting temporary Mexican farm and rail workers to fill wartime labor shortages. It brought hundreds of thousands of laborers, often into low pay and poor conditions, and ran until 1964.",
+   "hint": "→ program + purpose",
+   "note": "Pair with the 1943 Zoot Suit Riots in Los Angeles to show demand for Mexican labor alongside hostility to Mexican Americans.",
+   "core": false,
+   "alt": [
+    "Bracero"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.13",
+   "v": "IDENTIFY",
+   "q": "Identify the Manhattan Project.",
+   "a": "The secret U.S. program (1942-1945), directed by J. Robert Oppenheimer at Los Alamos under General Leslie Groves, that built the first atomic bombs, tested at Trinity in July 1945.",
+   "hint": "→ project + leaders",
+   "note": "Also the model for the permanent federal-scientific partnership that defines the Cold War state.",
+   "core": false,
+   "alt": [
+    "Manhattan Project",
+    "Oppenheimer"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.2",
+   "v": "EXPLAIN",
+   "q": "Explain the main causes of American overseas expansion in the 1890s.",
+   "a": "Industrial overproduction demanded foreign markets; Alfred Thayer Mahan's The Influence of Sea Power argued for a large navy, coaling stations, and colonies; Social Darwinism and missionary duty supplied racial and religious justification; and the 1890 census closing of the frontier prompted a search for new frontiers.",
+   "hint": "→ four causes listed",
+   "note": "Economic, strategic, and ideological causes together; a one-cause answer loses points on the LEQ.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "EXPLAIN",
+   "q": "Explain the immediate causes of the Spanish-American War.",
+   "a": "Cuban revolt against Spain and Spanish reconcentration camps drew U.S. sympathy; yellow journalism amplified atrocity stories; the de Lome letter insulted President McKinley; and the explosion of the USS Maine in Havana harbor was blamed on Spain, producing the cry Remember the Maine.",
+   "hint": "→ chain of causes",
+   "note": "John Hay called it a splendid little war: ten weeks that produced Puerto Rico, Guam, and the Philippines.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.5",
+   "v": "EXPLAIN",
+   "q": "Explain why the United States entered World War I in 1917.",
+   "a": "German unrestricted submarine warfare (Lusitania, then the 1917 resumption), the Zimmermann Telegram, deep economic ties and loans to the Allies, cultural and press sympathy for Britain, and Wilson's ideological aim of making the world safe for democracy.",
+   "hint": "→ causes ranked",
+   "note": "Note the timing: the immediate triggers are 1917, but economic entanglement began in 1914.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.5",
+   "v": "EXPLAIN",
+   "q": "Explain why the Senate rejected the Treaty of Versailles.",
+   "a": "Article X of the League Covenant appeared to commit the U.S. to defend member states, which critics said surrendered Congress's war power. Henry Cabot Lodge's reservationists demanded amendments; the irreconcilables opposed any League; and Wilson refused all compromise after his stroke.",
+   "hint": "→ objection + politics",
+   "note": "The U.S. never joined the League it invented, a favorite example of the limits of Wilsonian idealism.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "EXPLAIN",
+   "q": "Explain the main causes of the Great Depression.",
+   "a": "Speculation and buying stock on margin, an overextended banking system with no deposit insurance, farm overproduction and debt, industrial overproduction against stagnant wages and deep inequality, weak purchasing power propped up by installment credit, and the 1930 Hawley-Smoot Tariff, which choked world trade.",
+   "hint": "→ multiple causes listed",
+   "note": "The crash was a trigger, not the cause; graders want structural weaknesses in the 1920s economy.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "EXPLAIN",
+   "q": "Explain why FDR proposed the court-packing plan and why it backfired.",
+   "a": "After the Court struck down the NRA and AAA, FDR proposed adding a justice for every one over seventy, up to six. Congress and the public saw a threat to separation of powers; the plan died, split the Democratic coalition, and emboldened a conservative bloc, though the Court soon began upholding New Deal laws.",
+   "hint": "→ motive + backlash",
+   "note": "The switch in time that saved nine: FDR lost the battle but won the constitutional war.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "EXPLAIN",
+   "q": "Explain how World War II ended the Great Depression and transformed the economy.",
+   "a": "Massive deficit-financed war spending, the draft, and conversion of industry to war production erased unemployment, doubled GDP, drew women and rural migrants into wage work, expanded union membership, and created a permanent federal role in the economy through taxes, contracts, and research funding.",
+   "hint": "→ mechanism + effects",
+   "note": "The best evidence that spending, not New Deal programs alone, ended the Depression.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.13",
+   "v": "EXPLAIN",
+   "q": "Explain the arguments for and against the use of atomic bombs on Japan.",
+   "a": "For: it would end the war quickly, avoid a projected invasion of the home islands with heavy casualties, and answer Pearl Harbor. Against: Japan was near collapse, a demonstration or modified surrender terms were possible, the targets were civilian, and a motive was to intimidate the Soviet Union.",
+   "hint": "→ two-sided argument",
+   "note": "Truman's decision is a standard DBQ; give both the military-necessity and atomic-diplomacy interpretations.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.13",
+   "v": "EXPLAIN",
+   "q": "Explain the U.S. response to the Holocaust and its limits.",
+   "a": "The State Department restricted refugee admissions under existing quotas, the SS St. Louis was turned away in 1939, and the Allies rejected proposals to bomb the rail lines to Auschwitz. Only in 1944 did FDR create the War Refugee Board, which helped save perhaps 200,000 lives.",
+   "hint": "→ actions + limits",
+   "note": "Antisemitism, nativist quotas, and a win-the-war-first strategy all explain the delay.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "CONTRAST",
+   "q": "Contrast New Nationalism and New Freedom in the election of 1912.",
+   "a": "Roosevelt's New Nationalism (Progressive Bull Moose) accepted big business but demanded a strong federal regulatory state and social welfare legislation. Wilson's New Freedom promised to break up trusts, cut tariffs, and restore competition through smaller government.",
+   "hint": "→ two programs compared",
+   "note": "Four-way race: Wilson won with 42 percent because Taft and TR split Republicans; Debs took 6 percent.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.2",
+   "v": "CONTRAST",
+   "q": "Contrast the imperialist and anti-imperialist arguments over annexing the Philippines.",
+   "a": "Imperialists cited naval bases, Asian markets, national prestige, and a duty to uplift and Christianize. Anti-imperialists argued annexation violated consent of the governed, would entangle the U.S. in war, would admit non-white peoples and cheap labor, and betrayed the Declaration of Independence.",
+   "hint": "→ two argument sets",
+   "note": "Note that some anti-imperialism was itself racist; both sides used racial reasoning.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "CONTRAST",
+   "q": "Contrast Big Stick diplomacy, dollar diplomacy, and moral diplomacy.",
+   "a": "Roosevelt's Big Stick used naval power and intervention (Panama, the Roosevelt Corollary). Taft's dollar diplomacy substituted American loans and investment for bullets. Wilson's moral diplomacy promised to back only democratic, legitimate governments, yet he intervened in Mexico, Haiti, and the Caribbean.",
+   "hint": "→ three approaches compared",
+   "note": "All three produced intervention; the continuity is U.S. dominance in the Caribbean, not the rhetoric.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "CONTRAST",
+   "q": "Contrast the suffrage strategies of Carrie Chapman Catt and Alice Paul.",
+   "a": "Catt's NAWSA pursued a Winning Plan of state-by-state campaigns plus a federal amendment, stressing respectability and wartime patriotic service. Paul's National Woman's Party picketed the White House, went on hunger strikes, and held the party in power responsible.",
+   "hint": "→ moderate vs militant",
+   "note": "Both mattered: Paul's confrontation raised urgency while Catt's lobbying delivered the votes.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "CONTRAST",
+   "q": "Compare 1920s nativism with earlier nineteenth-century nativism.",
+   "a": "Both cast recent immigrants as racially and religiously unassimilable, and both surged in economic stress. The 1850s Know-Nothings attacked Irish and German Catholics through party politics; 1920s nativism targeted southern and eastern Europeans, Catholics, and Jews, winning federal quota laws and reviving the Klan.",
+   "hint": "→ continuity + escalation",
+   "note": "Change over time: 1920s nativism succeeded in writing racial preference into federal immigration law.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.8",
+   "v": "CONTRAST",
+   "q": "Contrast Marcus Garvey's program with that of the NAACP.",
+   "a": "Garvey's UNIA preached Black separatism, racial pride, and economic self-sufficiency, with a Back to Africa vision and the Black Star Line. The NAACP under Du Bois pursued integration and equal citizenship through litigation, lobbying, and publicity in The Crisis.",
+   "hint": "→ separatism vs integration",
+   "note": "This split anticipates the later King versus Malcolm X and Black Power debate.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "CONTRAST",
+   "q": "Contrast Hoover's and Roosevelt's responses to the Depression.",
+   "a": "Hoover relied on voluntarism, local relief, and confidence, then moved to limited federal action through the Reconstruction Finance Corporation, which lent to banks and businesses; he opposed direct federal relief. FDR embraced direct relief, work programs, deficit spending, and permanent social insurance.",
+   "hint": "→ degree of intervention",
+   "note": "The difference is scale and direct aid, not a total break: Hoover began federal intervention, FDR expanded it.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.10",
+   "v": "CONTRAST",
+   "q": "Contrast the First New Deal with the Second New Deal.",
+   "a": "The First (1933-1934) focused on emergency relief and recovery through business-government cooperation: banking holiday, CCC, AAA, NRA, TVA. The Second (1935-1938), pushed by populist critics and labor unrest, was more redistributive and pro-labor: WPA, Social Security, Wagner Act, and wealth taxes.",
+   "hint": "→ two phases compared",
+   "note": "Second New Deal reforms are the ones that survive; they build the modern welfare state.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "DATE",
+   "q": "Date the Spanish-American War and name the treaty that ended it.",
+   "a": "1898. The Treaty of Paris gave the U.S. Puerto Rico, Guam, and the Philippines (for 20 million dollars) and independence in name for Cuba.",
+   "hint": "→ year + treaty",
+   "note": "1898 marks the pivot from continental to overseas empire.",
+   "core": false,
+   "alt": [
+    "1898"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.3",
+   "v": "DATE",
+   "q": "Date the opening of the Panama Canal.",
+   "a": "1914. The U.S. backed Panama's 1903 revolt against Colombia and secured the Canal Zone by the Hay-Bunau-Varilla Treaty.",
+   "hint": "→ year only",
+   "note": "The canal is the strategic payoff of the Roosevelt Corollary and Mahan's naval doctrine.",
+   "core": false,
+   "alt": [
+    "1914"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.5",
+   "v": "DATE",
+   "q": "Date the U.S. declaration of war on Germany in World War I.",
+   "a": "April 1917, nearly three years after the war began in Europe in August 1914; U.S. troops arrived in force in 1918.",
+   "hint": "→ month and year",
+   "note": "The long delay is why arguments about neutrality and economic ties matter.",
+   "core": false,
+   "alt": [
+    "April 1917",
+    "1917"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.4",
+   "v": "DATE",
+   "q": "Date the ratification of the 19th Amendment.",
+   "a": "1920, seventy-two years after the Seneca Falls Convention of 1848.",
+   "hint": "→ year + span",
+   "note": "Chronology trap: the 19th comes after the 18th (1919), not before.",
+   "core": false,
+   "alt": [
+    "1920"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.9",
+   "v": "DATE",
+   "q": "Date the stock market crash that opened the Great Depression.",
+   "a": "October 1929 (Black Thursday, October 24 and Black Tuesday, October 29). Unemployment peaked near 25 percent by 1933.",
+   "hint": "→ month and year",
+   "note": "Hoover was seven months into his term; FDR did not take office until March 1933.",
+   "core": true,
+   "alt": [
+    "October 1929",
+    "1929"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.12",
+   "v": "DATE",
+   "q": "Date the attack on Pearl Harbor.",
+   "a": "December 7, 1941. Congress declared war on Japan the next day; Germany and Italy declared war on the U.S. on December 11.",
+   "hint": "→ full date",
+   "note": "Note that Germany declared war on the U.S., which is what made it a two-front American war.",
+   "core": true,
+   "alt": [
+    "December 7, 1941",
+    "1941"
+   ]
+  },
+  {
+   "u": "u7",
+   "t": "7.13",
+   "v": "DATE",
+   "q": "Date D-Day and the atomic bombings of Japan.",
+   "a": "D-Day, the Allied landing at Normandy, was June 6, 1944. Hiroshima was bombed on August 6, 1945 and Nagasaki on August 9; Japan surrendered on August 15 (V-J Day).",
+   "hint": "→ two dates",
+   "note": "V-E Day is May 8, 1945, three months before the Pacific war ends.",
+   "core": false,
+   "alt": [
+    "June 6, 1944",
+    "August 1945"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "DEFINE",
+   "q": "Define containment and identify the diplomat who formulated it.",
+   "a": "The U.S. strategy of blocking any further expansion of Soviet influence without direct war. George Kennan set it out in the 1946 Long Telegram and the 1947 Mr. X article, arguing that patient, firm resistance would eventually force Soviet mellowing.",
+   "hint": "→ strategy + author",
+   "note": "Containment is the organizing idea of Period 8: every Cold War policy question can be sorted by it.",
+   "core": true,
+   "alt": [
+    "Kennan",
+    "Long Telegram"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "IDENTIFY",
+   "q": "Identify the Truman Doctrine (1947).",
+   "a": "Truman's pledge to support free peoples resisting armed subjugation, made when asking Congress for 400 million dollars in aid to Greece and Turkey. It committed the U.S. to global anticommunist intervention.",
+   "hint": "→ policy + occasion",
+   "note": "The rhetorical template reused for Korea, Vietnam, and beyond: a local crisis framed in global terms.",
+   "core": true,
+   "alt": [
+    "Truman Doctrine"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "IDENTIFY",
+   "q": "Identify the Marshall Plan (1948).",
+   "a": "The European Recovery Program, roughly 13 billion dollars in U.S. aid to rebuild Western European economies. It aimed to restore trading partners and to make communism less attractive by removing the poverty it fed on.",
+   "hint": "→ program + dual purpose",
+   "note": "Economic containment: humanitarian and strategic at once. The USSR barred its satellites from joining.",
+   "core": true,
+   "alt": [
+    "Marshall Plan",
+    "European Recovery Program"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "IDENTIFY",
+   "q": "Identify NATO and the Warsaw Pact.",
+   "a": "NATO (1949) is a mutual-defense alliance of the U.S., Canada, and Western European states in which an attack on one is an attack on all. The Warsaw Pact (1955) was the Soviet counter-alliance of Eastern European satellites.",
+   "hint": "→ two alliances",
+   "note": "NATO was the first peacetime military alliance in U.S. history, a break from the no entangling alliances tradition.",
+   "core": false,
+   "alt": [
+    "NATO",
+    "Warsaw Pact"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "IDENTIFY",
+   "q": "Identify the Korean War and its outcome.",
+   "a": "After North Korea invaded the South in 1950, Truman sent U.S. forces under a UN mandate. MacArthur's Inchon landing pushed north, China intervened, and Truman fired MacArthur for insubordination. The 1953 armistice restored a divided Korea near the 38th parallel.",
+   "hint": "→ conflict + result",
+   "note": "First hot war of containment: it tripled defense spending, militarized NSC-68, and set the limited-war pattern.",
+   "core": false,
+   "alt": [
+    "Korean War"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "DEFINE",
+   "q": "Define McCarthyism and identify HUAC.",
+   "a": "McCarthyism is making sweeping accusations of communist disloyalty without evidence, named for Senator Joseph McCarthy. The House Un-American Activities Committee investigated alleged subversion, blacklisting the Hollywood Ten and probing Alger Hiss; the Rosenbergs were executed for atomic espionage in 1953.",
+   "hint": "→ practice + institution",
+   "note": "McCarthy fell after the televised 1954 Army-McCarthy hearings and Senate censure; television undid him.",
+   "core": true,
+   "alt": [
+    "McCarthyism",
+    "HUAC"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "IDENTIFY",
+   "q": "Identify the military-industrial complex and who warned against it.",
+   "a": "The permanent alliance of the armed forces, defense contractors, and Congress created by sustained Cold War spending. President Eisenhower warned in his 1961 Farewell Address that its unwarranted influence threatened liberty and democratic process.",
+   "hint": "→ term + source",
+   "note": "Striking sourcing document: the warning comes from a five-star general and Republican president.",
+   "core": false,
+   "alt": [
+    "military-industrial complex"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.7",
+   "v": "IDENTIFY",
+   "q": "Identify the Bay of Pigs invasion and the Cuban Missile Crisis.",
+   "a": "The 1961 Bay of Pigs was a failed CIA-backed invasion by Cuban exiles. In October 1962 U-2 photos revealed Soviet missiles in Cuba; Kennedy imposed a naval quarantine, and Khrushchev withdrew the missiles in exchange for a U.S. pledge not to invade Cuba and the quiet removal of U.S. missiles from Turkey.",
+   "hint": "→ two crises + resolution",
+   "note": "Closest approach to nuclear war; it produced the Moscow-Washington hotline and the 1963 Test Ban Treaty.",
+   "core": true,
+   "alt": [
+    "Cuban Missile Crisis",
+    "Bay of Pigs"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "IDENTIFY",
+   "q": "Identify the Gulf of Tonkin Resolution (1964).",
+   "a": "After reported North Vietnamese attacks on U.S. destroyers, Congress authorized the president to take all necessary measures to repel attack and prevent further aggression, effectively a blank check for war without a declaration.",
+   "hint": "→ resolution + power granted",
+   "note": "Only two senators voted no; the reported second attack probably never happened, which fuels the credibility gap.",
+   "core": true,
+   "alt": [
+    "Gulf of Tonkin Resolution"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "IDENTIFY",
+   "q": "Identify the Tet Offensive (1968).",
+   "a": "A coordinated North Vietnamese and Viet Cong surprise assault on more than 100 South Vietnamese cities during the lunar new year. U.S. forces repelled it with heavy communist losses, but the scale of the attack contradicted official claims that victory was near.",
+   "hint": "→ event + effect on opinion",
+   "note": "Military win, political defeat: Johnson's approval collapsed and he declined to run again.",
+   "core": true,
+   "alt": [
+    "Tet Offensive"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "DEFINE",
+   "q": "Define Vietnamization and the Nixon Doctrine.",
+   "a": "Vietnamization was Nixon's policy of withdrawing U.S. ground troops while training and equipping South Vietnamese forces to fight, backed by intensified bombing and the invasion of Cambodia. The Nixon Doctrine generalized it: allies would supply the manpower, the U.S. the aid and air power.",
+   "hint": "→ policy + broader doctrine",
+   "note": "The 1970 Cambodia incursion triggered campus protests and the Kent State shootings.",
+   "core": false,
+   "alt": [
+    "Vietnamization"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "IDENTIFY",
+   "q": "Identify the Pentagon Papers and the War Powers Act.",
+   "a": "The Pentagon Papers (1971) were a leaked classified history showing that administrations had misled the public about Vietnam; the Court allowed publication. The War Powers Act (1973) required the president to notify Congress within 48 hours and to end deployments within 60 days absent authorization.",
+   "hint": "→ leak + statute",
+   "note": "Both are the institutional aftershock of the credibility gap; Congress reclaiming war power from the presidency.",
+   "core": false,
+   "alt": [
+    "Pentagon Papers",
+    "War Powers Act"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "DEFINE",
+   "q": "Define detente and give three examples of it.",
+   "a": "The 1970s easing of Cold War tensions through negotiation. Examples: Nixon's 1972 visit to China, opening relations and splitting the communist bloc; the 1972 Moscow summit and SALT I limiting missiles and the ABM Treaty; and the 1975 Helsinki Accords on borders and human rights.",
+   "hint": "→ policy + examples",
+   "note": "Only a committed anticommunist like Nixon could open China: the political-cover argument.",
+   "core": true,
+   "alt": [
+    "detente",
+    "SALT I"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "IDENTIFY",
+   "q": "Identify the GI Bill (1944) and its effects.",
+   "a": "The Servicemen's Readjustment Act gave veterans tuition and stipends for college, low-interest home and business loans, and unemployment pay. It expanded higher education, built a mass middle class, and fueled suburban homeownership.",
+   "hint": "→ law + social effects",
+   "note": "Its benefits ran through segregated institutions and banks, so white veterans gained far more, widening the wealth gap.",
+   "core": false,
+   "alt": [
+    "GI Bill"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "IDENTIFY",
+   "q": "Identify Levittown and describe postwar suburbanization.",
+   "a": "Levittown was a mass-produced Long Island subdivision built with standardized assembly-line methods and sold cheaply to veterans. Backed by FHA and VA mortgages, the baby boom, and new highways, suburbs grew explosively; their deeds and lending practices excluded African Americans.",
+   "hint": "→ place + pattern",
+   "note": "White flight plus redlining creates de facto segregation in the North, which is why Brown did not desegregate Northern schools.",
+   "core": false,
+   "alt": [
+    "Levittown",
+    "suburbanization"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "IDENTIFY",
+   "q": "Identify the Interstate Highway Act (1956) and its stated justification.",
+   "a": "Eisenhower's National Interstate and Defense Highways Act funded over 40,000 miles of interstate highway, justified as national defense for evacuating cities and moving military traffic. It was the largest public works project in U.S. history.",
+   "hint": "→ law + rationale",
+   "note": "Effects: suburban sprawl, decline of railroads and inner cities, Sunbelt growth, and highways cutting through Black neighborhoods.",
+   "core": false,
+   "alt": [
+    "Interstate Highway Act"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "IDENTIFY",
+   "q": "Identify Brown v. Board of Education (1954) and its holding.",
+   "a": "A unanimous Warren Court held that separate educational facilities are inherently unequal, overturning the Plessy v. Ferguson separate but equal doctrine in public schools. Thurgood Marshall argued the case for the NAACP Legal Defense Fund.",
+   "hint": "→ case + doctrine overturned",
+   "note": "Brown II (1955) ordered desegregation with all deliberate speed, the vague phrase that licensed massive resistance.",
+   "core": true,
+   "alt": [
+    "Brown v. Board"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "IDENTIFY",
+   "q": "Identify the Montgomery Bus Boycott and its outcome.",
+   "a": "Sparked by Rosa Parks's arrest in December 1955, African Americans in Montgomery boycotted city buses for 381 days under the Montgomery Improvement Association led by Martin Luther King Jr. The Supreme Court ruled bus segregation unconstitutional in 1956.",
+   "hint": "→ event + result",
+   "note": "It launched King nationally and proved mass nonviolent economic pressure could work; the SCLC followed in 1957.",
+   "core": true,
+   "alt": [
+    "Montgomery Bus Boycott",
+    "Rosa Parks"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "IDENTIFY",
+   "q": "Identify the Greensboro sit-ins, the Freedom Rides, and SNCC.",
+   "a": "In 1960 four Black college students sat in at a Greensboro Woolworth lunch counter, sparking sit-ins across the South and the founding of the Student Nonviolent Coordinating Committee. CORE's 1961 Freedom Rides tested desegregation of interstate bus travel and met mob violence in Alabama.",
+   "hint": "→ three actions + organization",
+   "note": "Student-led direct action forced a reluctant Kennedy administration to enforce federal desegregation rulings.",
+   "core": false,
+   "alt": [
+    "sit-ins",
+    "Freedom Rides",
+    "SNCC"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "IDENTIFY",
+   "q": "Identify the Birmingham campaign and the Letter from Birmingham Jail.",
+   "a": "King's 1963 SCLC campaign in Birmingham used marches and boycotts; Bull Connor's police dogs and fire hoses, televised nationally, produced national outrage. King's Letter from Birmingham Jail answered white moderate clergy, defending nonviolent direct action and the duty to disobey unjust laws.",
+   "hint": "→ campaign + document",
+   "note": "Deliberate media strategy: provoke visible repression to force federal action. It pushed Kennedy to propose the civil rights bill.",
+   "core": false,
+   "alt": [
+    "Birmingham",
+    "Letter from Birmingham Jail"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "IDENTIFY",
+   "q": "Identify the March on Washington (1963).",
+   "a": "A quarter of a million people rallied for Jobs and Freedom at the Lincoln Memorial, where King delivered the I Have a Dream speech. Organized by A. Philip Randolph and Bayard Rustin, it pressed Congress to pass the pending civil rights bill.",
+   "hint": "→ event + demand",
+   "note": "Note the full name: it demanded economic justice as well as legal rights, a point often missed.",
+   "core": false,
+   "alt": [
+    "March on Washington"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "IDENTIFY",
+   "q": "Identify the Civil Rights Act of 1964.",
+   "a": "It outlawed discrimination based on race, color, religion, sex, or national origin in public accommodations and employment, allowed the federal government to withhold funds from segregated programs, and created the EEOC.",
+   "hint": "→ law + what it banned",
+   "note": "Title VII's sex clause, added by an opponent hoping to kill the bill, became a foundation of the women's movement.",
+   "core": true,
+   "alt": [
+    "Civil Rights Act of 1964"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "IDENTIFY",
+   "q": "Identify the Voting Rights Act of 1965.",
+   "a": "Passed after the violence at Selma's Edmund Pettus Bridge, it suspended literacy tests and sent federal examiners to register voters in districts with a history of discrimination, requiring federal preclearance of changes to election rules.",
+   "hint": "→ law + mechanism",
+   "note": "Black registration in the South rose dramatically within a few years; the 24th Amendment (1964) had already banned poll taxes in federal elections.",
+   "core": true,
+   "alt": [
+    "Voting Rights Act of 1965"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.11",
+   "v": "IDENTIFY",
+   "q": "Identify Black Power, the Watts riot, and the Kerner Commission.",
+   "a": "Black Power, popularized by Stokely Carmichael and SNCC after 1966, stressed racial pride, self-determination, and self-defense; the Black Panthers added armed patrols and social programs. After the Watts and Detroit uprisings, the Kerner Commission found the nation moving toward two societies, separate and unequal.",
+   "hint": "→ movement + urban unrest + report",
+   "note": "The Kerner Report blamed white racism and de facto inequality, not agitators, and is a standard DBQ document.",
+   "core": true,
+   "alt": [
+    "Black Power",
+    "Kerner Commission"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.9",
+   "v": "IDENTIFY",
+   "q": "Identify the Great Society and the War on Poverty.",
+   "a": "Lyndon Johnson's domestic program aiming to end poverty and racial injustice. It included the Economic Opportunity Act, Head Start, Job Corps, VISTA, food stamps, federal aid to education, housing and urban development, the NEA and NEH, and public broadcasting.",
+   "hint": "→ program + components",
+   "note": "The most sweeping liberal legislation since the New Deal; poverty fell sharply, but Vietnam spending starved it.",
+   "core": true,
+   "alt": [
+    "Great Society",
+    "War on Poverty"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.9",
+   "v": "IDENTIFY",
+   "q": "Identify Medicare and Medicaid (1965).",
+   "a": "Medicare provides federal health insurance for Americans 65 and older through Social Security; Medicaid is a joint federal-state program covering health care for low-income people.",
+   "hint": "→ two programs + who they cover",
+   "note": "The largest expansion of the welfare state since Social Security and the direct ancestor of debates over the ACA.",
+   "core": true,
+   "alt": [
+    "Medicare",
+    "Medicaid"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify the Immigration and Nationality Act of 1965.",
+   "a": "The Hart-Celler Act abolished the 1924 national-origins quotas, replacing them with hemispheric caps and preferences for family reunification and needed skills. It opened large-scale immigration from Asia, Latin America, Africa, and the Caribbean.",
+   "hint": "→ law + what it replaced",
+   "note": "The single most important cause of late-twentieth-century demographic change; connects Period 7 quotas to Period 9 debates.",
+   "core": true,
+   "alt": [
+    "Hart-Celler Act",
+    "Immigration Act of 1965"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.12",
+   "v": "DEFINE",
+   "q": "Define the counterculture of the 1960s.",
+   "a": "A youth movement rejecting middle-class conformity, materialism, and sexual restraint in favor of communal living, rock music, drug experimentation, and personal liberation. Landmarks include the Free Speech Movement at Berkeley, SDS and the Port Huron Statement, and Woodstock (1969).",
+   "hint": "→ movement + features",
+   "note": "Distinguish the cultural counterculture from the political New Left, though they overlapped on Vietnam.",
+   "core": false,
+   "alt": [
+    "counterculture",
+    "New Left"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify Betty Friedan, The Feminine Mystique, and NOW.",
+   "a": "Friedan's 1963 book named the problem that has no name, the frustration of educated suburban housewives confined to domestic roles, and helped launch second-wave feminism. In 1966 she co-founded the National Organization for Women to press for equal pay, equal employment enforcement, and legal equality.",
+   "hint": "→ author + book + organization",
+   "note": "Second-wave feminism borrowed the civil rights model: Title VII gave NOW its legal lever.",
+   "core": false,
+   "alt": [
+    "Feminine Mystique",
+    "NOW"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify the Equal Rights Amendment and the campaign against it.",
+   "a": "The ERA, passed by Congress in 1972, would have barred denial of rights on account of sex. Phyllis Schlafly's STOP ERA campaign argued it would end protective laws, alimony, and single-sex facilities and would draft women; ratification fell three states short by 1982.",
+   "hint": "→ amendment + opposition",
+   "note": "The ERA fight is the clearest evidence that grassroots conservatism was mobilizing before Reagan.",
+   "core": false,
+   "alt": [
+    "ERA",
+    "Phyllis Schlafly"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify Roe v. Wade (1973) and its reasoning.",
+   "a": "The Supreme Court struck down most state abortion bans, holding that a right to privacy implied by the Fourteenth Amendment covers a woman's decision to end a pregnancy, subject to increasing state regulation by trimester.",
+   "hint": "→ case + constitutional basis",
+   "note": "It built on Griswold's privacy right and became the central mobilizing issue of the religious right; overturned in 2022.",
+   "core": true,
+   "alt": [
+    "Roe v. Wade"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.11",
+   "v": "IDENTIFY",
+   "q": "Identify the Chicano movement and Cesar Chavez.",
+   "a": "Mexican American activism for labor rights, bilingual education, and political power. Chavez and Dolores Huerta built the United Farm Workers, using nonviolent strikes and the national grape boycott (1965-1970) to win contracts; younger activists formed La Raza Unida and Brown Berets.",
+   "hint": "→ movement + leaders",
+   "note": "Chavez consciously adopted King's and Gandhi's nonviolent methods, including fasts, to gain moral leverage.",
+   "core": false,
+   "alt": [
+    "Cesar Chavez",
+    "United Farm Workers"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.11",
+   "v": "IDENTIFY",
+   "q": "Identify the American Indian Movement.",
+   "a": "AIM, founded in 1968, demanded tribal sovereignty, treaty enforcement, and an end to termination policy, drawing attention through the occupation of Alcatraz (1969-1971) and the standoff at Wounded Knee (1973). It won the Indian Self-Determination Act of 1975.",
+   "hint": "→ organization + actions",
+   "note": "Red Power parallels Black Power: from integration and assimilation toward self-determination.",
+   "core": false,
+   "alt": [
+    "AIM",
+    "American Indian Movement"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.11",
+   "v": "IDENTIFY",
+   "q": "Identify the Stonewall riots (1969).",
+   "a": "Patrons of the Stonewall Inn, a gay bar in Greenwich Village, fought back against a police raid over several nights. The uprising catalyzed the gay liberation movement, the first pride marches, and organizations demanding an end to legal and medical persecution.",
+   "hint": "→ event + movement launched",
+   "note": "Fits the pattern of rights movements expanding after 1965 by adapting civil rights tactics.",
+   "core": false,
+   "alt": [
+    "Stonewall"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.13",
+   "v": "IDENTIFY",
+   "q": "Identify Silent Spring, Earth Day, and the EPA.",
+   "a": "Rachel Carson's Silent Spring (1962) exposed the ecological damage of DDT and launched modern environmentalism. The first Earth Day came in 1970, and Nixon created the Environmental Protection Agency that year; the Clean Air and Clean Water Acts followed.",
+   "hint": "→ book + event + agency",
+   "note": "Environmental regulation is bipartisan in this era: Nixon signs it, and the Three Mile Island accident (1979) hardens antinuclear feeling.",
+   "core": false,
+   "alt": [
+    "Silent Spring",
+    "EPA"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify Gideon v. Wainwright and Miranda v. Arizona.",
+   "a": "Gideon (1963) required states to provide counsel to defendants who cannot afford a lawyer. Miranda (1966) required police to inform suspects of the rights to silence and to an attorney before custodial interrogation.",
+   "hint": "→ two cases + rights secured",
+   "note": "Warren Court criminal-procedure revolution: it applied Bill of Rights protections to the states through the Fourteenth Amendment.",
+   "core": false,
+   "alt": [
+    "Gideon",
+    "Miranda"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify Engel v. Vitale and Griswold v. Connecticut.",
+   "a": "Engel (1962) barred official prayer in public schools as an establishment of religion. Griswold (1965) struck down a ban on contraceptives for married couples, finding a right to privacy in the penumbras of the Bill of Rights.",
+   "hint": "→ two cases + doctrine",
+   "note": "Engel energized religious conservatives; Griswold's privacy right leads directly to Roe.",
+   "core": false,
+   "alt": [
+    "Engel v. Vitale",
+    "Griswold"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify the Watergate scandal and its outcome.",
+   "a": "The 1972 break-in at Democratic headquarters, ordered by operatives tied to Nixon's reelection committee, and the cover-up that followed. Senate hearings revealed secret tapes; United States v. Nixon (1974) forced their release, and Nixon resigned in August 1974 facing impeachment.",
+   "hint": "→ scandal + resolution",
+   "note": "US v. Nixon limited executive privilege: no president is above the judicial process. Congress then passed FOIA and campaign-finance reforms.",
+   "core": true,
+   "alt": [
+    "Watergate"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "DEFINE",
+   "q": "Define stagflation and identify the 1973 OPEC oil embargo.",
+   "a": "Stagflation is simultaneous high inflation, high unemployment, and stagnant growth, which Keynesian policy could not explain or cure. OPEC's 1973 embargo, retaliating for U.S. support of Israel in the Yom Kippur War, quadrupled oil prices and produced gas lines and rationing.",
+   "hint": "→ term + trigger event",
+   "note": "Deficit spending on Vietnam and the Great Society, plus the 1971 end of the gold standard, set the inflation up; the embargo lit it.",
+   "core": false,
+   "alt": [
+    "stagflation",
+    "OPEC embargo"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "IDENTIFY",
+   "q": "Identify the Camp David Accords and the Iran hostage crisis.",
+   "a": "Carter brokered the 1978 Camp David Accords, in which Egypt's Sadat and Israel's Begin agreed to the first Arab-Israeli peace treaty. In November 1979 Iranian revolutionaries seized the U.S. embassy in Tehran and held 52 Americans for 444 days, released the day Reagan took office.",
+   "hint": "→ success + failure paired",
+   "note": "The pairing is the standard framing of Carter: a diplomatic triumph swamped by a humiliation he could not end.",
+   "core": false,
+   "alt": [
+    "Camp David Accords",
+    "Iran hostage crisis"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "STATE",
+   "q": "State what the 22nd and 25th Amendments provide.",
+   "a": "The 22nd (1951) limits a president to two elected terms, a reaction to FDR's four. The 25th (1967) sets presidential succession and disability procedures and lets the president nominate a vice president confirmed by Congress.",
+   "hint": "→ two amendments + rules",
+   "note": "The 25th made Gerald Ford president in 1974 without ever being elected to either office.",
+   "core": false,
+   "alt": [
+    "22nd Amendment",
+    "25th Amendment"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "STATE",
+   "q": "State what the 24th and 26th Amendments provide.",
+   "a": "The 24th (1964) abolished poll taxes in federal elections. The 26th (1971) lowered the voting age to 18, driven by the argument that those old enough to be drafted for Vietnam were old enough to vote.",
+   "hint": "→ two amendments + voting rights",
+   "note": "Both extend the franchise; the 26th ties directly to Vietnam-era protest.",
+   "core": false,
+   "alt": [
+    "24th Amendment",
+    "26th Amendment"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "EXPLAIN",
+   "q": "Explain the origins of the Cold War.",
+   "a": "Wartime cooperation broke down over Eastern Europe: Stalin demanded a buffer zone and imposed communist regimes despite Yalta pledges of free elections. Add ideological hostility between capitalism and communism, the U.S. atomic monopoly, Soviet resentment of the delayed second front, and the iron curtain descending.",
+   "hint": "→ causes listed",
+   "note": "Traditional, revisionist, and post-revisionist interpretations argue over blame; the exam wants mutual misperception plus real conflicts of interest.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "EXPLAIN",
+   "q": "Explain NSC-68 and how it changed containment.",
+   "a": "The 1950 National Security Council report, written after the Soviet atomic test and the communist victory in China, portrayed a global struggle and called for a massive permanent military buildup and a quadrupled defense budget. Korea provided the justification to implement it.",
+   "hint": "→ document + policy shift",
+   "note": "It converts Kennan's selective, largely political containment into militarized, global containment.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "EXPLAIN",
+   "q": "Explain the significance of the Berlin blockade and airlift.",
+   "a": "When Stalin cut off ground access to West Berlin in 1948, Truman refused to withdraw or force the issue and instead supplied the city by air for eleven months. The USSR backed down, Germany was permanently divided into two states, and NATO was created the next year.",
+   "hint": "→ event + consequences",
+   "note": "It showed containment could work without war and made West Berlin a symbol reused through the 1961 Wall.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.3",
+   "v": "EXPLAIN",
+   "q": "Explain why the Second Red Scare gained such force after 1949.",
+   "a": "The fall of China, the Soviet atomic bomb, the Hiss and Rosenberg spy cases, and the Korean War made subversion look plausible. Truman's own loyalty program legitimized the hunt, and politicians found accusations electorally profitable. It collapsed once McCarthy attacked the Army on live television.",
+   "hint": "→ causes + how it ended",
+   "note": "Compare with the First Red Scare of 1919-1920: fear of foreign ideology plus domestic political payoff.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.4",
+   "v": "EXPLAIN",
+   "q": "Explain the significance of Sputnik (1957) for U.S. policy.",
+   "a": "The first Soviet satellite implied missiles that could reach America and shattered assumptions of U.S. technological superiority. Congress responded with NASA (1958) and the National Defense Education Act, funding science, math, and foreign language instruction; talk of a missile gap shaped the 1960 election.",
+   "hint": "→ event + policy responses",
+   "note": "Neat example of Cold War competition reshaping domestic institutions, especially schools.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "EXPLAIN",
+   "q": "Explain why the United States escalated its involvement in Vietnam.",
+   "a": "Containment logic and the domino theory held that losing Vietnam would topple Southeast Asia; leaders feared looking weak after China and Korea; commitments piled up from Truman's aid to France through Kennedy's buildup; and the Gulf of Tonkin Resolution let Johnson escalate without a declaration of war.",
+   "hint": "→ causes + mechanism",
+   "note": "Emphasize incrementalism: no single decision, but a chain each president found harder to reverse.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "EXPLAIN",
+   "q": "Explain why the Tet Offensive was a turning point despite being a military failure for the communists.",
+   "a": "It contradicted official assurances that the enemy was nearly beaten, widening the credibility gap. Walter Cronkite declared the war a stalemate, Johnson's approval fell, he halted bombing and withdrew from the 1968 race, and majority opinion turned against the war.",
+   "hint": "→ contrast + consequences",
+   "note": "Media and public opinion as a factor of war: the classic causation prompt for Period 8.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "EXPLAIN",
+   "q": "Explain the significance of Brown v. Board of Education and the limits of its enforcement.",
+   "a": "Brown destroyed the legal foundation of Jim Crow. But Brown II's all deliberate speed invited delay: Southern officials signed the Southern Manifesto and closed schools, Eisenhower had to send troops to Little Rock in 1957, and most Southern Black students remained in segregated schools a decade later.",
+   "hint": "→ significance + limits",
+   "note": "Court victories need executive enforcement and mass pressure; that argument organizes many civil rights essays.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "EXPLAIN",
+   "q": "Explain why nonviolent direct action was effective from 1955 to 1965.",
+   "a": "Boycotts imposed economic costs, and disciplined nonviolence in the face of dogs, hoses, and beatings created televised images that shocked national opinion, isolated segregationists, and generated pressure on presidents and Congress to act. It also claimed moral and religious authority that opponents could not match.",
+   "hint": "→ mechanism + outcome",
+   "note": "The tactic depended on television and on federal willingness to intervene; it worked poorly against Northern de facto segregation.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.11",
+   "v": "EXPLAIN",
+   "q": "Explain why the civil rights movement fragmented after 1965.",
+   "a": "Once legal segregation and voting barriers fell, the remaining problems were economic and structural: poverty and Northern housing and school segregation, which laws did not reach. Younger activists rejected nonviolence, urban uprisings frightened white allies, Vietnam split the coalition, and King was killed in 1968.",
+   "hint": "→ causes of fragmentation",
+   "note": "Change over time: from legal equality to economic justice, a far harder goal with far less white support.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "EXPLAIN",
+   "q": "Explain the causes of 1970s stagflation.",
+   "a": "Deficit spending on Vietnam and the Great Society without tax increases fed inflation; the 1971 abandonment of the gold standard weakened the dollar; the 1973 and 1979 oil shocks raised prices across the economy; and rising foreign competition plus deindustrialization slowed growth and cut manufacturing jobs.",
+   "hint": "→ causes listed",
+   "note": "Stagflation discredited Great Society liberalism and opened the door to supply-side conservatism.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "EXPLAIN",
+   "q": "Explain the significance of Watergate for American politics.",
+   "a": "It forced the first presidential resignation, confirmed that the president is subject to judicial process, and produced reforms in campaign finance, war powers, and government transparency. Combined with Vietnam, it drove a lasting collapse of public trust in the federal government.",
+   "hint": "→ effects on institutions + trust",
+   "note": "The distrust Watergate created is a key precondition for Reagan's argument that government is the problem.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "CONTRAST",
+   "q": "Contrast containment with rollback.",
+   "a": "Containment sought to hold the line against further Soviet expansion through aid, alliances, and limited war, accepting the existing communist sphere. Rollback, urged by critics such as MacArthur and by 1952 Republican rhetoric about liberation, meant actively freeing territory already under communist control.",
+   "hint": "→ two strategies compared",
+   "note": "Truman's firing of MacArthur is the moment containment beats rollback and civilian control is affirmed.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "CONTRAST",
+   "q": "Contrast the Truman Doctrine with the Marshall Plan.",
+   "a": "The Truman Doctrine was a military and political commitment to aid governments resisting communist takeover, framed in urgent ideological terms. The Marshall Plan was economic reconstruction aid designed to make Western Europe prosperous, and thus resistant to communism, while creating markets for U.S. goods.",
+   "hint": "→ military vs economic",
+   "note": "Both are containment; the difference is the instrument, hard commitment versus economic prevention.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.7",
+   "v": "CONTRAST",
+   "q": "Contrast massive retaliation with flexible response.",
+   "a": "Eisenhower's massive retaliation threatened overwhelming nuclear reprisal for aggression, cheaper than large conventional forces (more bang for the buck) but credible only against major threats. Kennedy's flexible response built conventional and counterinsurgency forces for limited wars, making intervention easier.",
+   "hint": "→ two doctrines compared",
+   "note": "The shift helps explain escalation in Vietnam: more usable options meant more temptation to use them.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "CONTRAST",
+   "q": "Contrast the approaches of Martin Luther King Jr. and Malcolm X.",
+   "a": "King preached nonviolent direct action, integration, and appeals to Christian conscience and federal power. Malcolm X, in his Nation of Islam years, rejected integration and nonviolence, urging Black separatism, self-defense by any means necessary, and racial pride; after Mecca he sought broader alliances.",
+   "hint": "→ two philosophies compared",
+   "note": "Both diagnosed the same injustice; the difference is over means, and Malcolm X spoke more directly to Northern urban conditions.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "CONTRAST",
+   "q": "Contrast the strategies of the NAACP, SCLC, and SNCC.",
+   "a": "The NAACP litigated for legal change through the courts. King's SCLC mobilized Black churches for staged nonviolent campaigns aimed at national media and federal action. SNCC organized students for grassroots direct action and voter registration, and moved after 1966 toward Black Power.",
+   "hint": "→ three organizations compared",
+   "note": "Movement, not monolith: knowing the division of labor prevents a vague one-leader essay.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "CONTRAST",
+   "q": "Contrast the Civil Rights Act of 1964 with the Voting Rights Act of 1965.",
+   "a": "The 1964 act attacked segregation and discrimination in public accommodations and employment, using federal funding leverage and the EEOC. The 1965 act targeted political exclusion, suspending literacy tests and placing federal registrars and preclearance requirements over states with histories of disfranchisement.",
+   "hint": "→ social vs political rights",
+   "note": "1964 addresses access to public life, 1965 addresses power; Selma is the event that produces the second.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "CONTRAST",
+   "q": "Contrast de jure and de facto segregation.",
+   "a": "De jure segregation is separation required by law, as in the Jim Crow South, and can be struck down by courts and statutes. De facto segregation arises from private practice and policy, including redlining, restrictive covenants, and white flight, and persisted in Northern cities after the laws changed.",
+   "hint": "→ definitions + where each existed",
+   "note": "This distinction explains why the movement's Northern campaigns after 1965 largely failed.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.9",
+   "v": "CONTRAST",
+   "q": "Compare the New Deal and the Great Society.",
+   "a": "Both expanded federal responsibility for economic security under liberal Democrats with large majorities. The New Deal answered mass unemployment with relief, jobs, and social insurance for workers; the Great Society, in a time of prosperity, targeted poverty, health care, education, civil rights, and quality of life.",
+   "hint": "→ continuity + differences",
+   "note": "Great Society is New Deal liberalism extended to groups the New Deal excluded, especially African Americans.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "CONTRAST",
+   "q": "Compare first-wave and second-wave feminism.",
+   "a": "The first wave, from Seneca Falls to 1920, concentrated on legal rights, above all suffrage. The second wave, after 1963, targeted workplace discrimination, equal pay, reproductive rights, and cultural and domestic roles, arguing that legal equality alone left women subordinate.",
+   "hint": "→ continuity + change",
+   "note": "Both drew organizers and tactics from contemporaneous reform movements: abolition then, civil rights now.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "CONTRAST",
+   "q": "Compare U.S. Cold War policy in the late 1940s with policy in the early 1970s.",
+   "a": "Late 1940s: confrontation, refusal to recognize communist China, alliance building, and a rapid arms buildup. Early 1970s: detente, arms control through SALT I, recognition of the Soviet sphere at Helsinki, and Nixon's opening to China, exploiting the Sino-Soviet split.",
+   "hint": "→ change over time",
+   "note": "The continuity is the goal, containing Soviet power; the change is negotiation replacing confrontation as the method.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.12",
+   "v": "CONTRAST",
+   "q": "Contrast 1950s mainstream culture with the 1960s counterculture.",
+   "a": "1950s culture stressed suburban domesticity, corporate conformity, religious observance, and consumer abundance, with dissent confined to figures like the Beats. The 1960s counterculture rejected those norms for personal authenticity, communal living, sexual freedom, and open political protest.",
+   "hint": "→ two cultures compared",
+   "note": "Note the continuity: both rest on postwar affluence, which gave youth the leisure and means to opt out.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "DATE",
+   "q": "Date the Truman Doctrine and the Marshall Plan.",
+   "a": "The Truman Doctrine was announced in March 1947; the Marshall Plan was proposed in June 1947 and funded in 1948.",
+   "hint": "→ year only",
+   "note": "1947 is the standard start date for open Cold War in most exam framings.",
+   "core": false,
+   "alt": [
+    "1947"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "DATE",
+   "q": "Date the Berlin airlift, the founding of NATO, the Soviet atomic test, and the communist victory in China.",
+   "a": "The Berlin airlift ran from June 1948 to May 1949. NATO was founded in April 1949, the USSR tested an atomic bomb in August 1949, and Mao's communists won China in October 1949.",
+   "hint": "→ cluster of years",
+   "note": "1949 is the hinge: the loss of the atomic monopoly and of China drives NSC-68 and the Second Red Scare.",
+   "core": false,
+   "alt": [
+    "1948-1949",
+    "1949"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.2",
+   "v": "DATE",
+   "q": "Date the Korean War.",
+   "a": "1950 to 1953. It began with the North Korean invasion in June 1950 and ended with an armistice, not a peace treaty, in July 1953.",
+   "hint": "→ two years",
+   "note": "No formal peace treaty exists; the war explains the permanent U.S. military presence in Asia.",
+   "core": false,
+   "alt": [
+    "1950-1953"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.6",
+   "v": "DATE",
+   "q": "Date Brown v. Board of Education and the Montgomery Bus Boycott.",
+   "a": "Brown was decided in May 1954. The Montgomery Bus Boycott ran from December 1955 to December 1956.",
+   "hint": "→ two years",
+   "note": "Chronology trap: Brown comes first and helps make the boycott legally plausible.",
+   "core": false,
+   "alt": [
+    "1954",
+    "1955-1956"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.7",
+   "v": "DATE",
+   "q": "Date the Cuban Missile Crisis.",
+   "a": "October 1962, thirteen days of confrontation resolved by the Soviet withdrawal of missiles from Cuba.",
+   "hint": "→ month and year",
+   "note": "It follows the failed Bay of Pigs (1961) and the building of the Berlin Wall (1961).",
+   "core": false,
+   "alt": [
+    "1962"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.10",
+   "v": "DATE",
+   "q": "Date the Civil Rights Act and the Gulf of Tonkin Resolution.",
+   "a": "Both came in 1964, the Civil Rights Act in July and the Gulf of Tonkin Resolution in August, months before Johnson's landslide election.",
+   "hint": "→ same year, two laws",
+   "note": "Same president, same summer: the Great Society and Vietnam escalation start together and then compete for money.",
+   "core": false,
+   "alt": [
+    "1964"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.8",
+   "v": "DATE",
+   "q": "Date the Tet Offensive, the assassinations of King and Robert Kennedy, and Nixon's election.",
+   "a": "All in 1968: Tet in January and February, King in April, Robert Kennedy in June, and Nixon's victory in November on a law-and-order and peace-with-honor platform.",
+   "hint": "→ year + events",
+   "note": "1968 is the pivot of Period 8: liberal coalition fractures and conservative realignment begins.",
+   "core": false,
+   "alt": [
+    "1968"
+   ]
+  },
+  {
+   "u": "u8",
+   "t": "8.14",
+   "v": "DATE",
+   "q": "Date Nixon's resignation and the fall of Saigon.",
+   "a": "Nixon resigned in August 1974; Saigon fell to North Vietnamese forces in April 1975, ending the war.",
+   "hint": "→ two dates",
+   "note": "Within nine months the U.S. loses both a president to scandal and the war, deepening the crisis of confidence.",
+   "core": false,
+   "alt": [
+    "1974",
+    "1975"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "IDENTIFY",
+   "q": "Identify the New Right coalition that elected Reagan in 1980.",
+   "a": "A coalition of economic conservatives seeking tax cuts and deregulation, religious conservatives mobilized by abortion, school prayer, and the ERA, Cold War hawks demanding rearmament, and Southern and Sunbelt whites who had left the Democratic party, joined by blue-collar Reagan Democrats.",
+   "hint": "→ coalition + components",
+   "note": "Reagan's win rests on the collapse of the New Deal coalition; explain both the pull of conservatism and the push of stagflation.",
+   "core": true,
+   "alt": [
+    "New Right",
+    "Reagan Revolution"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "DEFINE",
+   "q": "Define supply-side economics and identify Reagan's core domestic policies.",
+   "a": "Supply-side, or Reaganomics, held that cutting taxes on high incomes and business would spur investment, growth, and ultimately higher revenue. Reagan cut top marginal rates sharply (1981 and 1986), deregulated industries, cut domestic social spending, and broke the 1981 PATCO air traffic controllers strike.",
+   "hint": "→ theory + policies",
+   "note": "The Laffer curve is the theory; the results were growth with tripled national debt, weakened unions, and rising inequality.",
+   "core": true,
+   "alt": [
+    "Reaganomics",
+    "supply-side"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "IDENTIFY",
+   "q": "Identify the Reagan Doctrine and the Strategic Defense Initiative.",
+   "a": "The Reagan Doctrine supported anticommunist insurgents against Soviet-backed governments, as in Afghanistan, Nicaragua, and Angola. SDI, nicknamed Star Wars, proposed a space-based missile shield; never built, it pressured the USSR into an arms race it could not afford.",
+   "hint": "→ policy + program",
+   "note": "Reagan's first term revives confrontation and the evil empire rhetoric before he turns to negotiation with Gorbachev.",
+   "core": false,
+   "alt": [
+    "Reagan Doctrine",
+    "SDI"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "IDENTIFY",
+   "q": "Identify the Iran-Contra affair.",
+   "a": "Reagan administration officials secretly sold arms to Iran to free American hostages and diverted the proceeds to fund Nicaraguan Contra rebels, in defiance of the Boland Amendment banning such aid. The scandal produced hearings and convictions but did not implicate Reagan directly.",
+   "hint": "→ scandal + illegality",
+   "note": "A constitutional issue like Watergate: executive action to evade an explicit congressional prohibition.",
+   "core": false,
+   "alt": [
+    "Iran-Contra"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "IDENTIFY",
+   "q": "Identify Mikhail Gorbachev's reforms.",
+   "a": "Glasnost (openness) permitted criticism and loosened censorship, and perestroika (restructuring) introduced limited market mechanisms into a stagnant Soviet economy. Gorbachev also cut military spending, negotiated the INF Treaty (1987), and refused to use force to hold Eastern Europe.",
+   "hint": "→ two Russian terms + effects",
+   "note": "His refusal to intervene in 1989 is the immediate reason Eastern Europe's revolutions succeeded.",
+   "core": false,
+   "alt": [
+    "glasnost",
+    "perestroika"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "IDENTIFY",
+   "q": "Identify the fall of the Berlin Wall and the dissolution of the Soviet Union.",
+   "a": "In 1989 Eastern European communist regimes fell in rapid succession and the Berlin Wall was opened in November; Germany reunified in 1990. After a failed hardline coup, the USSR dissolved into fifteen independent republics in December 1991, ending the Cold War.",
+   "hint": "→ two events + result",
+   "note": "The result is a unipolar moment: the U.S. as sole superpower, which frames 1990s foreign policy debates.",
+   "core": true,
+   "alt": [
+    "fall of the Berlin Wall",
+    "dissolution of the USSR"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "IDENTIFY",
+   "q": "Identify the Moral Majority and the culture wars.",
+   "a": "Jerry Falwell's Moral Majority (1979) organized evangelical Christians into a Republican voting bloc against abortion, gay rights, feminism, and secular public schools. The resulting culture wars pitted traditionalist against progressive views of family, religion, sexuality, and national identity.",
+   "hint": "→ organization + conflict",
+   "note": "Religion becomes a stable predictor of party alignment, a major cause of later polarization.",
+   "core": false,
+   "alt": [
+    "Moral Majority",
+    "culture wars"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify the AIDS crisis and the activist response.",
+   "a": "AIDS spread in the U.S. from 1981, killing tens of thousands amid stigma and federal inaction; Reagan did not address it publicly for years. ACT UP and other groups used direct action to demand research funding, faster drug approval, and treatment access, winning major changes by the 1990s.",
+   "hint": "→ epidemic + activism",
+   "note": "It shows public health as a political question and pushed gay rights into national visibility.",
+   "core": false,
+   "alt": [
+    "AIDS",
+    "ACT UP"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify the Persian Gulf War (1991).",
+   "a": "After Iraq invaded Kuwait in 1990, George H. W. Bush assembled a broad UN-backed coalition; Operation Desert Storm expelled Iraqi forces in about six weeks with few U.S. casualties. Saddam Hussein was left in power.",
+   "hint": "→ conflict + outcome",
+   "note": "Bush called it the end of the Vietnam syndrome; leaving Saddam in power sets up the 2003 war.",
+   "core": false,
+   "alt": [
+    "Persian Gulf War",
+    "Desert Storm"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.4",
+   "v": "IDENTIFY",
+   "q": "Identify NAFTA and the digital revolution as forces of globalization.",
+   "a": "NAFTA (1994) created a free trade zone among the U.S., Canada, and Mexico, cutting prices and expanding trade while accelerating Rust Belt manufacturing job losses. Personal computers, the internet, and mobile technology reorganized work and commerce, fueling the 1990s boom and the dot-com bubble.",
+   "hint": "→ agreement + technology",
+   "note": "Globalization is the WXT engine of Period 9: growth and cheap goods alongside deindustrialization and inequality.",
+   "core": false,
+   "alt": [
+    "NAFTA",
+    "globalization"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "IDENTIFY",
+   "q": "Identify the Contract with America and the domestic politics of the Clinton years.",
+   "a": "Newt Gingrich's 1994 Contract with America won Republicans control of Congress on balanced budgets, tax cuts, term limits, and welfare reform. Clinton triangulated, declared the era of big government over, and signed welfare reform in 1996; the House impeached him in 1998 and the Senate acquitted.",
+   "hint": "→ platform + presidency",
+   "note": "Divided government plus impeachment: evidence that partisan polarization was hardening well before 2000.",
+   "core": false,
+   "alt": [
+    "Contract with America"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify Bush v. Gore (2000).",
+   "a": "In an election decided by Florida's disputed count, the Supreme Court halted the recount 5-4 on equal protection grounds, effectively awarding the presidency to George W. Bush. Gore had won the national popular vote.",
+   "hint": "→ case + result",
+   "note": "One of only a handful of elections where the popular-vote winner lost; it fed distrust of both the Court and the process.",
+   "core": false,
+   "alt": [
+    "Bush v. Gore"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify the September 11 attacks and the War on Terror.",
+   "a": "Al-Qaeda hijackers flew planes into the World Trade Center and Pentagon on September 11, 2001, killing nearly 3,000 people. The U.S. invaded Afghanistan to destroy al-Qaeda and topple the Taliban, and declared a global campaign against terrorist networks and states supporting them.",
+   "hint": "→ event + policy response",
+   "note": "The defining rupture of Period 9: it reorients foreign policy and reopens the security-versus-liberty debate.",
+   "core": true,
+   "alt": [
+    "9/11",
+    "War on Terror"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify the USA PATRIOT Act and the Department of Homeland Security.",
+   "a": "The PATRIOT Act (2001) expanded federal surveillance of communications, records, and finances and eased information sharing among agencies. DHS (2002) merged more than twenty agencies. Critics cited warrantless surveillance, indefinite detention at Guantanamo, and profiling of Muslim Americans.",
+   "hint": "→ law + agency + criticism",
+   "note": "Put it in the wartime civil liberties series with the Sedition Acts, Schenck, and Korematsu.",
+   "core": false,
+   "alt": [
+    "PATRIOT Act",
+    "Department of Homeland Security"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify the Iraq War (2003).",
+   "a": "The U.S. and a small coalition invaded Iraq to remove Saddam Hussein, justified by claims of weapons of mass destruction and ties to terrorism. No such weapons were found; the fast conventional victory gave way to years of insurgency, sectarian civil war, and a costly occupation.",
+   "hint": "→ war + justification + outcome",
+   "note": "Preemptive war under the Bush Doctrine; the intelligence failure deepened distrust of government claims.",
+   "core": false,
+   "alt": [
+    "Iraq War"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.4",
+   "v": "IDENTIFY",
+   "q": "Identify the 2008 financial crisis and the government response.",
+   "a": "The collapse of a housing bubble built on subprime mortgages and mortgage-backed securities brought down major financial firms, froze credit, and produced the Great Recession with unemployment near ten percent. Congress passed the 700 billion dollar TARP bailout, then a 2009 stimulus and the Dodd-Frank law.",
+   "hint": "→ cause + response",
+   "note": "The bailouts spawned both the Tea Party and Occupy Wall Street, populist reactions from right and left.",
+   "core": true,
+   "alt": [
+    "2008 financial crisis",
+    "TARP"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "IDENTIFY",
+   "q": "Identify Barack Obama's presidency and the Affordable Care Act.",
+   "a": "Obama was elected in 2008 as the first African American president amid crisis and war. The ACA (2010) expanded coverage through insurance exchanges, subsidies, Medicaid expansion, and a ban on denial for preexisting conditions, and became a central partisan battle.",
+   "hint": "→ president + signature law",
+   "note": "Trace the line from Social Security to Medicare to the ACA when a prompt asks about the federal role in welfare.",
+   "core": true,
+   "alt": [
+    "Obama",
+    "Affordable Care Act"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.5",
+   "v": "IDENTIFY",
+   "q": "Identify the demographic changes and immigration debates of the 1990s and 2000s.",
+   "a": "Immigration after the 1965 act, largely from Latin America and Asia, made the U.S. far more diverse, with Latinos becoming the largest minority group and growth concentrated in the Sunbelt. Debate centered on undocumented migration, enforcement, guest workers, and a path to citizenship (IRCA 1986, DACA 2012).",
+   "hint": "→ trend + policy debate",
+   "note": "MIG and NAT themes: arguments over national identity and assimilation echo the 1850s and the 1920s.",
+   "core": false,
+   "alt": [
+    "immigration debate"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "EXPLAIN",
+   "q": "Explain the rise of modern conservatism by 1980.",
+   "a": "Stagflation and tax revolts discredited liberal economic management; Vietnam and Watergate destroyed trust in government; backlash against the counterculture, busing, crime, and Roe mobilized religious voters; Sunbelt growth shifted electoral power; and think tanks, direct mail, and evangelical media built a movement.",
+   "hint": "→ causes listed",
+   "note": "Answer both halves: what liberalism lost and what conservatives built, since the shift is not just reaction.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "EXPLAIN",
+   "q": "Explain why the Cold War ended.",
+   "a": "The Soviet command economy stagnated under military spending, the Afghan war, and falling oil prices; Gorbachev's reforms loosened control and he refused to defend satellite regimes by force; U.S. rearmament and SDI raised the cost of competition; and movements from Solidarity onward dissolved the bloc from within.",
+   "hint": "→ internal + external causes",
+   "note": "Historians argue over how much credit Reagan deserves versus Soviet internal collapse; acknowledge both.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "EXPLAIN",
+   "q": "Explain the economic effects of Reagan's policies.",
+   "a": "Recession and tight money broke inflation by 1983, and the 1980s brought long expansion and financial deregulation. But defense spending with tax cuts tripled the national debt, union membership and manufacturing jobs fell, inequality widened sharply, and social program cuts hit the poor hardest.",
+   "hint": "→ gains + costs",
+   "note": "Balanced evaluation earns the point; note that the deficit outcome contradicted supply-side predictions.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "EXPLAIN",
+   "q": "Explain how the September 11 attacks changed American government and society.",
+   "a": "They produced a permanent domestic security apparatus (DHS, TSA, expanded surveillance), two long wars, a doctrine of preemptive war, and fights over torture and indefinite detention. At home came a surge of unity, then lasting debate over security versus liberty and rising anti-Muslim discrimination.",
+   "hint": "→ policy + social effects",
+   "note": "The strongest continuity argument on the exam: every major war narrows civil liberties, then the courts and public push back.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.4",
+   "v": "EXPLAIN",
+   "q": "Explain the causes of the 2008 financial crisis.",
+   "a": "Low interest rates and lax lending fueled a housing bubble; subprime mortgages were bundled into securities that ratings agencies mispriced; deregulation and the repeal of Glass-Steagall let banks take enormous leveraged risks; when housing prices fell, defaults spread through the financial system and credit froze.",
+   "hint": "→ chain of causes",
+   "note": "Compare with 1929: speculation, leverage, and thin regulation, but this time the federal response was immediate.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "EXPLAIN",
+   "q": "Explain the causes of increased political polarization since 1990.",
+   "a": "Partisan realignment sorted conservatives into the Republican party and liberals into the Democratic, aligning region, religion, and race with party; cable news and social media created separate information worlds; gerrymandering and primaries rewarded ideological purity; and inequality hardened the divide.",
+   "hint": "→ causes listed",
+   "note": "Useful for a Period 9 causation LEQ, which usually asks about political or social change since 1980.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.2",
+   "v": "CONTRAST",
+   "q": "Contrast New Deal liberalism with Reagan-era conservatism.",
+   "a": "New Deal liberalism treated federal power as the cure for insecurity, favoring regulation, social insurance, progressive taxation, and unions. Reagan conservatism treated government as the problem, favoring tax cuts, deregulation, lower domestic spending, and traditional moral order, while expanding the military.",
+   "hint": "→ two ideologies compared",
+   "note": "Note the continuity: Reagan did not dismantle Social Security or Medicare, so the New Deal core survived.",
+   "core": true,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "CONTRAST",
+   "q": "Compare U.S. foreign policy during the Cold War with policy after 1991.",
+   "a": "Cold War policy centered on containing one superpower rival through alliances, deterrence, and proxy conflicts. After 1991 the U.S. acted as sole superpower, intervening in the Balkans and Somalia, then after 2001 reorienting around terrorism, preemption, and nonstate enemies.",
+   "hint": "→ continuity + change",
+   "note": "Continuity: global military presence and intervention. Change: the enemy shifts from a state rival to networks.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.4",
+   "v": "CONTRAST",
+   "q": "Compare the federal response to the Great Depression with the response to the 2008 recession.",
+   "a": "Both used federal money to stabilize a collapsing financial system: bank holiday, FDIC, SEC, and jobs programs in the 1930s; TARP, Federal Reserve action, the 2009 stimulus, and Dodd-Frank after 2008. The New Deal response was larger and created lasting jobs programs; the 2008 response was faster and bank-centered.",
+   "hint": "→ continuity + differences",
+   "note": "Excellent continuity-and-change prompt: the New Deal precedent is exactly what made rapid 2008 intervention thinkable.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.5",
+   "v": "CONTRAST",
+   "q": "Compare immigration debates of the 1920s with those of the 2000s.",
+   "a": "Both featured claims that newcomers threatened jobs, culture, and national identity, and both produced calls for restriction. The 1920s brought racial national-origins quotas aimed at southern and eastern Europeans and Asians; the 2000s focused on undocumented migration, border enforcement, and legal status.",
+   "hint": "→ continuity + change",
+   "note": "Nativism recurs in every period of heavy migration; note that current restrictionism cannot use explicit racial categories.",
+   "core": false,
+   "alt": null
+  },
+  {
+   "u": "u9",
+   "t": "9.3",
+   "v": "DATE",
+   "q": "Date the fall of the Berlin Wall and the dissolution of the Soviet Union.",
+   "a": "The Berlin Wall opened in November 1989; the Soviet Union formally dissolved in December 1991.",
+   "hint": "→ two years",
+   "note": "Two years separate them: the East European revolutions come first, the USSR's own collapse second.",
+   "core": false,
+   "alt": [
+    "1989",
+    "1991"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.6",
+   "v": "DATE",
+   "q": "Date the September 11 attacks and the invasion of Iraq.",
+   "a": "The attacks came on September 11, 2001; the U.S. invaded Afghanistan in October 2001 and Iraq in March 2003.",
+   "hint": "→ dates in order",
+   "note": "Keep the order straight: Afghanistan is the direct response, Iraq is a separate decision eighteen months later.",
+   "core": false,
+   "alt": [
+    "2001",
+    "2003"
+   ]
+  },
+  {
+   "u": "u9",
+   "t": "9.4",
+   "v": "DATE",
+   "q": "Date the financial crisis, Obama's election, and the Affordable Care Act.",
+   "a": "The financial crisis broke in September 2008, Obama was elected in November 2008, and the Affordable Care Act was signed in March 2010.",
+   "hint": "→ sequence of years",
+   "note": "The crisis makes the election, and the election makes the law: a tight causal chain for a short-answer question.",
+   "core": false,
+   "alt": [
+    "2008",
+    "2010"
+   ]
+  }
+ ]
+}
