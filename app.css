@@ -15,6 +15,7 @@
   --hair-soft:rgba(10,10,12,.07);
 
   /* --- type scale -------------------------------------------------------- */
+  --font-sf:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","SF Pro",system-ui,"Helvetica Neue",Arial,sans-serif;
   --t-hero:clamp(38px,10.5vw,58px);
   --t-title:clamp(26px,6.5vw,36px);
   --t-body:16px;
@@ -63,7 +64,7 @@ html{ background:var(--ground); }
 body{
   background:var(--ground);
   color:var(--ink);
-  font:var(--t-body)/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;
+  font:var(--t-body)/1.5 var(--font-sf);
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   -webkit-tap-highlight-color:transparent;
@@ -99,9 +100,13 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 .tabs{ position:fixed; z-index:40; left:14px; right:14px; bottom:calc(env(safe-area-inset-bottom, 0px) + 12px); }
 @media (min-width:640px){ .tabs{ left:50%; right:auto; width:372px; margin-left:-186px; } }
 .lg-tab span{ letter-spacing:.005em; }
+/* the vendored kit ships a shorter stack; keep liquid-glass.css byte-for-byte
+   and pin the components to SF from here instead */
+.lg, .lg-btn, .lg-tab, .lg-seg-item, .lg-title, .lg-sub,
+.lg-search-input, .lg-chip, .lg-header-title{ font-family:var(--font-sf); }
 
 /* --- typography atoms ---------------------------------------------------- */
-.eyebrow{ font-size:12px; font-weight:680; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); }
+.eyebrow{ font-size:12.5px; font-weight:650; letter-spacing:-.005em; color:var(--muted); }
 .k{ font-size:var(--t-label); font-weight:650; color:var(--ink-soft); letter-spacing:0; }
 .v{ font-size:var(--t-hero); font-weight:450; letter-spacing:-.035em; line-height:1.14; color:var(--ink); }
 .title{ font-size:var(--t-title); font-weight:500; letter-spacing:-.025em; line-height:1.16; color:var(--ink); margin:0; }
@@ -185,7 +190,8 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   will-change:transform, opacity; }
 .card .cardhead{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px; }
 .card .cardhead .eyebrow{ min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.card .verb{ font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+.card .verb{ font-size:12.5px; font-weight:650; letter-spacing:-.005em; text-transform:lowercase; color:var(--muted); margin-bottom:7px; }
+.card .verb::first-letter{ text-transform:uppercase; }
 .card .cardhead .eyebrow{ color:var(--ink-soft); }
 .card .starbtn{ background:none; border:0; padding:6px; margin:-6px -6px -6px 0; color:var(--muted); cursor:pointer; }
 .card .starbtn svg{ width:20px; height:20px; display:block; }
@@ -221,7 +227,7 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 .cardwrap.swiping{ transition:none; }
 .cardwrap.settle{ transition:transform .34s cubic-bezier(.32,.72,0,1); }
 .swipehint{ position:absolute; top:50%; transform:translateY(-50%); font-size:13px; font-weight:700;
-  letter-spacing:.06em; text-transform:uppercase; color:var(--ink); opacity:0; transition:opacity .12s ease;
+  letter-spacing:-.01em; color:var(--ink); opacity:0; transition:opacity .12s ease;
   pointer-events:none; }
 .swipehint.l{ left:8px; } .swipehint.r{ right:8px; }
 .cardstage{ position:relative; }
