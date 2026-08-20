@@ -3,7 +3,7 @@
 A home-screen web app for five AP courses. **2,277 cards**, written unit by unit
 against the current College Board Course and Exam Descriptions.
 
-**Live:** https://21ag21.github.io/JuniorYearFlashcardsApp/
+**Live:** https://cards.betteraeries.workers.dev  (Cloudflare Worker — the same worker serves the app and the account API)
 
 | Deck | Cards | Organised by |
 |---|---|---|
@@ -13,11 +13,15 @@ against the current College Board Course and Exam Descriptions.
 | AP Calculus BC | 435 | Units 1–10 |
 | AP U.S. History | 516 | Periods 1–9 |
 
-## Turning on the site
+## Deploying
 
-Settings → Pages → Source: **Deploy from a branch** → `main` / `/ (root)` → Save.
-A minute later the URL above is live. Nothing else to configure — there is no
-build step, no framework, and no dependency to install.
+```
+npx wrangler deploy
+```
+
+That is the whole deploy: the app is served as Worker static assets from this
+folder (see .assetsignore for what stays out), and /api/* runs worker/index.mjs.
+No build step, no framework, no dependency to install.
 
 ## Putting it on a phone
 
@@ -38,7 +42,7 @@ hand: generate one, then register its hash so the Worker will accept it —
 ```
 TOKEN=$(node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))")
 HASH=$(node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "$TOKEN")
-cd worker && npx wrangler kv key put "tok:$HASH" 1 --namespace-id <CARDS_KV_ID> --remote
+npx wrangler kv key put "tok:$HASH" 1 --namespace-id <CARDS_KV_ID> --remote
 ```
 
 The worker stores one JSON blob per account; the app merges per card, so two

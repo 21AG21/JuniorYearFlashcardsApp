@@ -1,18 +1,10 @@
-# How to push this
+# Deploying
 
-The commit is already made and `origin` already points at the repo. From this
-folder:
+The app lives on Cloudflare, not GitHub Pages:
 
 ```
-git push -u origin main
+npx wrangler deploy
 ```
 
-That's it. If git asks for a password, use a personal access token, or run
-`gh auth login` first (`brew install gh` if you don't have it).
-
-Then turn the site on: **Settings → Pages → Source: Deploy from a branch →
-`main` / `/ (root)` → Save.** A minute later:
-
-https://21ag21.github.io/JuniorYearFlashcardsApp/
-
-Open that in Safari on the iPhone → Share → Add to Home Screen.
+https://cards.betteraeries.workers.dev — app and account API on one origin.
+GitHub is just the code host; push with `git push` as usual.
