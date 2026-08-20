@@ -366,6 +366,10 @@ sub,sup{ font-size:.68em; }
 .mrow.sel{ color:var(--ink); font-weight:720; }
 .mrow.done{ color:var(--muted); font-weight:480; text-decoration:line-through; text-decoration-thickness:1px; }
 
+.tgwrap{ display:flex; margin:var(--s-2) 0; }
+.tg{ width:min(92vw, 480px); height:auto; }
+.tg-axis{ stroke:var(--hair); stroke-width:1; }
+.tg-curve{ stroke:var(--ink); stroke-width:2; fill:none; stroke-linecap:round; }
 .ucwrap{ display:flex; margin:var(--s-2) 0; }
 .uc{ width:min(88vw, 400px); height:auto; }
 .uc-axis{ stroke:var(--hair-soft); stroke-width:1; }

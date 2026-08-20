@@ -18,6 +18,9 @@
     langmatch:  { name: 'Device match',     deck: 'lang',   kind: 'match'  },
     frmatch:    { name: 'Vocab match',      deck: 'french', kind: 'match'  },
     unitcircle: { name: 'Unit circle',      deck: 'calcbc', kind: 'circle' },
+    degcircle:  { name: 'Degrees on the circle', deck: 'calcbc', kind: 'circle' },
+    triggraphs: { name: 'Name that graph',  deck: 'calcbc', kind: 'graph'  },
+    identmatch: { name: 'Identity match',   deck: 'calcbc', kind: 'match'  },
     derivmatch: { name: 'Derivative match', deck: 'calcbc', kind: 'match'  }
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush'];
@@ -145,6 +148,39 @@
     ['sin(x²)', '2x cos(x²)']
   ];
 
+  /* ---------------- data: trig identities --------------------------------- */
+  var IDENT_PAIRS = [
+    ['sin²x + cos²x', '1'],
+    ['1 + tan²x', 'sec²x'],
+    ['1 + cot²x', 'csc²x'],
+    ['sin 2x', '2 sin x cos x'],
+    ['cos 2x', 'cos²x − sin²x'],
+    ['tan x', 'sin x / cos x'],
+    ['cot x', 'cos x / sin x'],
+    ['sec x', '1 / cos x'],
+    ['csc x', '1 / sin x'],
+    ['sin(−x)', '−sin x'],
+    ['cos(−x)', 'cos x'],
+    ['sin(π/2 − x)', 'cos x'],
+    ['cos(π/2 − x)', 'sin x'],
+    ['tan 2x', '2 tan x / (1 − tan²x)']
+  ];
+
+  /* ---------------- data: trig graphs -------------------------------------- */
+  var GRAPHS = [
+    ['sin x',  function (x) { return Math.sin(x); }],
+    ['cos x',  function (x) { return Math.cos(x); }],
+    ['tan x',  function (x) { return Math.tan(x); }],
+    ['−sin x', function (x) { return -Math.sin(x); }],
+    ['−cos x', function (x) { return -Math.cos(x); }],
+    ['2 sin x', function (x) { return 2 * Math.sin(x); }],
+    ['sin 2x', function (x) { return Math.sin(2 * x); }],
+    ['cos 2x', function (x) { return Math.cos(2 * x); }],
+    ['sec x',  function (x) { return 1 / Math.cos(x); }],
+    ['csc x',  function (x) { return 1 / Math.sin(x); }],
+    ['cot x',  function (x) { return Math.cos(x) / Math.sin(x); }]
+  ];
+
   /* ---------------- data: the unit circle -------------------------------- */
   /* label, cos display, sin display, tan display, cos value, sin value */
   var ANGLES = [
@@ -165,6 +201,9 @@
     ['7π/4',  '√2/2',  '−√2/2', '−1',         0.707, -0.707],
     ['11π/6', '√3/2',  '−1/2',  '−√3/3',      0.866, -0.5]
   ];
+  /* degree labels, index-parallel to ANGLES */
+  var DEG = ['0°', '30°', '45°', '60°', '90°', '120°', '135°', '150°', '180°',
+             '210°', '225°', '240°', '270°', '300°', '315°', '330°'];
 
   /* ---------------- helpers ---------------------------------------------- */
   function shuffle(a) {
@@ -207,6 +246,7 @@
     clearTimeout(timer);
     if (g.kind === 'order') startOrder(id);
     else if (g.kind === 'match') startMatch(id);
+    else if (g.kind === 'graph') startGraph(id);
     else startCircle(id);
   }
 
@@ -312,7 +352,7 @@
 
   function startMatch(id) {
     var pairs = id === 'frmatch' ? frenchPairs()
-      : sample(id === 'derivmatch' ? DERIV_PAIRS : LANG_PAIRS, 6);
+      : sample(id === 'derivmatch' ? DERIV_PAIRS : id === 'identmatch' ? IDENT_PAIRS : LANG_PAIRS, 6);
     var left = [], right = [];
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });
     shuffle(left); shuffle(right);
@@ -327,6 +367,7 @@
       return gameDone(st.id, st.total / Math.max(st.tries, st.total), label);
     }
     var head = st.id === 'derivmatch' ? ['f(x)', "f′(x)"]
+      : st.id === 'identmatch' ? ['Expression', 'Equals']
       : st.id === 'frmatch' ? ['French', 'English'] : ['Device', 'What it is'];
     function col(items, side, sel) {
       return items.map(function (it, i) {
@@ -362,14 +403,17 @@
      CIRCLE — the unit circle: tap angles, tap coordinates, name exact values
      ========================================================================== */
   function startCircle(id) {
+    var deg = id === 'degcircle';
     var qs = [];
     var idxs = shuffle(ANGLES.map(function (_, i) { return i; }));
     for (var i = 0; i < 12; i++) {
       var a = idxs[i % idxs.length];
-      var type = i % 3; // rotate: tap the angle, tap the coordinates, name a value
+      // radians rotate tap-angle / tap-coordinates / name-a-value;
+      // degrees alternate tap-a-degree / name-the-marked-angle
+      var type = deg ? (i % 2 ? 3 : 0) : i % 3;
       qs.push({ type: type, a: a });
     }
-    st = { id: id, kind: 'circle', qs: shuffle(qs), i: 0, score: 0, total: 12,
+    st = { id: id, kind: 'circle', deg: deg, qs: shuffle(qs), i: 0, score: 0, total: 12,
            lock: false, wrong: -1 };
     renderCircle();
   }
@@ -379,13 +423,14 @@
     s += '<line class="uc-axis" x1="20" y1="150" x2="280" y2="150"/>';
     s += '<line class="uc-axis" x1="150" y1="20" x2="150" y2="280"/>';
     s += '<circle class="uc-ring" cx="150" cy="150" r="110" fill="none"/>';
+    var marked = q.type === 2 || q.type === 3;   // a highlighted point, answered via choices
     ANGLES.forEach(function (a, i) {
       var x = 150 + 110 * a[4], y = 150 - 110 * a[5];
       var cls = 'uc-dot';
       if (st.lock && i === st.qs[st.i].a) cls += ' on';        // the right answer, revealed
       if (st.lock && i === st.wrong) cls += ' off';            // the tap that missed
-      if (!st.lock && q.type === 2 && i === q.a) cls += ' on'; // the highlighted point
-      s += '<g' + (q.type !== 2 ? ' data-dot="' + i + '"' : '') + '>' +
+      if (!st.lock && marked && i === q.a) cls += ' on';       // the highlighted point
+      s += '<g' + (!marked ? ' data-dot="' + i + '"' : '') + '>' +
         '<circle class="uc-hit" cx="' + x + '" cy="' + y + '" r="17"/>' +
         '<circle class="' + cls + '" cx="' + x + '" cy="' + y + '" r="5"/></g>';
     });
@@ -395,30 +440,36 @@
 
   function circlePrompt(q) {
     var a = ANGLES[q.a];
-    if (q.type === 0) return 'Tap ' + a[0];
+    if (q.type === 0) return 'Tap ' + (st.deg ? DEG[q.a] : a[0]);
     if (q.type === 1) return 'Tap the angle where cos θ = ' + a[1] + ' and sin θ = ' + a[2];
+    if (q.type === 3) return 'Which angle is marked?';
     var fn = ['cos', 'sin', 'tan'][q.a % 3];
     q.fn = fn;
     return 'What is ' + fn + ' θ at the marked point?';
   }
 
   function circleChoices(q) {
-    if (q.type !== 2) return '';
-    var a = ANGLES[q.a];
-    var right = q.fn === 'cos' ? a[1] : q.fn === 'sin' ? a[2] : a[3];
+    if (q.type !== 2 && q.type !== 3) return '';
     if (!q.choices) {
-      var pool = { cos: ['1', '√3/2', '√2/2', '1/2', '0', '−1/2', '−√2/2', '−√3/2', '−1'],
-                   sin: ['1', '√3/2', '√2/2', '1/2', '0', '−1/2', '−√2/2', '−√3/2', '−1'],
-                   tan: ['0', '√3/3', '1', '√3', 'undefined', '−√3', '−1', '−√3/3'] }[q.fn];
-      q.choices = shuffle([right].concat(sample(pool.filter(function (v) { return v !== right; }), 3)));
-      q.right = right;
+      if (q.type === 3) {
+        q.right = DEG[q.a];
+        q.choices = shuffle([q.right].concat(sample(DEG.filter(function (v) { return v !== q.right; }), 3)));
+      } else {
+        var a = ANGLES[q.a];
+        var right = q.fn === 'cos' ? a[1] : q.fn === 'sin' ? a[2] : a[3];
+        var pool = { cos: ['1', '√3/2', '√2/2', '1/2', '0', '−1/2', '−√2/2', '−√3/2', '−1'],
+                     sin: ['1', '√3/2', '√2/2', '1/2', '0', '−1/2', '−√2/2', '−√3/2', '−1'],
+                     tan: ['0', '√3/3', '1', '√3', 'undefined', '−√3', '−1', '−√3/3'] }[q.fn];
+        q.choices = shuffle([right].concat(sample(pool.filter(function (v) { return v !== right; }), 3)));
+        q.right = right;
+      }
     }
     return '<div class="choices">' + q.choices.map(function (c, i) {
       var state = '';
       if (st.lock) state = c === q.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
       return '<button class="choice num" data-gc="' + i + '"' +
         (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
-        q.fn + ' θ = ' + esc(c) + '</button>';
+        (q.type === 3 ? esc(c) : q.fn + ' θ = ' + esc(c)) + '</button>';
     }).join('') + '</div>';
   }
 
@@ -450,10 +501,10 @@
   function tapDot(i) {
     if (!st || st.kind !== 'circle' || st.lock) return;
     var q = st.qs[st.i];
-    if (q.type === 2) return;
+    if (q.type === 2 || q.type === 3) return;
     st.lock = true;
     if (i === q.a) { st.score++; }
-    else { st.wrong = i; ctx.toast(ANGLES[q.a][0] + ' is here'); }
+    else { st.wrong = i; ctx.toast((st.deg ? DEG[q.a] : ANGLES[q.a][0]) + ' is here'); }
     renderCircle();
     timer = setTimeout(nextCircle, i === q.a ? 550 : 1400);
   }
@@ -461,12 +512,93 @@
   function tapChoice(i) {
     if (!st || st.kind !== 'circle' || st.lock) return;
     var q = st.qs[st.i];
-    if (q.type !== 2) return;
+    if (q.type !== 2 && q.type !== 3) return;
     st.lock = true;
     if (q.choices[i] === q.right) { st.score++; }
     else { st.wrongChoice = i; }
     renderCircle();
     timer = setTimeout(nextCircle, q.choices[i] === q.right ? 550 : 1400);
+  }
+
+  /* ==========================================================================
+     GRAPH — which trig function is this?
+     ========================================================================== */
+  function startGraph(id) {
+    var order = shuffle(GRAPHS.map(function (_, i) { return i; })).slice(0, 10);
+    st = { id: id, kind: 'graph', qs: order, i: 0, score: 0, total: order.length,
+           lock: false, wrongChoice: -1, choices: null, right: null };
+    renderGraph();
+  }
+
+  function graphSVG(gi) {
+    var f = GRAPHS[gi][1];
+    var s = '<svg viewBox="0 0 320 190" class="tg" aria-label="Graph of a trig function">';
+    s += '<line class="tg-axis" x1="10" y1="95" x2="310" y2="95"/>';
+    s += '<line class="tg-axis" x1="160" y1="10" x2="160" y2="180"/>';
+    [-2, -1, 1, 2].forEach(function (k) {   // ticks at multiples of pi
+      var px = 160 + k * 75;
+      s += '<line class="tg-axis" x1="' + px + '" y1="91" x2="' + px + '" y2="99"/>';
+    });
+    var segs = [], cur = [];
+    for (var px = 0; px <= 300; px++) {
+      var x = (px / 300) * 4 * Math.PI - 2 * Math.PI;
+      var y = f(x);
+      if (!isFinite(y) || Math.abs(y) > 3.4) { if (cur.length > 1) segs.push(cur); cur = []; continue; }
+      var X = 10 + px, Y = 95 - y * 28;
+      if (cur.length && Math.abs(Y - cur[cur.length - 1][1]) > 80) {   // asymptote jump
+        if (cur.length > 1) segs.push(cur); cur = [];
+      }
+      cur.push([X, Y]);
+    }
+    if (cur.length > 1) segs.push(cur);
+    segs.forEach(function (seg) {
+      s += '<polyline class="tg-curve" points="' +
+        seg.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '"/>';
+    });
+    return s + '</svg>';
+  }
+
+  function renderGraph() {
+    if (st.i >= st.total) {
+      return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
+    }
+    var gi = st.qs[st.i];
+    if (!st.choices) {
+      st.right = GRAPHS[gi][0];
+      var labels = GRAPHS.map(function (g) { return g[0]; })
+        .filter(function (l) { return l !== st.right; });
+      st.choices = shuffle([st.right].concat(sample(labels, 3)));
+    }
+    var ch = '<div class="choices">' + st.choices.map(function (cl, i) {
+      var state = '';
+      if (st.lock) state = cl === st.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
+      return '<button class="choice" data-gc="' + i + '"' +
+        (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') +
+        '>y = ' + esc(cl) + '</button>';
+    }).join('') + '</div>';
+    ctx.mount(
+      ctx.backbar(GAMES[st.id].name) +
+      gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
+      '<div class="gcur"><div class="gname">Which function is this?</div></div>' +
+      '<div class="tgwrap">' + graphSVG(gi) + '</div>' + ch,
+      { session: true, keepScroll: st.i > 0 }
+    );
+  }
+
+  function nextGraph() {
+    if (!st || st.kind !== 'graph') return;
+    if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
+    st.i++; st.lock = false; st.wrongChoice = -1; st.choices = null; st.right = null;
+    renderGraph();
+  }
+
+  function tapGraphChoice(i) {
+    if (!st || st.kind !== 'graph' || st.lock) return;
+    st.lock = true;
+    var right = st.choices[i] === st.right;
+    if (right) { st.score++; } else { st.wrongChoice = i; }
+    renderGraph();
+    timer = setTimeout(nextGraph, right ? 550 : 1400);
   }
 
   /* ---------------- delegation ------------------------------------------- */
@@ -479,7 +611,11 @@
     if ((el = t.closest('[data-ml]'))) { pickMatch('l', parseInt(el.getAttribute('data-ml'), 10)); return; }
     if ((el = t.closest('[data-mr]'))) { pickMatch('r', parseInt(el.getAttribute('data-mr'), 10)); return; }
     if ((el = t.closest('[data-dot]'))) { tapDot(parseInt(el.getAttribute('data-dot'), 10)); return; }
-    if ((el = t.closest('[data-gc]'))) { tapChoice(parseInt(el.getAttribute('data-gc'), 10)); return; }
+    if ((el = t.closest('[data-gc]'))) {
+      var ci = parseInt(el.getAttribute('data-gc'), 10);
+      if (st.kind === 'graph') tapGraphChoice(ci); else tapChoice(ci);
+      return;
+    }
   }
 
   /* ---------------- public ------------------------------------------------ */
