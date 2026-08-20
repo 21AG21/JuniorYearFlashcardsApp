@@ -25,131 +25,27 @@
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush'];
 
-  /* ---------------- data: US History timeline ---------------------------- */
-  /* One event per year, well separated, spanning the CED periods. */
-  var EVENTS = [
-    ['Columbus reaches the Americas', 1492],
-    ['Jamestown founded', 1607],
-    ['Mayflower Compact', 1620],
-    ["Bacon's Rebellion", 1676],
-    ['Salem witch trials', 1692],
-    ['French and Indian War begins', 1754],
-    ['Proclamation of 1763', 1763],
-    ['Boston Massacre', 1770],
-    ['Boston Tea Party', 1773],
-    ['Declaration of Independence', 1776],
-    ['British surrender at Yorktown', 1781],
-    ['Constitutional Convention', 1787],
-    ['Bill of Rights ratified', 1791],
-    ['Louisiana Purchase', 1803],
-    ['War of 1812 begins', 1812],
-    ['Missouri Compromise', 1820],
-    ['Monroe Doctrine', 1823],
-    ['Indian Removal Act', 1830],
-    ['Trail of Tears', 1838],
-    ['Seneca Falls Convention', 1848],
-    ['California Gold Rush', 1849],
-    ['Compromise of 1850', 1850],
-    ['Kansas–Nebraska Act', 1854],
-    ['Dred Scott decision', 1857],
-    ['Attack on Fort Sumter', 1861],
-    ['Emancipation Proclamation', 1863],
-    ['Civil War ends', 1865],
-    ['Transcontinental Railroad completed', 1869],
-    ['Reconstruction ends', 1877],
-    ['Dawes Act', 1887],
-    ['Wounded Knee Massacre', 1890],
-    ['Plessy v. Ferguson', 1896],
-    ['Spanish–American War', 1898],
-    ['Pure Food and Drug Act', 1906],
-    ['United States enters World War I', 1917],
-    ['19th Amendment ratified', 1920],
-    ['Stock market crash', 1929],
-    ['First New Deal begins', 1933],
-    ['Attack on Pearl Harbor', 1941],
-    ['D-Day', 1944],
-    ['World War II ends', 1945],
-    ['Brown v. Board of Education', 1954],
-    ['Cuban Missile Crisis', 1962],
-    ['March on Washington', 1963],
-    ['Civil Rights Act', 1964],
-    ['Voting Rights Act', 1965],
-    ['Apollo 11 Moon landing', 1969],
-    ['Watergate break-in', 1972],
-    ['Nixon resigns', 1974],
-    ['Berlin Wall falls', 1989],
-    ['Soviet Union dissolves', 1991],
-    ['September 11 attacks', 2001],
-    ['Financial crisis', 2008]
+  /* ==========================================================================
+     Content is GENERATED, never a hardcoded question list. The only tables
+     below are reference facts (a periodic table, the 16 standard angles,
+     identity facts) — the questions built from them are random every round.
+     ========================================================================== */
+
+  /* elements: symbol, atomic number, atomic mass (u), Pauling EN (0 = n/a) */
+  var ELEMENTS = [
+    ['H', 1, 1.0, 2.20], ['He', 2, 4.0, 0], ['Li', 3, 6.9, 0.98], ['Be', 4, 9.0, 1.57],
+    ['B', 5, 10.8, 2.04], ['C', 6, 12.0, 2.55], ['N', 7, 14.0, 3.04], ['O', 8, 16.0, 3.44],
+    ['F', 9, 19.0, 3.98], ['Ne', 10, 20.2, 0], ['Na', 11, 23.0, 0.93], ['Mg', 12, 24.3, 1.31],
+    ['Al', 13, 27.0, 1.61], ['Si', 14, 28.1, 1.90], ['P', 15, 31.0, 2.19], ['S', 16, 32.1, 2.58],
+    ['Cl', 17, 35.5, 3.16], ['Ar', 18, 39.9, 0], ['K', 19, 39.1, 0.82], ['Ca', 20, 40.1, 1.00],
+    ['Ti', 22, 47.9, 1.54], ['Cr', 24, 52.0, 1.66], ['Mn', 25, 54.9, 1.55], ['Fe', 26, 55.8, 1.83],
+    ['Ni', 28, 58.7, 1.91], ['Cu', 29, 63.5, 1.90], ['Zn', 30, 65.4, 1.65], ['Br', 35, 79.9, 2.96],
+    ['Ag', 47, 107.9, 1.93], ['Sn', 50, 118.7, 1.96], ['I', 53, 126.9, 2.66], ['Cs', 55, 132.9, 0.79],
+    ['Ba', 56, 137.3, 0.89], ['Au', 79, 197.0, 2.54], ['Hg', 80, 200.6, 2.00], ['Pb', 82, 207.2, 1.87]
   ];
 
-  /* ---------------- data: Chemistry ranking axes ------------------------- */
-  /* Every axis ranks biggest-first; values are far enough apart to be fair. */
-  var CHEM_AXES = [
-    { title: 'Most electronegative first', items: [
-      ['F', 3.98, 'EN 3.98'], ['O', 3.44, 'EN 3.44'], ['Cl', 3.16, 'EN 3.16'],
-      ['S', 2.58, 'EN 2.58'], ['H', 2.20, 'EN 2.20'], ['Na', 0.93, 'EN 0.93']] },
-    { title: 'Largest atomic radius first', items: [
-      ['Cs', 260, '260 pm'], ['K', 220, '220 pm'], ['Na', 180, '180 pm'],
-      ['Mg', 150, '150 pm'], ['Al', 125, '125 pm'], ['Cl', 100, '100 pm'], ['F', 50, '50 pm']] },
-    { title: 'Highest first ionization energy first', items: [
-      ['He', 2372, '2372 kJ/mol'], ['Ne', 2081, '2081 kJ/mol'], ['F', 1681, '1681 kJ/mol'],
-      ['N', 1402, '1402 kJ/mol'], ['O', 1314, '1314 kJ/mol'], ['C', 1086, '1086 kJ/mol'], ['Li', 520, '520 kJ/mol']] },
-    { title: 'Strongest acid first', items: [
-      ['HCl', 1e6, 'strong acid'], ['H₃PO₄', 7.5e-3, 'Ka 7.5×10⁻³'], ['HF', 6.6e-4, 'Ka 6.6×10⁻⁴'],
-      ['CH₃COOH', 1.8e-5, 'Ka 1.8×10⁻⁵'], ['H₂CO₃', 4.3e-7, 'Ka 4.3×10⁻⁷'], ['NH₄⁺', 5.6e-10, 'Ka 5.6×10⁻¹⁰']] },
-    { title: 'Highest boiling point first', items: [
-      ['H₂O', 100, '100 °C'], ['CH₃OH', 65, '65 °C'], ['CH₃CHO', 20, '20 °C'],
-      ['NH₃', -33, '−33 °C'], ['CH₄', -162, '−162 °C'], ['He', -269, '−269 °C']] },
-    { title: 'Most active metal first', items: [
-      ['Li', 3.04, 'E° −3.04 V'], ['Na', 2.71, 'E° −2.71 V'], ['Mg', 2.37, 'E° −2.37 V'],
-      ['Zn', 0.76, 'E° −0.76 V'], ['Fe', 0.44, 'E° −0.44 V'], ['Cu', -0.34, 'E° +0.34 V'], ['Au', -1.50, 'E° +1.50 V']] }
-  ];
-
-  /* ---------------- data: English device pairs --------------------------- */
-  var LANG_PAIRS = [
-    ['Ethos', 'appeal to credibility'],
-    ['Pathos', 'appeal to emotion'],
-    ['Logos', 'appeal to logic'],
-    ['Anaphora', 'repetition at the start of lines'],
-    ['Antithesis', 'contrast set in parallel form'],
-    ['Juxtaposition', 'side-by-side contrast'],
-    ['Hyperbole', 'deliberate exaggeration'],
-    ['Understatement', 'downplaying on purpose'],
-    ['Verbal irony', 'saying one thing, meaning another'],
-    ['Metonymy', 'an associated stand-in — “the crown”'],
-    ['Synecdoche', 'a part for the whole — “all hands”'],
-    ['Allusion', 'an indirect reference'],
-    ['Anecdote', 'a short personal story as evidence'],
-    ['Concession', 'granting part of the opposing point'],
-    ['Refutation', 'disproving the opposing point'],
-    ['Rhetorical question', 'a question asked for effect'],
-    ['Parallelism', 'matching grammatical structure'],
-    ['Diction', 'word choice'],
-    ['Syntax', 'sentence structure'],
-    ['Euphemism', 'softened phrasing for something harsh']
-  ];
-
-  /* ---------------- data: Calc BC derivative pairs ------------------------ */
-  var DERIV_PAIRS = [
-    ['sin x', 'cos x'],
-    ['cos x', '−sin x'],
-    ['tan x', 'sec² x'],
-    ['ln x', '1/x'],
-    ['eˣ', 'eˣ'],
-    ['x²', '2x'],
-    ['√x', '1/(2√x)'],
-    ['1/x', '−1/x²'],
-    ['sec x', 'sec x · tan x'],
-    ['arctan x', '1/(1 + x²)'],
-    ['arcsin x', '1/√(1 − x²)'],
-    ['ln|sec x|', 'tan x'],
-    ['x ln x − x', 'ln x'],
-    ['sin(x²)', '2x cos(x²)']
-  ];
-
-  /* ---------------- data: trig identities --------------------------------- */
-  var IDENT_PAIRS = [
+  /* identity facts; each round mixes a few with generated exact values */
+  var IDENTS = [
     ['sin²x + cos²x', '1'],
     ['1 + tan²x', 'sec²x'],
     ['1 + cot²x', 'csc²x'],
@@ -166,19 +62,12 @@
     ['tan 2x', '2 tan x / (1 − tan²x)']
   ];
 
-  /* ---------------- data: trig graphs -------------------------------------- */
-  var GRAPHS = [
-    ['sin x',  function (x) { return Math.sin(x); }],
-    ['cos x',  function (x) { return Math.cos(x); }],
-    ['tan x',  function (x) { return Math.tan(x); }],
-    ['−sin x', function (x) { return -Math.sin(x); }],
-    ['−cos x', function (x) { return -Math.cos(x); }],
-    ['2 sin x', function (x) { return 2 * Math.sin(x); }],
-    ['sin 2x', function (x) { return Math.sin(2 * x); }],
-    ['cos 2x', function (x) { return Math.cos(2 * x); }],
-    ['sec x',  function (x) { return 1 / Math.cos(x); }],
-    ['csc x',  function (x) { return 1 / Math.sin(x); }],
-    ['cot x',  function (x) { return Math.cos(x) / Math.sin(x); }]
+  /* graph base functions; every question is a generated A·f(Bx) with a sign */
+  var GFNS = [
+    ['sin', Math.sin], ['cos', Math.cos], ['tan', Math.tan],
+    ['sec', function (x) { return 1 / Math.cos(x); }],
+    ['csc', function (x) { return 1 / Math.sin(x); }],
+    ['cot', function (x) { return Math.cos(x) / Math.sin(x); }]
   ];
 
   /* ---------------- data: the unit circle -------------------------------- */
@@ -204,6 +93,21 @@
   /* degree labels, index-parallel to ANGLES */
   var DEG = ['0°', '30°', '45°', '60°', '90°', '120°', '135°', '150°', '180°',
              '210°', '225°', '240°', '270°', '300°', '315°', '330°'];
+  /* the same angles as fractions of π, for generating coterminal labels */
+  var FRAC = [[0, 1], [1, 6], [1, 4], [1, 3], [1, 2], [2, 3], [3, 4], [5, 6], [1, 1],
+              [7, 6], [5, 4], [4, 3], [3, 2], [5, 3], [7, 4], [11, 6]];
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+  function radLabel(i, k) {
+    var num = FRAC[i][0] + 2 * k * FRAC[i][1], den = FRAC[i][1];
+    if (!num) return '0';
+    var g = gcd(Math.abs(num), den); num /= g; den /= g;
+    var sign = num < 0 ? '−' : ''; num = Math.abs(num);
+    return sign + (num === 1 ? '' : num) + 'π' + (den === 1 ? '' : '/' + den);
+  }
+  function degLabel(i, k) {
+    var d = parseInt(DEG[i], 10) + 360 * k;
+    return (d < 0 ? '−' : '') + Math.abs(d) + '°';   // typographic minus, like every label
+  }
 
   /* ---------------- helpers ---------------------------------------------- */
   function shuffle(a) {
@@ -269,18 +173,78 @@
   }
 
   /* ==========================================================================
-     ORDER — the timeline mechanic: place each item into the sequence
+     ORDER — the timeline mechanic: place each item into the sequence.
+     Timeline rounds are extracted live from the US History deck; chemistry
+     rounds are generated from the periodic-table reference.
      ========================================================================== */
+  function clean(s) { return T.plain(s).replace(/\s+/g, ' ').trim(); }
+
+  function datedCards() {
+    var d = S.getDeck('apush'), out = [], seenYear = {};
+    if (!d) return out;
+    shuffle(d.cards.slice()).forEach(function (c) {
+      var q = clean(c.q);
+      if (q.length < 8 || q.length > 70) return;
+      var ys = (q + ' ' + T.plain(c.a)).match(/\b(1[4-9]\d\d|20[0-2]\d)\b/g);
+      if (!ys) return;
+      var uniq = {}; ys.forEach(function (y) { uniq[y] = 1; });
+      var keys = Object.keys(uniq);
+      if (keys.length !== 1) return;                          // exactly one year → unambiguous
+      if (new RegExp('\\b' + keys[0] + '\\b').test(q)) return; // never print the answer in the prompt
+      var y = parseInt(keys[0], 10);
+      if (seenYear[y]) return;
+      seenYear[y] = 1;
+      out.push({ n: q, v: y, vl: String(y) });
+    });
+    return out;
+  }
+  function topicCards() {
+    var d = S.getDeck('apush'), out = [], seenT = {};
+    if (!d) return out;
+    shuffle(d.cards.slice()).forEach(function (c) {
+      var q = clean(c.q);
+      if (q.length < 8 || q.length > 70 || !c.t || !/^\d+\.\d+$/.test(c.t) || seenT[c.t]) return;
+      seenT[c.t] = 1;
+      var m = c.t.split('.');
+      out.push({ n: q, v: parseInt(m[0], 10) * 100 + parseInt(m[1], 10), vl: 'Topic ' + c.t });
+    });
+    return out;
+  }
+
+  function chemRound() {
+    var axes = [
+      { title: 'Highest atomic number first', get: function (e) { return e[1]; }, vl: function (e) { return 'Z = ' + e[1]; } },
+      { title: 'Heaviest first', get: function (e) { return e[2]; }, vl: function (e) { return e[2].toFixed(1) + ' u'; } },
+      { title: 'Most electronegative first', get: function (e) { return e[3]; }, vl: function (e) { return 'EN ' + e[3].toFixed(2); }, gap: 0.25 }
+    ];
+    var ax = axes[Math.floor(Math.random() * axes.length)];
+    var pool = shuffle(ELEMENTS.filter(function (e) { return ax.get(e) > 0; }).slice());
+    var picked = [];
+    pool.forEach(function (e) {
+      if (picked.length >= 6) return;
+      var v = ax.get(e);
+      var fair = picked.every(function (p) { return Math.abs(ax.get(p) - v) >= (ax.gap || 0.001); });
+      if (fair) picked.push(e);
+    });
+    return { title: ax.title,
+      items: picked.map(function (e) { return { n: e[0], v: -ax.get(e), vl: ax.vl(e) }; }) };
+  }
+
   function startOrder(id) {
     var axis, pool;
     if (id === 'timeline') {
-      axis = { title: 'Earliest at the top' };
-      pool = sample(EVENTS, 8).map(function (e) { return { n: e[0], v: e[1], vl: String(e[1]) }; });
+      pool = datedCards();
+      if (pool.length >= 8) {
+        axis = { title: 'Earliest at the top' };
+        pool = pool.slice(0, 8);
+      } else {
+        axis = { title: 'Course order, earliest first' };
+        pool = topicCards().slice(0, 8);
+      }
     } else {
-      var ax = CHEM_AXES[Math.floor(Math.random() * CHEM_AXES.length)];
+      var ax = chemRound();
       axis = { title: ax.title };
-      // rank biggest-first: negate so the engine always sorts ascending
-      pool = sample(ax.items, Math.min(6, ax.items.length)).map(function (e) { return { n: e[0], v: -e[1], vl: e[2] }; });
+      pool = ax.items;   // values negated so the engine always sorts ascending
     }
     var anchor = pool.shift();
     st = { id: id, kind: 'order', axis: axis, queue: pool, placed: [anchor],
@@ -331,28 +295,86 @@
   }
 
   /* ==========================================================================
-     MATCH — two columns of text; pair them up
+     MATCH — two columns of text; pair them up. Boards come from the decks
+     themselves or from symbolic generators — a fresh board every round.
      ========================================================================== */
-  function frenchPairs() {
-    var d = S.getDeck('french');
-    var out = [], seenQ = {}, seenA = {};
+  function deckPairs(deckId) {
+    var d = S.getDeck(deckId);
+    var tiers = [[40, 60], [60, 90], [80, 120]];
+    var cands = [], seenQ = {}, seenA = {};
     if (d) {
-      shuffle(d.cards.slice()).forEach(function (c) {
-        if (out.length >= 6) return;
-        var q = T.plain(c.q).trim(), a = T.plain(c.a).trim();
-        if (!q || !a || q.length > 26 || a.length > 26) return;
-        if (/\d/.test(q + a)) return;
-        if (seenQ[q.toLowerCase()] || seenA[a.toLowerCase()]) return;
-        seenQ[q.toLowerCase()] = seenA[a.toLowerCase()] = 1;
-        out.push([q, a]);
-      });
+      for (var t = 0; t < tiers.length && cands.length < 24; t++) {
+        shuffle(d.cards.slice()).forEach(function (c) {
+          if (cands.length >= 60) return;
+          var q = clean(c.q), a = clean(c.a);
+          if (q.length < 3 || a.length < 2 || q.length > tiers[t][0] || a.length > tiers[t][1]) return;
+          var kq = q.toLowerCase(), ka = a.toLowerCase();
+          if (seenQ[kq] || seenA[ka]) return;
+          seenQ[kq] = seenA[ka] = 1;
+          cands.push([q, a]);
+        });
+      }
     }
-    return out.length >= 4 ? out : LANG_PAIRS.slice(0, 6); // never render an empty board
+    return sample(cands, Math.min(6, cands.length));
+  }
+
+  function sup(n) {
+    return String(n).split('').map(function (c) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'.charAt(+c); }).join('');
+  }
+  function genDerivPairs(n) {
+    var out = [], seenL = {}, seenR = {}, guard = 0;
+    while (out.length < n && guard++ < 200) {
+      var a = 2 + Math.floor(Math.random() * 4);           // 2..5
+      var p = 2 + Math.floor(Math.random() * 4);           // 2..5
+      var ax = (Math.random() < 0.4 ? '' : a) + 'x';
+      var A = ax === 'x' ? 1 : a;
+      var pre = A > 1 ? A + ' ' : '';
+      var pair;
+      switch (Math.floor(Math.random() * 8)) {
+        case 0: pair = ['x' + sup(p), p + 'x' + (p - 1 > 1 ? sup(p - 1) : '')]; break;
+        case 1: pair = [a + 'x' + sup(p), (a * p) + 'x' + (p - 1 > 1 ? sup(p - 1) : '')]; break;
+        case 2: pair = ['sin ' + ax, pre + 'cos ' + ax]; break;
+        case 3: pair = ['cos ' + ax, '−' + pre + 'sin ' + ax]; break;
+        case 4: pair = ['tan ' + ax, pre + 'sec² ' + ax]; break;
+        case 5: pair = [A > 1 ? 'e' + sup(A) + 'ˣ' : 'eˣ', A > 1 ? A + ' e' + sup(A) + 'ˣ' : 'eˣ']; break;
+        case 6: pair = ['ln ' + ax, '1/x']; break;
+        case 7: var m = 1 + Math.floor(Math.random() * 3);
+          pair = ['1/x' + (m > 1 ? sup(m) : ''), '−' + m + '/x' + sup(m + 1)]; break;
+      }
+      if (seenL[pair[0]] || seenR[pair[1]]) continue;
+      seenL[pair[0]] = seenR[pair[1]] = 1;
+      out.push(pair);
+    }
+    return out;
+  }
+  function genValuePairs(n, seenR) {
+    var out = [], seenL = {}, guard = 0;
+    while (out.length < n && guard++ < 100) {
+      var i = Math.floor(Math.random() * 16);
+      var fn = ['sin', 'cos', 'tan'][Math.floor(Math.random() * 3)];
+      var val = fn === 'sin' ? ANGLES[i][2] : fn === 'cos' ? ANGLES[i][1] : ANGLES[i][3];
+      var left = fn + ' ' + ANGLES[i][0];
+      if (seenL[left] || seenR[val]) continue;
+      seenL[left] = 1; seenR[val] = 1;
+      out.push([left, val]);
+    }
+    return out;
+  }
+  function genIdentPairs(n) {
+    var seenR = {};
+    var facts = sample(IDENTS, 3).filter(function (pr) {
+      if (seenR[pr[1]]) return false;
+      seenR[pr[1]] = 1; return true;
+    });
+    return shuffle(facts.concat(genValuePairs(n - facts.length, seenR)));
   }
 
   function startMatch(id) {
-    var pairs = id === 'frmatch' ? frenchPairs()
-      : sample(id === 'derivmatch' ? DERIV_PAIRS : id === 'identmatch' ? IDENT_PAIRS : LANG_PAIRS, 6);
+    var pairs =
+      id === 'derivmatch' ? genDerivPairs(6) :
+      id === 'identmatch' ? genIdentPairs(6) :
+      deckPairs(id === 'frmatch' ? 'french' : 'lang');
+    if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
     var left = [], right = [];
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });
     shuffle(left); shuffle(right);
@@ -440,7 +462,11 @@
 
   function circlePrompt(q) {
     var a = ANGLES[q.a];
-    if (q.type === 0) return 'Tap ' + (st.deg ? DEG[q.a] : a[0]);
+    if (q.type === 0) {
+      // half the time the label is a generated coterminal form (17π/6, −210°…)
+      if (q.k == null) q.k = Math.random() < 0.5 ? 0 : [-1, 1, 2][Math.floor(Math.random() * 3)];
+      return 'Tap ' + (st.deg ? degLabel(q.a, q.k) : radLabel(q.a, q.k));
+    }
     if (q.type === 1) return 'Tap the angle where cos θ = ' + a[1] + ' and sin θ = ' + a[2];
     if (q.type === 3) return 'Which angle is marked?';
     var fn = ['cos', 'sin', 'tan'][q.a % 3];
@@ -523,15 +549,50 @@
   /* ==========================================================================
      GRAPH — which trig function is this?
      ========================================================================== */
+  function graphLabel(g) {
+    return (g.s < 0 ? '−' : '') + (g.A > 1 ? g.A + ' ' : '') + GFNS[g.f][0] + ' ' + (g.B > 1 ? g.B + 'x' : 'x');
+  }
+  function genGraph() {
+    var f = Math.floor(Math.random() * 6);
+    var g = { f: f, A: 1, B: 1, s: Math.random() < 0.3 ? -1 : 1 };
+    if (f < 2) { g.A = [1, 1, 2, 3][Math.floor(Math.random() * 4)]; g.B = [1, 1, 2, 3][Math.floor(Math.random() * 4)]; }
+    else if (f === 2) { g.B = [1, 1, 2][Math.floor(Math.random() * 3)]; }
+    return g;
+  }
+  function graphChoicesFor(g) {
+    var right = graphLabel(g), seen = {}, out = [right], guard = 0;
+    seen[right] = 1;
+    while (out.length < 4 && guard++ < 80) {
+      var m = { f: g.f, A: g.A, B: g.B, s: g.s };
+      var r = Math.floor(Math.random() * 4);
+      if (r === 0) m.s = -m.s;
+      else if (r === 1) m.A = m.A === 1 ? 2 : m.A === 2 ? 3 : 1;
+      else if (r === 2) m.B = m.B === 1 ? 2 : 1;
+      else m.f = (m.f + 1 + Math.floor(Math.random() * 5)) % 6;
+      if (m.f >= 2) m.A = 1;          // only sin/cos show an amplitude
+      if (m.f >= 3) m.B = 1;
+      var lb = graphLabel(m);
+      if (!seen[lb]) { seen[lb] = 1; out.push(lb); }
+    }
+    return shuffle(out);
+  }
+
   function startGraph(id) {
-    var order = shuffle(GRAPHS.map(function (_, i) { return i; })).slice(0, 10);
-    st = { id: id, kind: 'graph', qs: order, i: 0, score: 0, total: order.length,
-           lock: false, wrongChoice: -1, choices: null, right: null };
+    var qs = [], seen = {}, guard = 0;
+    while (qs.length < 10 && guard++ < 120) {
+      var g = genGraph();
+      var lb = graphLabel(g);
+      if (seen[lb]) continue;
+      seen[lb] = 1;
+      qs.push(g);
+    }
+    st = { id: id, kind: 'graph', qs: qs, i: 0, score: 0, total: qs.length,
+           lock: false, wrongChoice: -1 };
     renderGraph();
   }
 
-  function graphSVG(gi) {
-    var f = GRAPHS[gi][1];
+  function graphSVG(g) {
+    var f = function (x) { return g.s * g.A * GFNS[g.f][1](g.B * x); };
     var s = '<svg viewBox="0 0 320 190" class="tg" aria-label="Graph of a trig function">';
     s += '<line class="tg-axis" x1="10" y1="95" x2="310" y2="95"/>';
     s += '<line class="tg-axis" x1="160" y1="10" x2="160" y2="180"/>';
@@ -562,16 +623,14 @@
     if (st.i >= st.total) {
       return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
     }
-    var gi = st.qs[st.i];
-    if (!st.choices) {
-      st.right = GRAPHS[gi][0];
-      var labels = GRAPHS.map(function (g) { return g[0]; })
-        .filter(function (l) { return l !== st.right; });
-      st.choices = shuffle([st.right].concat(sample(labels, 3)));
+    var g = st.qs[st.i];
+    if (!g.choices) {
+      g.right = graphLabel(g);
+      g.choices = graphChoicesFor(g);
     }
-    var ch = '<div class="choices">' + st.choices.map(function (cl, i) {
+    var ch = '<div class="choices">' + g.choices.map(function (cl, i) {
       var state = '';
-      if (st.lock) state = cl === st.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
+      if (st.lock) state = cl === g.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
       return '<button class="choice" data-gc="' + i + '"' +
         (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') +
         '>y = ' + esc(cl) + '</button>';
@@ -580,7 +639,7 @@
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
       '<div class="gcur"><div class="gname">Which function is this?</div></div>' +
-      '<div class="tgwrap">' + graphSVG(gi) + '</div>' + ch,
+      '<div class="tgwrap">' + graphSVG(g) + '</div>' + ch,
       { session: true, keepScroll: st.i > 0 }
     );
   }
@@ -588,14 +647,15 @@
   function nextGraph() {
     if (!st || st.kind !== 'graph') return;
     if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
-    st.i++; st.lock = false; st.wrongChoice = -1; st.choices = null; st.right = null;
+    st.i++; st.lock = false; st.wrongChoice = -1;
     renderGraph();
   }
 
   function tapGraphChoice(i) {
     if (!st || st.kind !== 'graph' || st.lock) return;
+    var g = st.qs[st.i];
     st.lock = true;
-    var right = st.choices[i] === st.right;
+    var right = g.choices[i] === g.right;
     if (right) { st.score++; } else { st.wrongChoice = i; }
     renderGraph();
     timer = setTimeout(nextGraph, right ? 550 : 1400);
