@@ -115,6 +115,7 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-r .searchbar input{ font-size:28px; }
   .pane-r .prose, .pane-r .card .a, .pane-r .card .note{ max-width:62ch; }
   .pane-r .setrow{ max-width:560px; }   /* a toggle never sits a metre from its name */
+  .pane-r .lg-seg{ max-width:340px; }
 }
 
 /* a centered capsule that shrink-wraps its glyphs — margin centering, not
@@ -185,7 +186,9 @@ button.hero-tap:active{ opacity:.55; }
   background:var(--ink); color:var(--ground); font:inherit; font-size:16px; font-weight:680; letter-spacing:-.01em;
   cursor:pointer; transition:transform .16s cubic-bezier(.32,.72,0,1), opacity .12s ease; }
 .act:active{ transform:scale(.97); opacity:.85; }
-.textbtn{ background:none; border:0; padding:12px 2px; margin:0; min-height:44px; font:inherit; font-size:15px; font-weight:640;
+/* zero horizontal padding: every text control shares the same gutter line
+   as headings and rows — nothing sits 2px off */
+.textbtn{ background:none; border:0; padding:12px 0; margin:0; min-height:44px; font:inherit; font-size:15px; font-weight:640;
   color:var(--ink-soft); cursor:pointer; letter-spacing:-.005em; }
 .textbtn:active{ opacity:.5; }
 .textbtn.quiet{ font-size:13px; color:var(--muted); font-weight:600; }
@@ -193,7 +196,7 @@ button.hero-tap:active{ opacity:.55; }
 
 /* legacy .chip markup renders as a text button — chips do not exist here */
 .chips{ display:flex; flex-wrap:wrap; gap:2px 22px; margin:0 0 var(--s-3); padding:0; overflow:visible; }
-.chip{ flex:0 0 auto; padding:12px 2px; min-height:44px; border-radius:0; border:0; background:none;
+.chip{ flex:0 0 auto; padding:12px 0; min-height:44px; border-radius:0; border:0; background:none;
   color:var(--ink-soft); font:inherit; font-size:15px; font-weight:640; cursor:pointer; white-space:nowrap; }
 .chip[aria-pressed="true"]{ color:var(--ink); font-weight:720; }
 .chip:active{ opacity:.5; }
@@ -229,7 +232,7 @@ button.hero-tap:active{ opacity:.55; }
 
 /* grades: text in a row, in the flow; the recommended one is heavier ink */
 .rate{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-top:var(--s-4); }
-.rate button{ background:none; border:0; padding:10px 2px; min-height:44px; cursor:pointer; font:inherit;
+.rate button{ background:none; border:0; padding:10px 0; min-height:44px; cursor:pointer; font:inherit;
   display:flex; flex-direction:column; align-items:flex-start; gap:2px; transition:opacity .12s ease; }
 .rate button:active{ opacity:.5; }
 .rate .lab{ font-size:17px; font-weight:640; letter-spacing:-.01em; color:var(--ink-soft); }
@@ -247,7 +250,7 @@ button.hero-tap:active{ opacity:.55; }
 .swipehint.l{ left:8px; } .swipehint.r{ right:8px; }
 
 .typewrap{ margin-top:18px; }
-.typein{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--hair); padding:9px 1px;
+.typein{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--hair); padding:9px 0;
   font:inherit; font-size:19px; color:var(--ink); letter-spacing:-.01em; }
 .typein::placeholder{ color:var(--muted); }
 .typein:focus{ outline:none; border-bottom-color:var(--ink-soft); }
@@ -281,7 +284,7 @@ button.hero-tap:active{ opacity:.55; }
 .searchbar{ display:flex; align-items:center; gap:10px; margin-bottom:var(--s-4);
   padding-top:calc(env(safe-area-inset-top, 0px) + 4px); }
 #app .searchbar:first-child{ padding-top:0; }
-.searchbar input{ flex:1; background:transparent; border:0; border-bottom:1px solid var(--hair); padding:10px 1px;
+.searchbar input{ flex:1; min-width:0; background:transparent; border:0; border-bottom:1px solid var(--hair); padding:10px 0;
   font:inherit; font-size:24px; font-weight:430; color:var(--ink); letter-spacing:-.015em; }
 .searchbar input:focus{ outline:none; border-bottom-color:var(--ink-soft); }
 .searchbar input::placeholder{ color:var(--muted); }
@@ -336,9 +339,9 @@ sub,sup{ font-size:.68em; }
 /* profiles and choice values are weighted text, never chips (banned house-wide) */
 .profile{ display:flex; flex-wrap:wrap; gap:2px 22px; margin-top:var(--s-1); }
 .profile .chip, .numchips .chip{ font-size:17px; font-variant-numeric:tabular-nums; }
-.lg-seg{ width:100%; max-width:340px; margin-top:var(--s-2); }
+.lg-seg{ width:100%; margin-top:var(--s-2); }   /* flush with the toggles' right edge on phones */
 .data-list{ display:flex; flex-direction:column; align-items:stretch; }
-.data-list .textbtn{ text-align:left; font-size:17px; font-weight:560; padding:13px 2px; min-height:52px; }
+.data-list .textbtn{ text-align:left; font-size:17px; font-weight:560; padding:13px 0; min-height:52px; }
 .data-list .textbtn + .textbtn{ border-top:1px solid var(--hair-soft); }
 /* destructive arm state: ink and heavy, never red, never a dialog */
 .textbtn.armed{ color:var(--ink); font-weight:720; }
@@ -362,7 +365,7 @@ sub,sup{ font-size:.68em; }
 
 /* the identities board: a field of tappable expressions, whitespace only */
 .board{ display:flex; flex-wrap:wrap; gap:4px 30px; margin-top:var(--s-3); }
-.board .tile{ background:none; border:0; padding:10px 2px; min-height:44px; font:inherit;
+.board .tile{ background:none; border:0; padding:10px 0; min-height:44px; font:inherit;
   font-size:16.5px; font-weight:520; color:var(--ink-soft); cursor:pointer;
   font-variant-numeric:tabular-nums; transition:opacity .12s ease; }
 .board .tile:active{ opacity:.5; }
