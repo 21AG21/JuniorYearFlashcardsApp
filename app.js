@@ -71,17 +71,16 @@
     var next = hash.charAt(0) === '#' ? hash : '#' + hash;
     if (location.hash === next) route(); else location.hash = next;
   }
-  function meter(p, soft) {
-    if (!p) return '<div class="meter' + (soft ? ' soft' : '') + '"></div>';
-    return '<div class="meter' + (soft ? ' soft' : '') + '"><i style="width:' + Math.max(2, p * 100) + '%"></i></div>';
-  }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+  // Shorten the label before the type (skill §3): the course identity, one line.
+  var NICE = { lang: 'English', chem: 'Chemistry', french: 'French', calcbc: 'Calc BC', apush: 'US History' };
+  function nice(idOrDeck) { var id = typeof idOrDeck === 'string' ? idOrDeck : idOrDeck.id; return NICE[id] || (typeof idOrDeck === 'string' ? id : idOrDeck.short); }
   function pct(x) { return Math.round(x * 100) + '%'; }
 
   function backbar(title, rightHtml) {
     return '<div class="backbar">' +
       '<button class="iconbtn" data-back aria-label="Back"><svg><use href="#i-back"/></svg></button>' +
-      '<span class="eyebrow">' + esc(title) + '</span>' +
+      '<span class="k">' + esc(title) + '</span>' +
       (rightHtml || '') + '</div>';
   }
 
@@ -103,39 +102,29 @@
      ========================================================================== */
   function viewDecks() {
     var ix = S.getIndex();
-    var due = 0, todayN = S.studiedToday();
+    var due = 0;
     var rows = ix.courses.map(function (c) {
       var d = S.getDeck(c.id);
       var st = d ? S.deckStats(d) : { due: 0, known: 0, total: c.count, pct: 0, fresh: c.count };
       due += st.due;
-      var right = st.due ? st.due + ' due' : (st.seen ? pct(st.pct) : String(c.count));
+      // one meaning per column: every row shows its total; a due count is a
+      // second line on the rows where it is true (skill §4.1)
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
-        '<span class="lname">' + esc(c.name) +
-        '<small>' + esc(c.blurb) + '</small></span>' +
-        '<span class="lval' + (st.due ? '' : ' dim') + '">' + esc(right) + '</span>' +
-        '</button>' + meter(st.pct, !st.due) + '</li>';
+        '<span class="lname">' + esc(nice(c.id)) + '</span>' +
+        '<span class="lval num">' + c.count + '</span>' +
+        (st.due ? '<span class="lsub">' + st.due + ' due</span>' : '') +
+        '</button></li>';
     }).join('');
 
-    var everSeen = 0;
-    ix.courses.forEach(function (c) { var dk = S.getDeck(c.id); if (dk) everSeen += S.deckStats(dk).seen; });
-    var greetK = due ? plural(due, 'card') + ' due'
-               : todayN ? plural(todayN, 'card') + ' today'
-               : everSeen ? 'Nothing due'
-               : ix.total.toLocaleString() + ' cards';
+    // The hero is the fact, and when there is one obvious action it IS the tap.
+    var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
     mount(
       '<div class="head">' +
-        '<span class="k">' + esc(S.activeProfile().name) + '</span>' +
-        '<h1>' + esc(greetK) + '</h1>' +
-        '<div class="sub">' + (due
-          ? 'Review pulls from every deck at once.'
-          : everSeen ? 'Nothing is scheduled. Any deck below is open for extra practice.'
-          : 'Five courses, written to the College Board CEDs. Pick one and start.') + '</div>' +
+        (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
+             : '<h1>' + esc(hero) + '</h1>') +
       '</div>' +
-      (due ? '<button class="btn-loud" data-go="#/review" style="margin-bottom:var(--s-5)">Review ' + due + ' now<span class="sub">Mixed across all five courses</span></button>' : '') +
       '<ul class="list tight">' + rows + '</ul>' +
-      '<div style="margin-top:var(--s-5)"><button class="ledger" data-go="#/settings">' +
-        '<span class="lname dim">Settings<small>Profiles, theme, backup</small></span>' +
-        '<span class="lval dim">›</span></button></div>'
+      '<div style="margin-top:var(--s-5)"><button class="textbtn" data-go="#/settings">Settings</button></div>'
     );
   }
 
@@ -146,36 +135,31 @@
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
     var st = S.deckStats(d);
+    // units in course order, each under a small muted label — never a header (skill §4.2)
     var units = d.units.map(function (u) {
       var us = S.unitStats(d, u.id);
       if (!us.total) return '';
-      var right = us.due ? us.due + ' due' : (us.seen ? pct(us.pct) : String(us.total));
-      return '<li><button class="ledger' + (us.pct >= 0.9 ? ' done' : '') + '" data-go="#/d/' + deckId + '/u/' + u.id + '">' +
-        '<span class="lname">' + esc(u.title) +
-        '<small>' + esc(u.weight) + ' · ' + us.total + ' cards</small></span>' +
-        '<span class="lval' + (us.due ? '' : ' dim') + '">' + esc(right) + '</span></button>' +
-        meter(us.pct, true) + '</li>';
+      return '<li>' +
+        '<div class="ulabel">Unit ' + u.n + '</div>' +
+        '<button class="ledger mid' + (us.pct >= 0.9 ? ' done' : '') + '" data-go="#/d/' + deckId + '/u/' + u.id + '">' +
+        '<span class="lname">' + esc(u.title) + '</span>' +
+        '<span class="lval num">' + us.total + '</span>' +
+        (us.due ? '<span class="lsub">' + us.due + ' due</span>' : '') +
+        '</button></li>';
     }).join('');
 
     mount(
-      backbar(d.abbr) +
-      '<div class="head">' +
-        '<span class="k">' + st.total + ' cards · ' + st.known + ' known</span>' +
-        '<h1>' + esc(d.name) + '</h1>' +
+      backbar('') +
+      '<div class="dhero"><span class="dn">' + esc(nice(d)) + '</span><span class="dv">' + st.total + '</span></div>' +
+      '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due : 'Study') + '</button>' +
+      '<div class="modes">' +
+        '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
+        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Multiple choice</button>' +
+        (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Starred</button>' : '') +
+        '<button class="textbtn" data-go="#/study/' + deckId + '/hard">Trouble spots</button>' +
+        '<button class="textbtn" data-go="#/study/' + deckId + '/all">Shuffle all</button>' +
       '</div>' +
-      '<button class="btn-loud" data-go="#/study/' + deckId + '/smart">' +
-        (st.due ? 'Review ' + st.due : 'Study') +
-        '<span class="sub">' + (st.due ? 'Due cards first, then new' : (st.fresh ? st.fresh + ' cards you have not seen' : 'Nothing due — this is extra practice')) + '</span>' +
-      '</button>' +
-      '<div class="chips" style="margin-top:var(--s-4)">' +
-        '<button class="chip" data-go="#/study/' + deckId + '/core">High-yield only</button>' +
-        '<button class="chip" data-go="#/quiz/' + deckId + '/smart">Multiple choice</button>' +
-        (st.starred ? '<button class="chip" data-go="#/study/' + deckId + '/starred">Starred ' + st.starred + '</button>' : '') +
-        '<button class="chip" data-go="#/study/' + deckId + '/hard">Trouble spots</button>' +
-        '<button class="chip" data-go="#/study/' + deckId + '/all">Everything, shuffled</button>' +
-      '</div>' +
-      '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">Units</div>' +
-      '<ul class="list tight">' + units + '</ul>'
+      '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
     );
   }
 
@@ -199,21 +183,15 @@
     }).join('');
 
     mount(
-      backbar(d.abbr + ' · Unit ' + u.n) +
-      '<div class="head">' +
-        '<span class="k">' + esc(u.weight) + ' · ' + us.total + ' cards</span>' +
-        '<h1 style="font-size:var(--t-title)">' + esc(u.title) + '</h1>' +
+      backbar(nice(d) + ' · Unit ' + u.n) +
+      '<div class="dhero"><span class="dn">' + esc(u.title) + '</span><span class="dv">' + us.total + '</span></div>' +
+      '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due : 'Study') + '</button>' +
+      '<div class="modes">' +
+        '<button class="textbtn" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
+        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Multiple choice</button>' +
+        '<button class="textbtn" data-go="#/study/' + deckId + '/all/' + unitId + '">Shuffle all</button>' +
       '</div>' +
-      '<button class="btn-loud" data-go="#/study/' + deckId + '/smart/' + unitId + '">' +
-        (us.due ? 'Review ' + us.due : 'Study this unit') +
-        '<span class="sub">' + us.known + ' of ' + us.total + ' known</span></button>' +
-      '<div class="chips" style="margin-top:var(--s-4)">' +
-        '<button class="chip" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
-        '<button class="chip" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Multiple choice</button>' +
-        '<button class="chip" data-go="#/study/' + deckId + '/all/' + unitId + '">Shuffle all</button>' +
-      '</div>' +
-      '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">All cards — tap to peek</div>' +
-      '<ul class="list tight">' + list + '</ul>'
+      '<ul class="list tight" style="margin-top:var(--s-4)">' + list + '</ul>'
     );
   }
 
@@ -246,9 +224,9 @@
     });
     if (!all.length) {
       return mount(
-        '<div class="head"><span class="k">Review</span><h1>All clear</h1>' +
-        '<div class="sub">Nothing is due right now. Come back tomorrow, or study a deck ahead of schedule.</div></div>' +
-        '<button class="btn-loud" data-go="#/">Back to decks</button>'
+        '<div class="head"><h1>Nothing due</h1>' +
+        '<div class="sub">Next: whatever comes due tomorrow</div></div>' +
+        '<button class="textbtn" data-go="#/">Decks</button>'
       );
     }
     S.shuffle(all);
@@ -269,28 +247,31 @@
       backbar(d.abbr) +
       '<div class="head"><span class="k">' + esc(d.short) + '</span><h1>All caught up</h1>' +
       '<div class="sub">' + esc(label) + '</div></div>' +
-      '<button class="btn-loud" data-go="#/study/' + d.id + '/all' + (unitId ? '/' + unitId : '') + '">Study anyway<span class="sub">Shuffle the whole set, no scheduling</span></button>'
+      '<button class="act" data-go="#/study/' + d.id + '/all' + (unitId ? '/' + unitId : '') + '">Study anyway</button>'
     );
   }
 
   function cardDeckOf(c) { return S.getDeck(c.deck); }
 
-  function sessTop() {
-    var p = sess.planned ? Math.min(1, sess.done / sess.planned) : 0;
+  function sessTop(c) {
+    // One small label line: scope on the left, position on the right (skill §4.3).
+    var d = c ? cardDeckOf(c) : sess.deck;
+    var unit = c && d ? d.unitById[c.u] : null;
+    var scope = d ? nice(d) + (unit ? ' · ' + unit.title : '') : 'Review';
     return '<div class="sess-top">' +
-      '<button class="iconbtn" data-exit aria-label="End session"><svg><use href="#i-close"/></svg></button>' +
-      '<div class="prog"><i style="width:' + (p * 100) + '%"></i></div>' +
-      '<span class="sess-count num">' + Math.min(sess.done + 1, sess.planned) + ' / ' + sess.planned + '</span>' +
-      (sess.history.length ? '<button class="iconbtn" data-undo aria-label="Undo"><svg><use href="#i-undo"/></svg></button>' : '') +
+      '<span class="scope">' + esc(scope) + '</span>' +
+      '<span class="pos num">' + Math.min(sess.done + 1, sess.planned) + ' of ' + sess.planned + '</span>' +
+      '</div>';
+  }
+  // Done / Undo / Star as quiet text — the affordances survive, the chrome does not.
+  function sessUtil(starred) {
+    return '<div class="sess-util">' +
+      '<button class="textbtn quiet" data-exit>Done</button>' +
+      (sess.history.length ? '<button class="textbtn quiet" data-undo>Undo</button>' : '') +
+      (starred != null ? '<button class="textbtn quiet" data-star aria-pressed="' + starred + '">' + (starred ? 'Starred' : 'Star') + '</button>' : '') +
       '</div>';
   }
 
-  function cardHead(d, unit, starred) {
-    return '<div class="cardhead">' +
-      '<span class="eyebrow">' + esc(d.abbr) + (unit ? ' · ' + esc(unit.title) : '') + '</span>' +
-      '<button class="starbtn" data-star aria-pressed="' + starred + '" aria-label="Star card">' +
-        '<svg><use href="#' + (starred ? 'i-star-fill' : 'i-star') + '"/></svg></button></div>';
-  }
   function topicLabel(c) {
     if (!c.t) return c.c ? 'high-yield' : '';
     var t = /^\d+\.\d+$/.test(c.t) ? 'CED ' + c.t : c.t;
@@ -318,16 +299,13 @@
     if (sess.quiz) return renderQuizCard(c, d, unit);
 
     var body =
-      cardHead(d, unit, starred) +
-      '<div class="verb">' + esc(c.v) + '</div>' +
       '<div class="q' + sizeClass(c.q) + '">' + T.html(c.q) + '</div>' +
       (!sess.revealed && c.h ? '<div class="hint">' + T.html(c.h) + '</div>' : '');
 
     if (!sess.revealed) {
-      body += settings.typing
-        ? '<div class="typewrap"><input class="typein" id="typein" autocomplete="off" autocorrect="off" ' +
-          'autocapitalize="none" spellcheck="false" placeholder="Type your answer"></div>'
-        : '<div class="tapcue">Tap to reveal</div>';
+      // the prompt itself is the tap; no "Tap to reveal" caption (skill §8)
+      if (settings.typing) body += '<div class="typewrap"><input class="typein" id="typein" autocomplete="off" autocorrect="off" ' +
+          'autocapitalize="none" spellcheck="false" placeholder="Type your answer"></div>';
     } else {
       body += '<div class="rule reveal"></div>' +
         '<div class="a reveal' + sizeClass(c.a) + '">' + T.html(c.a) + '</div>' +
@@ -336,20 +314,21 @@
         (topicLabel(c) ? '<div class="meta reveal">' + esc(topicLabel(c)) + '</div>' : '');
     }
 
+    // grades in the flow, as text; the recommended grade is the heavier ink
     var footer = sess.revealed
       ? '<div class="rate">' +
           '<button class="r-again" data-grade="0"><span class="lab">Again</span><span class="when">' + S.preview(c.i, 0) + '</span></button>' +
           '<button class="r-good" data-grade="1"><span class="lab">Good</span><span class="when">' + S.preview(c.i, 1) + '</span></button>' +
           '<button class="r-easy" data-grade="2"><span class="lab">Easy</span><span class="when">' + S.preview(c.i, 2) + '</span></button>' +
         '</div>'
-      : '<div class="rate"><button class="r-good" data-reveal style="flex:1"><span class="lab">Show answer</span><span class="when">space</span></button></div>';
+      : '<div class="rate"><button class="r-good" data-reveal><span class="lab">Show answer</span><span class="when kbd">space</span></button></div>';
 
     mount(
-      '<div class="session">' + sessTop() +
+      '<div class="session">' + sessTop(c) +
       '<div class="cardstage">' +
         '<span class="swipehint l">Again</span><span class="swipehint r">Good</span>' +
-        '<div class="cardwrap"><div class="lg lg-card lg-thick card enter" id="card" role="group">' + body + '</div></div>' +
-      '</div>' + footer + '</div>',
+        '<div class="cardwrap"><div class="card enter" id="card" role="group">' + body + '</div></div>' +
+      '</div>' + footer + sessUtil(starred) + '</div>',
       { session: true }
     );
     wireCard();
@@ -359,7 +338,6 @@
     if (!sess.choices) sess.choices = makeChoices(c, d);
     var starred = S.isStarred(c.i);
     var body =
-      cardHead(d, unit, starred) +
       '<div class="q' + sizeClass(c.q) + '">' + T.html(c.q) + '</div>' +
       '<div class="choices">' + sess.choices.map(function (ch, n) {
         var state = '';
@@ -372,14 +350,13 @@
       (sess.answered && c.n ? '<div class="note reveal">' + T.html(c.n) + '</div>' : '');
 
     var footer = sess.answered
-      ? '<div class="rate flow"><button class="r-good" data-next style="flex:1"><span class="lab">Next</span><span class="when">' +
-        (sess.choices[sess.picked] && sess.choices[sess.picked].correct ? 'correct' : 'noted') + '</span></button></div>'
+      ? '<div class="rate"><button class="r-good" data-next><span class="lab">Next</span></button></div>'
       : '';
 
     mount(
-      '<div class="session">' + sessTop() +
-      '<div class="cardstage"><div class="cardwrap"><div class="lg lg-card lg-thick card enter" id="card">' + body + '</div></div></div>' +
-      footer + '</div>', { session: true, quiz: true });
+      '<div class="session">' + sessTop(c) +
+      '<div class="cardstage"><div class="cardwrap"><div class="card enter" id="card">' + body + '</div></div></div>' +
+      footer + sessUtil(starred) + '</div>', { session: true, quiz: true });
     wireCard();
   }
 
@@ -537,10 +514,7 @@
     var on = S.toggleStar(sess.queue[0].i);
     toast(on ? 'Starred' : 'Unstarred');
     var btn = document.querySelector('[data-star]');
-    if (btn) {
-      btn.setAttribute('aria-pressed', String(on));
-      btn.querySelector('use').setAttribute('href', on ? '#i-star-fill' : '#i-star');
-    }
+    if (btn) { btn.setAttribute('aria-pressed', String(on)); btn.textContent = on ? 'Starred' : 'Star'; }
   }
 
   /* ---- session complete -------------------------------------------------- */
@@ -566,28 +540,21 @@
           plural(total, 'card') + ' reviewed · ' + plural(S.streak(), 'day') + ' streak</div>' +
       '</div>' +
       '<div style="margin:var(--s-4) 0 var(--s-5)">' + rows + '</div>' +
-      (st && st.due ? '<button class="btn-loud" data-go="' + again + '" style="margin-bottom:12px">Keep going<span class="sub">' + st.due + ' still due in this deck</span></button>' : '') +
-      '<div class="actions"><button class="lg lg-btn wide" data-go="' + (d ? '#/d/' + d.id : '#/') + '">Done</button></div>'
+      (st && st.due ? '<button class="act" data-go="' + again + '" style="margin-bottom:16px">Keep going</button>' : '') +
+      '<div><button class="textbtn" data-go="' + (d ? '#/d/' + d.id : '#/') + '">Done</button></div>'
     );
   }
 
   /* ==========================================================================
      VIEW · search
      ========================================================================== */
-  var searchState = { q: '', deck: '' };
+  var searchState = { q: '' };
   function viewSearch() {
-    var ix = S.getIndex();
+    // the field and the results — no hero, no scope chips, no instructions (skill §4.4)
     mount(
-      '<div class="head" style="margin-bottom:var(--s-4)"><span class="k">Search</span>' +
-      '<h1 style="font-size:var(--t-title)">Every card</h1></div>' +
       '<div class="searchbar"><input id="q" type="search" placeholder="a term, a formula, a year" ' +
         'autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" value="' + esc(searchState.q) + '"></div>' +
-      '<div class="chips" id="deckchips">' +
-        '<button class="chip" data-deck="" aria-pressed="' + (!searchState.deck) + '">All decks</button>' +
-        ix.courses.map(function (c) {
-          return '<button class="chip" data-deck="' + c.id + '" aria-pressed="' + (searchState.deck === c.id) + '">' + esc(c.short) + '</button>';
-        }).join('') +
-      '</div><div id="results"></div>'
+      '<div id="results"></div>'
     );
     var input = document.getElementById('q');
     var timer = null;
@@ -595,14 +562,7 @@
       searchState.q = input.value;
       clearTimeout(timer); timer = setTimeout(runSearch, 130);
     });
-    document.getElementById('deckchips').addEventListener('click', function (e) {
-      var b = e.target.closest('[data-deck]'); if (!b) return;
-      searchState.deck = b.getAttribute('data-deck');
-      document.querySelectorAll('#deckchips .chip').forEach(function (x) {
-        x.setAttribute('aria-pressed', String(x.getAttribute('data-deck') === searchState.deck));
-      });
-      runSearch();
-    });
+    if (!searchState.q) { try { input.focus(); } catch (e) {} }
     runSearch();
   }
 
@@ -610,15 +570,10 @@
     var out = document.getElementById('results');
     if (!out) return;
     var q = searchState.q.trim().toLowerCase();
-    if (q.length < 2) {
-      out.innerHTML = '<div class="empty">Type at least two characters. Search covers questions, answers, and notes across all ' +
-        S.getIndex().total.toLocaleString() + ' cards.</div>';
-      return;
-    }
+    if (q.length < 2) { out.innerHTML = ''; return; }   // show results or show nothing
     var terms = q.split(/\s+/);
     var hits = [];
     S.getIndex().courses.forEach(function (c) {
-      if (searchState.deck && c.id !== searchState.deck) return;
       var d = S.getDeck(c.id); if (!d) return;
       d.cards.forEach(function (card) {
         if (hits.length > 400) return;
@@ -627,7 +582,7 @@
         hits.push(card);
       });
     });
-    if (!hits.length) { out.innerHTML = '<div class="empty">No card matches that.</div>'; return; }
+    if (!hits.length) { out.innerHTML = '<div class="empty">No card matches.</div>'; return; }
     hits.sort(function (a, b) {
       var aq = T.plain(a.q).toLowerCase().indexOf(q), bq = T.plain(b.q).toLowerCase().indexOf(q);
       return (aq === -1 ? 999 : aq) - (bq === -1 ? 999 : bq);
@@ -638,9 +593,9 @@
         return '<li><button class="qrow" data-peek="' + c.i + '">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
-          '<span class="qmeta">' + esc(d.abbr) + ' · ' + esc(u ? u.title : '') + '</span></button></li>';
+          '<span class="qmeta">' + esc(nice(d)) + ' · ' + esc(u ? u.title : '') + '</span></button></li>';
       }).join('') + '</ul>' +
-      (hits.length > 120 ? '<div class="empty">Showing the first 120.</div>' : '');
+      (hits.length > 120 ? '<div class="empty cap">Showing the first 120.</div>' : '');
   }
 
   /* ==========================================================================
@@ -648,34 +603,39 @@
      ========================================================================== */
   function viewStats() {
     var ix = S.getIndex();
-    var hist = S.history(28);
-    var max = Math.max(1, Math.max.apply(null, hist.map(function (h) { return h.count; })));
-    var bars = hist.map(function (h) {
-      var pctv = h.count / max;
-      return '<i style="height:' + Math.max(2, pctv * 100) + '%" title="' + S.dayKey(h.day) + ': ' + h.count + '"></i>';
-    }).join('');
-
     var totals = { total: 0, known: 0, seen: 0, due: 0 };
     var rows = ix.courses.map(function (c) {
       var d = S.getDeck(c.id); if (!d) return '';
       var st = S.deckStats(d);
       totals.total += st.total; totals.known += st.known; totals.seen += st.seen; totals.due += st.due;
-      return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
-        '<span class="lname">' + esc(c.short) + '<small>' + st.known + ' known · ' + st.seen + ' seen · ' + st.total + ' total</small></span>' +
-        '<span class="lval num">' + pct(st.pct) + '</span></button>' +
-        meter(st.pct, true) + '</li>';
+      if (!st.seen) return '';   // a percent column exists only where some rows are non-zero
+      return '<li><button class="ledger mid" data-go="#/d/' + c.id + '">' +
+        '<span class="lname">' + esc(nice(c.id)) + '</span>' +
+        '<span class="lval num">' + pct(st.pct) + '</span></button></li>';
     }).join('');
 
+    // a chart only earns its place with 7+ real data points (skill §7.13)
+    var hist = S.history(28);
+    var real = hist.filter(function (h) { return h.count > 0; }).length;
+    var spark = '';
+    if (real >= 7) {
+      var max = Math.max(1, Math.max.apply(null, hist.map(function (h) { return h.count; })));
+      spark = '<div class="k" style="margin:var(--s-5) 0 10px">Last four weeks</div><div class="spark">' +
+        hist.map(function (h) {
+          return '<i' + (h.count ? '' : ' class="zero"') + ' style="height:' + Math.max(2, (h.count / max) * 100) + '%"></i>';
+        }).join('') + '</div>';
+    }
+
+    var caption = [];
+    if (S.studiedToday()) caption.push(plural(S.studiedToday(), 'card') + ' today');
+    if (S.streak() > 1) caption.push(S.streak() + '-day streak');
     mount(
-      '<div class="head"><span class="k">' + esc(S.activeProfile().name) + '</span>' +
-      '<h1>' + plural(S.streak(), 'day') + '</h1>' +
-      '<div class="sub">' + (S.studiedToday() ? plural(S.studiedToday(), 'card') + ' today · ' : '') +
-        totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString() + ' cards known</div></div>' +
-      '<div class="k" style="margin-bottom:10px">Last four weeks</div>' +
-      '<div class="spark">' + bars + '</div>' +
-      '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">By deck</div>' +
-      '<ul class="list tight">' + rows + '</ul>' +
-      (totals.due ? '<button class="btn-loud" style="margin-top:var(--s-5)" data-go="#/review">Review ' + totals.due + '<span class="sub">Mixed across decks</span></button>' : '')
+      '<div class="head"><span class="k">Known</span>' +
+      '<h1>' + totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString() + '</h1>' +
+      (caption.length ? '<div class="sub">' + caption.join(' · ') + '</div>' : '') + '</div>' +
+      (rows ? '<ul class="list tight">' + rows + '</ul>' : '') +
+      spark +
+      (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due + '</button></div>' : '')
     );
   }
 
@@ -687,8 +647,7 @@
     var profs = S.listProfiles(), active = S.activeProfile();
     mount(
       backbar('Settings') +
-      '<div class="head"><span class="k">Studying as</span><h1 style="font-size:var(--t-title)">' + esc(active.name) + '</h1>' +
-      '<div class="sub">Each student on this device keeps their own progress.</div></div>' +
+      '<div class="head"><span class="k">Studying as</span><h1 style="font-size:var(--t-title)">' + esc(active.name) + '</h1></div>' +
       '<div class="profile">' + profs.map(function (p) {
         return '<button class="chip" data-profile="' + p.id + '" aria-pressed="' + (p.id === active.id) + '">' + esc(p.name) + '</button>';
       }).join('') + '<button class="chip" data-addprofile>+ Add</button></div>' +
@@ -716,11 +675,11 @@
           '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token"></div></div>') +
 
       '<div class="k" style="margin:var(--s-5) 0 var(--s-2)">Data</div>' +
-      '<div class="actions" style="flex-direction:column;gap:10px">' +
-        '<button class="lg lg-btn wide" data-export>Copy backup to clipboard</button>' +
-        '<button class="lg lg-btn wide" data-import>Restore from a backup</button>' +
-        '<button class="lg lg-btn wide" data-reset>Reset this profile’s progress</button>' +
-        (profs.length > 1 ? '<button class="lg lg-btn wide" data-delprofile>Delete profile “' + esc(active.name) + '”</button>' : '') +
+      '<div class="data-list">' +
+        '<button class="textbtn" data-export>Copy backup to clipboard</button>' +
+        '<button class="textbtn" data-import>Restore from a backup</button>' +
+        '<button class="textbtn" data-reset>Reset this profile’s progress</button>' +
+        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile “' + esc(active.name) + '”</button>' : '') +
       '</div>' +
       '<div class="empty" style="font-size:13px">' + S.getIndex().total.toLocaleString() + ' cards, written to the College Board Course and Exam Descriptions. ' +
       (S.account.connected()
@@ -842,8 +801,12 @@
   function syncTabs(route) {
     var idx = route === '/review' ? 1 : route === '/search' ? 2 : route === '/stats' ? 3 : 0;
     var items = tabbar.querySelectorAll('.lg-tab');
-    if (tabbar.lgSelect) tabbar.lgSelect(idx);
-    else items.forEach(function (el, i) { el.classList.toggle('is-active', i === idx); });
+    items.forEach(function (el, i) { el.classList.toggle('is-active', i === idx); });
+    // The sliding pill needs real geometry. Coming back from a session the bar
+    // is still hidden at route time — select on the next frame, once it shows.
+    var apply = function () { if (tabbar.lgSelect) tabbar.lgSelect(idx); };
+    if (tabbar.offsetWidth === 0) requestAnimationFrame(function () { requestAnimationFrame(apply); });
+    else apply();
   }
 
   function route() {
@@ -905,6 +868,6 @@
   }).catch(function (err) {
     app.innerHTML = '<div class="head"><span class="k">AP Decks</span><h1>Could not load the decks</h1>' +
       '<div class="sub">' + esc(err.message) + '</div></div>' +
-      '<button class="btn-loud" onclick="location.reload()">Try again</button>';
+      '<button class="act" onclick="location.reload()">Try again</button>';
   });
 })();
