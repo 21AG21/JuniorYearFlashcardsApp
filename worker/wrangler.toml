@@ -1,0 +1,7 @@
+name = "cards"
+main = "index.mjs"
+compatibility_date = "2026-08-01"
+
+[[kv_namespaces]]
+binding = "CARDS"
+id = "39db93a67c96412aafca851c444cbb4a"

@@ -27,6 +27,23 @@ It launches full-screen with no browser chrome, works with no signal (a service
 worker caches the whole app and all five decks on first visit), and every
 student on the device gets their own profile under Settings.
 
+## Accounts (optional)
+
+By default progress never leaves the phone. An **account** is a token: open a
+magic link (`…/#t=YOURTOKEN`) once — or paste the token under Settings →
+Account — and that profile's progress syncs through a small Cloudflare Worker
+(`worker/`), so a phone and a laptop stay in step. Tokens are provisioned by
+hand: generate one, then register its hash so the Worker will accept it —
+
+```
+TOKEN=$(node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))")
+HASH=$(node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "$TOKEN")
+cd worker && npx wrangler kv key put "tok:$HASH" 1 --namespace-id <CARDS_KV_ID> --remote
+```
+
+The worker stores one JSON blob per account; the app merges per card, so two
+devices reviewing offline both keep their work.
+
 ## How studying works
 
 - Tap the card to reveal. **Again / Good / Easy** schedules it — SM-2 style,

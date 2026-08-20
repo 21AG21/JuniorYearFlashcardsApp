@@ -708,6 +708,13 @@
         }).join('') + '</div>' +
       setRow('Glass material', 'Turn off for maximum contrast and battery', 'glass', s.glass) +
 
+      '<div class="k" style="margin:var(--s-5) 0 var(--s-2)">Account</div>' +
+      (S.account.connected()
+        ? '<div class="setrow"><div class="sname">Synced<small>This profile follows your account across devices</small></div>' +
+          '<button class="chip" data-acct-off>Disconnect</button></div>'
+        : '<div class="setrow stack"><div class="sname">Connect<small>Open your account link, or paste the token from it</small></div>' +
+          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token"></div></div>') +
+
       '<div class="k" style="margin:var(--s-5) 0 var(--s-2)">Data</div>' +
       '<div class="actions" style="flex-direction:column;gap:10px">' +
         '<button class="lg lg-btn wide" data-export>Copy backup to clipboard</button>' +
@@ -716,7 +723,9 @@
         (profs.length > 1 ? '<button class="lg lg-btn wide" data-delprofile>Delete profile “' + esc(active.name) + '”</button>' : '') +
       '</div>' +
       '<div class="empty" style="font-size:13px">' + S.getIndex().total.toLocaleString() + ' cards, written to the College Board Course and Exam Descriptions. ' +
-      'Everything runs offline once installed; progress never leaves this phone.</div>'
+      (S.account.connected()
+        ? 'Everything runs offline once installed; progress syncs to your account.</div>'
+        : 'Everything runs offline once installed; progress never leaves this phone.</div>')
     );
 
   }
@@ -867,6 +876,19 @@
   });
 
   window.addEventListener('hashchange', route);
+
+  /* account: paste-token commit + disconnect + re-render when a pull merges */
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.id === 'acct-tok') {
+      if (S.account.setToken(e.target.value)) route();
+    }
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-acct-off]')) { S.account.clearToken(); route(); }
+  });
+  window.addEventListener('apdecks-sync', function (ev) {
+    if (ev.detail && ev.detail.changed) route();   // fresher progress just merged in
+  });
 
   /* ==========================================================================
      boot

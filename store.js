@@ -8,6 +8,20 @@
   var NS = 'apdecks.v1';
   var DAY = 86400000;
 
+  /* ---- account: magic link capture -------------------------------------- */
+  // #t=TOKEN must be taken before app.js's hash router runs (store.js loads
+  // first). The token is device-level, not part of any profile's state.
+  var TOK_KEY = NS + '.tok';
+  (function captureToken() {
+    var m = /^#t=([A-Za-z0-9_-]{16,128})$/.exec(location.hash || '');
+    if (!m) return;
+    try { localStorage.setItem(TOK_KEY, m[1]); } catch (e) { /* private mode */ }
+    // window.history, explicitly: this IIFE has its own history() (the day log),
+    // which shadows the browser's — the reason this once crashed on load.
+    window.history.replaceState(null, '', location.pathname + location.search + '#/');
+  })();
+  function token() { try { return localStorage.getItem(TOK_KEY) || ''; } catch (e) { return ''; } }
+
   /* ---- day numbers in the user's own timezone --------------------------- */
   function dayNum(d) {
     d = d || new Date();
@@ -68,8 +82,91 @@
   var saveTimer = null, saveFailed = false;
   function save(now) {
     if (saveTimer) clearTimeout(saveTimer);
-    if (now) { saveFailed = !write(stateKey(), state); return; }
-    saveTimer = setTimeout(function () { saveFailed = !write(stateKey(), state); }, 120);
+    if (now) { saveFailed = !write(stateKey(), state); schedulePush(); return; }
+    saveTimer = setTimeout(function () { saveFailed = !write(stateKey(), state); schedulePush(); }, 120);
+  }
+
+  /* ---- account: sync ----------------------------------------------------
+     One JSON blob per account on a tiny Worker; the merge happens here.
+     Cards merge per card by last-touched day (t), so two devices reviewing
+     offline both keep their work; the day log takes the max per day; settings
+     follow whichever side wrote the blob later. */
+  var API = 'https://cards.betteraeries.workers.dev/api/state';
+  var pushTimer = null, lastSyncAt = read('syncat', 0), syncing = false;
+
+  function mergeRemote(remote) {
+    if (!remote || typeof remote !== 'object') return false;
+    var changed = false;
+    var rc = remote.cards || {};
+    for (var id in rc) {
+      var mine = state.cards[id], theirs = rc[id];
+      if (!mine || (theirs.t || 0) > (mine.t || 0) ||
+          ((theirs.t || 0) === (mine.t || 0) && (theirs.r || 0) > (mine.r || 0))) {
+        state.cards[id] = theirs; changed = true;
+      }
+    }
+    var rl = remote.log || {};
+    for (var day in rl) {
+      if ((rl[day] || 0) > (state.log[day] || 0)) { state.log[day] = rl[day]; changed = true; }
+    }
+    if (remote.settings && (remote._at || 0) > lastSyncAt) {
+      for (var k in remote.settings) state.settings[k] = remote.settings[k];
+      changed = true;
+    }
+    return changed;
+  }
+
+  function pull() {
+    if (!token()) return Promise.resolve(false);
+    return fetch(API, { headers: { Authorization: 'Bearer ' + token() } })
+      .then(function (r) {
+        if (r.status === 401) { return false; }
+        if (!r.ok) return false;
+        return r.json().then(function (j) {
+          var changed = j && j.state ? mergeRemote(j.state) : false;
+          lastSyncAt = Date.now(); write('syncat', lastSyncAt);
+          if (changed) { write(stateKey(), state); }
+          try { window.dispatchEvent(new CustomEvent('apdecks-sync', { detail: { changed: changed } })); } catch (e) {}
+          return changed;
+        });
+      })
+      .catch(function () { return false; });
+  }
+
+  function pushNow() {
+    if (!token() || syncing) return;
+    syncing = true;
+    var at = Date.now();
+    var blob = { updatedAt: at, state: { cards: state.cards, log: state.log, settings: state.settings, _at: at } };
+    fetch(API, {
+      method: 'PUT',
+      headers: { Authorization: 'Bearer ' + token(), 'content-type': 'application/json' },
+      body: JSON.stringify(blob),
+    }).then(function (r) { if (r.ok) { lastSyncAt = at; write('syncat', at); } })
+      .catch(function () { /* offline: the next save retries */ })
+      .then(function () { syncing = false; });
+  }
+  function schedulePush() {
+    if (!token()) return;
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(pushNow, 2500);      // one PUT per burst of reviews
+  }
+
+  function setToken(t) {
+    t = String(t || '').trim();
+    if (!/^[A-Za-z0-9_-]{16,128}$/.test(t)) return false;
+    try { localStorage.setItem(TOK_KEY, t); } catch (e) { return false; }
+    pull();
+    return true;
+  }
+  function clearToken() { try { localStorage.removeItem(TOK_KEY); } catch (e) {} }
+
+  if (token()) {
+    pull();                                      // merge whatever another device did
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') pull();
+      else pushNow();                            // leaving: don't sit on the debounce
+    });
   }
 
   /* ---- decks ------------------------------------------------------------ */
@@ -335,6 +432,11 @@
     addProfile: addProfile, renameProfile: renameProfile, removeProfile: removeProfile,
     resetProgress: resetProgress, exportData: exportData, importData: importData,
     shuffle: shuffle,
-    storageFailed: function () { return saveFailed; }
+    storageFailed: function () { return saveFailed; },
+    account: {
+      connected: function () { return !!token(); },
+      setToken: setToken, clearToken: clearToken,
+      pull: pull, lastSyncAt: function () { return lastSyncAt; }
+    }
   };
 })(window);
