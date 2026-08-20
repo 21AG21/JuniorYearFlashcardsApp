@@ -888,6 +888,7 @@
     var root = '/' + (p[0] || '');
     syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root : '/');
     sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review') ? sess : null;
+    if (window.Games) window.Games.onRoute(p[0] || '');
 
     if (!p.length) {
       if (isWide()) {

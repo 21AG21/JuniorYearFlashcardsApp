@@ -440,6 +440,9 @@
   }
 
   function nextCircle() {
+    // the advance timer can outlive the game — never render over another view
+    if (!st || st.kind !== 'circle') return;
+    if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
     st.i++; st.lock = false; st.wrong = -1; st.wrongChoice = -1;
     renderCircle();
   }
@@ -487,6 +490,10 @@
     },
     hub: hub,
     play: play,
+    onRoute: function (root) {
+      // leaving the games clears live state and any pending advance timer
+      if (root !== 'game') { clearTimeout(timer); st = null; }
+    },
     linksFor: function (deckId) {
       var out = [];
       Object.keys(GAMES).forEach(function (id) {
