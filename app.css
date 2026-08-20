@@ -200,8 +200,12 @@ button.hero-tap:active{ opacity:.55; }
   color:var(--ink-soft); font:inherit; font-size:15px; font-weight:640; cursor:pointer; white-space:nowrap; }
 .chip[aria-pressed="true"]{ color:var(--ink); font-weight:720; }
 .chip:active{ opacity:.5; }
-.numchips{ display:flex; gap:2px 22px; margin-top:6px; flex-wrap:wrap; }
-.numchips .chip{ min-width:44px; text-align:left; font-variant-numeric:tabular-nums; }
+/* number choices: content-width text so the GLYPH gaps are equal — a
+   min-width box reads ragged (a hole after "5", tight after "100").
+   The tap target widens invisibly instead of the layout box. */
+.numchips{ display:flex; gap:2px 26px; margin-top:6px; flex-wrap:wrap; }
+.numchips .chip{ position:relative; font-variant-numeric:tabular-nums; }
+.numchips .chip::before{ content:""; position:absolute; inset:0 -13px; }
 
 /* --- study session: the card is text on the ground (skill §4.3) ----------- */
 .session{ display:flex; flex-direction:column; }
