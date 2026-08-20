@@ -62,10 +62,10 @@
     if (seg && !seg._wired) {
       seg._wired = true;
       seg.addEventListener('lg-change', function (e) {
-        var items = seg.querySelectorAll('[data-theme]');
+        var items = seg.querySelectorAll('[data-mode]');
         var pick = items[e.detail];
         if (!pick) return;
-        S.setSetting('theme', pick.getAttribute('data-theme'));
+        S.setSetting('theme', pick.getAttribute('data-mode'));
         applyTheme();
       });
     }
@@ -164,8 +164,7 @@
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
       '</div>' +
-      '<ul class="list tight">' + rows + '</ul>' +
-      '<div style="margin-top:var(--s-5)"><button class="textbtn" data-go="#/settings">Settings</button></div>'
+      '<ul class="list tight">' + rows + '</ul>'
     );
   }
 
@@ -693,55 +692,53 @@
     var s = S.getSettings();
     var profs = S.listProfiles(), active = S.activeProfile();
     mount(
-      backbar('Settings') +
-      '<div class="head"><span class="k">Studying as</span><h1 style="font-size:var(--t-title)">' + esc(active.name) + '</h1></div>' +
+      // small label, one moderate hero — the profile name is the content here
+      '<div class="head"><span class="k">Profile</span><h1 class="shero">' + esc(active.name) + '</h1></div>' +
       '<div class="profile">' + profs.map(function (p) {
         return '<button class="chip" data-profile="' + p.id + '" aria-pressed="' + (p.id === active.id) + '">' + esc(p.name) + '</button>';
       }).join('') + '<button class="chip" data-addprofile>+ Add</button></div>' +
 
-      '<div class="k" style="margin:var(--s-5) 0 var(--s-2)">Session</div>' +
-      setRow('Typing mode', 'Type the answer before you reveal it', 'typing', s.typing) +
-      setRow('High-yield first', 'Put the core cards at the front of new material', 'coreFirst', s.coreFirst) +
-      numRow('Cards per session', 'How long one sitting runs', 'sessionSize', s.sessionSize, [15, 20, 30, 50, 100]) +
-      numRow('New cards per session', 'Caps how much unseen material arrives at once', 'newPerSession', s.newPerSession, [5, 10, 20, 40]) +
+      '<div class="sect">Session</div>' +
+      setRow('Type answers', 'typing', s.typing) +
+      setRow('High-yield first', 'coreFirst', s.coreFirst) +
+      numRow('Cards per session', 'sessionSize', s.sessionSize, [15, 20, 30, 50, 100]) +
+      numRow('New cards', 'newPerSession', s.newPerSession, [5, 10, 20, 40]) +
 
-      '<div class="k" style="margin:var(--s-5) 0 var(--s-2)">Appearance</div>' +
-      '<div class="setrow"><div class="sname">Theme<small>Follows the phone unless you pin it</small></div></div>' +
+      '<div class="sect">Appearance</div>' +
       '<div class="lg lg-seg" id="themeseg">' +
+        // data-mode, not data-theme: the kit's [data-theme] selectors must
+        // never match a seg item, only the root element
         ['auto', 'light', 'dark'].map(function (t) {
-          return '<div class="lg-seg-item' + (s.theme === t ? ' is-active' : '') + '" data-theme="' + t + '">' +
+          return '<div class="lg-seg-item' + (s.theme === t ? ' is-active' : '') + '" data-mode="' + t + '">' +
             t.charAt(0).toUpperCase() + t.slice(1) + '</div>';
         }).join('') + '</div>' +
-      setRow('Glass material', 'Turn off for maximum contrast and battery', 'glass', s.glass) +
+      setRow('Glass', 'glass', s.glass) +
 
-      '<div class="k" style="margin:var(--s-5) 0 var(--s-2)">Account</div>' +
+      '<div class="sect">Account</div>' +
       (S.account.connected()
-        ? '<div class="setrow"><div class="sname">Synced<small>This profile follows your account across devices</small></div>' +
+        ? '<div class="setrow"><div class="sname">Synced</div>' +
           '<button class="chip" data-acct-off>Disconnect</button></div>'
-        : '<div class="setrow stack"><div class="sname">Connect<small>Open your account link, or paste the token from it</small></div>' +
-          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token"></div></div>') +
+        : '<div class="setrow stack"><div class="sname">Connect</div>' +
+          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="paste your account token"></div></div>') +
 
-      '<div class="k" style="margin:var(--s-5) 0 var(--s-2)">Data</div>' +
+      '<div class="sect">Data</div>' +
       '<div class="data-list">' +
-        '<button class="textbtn" data-export>Copy backup to clipboard</button>' +
-        '<button class="textbtn" data-import>Restore from a backup</button>' +
-        '<button class="textbtn" data-reset>Reset this profile’s progress</button>' +
-        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile “' + esc(active.name) + '”</button>' : '') +
+        '<button class="textbtn" data-export>Back up</button>' +
+        '<button class="textbtn" data-import>Restore</button>' +
+        '<button class="textbtn" data-reset>Reset progress</button>' +
+        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile</button>' : '') +
       '</div>' +
-      '<div class="empty" style="font-size:13px">' + S.getIndex().total.toLocaleString() + ' cards, written to the College Board Course and Exam Descriptions. ' +
-      (S.account.connected()
-        ? 'Everything runs offline once installed; progress syncs to your account.</div>'
-        : 'Everything runs offline once installed; progress never leaves this phone.</div>')
+      '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards · works offline' +
+      (S.account.connected() ? ' · syncs to your account' : '') + '</div>'
     );
-
   }
 
-  function setRow(name, sub, key, on) {
-    return '<div class="setrow"><div class="sname">' + esc(name) + '<small>' + esc(sub) + '</small></div>' +
-      '<div class="lg lg-toggle' + (on ? ' is-on' : '') + '" data-set="' + key + '" role="switch" tabindex="0" aria-checked="' + !!on + '"><div class="lg-knob"></div></div></div>';
+  function setRow(name, key, on) {
+    return '<div class="setrow"><div class="sname">' + esc(name) + '</div>' +
+      '<div class="lg lg-toggle' + (on ? ' is-on' : '') + '" data-set="' + key + '" role="switch" tabindex="0" aria-checked="' + !!on + '" aria-label="' + esc(name) + '"><div class="lg-knob"></div></div></div>';
   }
-  function numRow(name, sub, key, val, choices) {
-    return '<div class="setrow stack"><div class="sname">' + esc(name) + '<small>' + esc(sub) + '</small></div>' +
+  function numRow(name, key, val, choices) {
+    return '<div class="setrow stack"><div class="sname">' + esc(name) + '</div>' +
       '<div class="numchips">' + choices.map(function (n) {
         return '<button class="chip" data-num="' + key + '" data-val="' + n + '" aria-pressed="' + (val === n) + '">' + n + '</button>';
       }).join('') + '</div></div>';
@@ -846,7 +843,7 @@
      router
      ========================================================================== */
   function syncTabs(route) {
-    var idx = route === '/review' ? 1 : route === '/search' ? 2 : route === '/stats' ? 3 : 0;
+    var idx = route === '/review' ? 1 : route === '/search' ? 2 : route === '/stats' ? 3 : route === '/settings' ? 4 : 0;
     var items = tabbar.querySelectorAll('.lg-tab');
     items.forEach(function (el, i) { el.classList.toggle('is-active', i === idx); });
     // The sliding pill needs real geometry. Coming back from a session the bar
@@ -860,7 +857,7 @@
     var h = location.hash.replace(/^#/, '') || '/';
     var p = h.split('/').filter(Boolean);
     var root = '/' + (p[0] || '');
-    syncTabs(['review', 'search', 'stats'].indexOf(p[0]) > -1 ? root : '/');
+    syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root : '/');
     sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review') ? sess : null;
 
     if (!p.length) {
@@ -883,7 +880,7 @@
     return viewDecks();
   }
 
-  var TAB_ROUTES = ['/', '/review', '/search', '/stats'];
+  var TAB_ROUTES = ['/', '/review', '/search', '/stats', '/settings'];
   tabbar.addEventListener('lg-change', function (e) {
     var r = TAB_ROUTES[e.detail];
     if (r) go('#' + r);

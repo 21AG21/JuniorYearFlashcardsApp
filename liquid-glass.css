@@ -39,6 +39,25 @@
   --lg-accent: 10 132 255;
   --lg-green: 48 209 88;
 }
+/* System dark (no data-theme attribute set): mirrors the block above so pages
+   using this engine don't need a matchMedia stamp script for OS-dark support.
+   An explicit [data-theme="light"] still wins over system dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --lg-tint: 22 22 26;
+    --lg-tint-a: 0.36;
+    --lg-rim-hi: rgba(255,255,255,.42);
+    --lg-rim-mid: rgba(255,255,255,.07);
+    --lg-rim-lo: rgba(255,255,255,.22);
+    --lg-shadow: 0 10px 28px -8px rgba(0,0,0,.55), 0 2px 5px -1px rgba(0,0,0,.25), 0 0 0 .5px rgba(255,255,255,.06);
+    --lg-pill: 255 255 255; --lg-pill-a: .14;
+    --lg-ink: 255 255 255;
+    --lg-ink-a: .94;
+    --lg-ink-2a: .60;
+    --lg-accent: 10 132 255;
+    --lg-green: 48 209 88;
+  }
+}
 
 /* --------------------------------------------------------------------------
    The material
@@ -98,6 +117,16 @@
     inset 0 -10px 18px -14px rgba(0,0,0,.45),
     inset 0 0 14px -6px rgba(255,255,255,.10);
 }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lg::after {
+    box-shadow:
+      inset 0 0 0 .5px rgba(255,255,255,.08),
+      inset 1.5px 2px 4px -2px rgba(255,255,255,.35),
+      inset -1.5px -2.5px 5px -2px rgba(255,255,255,.22),
+      inset 0 -10px 18px -14px rgba(0,0,0,.45),
+      inset 0 0 14px -6px rgba(255,255,255,.10);
+  }
+}
 
 /* Bigger surfaces read as thicker glass: more blur, more tint, deeper shadow */
 .lg-thick {
@@ -106,6 +135,7 @@
   --lg-shadow: 0 18px 40px -12px rgba(0,0,0,.35), 0 3px 8px -2px rgba(0,0,0,.10);
 }
 [data-theme="dark"] .lg-thick { --lg-tint-a: 0.48; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lg-thick { --lg-tint-a: 0.48; } }
 
 /* "Clear" variant: no adaptive tint, more see-through (use over bold media) */
 .lg-clear { --lg-tint-a: 0.06; --lg-blur: 8px; }
@@ -122,6 +152,9 @@
 @media (prefers-reduced-transparency: reduce) {
   .lg { --lg-tint-a: .82; --lg-blur: 0px; }
   [data-theme="dark"] .lg { --lg-tint-a: .88; }
+}
+@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lg { --lg-tint-a: .88; }
 }
 
 /* --------------------------------------------------------------------------
@@ -178,6 +211,10 @@
 .lg-on-media .lg-pill { box-shadow: 0 2px 6px -1px rgba(0,0,0,.14), inset 0 0 0 .5px rgba(255,255,255,.7), inset 0 1px 1px rgba(255,255,255,.9); }
 [data-theme="dark"] .lg-on-media { --lg-pill: 255 255 255; --lg-pill-a: .18; }
 [data-theme="dark"] .lg-on-media .lg-pill { box-shadow: 0 2px 6px -1px rgba(0,0,0,.35), inset 0 0 0 .5px rgba(255,255,255,.18); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lg-on-media { --lg-pill: 255 255 255; --lg-pill-a: .18; }
+  :root:not([data-theme="light"]) .lg-on-media .lg-pill { box-shadow: 0 2px 6px -1px rgba(0,0,0,.35), inset 0 0 0 .5px rgba(255,255,255,.18); }
+}
 
 /* Segmented control ------------------------------------------------------ */
 .lg-seg { display: flex; height: 40px; padding: 3px; }
@@ -218,6 +255,7 @@
   overflow: hidden;
 }
 [data-theme="dark"] .lg-slider-track { background: rgba(120,120,128,.40); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lg-slider-track { background: rgba(120,120,128,.40); } }
 .lg-slider-fill {
   position: absolute; inset: 0 auto 0 0; width: calc(var(--v) * 100%);
   background: rgb(var(--lg-accent)); border-radius: inherit;
@@ -238,6 +276,7 @@
 .lg-slider.lg-capsule .lg-slider-track { position: absolute; inset: 0; height: auto; border-radius: inherit; background: none; box-shadow: none; }
 .lg-slider.lg-capsule .lg-slider-fill { background: rgba(255,255,255,.90); }
 [data-theme="dark"] .lg-slider.lg-capsule .lg-slider-fill { background: rgba(255,255,255,.85); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lg-slider.lg-capsule .lg-slider-fill { background: rgba(255,255,255,.85); } }
 .lg-slider.lg-capsule .lg-slider-thumb { display: none; }
 .lg-slider.lg-capsule .lg-slider-icon {
   position: relative; z-index: 3; margin-left: 12px; width: 22px; height: 22px;
@@ -272,6 +311,7 @@
   background: rgba(255,255,255, calc(var(--lg-press) * 0.16));
 }
 [data-theme="dark"] .lg::after { background: rgba(255,255,255, calc(var(--lg-press) * 0.10)); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lg::after { background: rgba(255,255,255, calc(var(--lg-press) * 0.10)); } }
 .lg::before { filter: brightness(calc(1 + var(--lg-press) * 0.6)); }
 .lg-tinted::after { background: rgba(255,255,255, calc(var(--lg-press) * 0.22)); }
 

@@ -71,10 +71,10 @@ function check(name, cond, extra) { (cond ? ok : bad).push(name + (cond ? '' : '
   await page.click('[data-set="typing"]'); await page.waitForTimeout(200);
 
   // --- theme pin
-  await page.click('[data-theme="dark"]'); await page.waitForTimeout(250);
+  await page.click('[data-mode="dark"]'); await page.waitForTimeout(250);
   const themeAttr = await page.getAttribute('html', 'data-theme');
   check('theme pins to dark', themeAttr === 'dark', themeAttr);
-  await page.click('[data-theme="auto"]'); await page.waitForTimeout(250);
+  await page.click('[data-mode="auto"]'); await page.waitForTimeout(250);
 
   // --- profiles
   page.on('dialog', d => d.accept('Priya'));

@@ -46,6 +46,7 @@
   --muted:#67676f;
   --hair:rgba(255,255,255,.14);
   --hair-soft:rgba(255,255,255,.08);
+  --lg-pill:255 255 255; --lg-pill-a:.14;
 }}
 :root[data-theme="dark"]{
   --ground:#000000;
@@ -55,11 +56,10 @@
   --muted:#67676f;
   --hair:rgba(255,255,255,.14);
   --hair-soft:rgba(255,255,255,.08);
+  --lg-pill:255 255 255; --lg-pill-a:.14;
 }
 /* the active tab is ink, never iOS blue (required override, skill §2) */
 .lg-tab.is-active{ color:rgb(var(--lg-ink)); }
-/* glyphs only — no labels on the tab bar */
-.lg-tab span{ display:none; }
 /* the toggle's on-state reads through shade, not green */
 .lg-toggle.is-on{ --lg-tint:var(--lg-ink); --lg-tint-a:.92; }
 
@@ -114,10 +114,17 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-r .qrow .qq{ font-size:22px; }
   .pane-r .searchbar input{ font-size:28px; }
   .pane-r .prose, .pane-r .card .a, .pane-r .card .note{ max-width:62ch; }
+  .pane-r .setrow{ max-width:560px; }   /* a toggle never sits a metre from its name */
 }
 
-.tabs{ position:fixed; z-index:40; left:16px; right:16px; bottom:calc(env(safe-area-inset-bottom, 0px) + 10px); }
-@media (min-width:640px){ .tabs{ left:50%; right:auto; width:340px; margin-left:-170px; } }
+/* the bar is content-capped and centered — never stretched edge to edge */
+.tabs{ position:fixed; z-index:40; left:50%; transform:translateX(-50%);
+  bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);
+  width:min(430px, calc(100vw - 24px)); }
+@media (max-width:360px){
+  .lg-tabbar{ padding:4px 14px; }
+  .lg-tab{ font-size:11px; }
+}
 .lg, .lg-btn, .lg-tab, .lg-seg-item, .lg-title, .lg-sub,
 .lg-search-input, .lg-header-title{ font-family:var(--font-sf); }
 
@@ -308,17 +315,19 @@ sub,sup{ font-size:.68em; }
   max-width:80vw; text-align:center; }
 #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* --- settings --------------------------------------------------------------- */
-.setrow{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:var(--s-3) 0; }
-.setrow .sname{ font-size:17px; font-weight:520; }
-.setrow .sname small{ display:block; font-size:var(--t-caption); font-weight:500; color:var(--muted); margin-top:3px; }
+/* --- settings ----------------------------------------------------------------
+   Three sizes do all the work: 14px section labels, 17px row names, one
+   moderate hero (the profile name). No sublabels, no captions under rows. */
+.head h1.shero{ font-size:clamp(30px,9vw,38px); font-weight:460; letter-spacing:-.03em; line-height:1.16; }
+.sect{ font-size:var(--t-label); font-weight:600; color:var(--ink-soft); margin:var(--s-5) 0 var(--s-1); }
+.setrow{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; }
+.setrow .sname{ font-size:17px; font-weight:520; color:var(--ink); }
 .setrow.stack{ display:block; }
 .lg-toggle{ flex:0 0 auto; }
 .profile{ display:flex; flex-wrap:wrap; gap:2px 22px; margin-top:var(--s-1); }
-.seg-wrap{ margin:0 0 var(--s-3); }
-.lg-seg{ width:100%; }
-.lg-seg-item{ font-size:13.5px; font-weight:620; padding:9px 10px; }
+.lg-seg{ width:100%; max-width:340px; margin-top:var(--s-2); }
 .data-list{ display:flex; flex-direction:column; align-items:flex-start; }
+.foot{ margin-top:var(--s-5); font-size:var(--t-label); color:var(--muted); }
 
 /* --- activity: 2px ink bars on the ground, latest in ink, history muted ---- */
 .spark{ display:flex; align-items:flex-end; gap:3px; height:64px; width:100%; }
