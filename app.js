@@ -18,13 +18,24 @@
       .replace(/"/g, '&quot;');
   }
   function mount(html, opts) {
-    app.innerHTML = html;
+    if (isWide()) {
+      // Two full-height panes: the deck list lives on the left, every view on
+      // the right — the same content as the phone, never extra chrome.
+      app.innerHTML = '<div class="pane-l">' + decksListHTML() + '</div>' +
+        '<div class="pane-r"><div class="inner">' + html + '</div></div>';
+    } else {
+      app.innerHTML = html;
+    }
+    app.classList.toggle('is-wide', isWide());
     app.classList.toggle('is-session', !!(opts && opts.session));
     app.classList.toggle('is-quiz', !!(opts && opts.quiz));
-    tabs.hidden = !!(opts && opts.session);
+    tabs.hidden = isWide() || !!(opts && opts.session);
     if (window.LG) window.LG.init(app);
     wireGlassControls();
-    if (!(opts && opts.keepScroll)) window.scrollTo(0, 0);
+    if (!(opts && opts.keepScroll)) {
+      var pr = app.querySelector('.pane-r');
+      if (pr) pr.scrollTop = 0; else window.scrollTo(0, 0);
+    }
   }
   function wireGlassControls() {
     app.querySelectorAll('.lg-toggle[data-set]').forEach(function (el) {
@@ -58,6 +69,36 @@
         applyTheme();
       });
     }
+  }
+
+  /* ---------------- two-pane wide layout (skill §5.6) -------------------- */
+  var WIDE_MQ = matchMedia('(min-width:900px) and (min-height:500px)');
+  function isWide() { return WIDE_MQ.matches; }
+  var curDeckId = null;          // which deck the right pane is about (marks the left row)
+  var lastDeckId = null;         // remembered so "/" can open somewhere sensible on wide
+
+  function decksListHTML() {
+    var ix = S.getIndex(), due = 0;
+    var rows = ix.courses.map(function (c) {
+      var d = S.getDeck(c.id);
+      var st = d ? S.deckStats(d) : { due: 0 };
+      due += st.due;
+      return '<li><button class="ledger' + (c.id === curDeckId ? ' on' : '') + '" data-go="#/d/' + c.id + '">' +
+        '<span class="lname">' + esc(nice(c.id)) + '</span>' +
+        '<span class="lval num">' + c.count + '</span>' +
+        (st.due ? '<span class="lsub">' + st.due + ' due</span>' : '') +
+        '</button></li>';
+    }).join('');
+    var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
+    return '<div class="head">' +
+        (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
+             : '<h1>' + esc(hero) + '</h1>') + '</div>' +
+      '<ul class="list tight">' + rows + '</ul>' +
+      '<div class="lnav">' +
+        '<button class="textbtn" data-go="#/search">Search</button>' +
+        '<button class="textbtn" data-go="#/stats">Progress</button>' +
+        '<button class="textbtn" data-go="#/settings">Settings</button>' +
+      '</div>';
   }
 
   var toastTimer = null;
@@ -134,6 +175,7 @@
   function viewCourse(deckId) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
+    curDeckId = lastDeckId = deckId;
     var st = S.deckStats(d);
     // units in course order, each under a small muted label — never a header (skill §4.2)
     var units = d.units.map(function (u) {
@@ -169,6 +211,7 @@
   function viewUnit(deckId, unitId) {
     var d = S.getDeck(deckId);
     if (!d || !d.unitById[unitId]) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
     var u = d.unitById[unitId], us = S.unitStats(d, unitId);
     var cards = d.cards.filter(function (c) { return c.u === unitId; });
 
@@ -291,6 +334,7 @@
   function renderCard() {
     if (!sess || !sess.queue.length) return renderDone();
     var c = sess.queue[0];
+    curDeckId = sess.deck ? sess.deck.id : null;
     var d = cardDeckOf(c);
     var unit = d.unitById[c.u];
     var starred = S.isStarred(c.i);
@@ -550,6 +594,7 @@
      ========================================================================== */
   var searchState = { q: '' };
   function viewSearch() {
+    curDeckId = null;
     // the field and the results — no hero, no scope chips, no instructions (skill §4.4)
     mount(
       '<div class="searchbar"><input id="q" type="search" placeholder="a term, a formula, a year" ' +
@@ -602,6 +647,7 @@
      VIEW · progress
      ========================================================================== */
   function viewStats() {
+    curDeckId = null;
     var ix = S.getIndex();
     var totals = { total: 0, known: 0, seen: 0, due: 0 };
     var rows = ix.courses.map(function (c) {
@@ -643,6 +689,7 @@
      VIEW · settings
      ========================================================================== */
   function viewSettings() {
+    curDeckId = null;
     var s = S.getSettings();
     var profs = S.listProfiles(), active = S.activeProfile();
     mount(
@@ -816,7 +863,15 @@
     syncTabs(['review', 'search', 'stats'].indexOf(p[0]) > -1 ? root : '/');
     sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review') ? sess : null;
 
-    if (!p.length) return viewDecks();
+    if (!p.length) {
+      if (isWide()) {
+        var ixw = S.getIndex();
+        var firstDue = null;
+        ixw.courses.forEach(function (c) { var dk = S.getDeck(c.id); if (!firstDue && dk && S.deckStats(dk).due) firstDue = c.id; });
+        return viewCourse(lastDeckId || firstDue || ixw.courses[0].id);
+      }
+      return viewDecks();
+    }
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3]) return viewUnit(p[1], p[3]);
     if (p[0] === 'd' && p[1]) return viewCourse(p[1]);
     if (p[0] === 'study') return startSession(p[1], p[2] || 'smart', p[3], false);
@@ -839,6 +894,20 @@
   });
 
   window.addEventListener('hashchange', route);
+  WIDE_MQ.addEventListener('change', function () {
+    if (sess) renderCard(); else route();   // never restart a session over a resize
+  });
+  // Some engines never fire the MQ change event under emulation or in-page
+  // resizes — watch resize too and re-render only when the split actually flips.
+  var wasWide = isWide(), sizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(sizeTimer);
+    sizeTimer = setTimeout(function () {
+      if (isWide() === wasWide) return;
+      wasWide = isWide();
+      if (sess) renderCard(); else route();
+    }, 120);
+  });
 
   /* account: paste-token commit + disconnect + re-render when a pull merges */
   document.addEventListener('change', function (e) {
