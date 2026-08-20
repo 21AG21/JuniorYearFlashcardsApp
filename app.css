@@ -340,6 +340,42 @@ sub,sup{ font-size:.68em; }
 .textbtn.armed{ color:var(--ink); font-weight:720; }
 .foot{ margin-top:var(--s-5); font-size:13px; color:var(--muted); }
 
+/* --- games ------------------------------------------------------------------
+   Same mono rules as everything else: rows of text, hairlines for structure,
+   right answers settle to ink, misses recede to muted. */
+.gcur{ margin:var(--s-3) 0 var(--s-4); }
+.gcur .k{ display:block; margin-bottom:4px; }
+.gcur .gname{ font-size:clamp(22px,6.6vw,28px); font-weight:640; letter-spacing:-.02em; line-height:1.22; color:var(--ink); }
+.gline{ display:flex; flex-direction:column; }
+.gline .gap{ position:relative; display:block; width:100%; height:36px; background:none; border:0; padding:0; cursor:pointer; }
+.gline .gap::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:var(--hair-soft); }
+.gline .gap:active::before{ height:2px; background:var(--ink); }
+@media (hover:hover){ .gline .gap:hover::before{ background:var(--hair); } }
+.grow{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+.grow .gname{ font-size:17px; font-weight:520; color:var(--ink); min-width:0; }
+.grow .gval{ font-size:var(--t-label); font-weight:500; color:var(--muted); white-space:nowrap; }
+.grow.miss .gname{ color:var(--muted); }
+
+.mcols{ display:grid; grid-template-columns:1fr 1fr; gap:0 24px; align-items:start; }
+.mhead{ margin:0 0 6px; }
+.mrow{ display:block; width:100%; text-align:left; background:none; border:0; padding:12px 0; min-height:44px;
+  border-top:1px solid var(--hair-soft); font:inherit; font-size:16px; font-weight:480; line-height:1.35;
+  color:var(--ink-soft); cursor:pointer; transition:opacity .12s ease; }
+.mrow:first-of-type{ border-top:0; }
+.mrow:active{ opacity:.55; }
+.mrow.sel{ color:var(--ink); font-weight:720; }
+.mrow.done{ color:var(--muted); font-weight:480; text-decoration:line-through; text-decoration-thickness:1px; }
+
+.ucwrap{ display:flex; margin:var(--s-2) 0; }
+.uc{ width:min(88vw, 400px); height:auto; }
+.uc-axis{ stroke:var(--hair-soft); stroke-width:1; }
+.uc-ring{ stroke:var(--hair); stroke-width:1.5; }
+.uc-dot{ fill:var(--muted); }
+.uc-dot.on{ fill:var(--ink); r:7; }
+.uc-dot.off{ fill:var(--hair); }
+.uc-hit{ fill:transparent; cursor:pointer; }
+@media (min-width:900px) and (min-height:500px){ .pane-r .uc{ width:min(44vh, 440px); } }
+
 /* --- activity: 2px ink bars on the ground, latest in ink, history muted ---- */
 .spark{ display:flex; align-items:flex-end; gap:3px; height:64px; width:100%; }
 .spark i{ flex:1; min-width:0; background:var(--muted); border-radius:1px; }

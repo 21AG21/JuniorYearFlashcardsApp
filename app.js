@@ -97,6 +97,7 @@
       '<div class="lnav">' +
         '<button class="textbtn" data-go="#/search">Search</button>' +
         '<button class="textbtn" data-go="#/stats">Progress</button>' +
+        '<button class="textbtn" data-go="#/games">Games</button>' +
         '<button class="textbtn" data-go="#/settings">Settings</button>' +
       '</div>';
   }
@@ -164,7 +165,8 @@
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
       '</div>' +
-      '<ul class="list tight">' + rows + '</ul>'
+      '<ul class="list tight">' + rows + '</ul>' +
+      '<div style="margin-top:var(--s-5)"><button class="textbtn" data-go="#/games">Games</button></div>'
     );
   }
 
@@ -199,6 +201,9 @@
         (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Starred</button>' : '') +
         '<button class="textbtn" data-go="#/study/' + deckId + '/hard">Trouble spots</button>' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/all">Shuffle all</button>' +
+        (window.Games ? window.Games.linksFor(deckId).map(function (g) {
+          return '<button class="textbtn" data-go="#/game/' + g[1] + '">' + esc(g[0]) + '</button>';
+        }).join('') : '') +
       '</div>' +
       '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
     );
@@ -901,6 +906,8 @@
     if (p[0] === 'search') return viewSearch();
     if (p[0] === 'stats') return viewStats();
     if (p[0] === 'settings') return viewSettings();
+    if (p[0] === 'games' && window.Games) return window.Games.hub();
+    if (p[0] === 'game' && p[1] && window.Games) return window.Games.play(p[1]);
     return viewDecks();
   }
 
@@ -946,6 +953,9 @@
   /* ==========================================================================
      boot
      ========================================================================== */
+  if (window.Games) window.Games.init({
+    mount: mount, esc: esc, go: go, toast: toast, nice: nice, backbar: backbar
+  });
   applyTheme();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
 
