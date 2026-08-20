@@ -20,7 +20,7 @@
     unitcircle: { name: 'Unit circle',      deck: 'calcbc', kind: 'circle' },
     degcircle:  { name: 'Degrees on the circle', deck: 'calcbc', kind: 'circle' },
     triggraphs: { name: 'Name that graph',  deck: 'calcbc', kind: 'graph'  },
-    identmatch: { name: 'Identity match',   deck: 'calcbc', kind: 'match'  },
+    identities: { name: 'Identities',       deck: 'calcbc', kind: 'board'  },
     derivmatch: { name: 'Derivative match', deck: 'calcbc', kind: 'match'  }
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush'];
@@ -44,22 +44,29 @@
     ['Ba', 56, 137.3, 0.89], ['Au', 79, 197.0, 2.54], ['Hg', 80, 200.6, 2.00], ['Pb', 82, 207.2, 1.87]
   ];
 
-  /* identity facts; each round mixes a few with generated exact values */
-  var IDENTS = [
-    ['sin²x + cos²x', '1'],
-    ['1 + tan²x', 'sec²x'],
-    ['1 + cot²x', 'csc²x'],
-    ['sin 2x', '2 sin x cos x'],
-    ['cos 2x', 'cos²x − sin²x'],
+  /* equivalence facts for the identities board: prompt → the tile it equals */
+  var EQUIV = [
+    ['sin²x', '1 − cos²x'],
+    ['cos²x', '1 − sin²x'],
+    ['1', 'sin²x + cos²x'],
+    ['sec²x', '1 + tan²x'],
+    ['csc²x', '1 + cot²x'],
+    ['tan²x', 'sec²x − 1'],
+    ['cot²x', 'csc²x − 1'],
     ['tan x', 'sin x / cos x'],
     ['cot x', 'cos x / sin x'],
     ['sec x', '1 / cos x'],
     ['csc x', '1 / sin x'],
     ['sin(−x)', '−sin x'],
+    ['tan(−x)', '−tan x'],
     ['cos(−x)', 'cos x'],
-    ['sin(π/2 − x)', 'cos x'],
-    ['cos(π/2 − x)', 'sin x'],
-    ['tan 2x', '2 tan x / (1 − tan²x)']
+    ['sin(90° − x)', 'cos x'],
+    ['cos(90° − x)', 'sin x'],
+    ['csc(90° − x)', 'sec x'],
+    ['sec(90° − x)', 'csc x'],
+    ['tan(90° − x)', 'cot x'],
+    ['sin 2x', '2 sin x cos x'],
+    ['cos 2x', 'cos²x − sin²x']
   ];
 
   /* graph base functions; every question is a generated A·f(Bx) with a sign */
@@ -151,7 +158,67 @@
     if (g.kind === 'order') startOrder(id);
     else if (g.kind === 'match') startMatch(id);
     else if (g.kind === 'graph') startGraph(id);
+    else if (g.kind === 'board') startBoard(id);
     else startCircle(id);
+  }
+
+  /* ==========================================================================
+     BOARD — one prompt at a time over a persistent field of expressions;
+     tap the one it equals. First-try hits score.
+     ========================================================================== */
+  function boardRound(n) {
+    var picked = [], used = {};
+    shuffle(EQUIV.slice()).forEach(function (f) {
+      if (picked.length >= n) return;
+      // prompts and tiles must all be distinct — and no tile may read the
+      // same as any prompt in the round, or the board answers itself
+      if (used[f[0]] || used[f[1]]) return;
+      used[f[0]] = used[f[1]] = 1;
+      picked.push(f);
+    });
+    return picked;
+  }
+  function startBoard(id) {
+    var facts = boardRound(10);
+    st = { id: id, kind: 'board', facts: shuffle(facts.slice()),
+           tiles: shuffle(facts.map(function (f) { return { t: f[1], done: false }; })),
+           i: 0, score: 0, total: facts.length, firstTry: true, flash: -1 };
+    renderBoard();
+  }
+  function renderBoard() {
+    if (st.i >= st.total) {
+      return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
+    }
+    var f = st.facts[st.i];
+    ctx.mount(
+      ctx.backbar(GAMES[st.id].name) +
+      gameTop(st.score + ' first try', (st.i + 1) + ' of ' + st.total) +
+      '<div class="gcur"><span class="k">Tap what this equals</span><div class="gname num">' + esc(f[0]) + '</div></div>' +
+      '<div class="board">' + st.tiles.map(function (tl, i) {
+        var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
+        return '<button class="' + cls + '" data-tile="' + i + '"' + (tl.done ? ' disabled' : '') + '>' + esc(tl.t) + '</button>';
+      }).join('') + '</div>',
+      { session: true, keepScroll: st.i > 0 }
+    );
+  }
+  function tapTile(i) {
+    if (!st || st.kind !== 'board') return;
+    var tl = st.tiles[i], f = st.facts[st.i];
+    if (!tl || tl.done) return;
+    if (tl.t === f[1]) {
+      tl.done = true;
+      if (st.firstTry) st.score++;
+      st.i++; st.firstTry = true; st.flash = -1;
+      renderBoard();
+    } else {
+      st.firstTry = false; st.flash = i;
+      renderBoard();
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        if (!st || st.kind !== 'board') return;
+        st.flash = -1; renderBoard();
+      }, 450);
+    }
   }
 
   function gameTop(scopeText, posText) {
@@ -360,19 +427,9 @@
     }
     return out;
   }
-  function genIdentPairs(n) {
-    var seenR = {};
-    var facts = sample(IDENTS, 3).filter(function (pr) {
-      if (seenR[pr[1]]) return false;
-      seenR[pr[1]] = 1; return true;
-    });
-    return shuffle(facts.concat(genValuePairs(n - facts.length, seenR)));
-  }
-
   function startMatch(id) {
     var pairs =
       id === 'derivmatch' ? genDerivPairs(6) :
-      id === 'identmatch' ? genIdentPairs(6) :
       deckPairs(id === 'frmatch' ? 'french' : 'lang');
     if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
     var left = [], right = [];
@@ -389,7 +446,6 @@
       return gameDone(st.id, st.total / Math.max(st.tries, st.total), label);
     }
     var head = st.id === 'derivmatch' ? ['f(x)', "f′(x)"]
-      : st.id === 'identmatch' ? ['Expression', 'Equals']
       : st.id === 'frmatch' ? ['French', 'English'] : ['Device', 'What it is'];
     function col(items, side, sel) {
       return items.map(function (it, i) {
@@ -467,7 +523,12 @@
       if (q.k == null) q.k = Math.random() < 0.5 ? 0 : [-1, 1, 2][Math.floor(Math.random() * 3)];
       return 'Tap ' + (st.deg ? degLabel(q.a, q.k) : radLabel(q.a, q.k));
     }
-    if (q.type === 1) return 'Tap the angle where cos θ = ' + a[1] + ' and sin θ = ' + a[2];
+    if (q.type === 1) {
+      // half coordinate-pair phrasing (the classic unit-circle test), half cos/sin
+      if (q.coord == null) q.coord = Math.random() < 0.5;
+      return q.coord ? 'Tap (' + a[1] + ', ' + a[2] + ')'
+                     : 'Tap the angle where cos θ = ' + a[1] + ' and sin θ = ' + a[2];
+    }
     if (q.type === 3) return 'Which angle is marked?';
     var fn = ['cos', 'sin', 'tan'][q.a % 3];
     q.fn = fn;
@@ -670,6 +731,7 @@
     if ((el = t.closest('[data-gap]'))) { placeAt(parseInt(el.getAttribute('data-gap'), 10)); return; }
     if ((el = t.closest('[data-ml]'))) { pickMatch('l', parseInt(el.getAttribute('data-ml'), 10)); return; }
     if ((el = t.closest('[data-mr]'))) { pickMatch('r', parseInt(el.getAttribute('data-mr'), 10)); return; }
+    if ((el = t.closest('[data-tile]'))) { tapTile(parseInt(el.getAttribute('data-tile'), 10)); return; }
     if ((el = t.closest('[data-dot]'))) { tapDot(parseInt(el.getAttribute('data-dot'), 10)); return; }
     if ((el = t.closest('[data-gc]'))) {
       var ci = parseInt(el.getAttribute('data-gc'), 10);

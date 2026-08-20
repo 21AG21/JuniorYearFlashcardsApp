@@ -145,7 +145,11 @@
     var sW = new Spring(0, function (v) { st.w = v; apply(); }, 0.35, 0.9);
     var sS = new Spring(1, function (v) { st.sx = st.sy = v; apply(); }, 0.25, 1);
     var isTabbar = el.classList.contains('lg-tabbar');
-    var EXTRA = isTabbar ? 20 : 0;   // iOS 26 tab pill = item content + 20pt each side; segments = segment
+    // iOS 26 tab pill = item content + 20pt each side — but that spec assumes
+    // content-sized icon+label items. A glyph-only bar with fixed-width tabs is
+    // already padded, so the pill hugs the tab instead of eating its neighbors.
+    var hasLabel = isTabbar && !!el.querySelector(itemSel + ' span');
+    var EXTRA = isTabbar ? (hasLabel ? 20 : -4) : 0;
     var geo = function (i) { var it = items[i]; return { x: it.offsetLeft - EXTRA, w: it.offsetWidth + 2 * EXTRA }; };
     var bounds = function () { var first = items[0], last = items[items.length - 1]; return { min: first.offsetLeft - EXTRA, max: last.offsetLeft + last.offsetWidth + EXTRA }; };
     var nearest = function (cx) { var best = 0, bd = 1e9; items.forEach(function (it, k) { var d = Math.abs(it.offsetLeft + it.offsetWidth / 2 - cx); if (d < bd) { bd = d; best = k; } }); return best; };

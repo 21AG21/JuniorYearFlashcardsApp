@@ -30,7 +30,7 @@
   /* --- spacing ----------------------------------------------------------- */
   --s-1:6px; --s-2:12px; --s-3:18px; --s-4:26px; --s-5:40px;
   --gutter:24px;
-  --tabh:calc(env(safe-area-inset-bottom, 0px) + 62px + 10px + 34px);
+  --tabh:calc(env(safe-area-inset-bottom, 0px) + 62px + 28px);
 
   /* --- liquid glass: neutral only (skill §2 table) ----------------------- */
   --lg-pill:120 120 128;
@@ -118,9 +118,10 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 }
 
 /* a centered capsule that shrink-wraps its glyphs — margin centering, not
-   transform, so the kit's pill measurements stay untouched (5Star direction) */
+   transform, so the kit's pill measurements stay untouched (5Star direction).
+   It rides low, just above the home indicator, like the real iOS 26 bar. */
 .tabs{ position:fixed; z-index:40; left:0; right:0; margin-inline:auto;
-  bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);
+  bottom:max(calc(env(safe-area-inset-bottom, 0px) - 16px), 10px);
   width:fit-content; max-width:calc(100vw - 32px); }
 .lg-tab{ width:60px; }             /* glyphs only, hit targets ≥44pt */
 @media (max-width:360px){
@@ -284,6 +285,8 @@ button.hero-tap:active{ opacity:.55; }
   font:inherit; font-size:24px; font-weight:430; color:var(--ink); letter-spacing:-.015em; }
 .searchbar input:focus{ outline:none; border-bottom-color:var(--ink-soft); }
 .searchbar input::placeholder{ color:var(--muted); }
+/* the native clear button is accent-blue — nothing on a mono page may be */
+.searchbar input::-webkit-search-cancel-button{ -webkit-appearance:none; appearance:none; display:none; }
 
 /* --- empty / done ---------------------------------------------------------- */
 .empty{ padding:var(--s-4) 0; color:var(--ink-soft); font-size:var(--t-title); font-weight:430; letter-spacing:-.03em; line-height:1.2; }
@@ -322,6 +325,7 @@ sub,sup{ font-size:.68em; }
    steep two-level hierarchy — 14px section labels, 17px rows. Whitespace
    groups sections (≈40px above a label, 10px below); a single hairline
    separates rows within a section. No sublabels, no boxes, no chevrons. */
+.head h1.uhead{ font-size:clamp(32px,10vw,40px); }
 .sect{ font-size:var(--t-label); font-weight:600; color:var(--ink-soft); margin:var(--s-5) 0 10px; }
 .setrow{ display:flex; align-items:center; justify-content:space-between; gap:16px;
   padding:12px 0; min-height:52px; }
@@ -355,6 +359,15 @@ sub,sup{ font-size:.68em; }
 .grow .gname{ font-size:17px; font-weight:520; color:var(--ink); min-width:0; }
 .grow .gval{ font-size:var(--t-label); font-weight:500; color:var(--muted); white-space:nowrap; }
 .grow.miss .gname{ color:var(--muted); }
+
+/* the identities board: a field of tappable expressions, whitespace only */
+.board{ display:flex; flex-wrap:wrap; gap:4px 30px; margin-top:var(--s-3); }
+.board .tile{ background:none; border:0; padding:10px 2px; min-height:44px; font:inherit;
+  font-size:16.5px; font-weight:520; color:var(--ink-soft); cursor:pointer;
+  font-variant-numeric:tabular-nums; transition:opacity .12s ease; }
+.board .tile:active{ opacity:.5; }
+.board .tile.done{ color:var(--muted); text-decoration:line-through; text-decoration-thickness:1px; }
+.board .tile.flash{ opacity:.3; }
 
 .mcols{ display:grid; grid-template-columns:1fr 1fr; gap:0 24px; align-items:start; }
 .mhead{ margin:0 0 6px; }

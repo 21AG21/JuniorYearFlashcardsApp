@@ -201,9 +201,8 @@
         (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Starred</button>' : '') +
         '<button class="textbtn" data-go="#/study/' + deckId + '/hard">Trouble spots</button>' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/all">Shuffle all</button>' +
-        (window.Games ? window.Games.linksFor(deckId).map(function (g) {
-          return '<button class="textbtn" data-go="#/game/' + g[1] + '">' + esc(g[0]) + '</button>';
-        }).join('') : '') +
+        (window.Games && window.Games.linksFor(deckId).length
+          ? '<button class="textbtn" data-go="#/games">Games</button>' : '') +
       '</div>' +
       '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
     );
@@ -697,8 +696,8 @@
     var s = S.getSettings();
     var profs = S.listProfiles(), active = S.activeProfile();
     mount(
-      // the hero is the screen's name, never the user's (5Star settings language)
-      '<div class="head"><h1>Settings</h1></div>' +
+      // the screen's name, sized for a utility page — not the content hero
+      '<div class="head"><h1 class="uhead">Settings</h1></div>' +
       '<div class="profile">' + profs.map(function (p) {
         return '<button class="chip" data-profile="' + p.id + '" aria-pressed="' + (p.id === active.id) + '">' + esc(p.name) + '</button>';
       }).join('') + '<button class="chip" data-addprofile>+ Add</button></div>' +
