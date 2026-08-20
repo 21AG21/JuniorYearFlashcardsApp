@@ -79,7 +79,7 @@ function check(name, cond, extra) { (cond ? ok : bad).push(name + (cond ? '' : '
   // --- profiles
   page.on('dialog', d => d.accept('Priya'));
   await page.click('[data-addprofile]'); await page.waitForTimeout(400);
-  const profText = await page.textContent('.head h1');
+  const profText = await page.textContent('.profile [aria-pressed="true"]');
   check('new profile becomes active', profText.trim() === 'Priya', profText);
   const freshCards = await page.evaluate(() => {
     const k = Object.keys(localStorage).filter(k=>k.includes('.state.'));

@@ -692,17 +692,17 @@
     var s = S.getSettings();
     var profs = S.listProfiles(), active = S.activeProfile();
     mount(
-      // small label, one moderate hero — the profile name is the content here
-      '<div class="head"><span class="k">Profile</span><h1 class="shero">' + esc(active.name) + '</h1></div>' +
+      // the hero is the screen's name, never the user's (5Star settings language)
+      '<div class="head"><h1>Settings</h1></div>' +
       '<div class="profile">' + profs.map(function (p) {
         return '<button class="chip" data-profile="' + p.id + '" aria-pressed="' + (p.id === active.id) + '">' + esc(p.name) + '</button>';
       }).join('') + '<button class="chip" data-addprofile>+ Add</button></div>' +
 
       '<div class="sect">Session</div>' +
-      setRow('Type answers', 'typing', s.typing) +
+      setRow('Typing mode', 'typing', s.typing) +
       setRow('High-yield first', 'coreFirst', s.coreFirst) +
       numRow('Cards per session', 'sessionSize', s.sessionSize, [15, 20, 30, 50, 100]) +
-      numRow('New cards', 'newPerSession', s.newPerSession, [5, 10, 20, 40]) +
+      numRow('New cards per session', 'newPerSession', s.newPerSession, [5, 10, 20, 40]) +
 
       '<div class="sect">Appearance</div>' +
       '<div class="lg lg-seg" id="themeseg">' +
@@ -712,25 +712,43 @@
           return '<div class="lg-seg-item' + (s.theme === t ? ' is-active' : '') + '" data-mode="' + t + '">' +
             t.charAt(0).toUpperCase() + t.slice(1) + '</div>';
         }).join('') + '</div>' +
-      setRow('Glass', 'glass', s.glass) +
+      setRow('Glass material', 'glass', s.glass) +
 
       '<div class="sect">Account</div>' +
       (S.account.connected()
         ? '<div class="setrow"><div class="sname">Synced</div>' +
-          '<button class="chip" data-acct-off>Disconnect</button></div>'
+          '<button class="textbtn" data-acct-off>Disconnect</button></div>'
         : '<div class="setrow stack"><div class="sname">Connect</div>' +
           '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="paste your account token"></div></div>') +
 
       '<div class="sect">Data</div>' +
       '<div class="data-list">' +
-        '<button class="textbtn" data-export>Back up</button>' +
-        '<button class="textbtn" data-import>Restore</button>' +
-        '<button class="textbtn" data-reset>Reset progress</button>' +
-        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile</button>' : '') +
+        '<button class="textbtn" data-export>Copy backup to clipboard</button>' +
+        '<button class="textbtn" data-import>Restore from a backup</button>' +
+        '<button class="textbtn" data-reset>Reset this profile’s progress</button>' +
+        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete this profile</button>' : '') +
       '</div>' +
-      '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards · works offline' +
-      (S.account.connected() ? ' · syncs to your account' : '') + '</div>'
+      '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards · runs offline once installed</div>'
     );
+  }
+
+  /* destructive actions arm on the first tap and revert after ~3s — ink and
+     weight say "are you sure", never a dialog and never red */
+  function armConfirm(btn, label) {
+    if (btn.getAttribute('data-armed')) { disarm(btn); return true; }
+    btn.setAttribute('data-armed', '1');
+    btn._label = btn.textContent;
+    btn.textContent = label;
+    btn.classList.add('armed');
+    btn._disarm = setTimeout(function () { disarm(btn); }, 3000);
+    return false;
+  }
+  function disarm(btn) {
+    if (!btn || !btn.getAttribute('data-armed')) return;
+    clearTimeout(btn._disarm);
+    btn.removeAttribute('data-armed');
+    btn.classList.remove('armed');
+    if (btn._label) btn.textContent = btn._label;
   }
 
   function setRow(name, key, on) {
@@ -784,12 +802,18 @@
       if (name && name.trim()) { S.addProfile(name.trim()); applyTheme(); viewSettings(); }
       return;
     }
-    if (t.closest('[data-delprofile]')) {
-      if (confirm('Delete this profile and its progress?')) { S.removeProfile(S.activeProfile().id); viewSettings(); }
+    var del = t.closest('[data-delprofile]');
+    if (del) {
+      if (armConfirm(del, 'Delete — tap again to confirm')) {
+        S.removeProfile(S.activeProfile().id); viewSettings(); toast('Profile deleted');
+      }
       return;
     }
-    if (t.closest('[data-reset]')) {
-      if (confirm('Reset all progress for this profile? Cards stay, scheduling is wiped.')) { S.resetProgress(); viewSettings(); toast('Progress reset'); }
+    var rst = t.closest('[data-reset]');
+    if (rst) {
+      if (armConfirm(rst, 'Reset — tap again to confirm')) {
+        S.resetProgress(); viewSettings(); toast('Progress reset');
+      }
       return;
     }
     if (t.closest('[data-export]')) {

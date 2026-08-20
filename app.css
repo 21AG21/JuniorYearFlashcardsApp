@@ -117,13 +117,15 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-r .setrow{ max-width:560px; }   /* a toggle never sits a metre from its name */
 }
 
-/* the bar is content-capped and centered — never stretched edge to edge */
-.tabs{ position:fixed; z-index:40; left:50%; transform:translateX(-50%);
+/* a centered capsule that shrink-wraps its glyphs — margin centering, not
+   transform, so the kit's pill measurements stay untouched (5Star direction) */
+.tabs{ position:fixed; z-index:40; left:0; right:0; margin-inline:auto;
   bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);
-  width:min(430px, calc(100vw - 24px)); }
+  width:fit-content; max-width:calc(100vw - 32px); }
+.lg-tab{ width:60px; }             /* glyphs only, hit targets ≥44pt */
 @media (max-width:360px){
   .lg-tabbar{ padding:4px 14px; }
-  .lg-tab{ font-size:11px; }
+  .lg-tab{ width:52px; }
 }
 .lg, .lg-btn, .lg-tab, .lg-seg-item, .lg-title, .lg-sub,
 .lg-search-input, .lg-header-title{ font-family:var(--font-sf); }
@@ -316,18 +318,27 @@ sub,sup{ font-size:.68em; }
 #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
 /* --- settings ----------------------------------------------------------------
-   Three sizes do all the work: 14px section labels, 17px row names, one
-   moderate hero (the profile name). No sublabels, no captions under rows. */
-.head h1.shero{ font-size:clamp(30px,9vw,38px); font-weight:460; letter-spacing:-.03em; line-height:1.16; }
-.sect{ font-size:var(--t-label); font-weight:600; color:var(--ink-soft); margin:var(--s-5) 0 var(--s-1); }
-.setrow{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; }
+   The 5Star settings language: the screen's name in the standard head, then a
+   steep two-level hierarchy — 14px section labels, 17px rows. Whitespace
+   groups sections (≈40px above a label, 10px below); a single hairline
+   separates rows within a section. No sublabels, no boxes, no chevrons. */
+.sect{ font-size:var(--t-label); font-weight:600; color:var(--ink-soft); margin:var(--s-5) 0 10px; }
+.setrow{ display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:12px 0; min-height:52px; }
+.setrow + .setrow{ border-top:1px solid var(--hair-soft); }
 .setrow .sname{ font-size:17px; font-weight:520; color:var(--ink); }
 .setrow.stack{ display:block; }
 .lg-toggle{ flex:0 0 auto; }
+/* profiles and choice values are weighted text, never chips (banned house-wide) */
 .profile{ display:flex; flex-wrap:wrap; gap:2px 22px; margin-top:var(--s-1); }
+.profile .chip, .numchips .chip{ font-size:17px; font-variant-numeric:tabular-nums; }
 .lg-seg{ width:100%; max-width:340px; margin-top:var(--s-2); }
-.data-list{ display:flex; flex-direction:column; align-items:flex-start; }
-.foot{ margin-top:var(--s-5); font-size:var(--t-label); color:var(--muted); }
+.data-list{ display:flex; flex-direction:column; align-items:stretch; }
+.data-list .textbtn{ text-align:left; font-size:17px; font-weight:560; padding:13px 2px; min-height:52px; }
+.data-list .textbtn + .textbtn{ border-top:1px solid var(--hair-soft); }
+/* destructive arm state: ink and heavy, never red, never a dialog */
+.textbtn.armed{ color:var(--ink); font-weight:720; }
+.foot{ margin-top:var(--s-5); font-size:13px; color:var(--muted); }
 
 /* --- activity: 2px ink bars on the ground, latest in ink, history muted ---- */
 .spark{ display:flex; align-items:flex-end; gap:3px; height:64px; width:100%; }
