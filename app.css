@@ -338,14 +338,14 @@ sub,sup{ font-size:.68em; }
   padding:12px 0; min-height:52px; }
 .setrow + .setrow{ border-top:1px solid var(--hair-soft); }
 .setrow .sname{ font-size:17px; font-weight:520; color:var(--ink); }
-.setrow.stack{ display:block; }
+.setrow.stack{ display:block; padding-bottom:0; }   /* the chips carry their own 12px — keeps the hairline centered between rows */
 .lg-toggle{ flex:0 0 auto; }
 /* profiles and choice values are weighted text, never chips (banned house-wide) */
 .profile{ display:flex; flex-wrap:wrap; gap:2px 22px; margin-top:var(--s-1); }
 .profile .chip, .numchips .chip{ font-size:17px; font-variant-numeric:tabular-nums; }
-.lg-seg{ width:100%; margin-top:var(--s-2); }   /* flush with the toggles' right edge on phones */
+.lg-seg{ width:100%; margin:var(--s-2) 0; }   /* flush right on phones; 12+12 below matches the hairline rows' 24px rhythm */
 .data-list{ display:flex; flex-direction:column; align-items:stretch; }
-.data-list .textbtn{ text-align:left; font-size:17px; font-weight:560; padding:13px 0; min-height:52px; }
+.data-list .textbtn{ text-align:left; font-size:17px; font-weight:560; padding:12px 0; min-height:52px; }
 .data-list .textbtn + .textbtn{ border-top:1px solid var(--hair-soft); }
 /* destructive arm state: ink and heavy, never red, never a dialog */
 .textbtn.armed{ color:var(--ink); font-weight:720; }
