@@ -370,14 +370,19 @@
 
   function best() { return S.getSettings().gameBest || {}; }
   function saveBest(id, n, label) {
+    if (n == null || !isFinite(n) || !label) return;   // never store a blank best
     var b = best();
-    if (!b[id] || n > b[id].n) { b[id] = { n: n, label: label }; S.setSetting('gameBest', b); }
+    if (!b[id] || b[id].n == null || n > b[id].n) { b[id] = { n: n, label: label }; S.setSetting('gameBest', b); }
   }
 
   /* ---------------- hub ---------------------------------------------------- */
   function hub() {
     st = null;
-    var b = best();
+    var b = best(), dirty = false;
+    Object.keys(b).forEach(function (k) {      // heal any blank best a past bug stored
+      if (!b[k] || b[k].n == null || !b[k].label) { delete b[k]; dirty = true; }
+    });
+    if (dirty) S.setSetting('gameBest', b);
     var html = '<div class="head"><h1>Games</h1></div>';
     ORDER_BY_DECK.forEach(function (deckId) {
       var rows = '';
@@ -470,23 +475,53 @@
     return out;
   }
 
+  /* the term inside a "Define X…" question — directives like "and give an
+     example" are the card's business, never the tile's */
+  var TERM_RE = /^Define (?:the |an? )?(.+?)(?:,? and (?:give|provide|offer|name|identify|explain).*)?[.?]?$/i;
+  function termOf(q) {
+    var m = TERM_RE.exec(q);
+    if (!m) return null;
+    var term = m[1].trim();
+    return term.length >= 2 && term.length <= 32 ? term : null;
+  }
+
   /* term board: a definition from the Lang deck; tap the term it defines */
-  function termRound(n) {
+  function termRound(n, unitId) {
     var d = S.getDeck('lang');
     var out = [], used = {};
     if (!d) return out;
-    var unitId = filtVal('langboard');
     var src = unitId ? d.cards.filter(function (c) { return c.u === unitId; }) : d.cards;
     shuffle(src.slice()).forEach(function (c) {
       if (out.length >= n || c.v !== 'DEFINE') return;
-      var m = /^Define (?:the |an? )?([^.(]{2,26}?)\.?$/i.exec(clean(c.q));
-      if (!m) return;
-      var term = m[1].trim(), def = clean(c.a);
+      var term = termOf(clean(c.q));
+      if (!term) return;
+      var def = clean(c.a);
       if (def.length > 130) def = def.slice(0, 127).replace(/\s+\S*$/, '') + '…';
       var kt = term.toLowerCase();
       if (used[kt] || used[def]) return;
       used[kt] = 1; used[def] = 1;
       out.push([def, term]);
+    });
+    return out;
+  }
+
+  /* device ↔ meaning pairs for the Lang match: the term is the tile, the
+     definition rides short — six wrapped paragraphs are not a board */
+  function langPairs(unitId) {
+    var d = S.getDeck('lang');
+    var out = [], seenT = {}, seenD = {};
+    if (!d) return out;
+    var src = unitId ? d.cards.filter(function (c) { return c.u === unitId; }) : d.cards;
+    shuffle(src.slice()).forEach(function (c) {
+      if (out.length >= 6 || c.v !== 'DEFINE') return;
+      var term = termOf(clean(c.q));
+      if (!term) return;
+      var def = clean(c.a);
+      if (def.length > 90) def = def.slice(0, 87).replace(/\s+\S*$/, '') + '…';
+      var kt = term.toLowerCase();
+      if (seenT[kt] || seenD[def]) return;
+      seenT[kt] = seenD[def] = 1;
+      out.push([term, def]);
     });
     return out;
   }
@@ -498,18 +533,27 @@
   }
   function startBoard(id) {
     st = { id: id, kind: 'board', score: 0, played: 0, stage: id === 'identities' ? 0 : null };
-    dealBoard(id === 'frconj' ? conjRound(10)
-            : id === 'langboard' ? termRound(9)
-            : boardRound(12, 0));
+    if (id === 'identities') {
+      // all four stages dealt up front, so the meter promises what exists
+      st.rounds = STAGES.map(function (_, sg) { return boardRound(12, sg); });
+      st.grand = st.rounds.reduce(function (a, r) { return a + r.length; }, 0);
+      dealBoard(st.rounds[0]);
+    } else if (id === 'langboard') {
+      var facts = termRound(9, filtVal('langboard'));
+      if (facts.length < 4) facts = termRound(9, null);   // a thin unit never bricks the board
+      dealBoard(facts);
+    } else {
+      dealBoard(conjRound(10));
+    }
     renderBoard();
   }
   function renderBoard(still) {
     if (st.i >= st.total) {
-      // Identities runs three stages, easy families first — the score rides through
+      // Identities runs four stages, easy families first — the score rides through
       if (st.stage != null && st.stage < STAGES.length - 1) {
         st.played += st.total;
         st.stage++;
-        dealBoard(boardRound(12, st.stage));
+        dealBoard(st.rounds[st.stage]);
       } else {
         var grand = st.played + st.total;
         return gameDone(st.id, st.score, grand, st.score + ' of ' + grand);
@@ -519,12 +563,14 @@
     var scope = st.stage != null
       ? STAGES[st.stage][0] + ' · ' + st.score + ' first try'
       : st.score + ' first try';
+    // long expressions get two wide columns instead of three broken ones
+    var wide = st.tiles.some(function (tl) { return estLen(tl.t) > 14; });
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
-      gameTop(scope, (st.played + st.i + 1) + ' of ' + (st.stage != null ? 48 : st.total)) +
+      gameTop(scope, (st.played + st.i + 1) + ' of ' + (st.stage != null ? st.grand : st.total)) +
       '<div class="gcur bcur' + (still ? '' : ' swap') + '">' +
         '<div class="gname num' + (flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
-      '<div class="board' + (st.anim ? ' deal' : '') + '">' + st.tiles.map(function (tl, i) {
+      '<div class="board' + (wide ? ' b2' : '') + (st.anim ? ' deal' : '') + '">' + st.tiles.map(function (tl, i) {
         var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
         return '<button class="' + cls + '" data-tile="' + i + '"' + (tl.done ? ' disabled' : '') + '>' + fx(tl.t) + '</button>';
       }).join('') + '</div>',
@@ -557,7 +603,7 @@
       '<span class="pos num">' + esc(posText) + '</span></div>';
   }
   function gameDone(id, score, total, label) {
-    saveBest(id, score / total, label);
+    if (total > 0) saveBest(id, score / total, label);
     var g = GAMES[id];
     st = null;
     ctx.mount(
@@ -835,7 +881,10 @@
       id === 'ionmatch' ? refPairs(IONS) :
       id === 'elemmatch' ? elemPairs() :
       id === 'frmatch' ? (FRVOCAB && FRVOCAB.length ? sample(FRVOCAB, 6) : deckPairs('french')) :
-      deckPairs('lang', filtVal('langmatch'));
+      langPairs(filtVal('langmatch'));
+    // a thin unit falls back to its own subject, never to another one
+    if (id === 'langmatch' && pairs.length < 4) pairs = langPairs(null);
+    if (!pairs.length) pairs = deckPairs(GAMES[id].deck) ;
     if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
     var left = [], right = [];
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });
@@ -848,7 +897,7 @@
   function renderMatch() {
     if (st.hits === st.total) {
       var label = st.total + ' in ' + st.tries;
-      return gameDone(st.id, st.total / Math.max(st.tries, st.total), label);
+      return gameDone(st.id, st.total, Math.max(st.tries, st.total), label);
     }
     var head = {
       derivmatch: ['f(x)', 'f′(x)'],
@@ -923,7 +972,7 @@
       if (st.lock && i === st.wrong) cls += ' off';            // the tap that missed
       if (!st.lock && marked && i === q.a) cls += ' on';       // the highlighted point
       s += '<g' + (!marked ? ' data-dot="' + i + '"' : '') + '>' +
-        '<circle class="uc-hit" cx="' + x + '" cy="' + y + '" r="17"/>' +
+        '<circle class="uc-hit" cx="' + x + '" cy="' + y + '" r="21"/>' +
         '<circle class="' + cls + '" cx="' + x + '" cy="' + y + '" r="5"/></g>';
     });
     s += '</svg>';
@@ -1094,7 +1143,24 @@
       }
       if (seen[p]) continue;
       seen[p] = 1;
-      qs.push({ p: p, c: shuffle([r].concat(pick3(pool, r))), r: r });
+      var ch = [r].concat(pick3(pool, r));
+      // a lone fraction among integers answers itself — keep it company
+      if (r.indexOf('⁄') > -1 && ch.filter(function (v) { return v.indexOf('⁄') > -1; }).length < 2) {
+        var fm = /^(\d+)⁄(\d+)$/.exec(r);
+        if (fm) {
+          var fa = +fm[1], fb = +fm[2];
+          var alts = [fracLabel(fb, fa), fracLabel(fa + 1, fb), fracLabel(fa, fb + 1), fracLabel(fa + fb, fb)];
+          for (var ai = 0; ai < alts.length; ai++) {
+            if (alts[ai].indexOf('⁄') > -1 && ch.indexOf(alts[ai]) < 0) {
+              for (var ri = ch.length - 1; ri > 0; ri--) {
+                if (ch[ri].indexOf('⁄') < 0) { ch[ri] = alts[ai]; break; }
+              }
+              break;
+            }
+          }
+        }
+      }
+      qs.push({ p: p, c: shuffle(ch), r: r });
     }
     return qs;
   }
@@ -1111,20 +1177,24 @@
       var style = Math.floor(Math.random() * 5), num = '';
       var d = function () { return 1 + Math.floor(Math.random() * 9); };
       if (style === 0) num = '0.00' + d() + [0, d(), '0', d() + '0'][Math.floor(Math.random() * 4)];
-      else if (style === 1) num = '' + d() + '0'.repeat(1 + Math.floor(Math.random() * 3));
+      else if (style === 1) num = '' + d() + (Math.random() < 0.4 ? d() : '') + '0'.repeat(1 + Math.floor(Math.random() * 3));
       else if (style === 2) num = '' + d() + d() + '0.' + [0, '0', d()][Math.floor(Math.random() * 3)];
       else if (style === 3) num = d() + '.0' + d();
-      else num = d() + '.' + d() + '0 × 10' + sup(2 + Math.floor(Math.random() * 4));
+      else {
+        // mantissas of varied length, zeros included — never one fixed shape
+        var frac = '', fl = 1 + Math.floor(Math.random() * 3);
+        for (var fi = 0; fi < fl; fi++) frac += (Math.random() < 0.35 ? '0' : d());
+        num = d() + '.' + frac + ' × 10' + sup(2 + Math.floor(Math.random() * 4));
+      }
       num = String(num);
       if (seen[num]) continue;
       seen[num] = 1;
-      var r = String(countSig(num));
-      var opts = [r];
-      [-2, -1, 1, 2, 3].forEach(function (o) {
-        var v = countSig(num) + o;
-        if (v >= 1 && opts.length < 4 && opts.indexOf(String(v)) < 0) opts.push(String(v));
-      });
-      opts.sort(function (a, b) { return a - b; });
+      var r0 = countSig(num), r = String(r0);
+      // a sliding window of four counts — the answer's position in the sorted
+      // row varies, so the option list itself teaches nothing
+      var lo = Math.max(1, r0 - Math.floor(Math.random() * 4));
+      if (lo + 3 < r0) lo = r0 - 3;
+      var opts = [lo, lo + 1, lo + 2, lo + 3].map(String);
       qs.push({ p: num, c: opts, r: r });
     }
     return qs;
@@ -1194,13 +1264,15 @@
   }
 
   /* year quiz: real events, distractor years pulled close enough to test */
-  function yearRound(n) {
+  function yearRound(n, keepDated) {
     var qs = [];
     var range = filtVal('yearquiz');
     var src = range ? TIMELINE.filter(function (e) { return e.y >= range[1] && e.y <= range[2]; })
                     : TIMELINE;
     shuffle(src.slice()).forEach(function (e) {
       if (qs.length >= n) return;
+      // an event whose name contains its year answers itself — sit those out
+      if (!keepDated && /\b(1[4-9]\d\d|20\d\d)\b/.test(e.t)) return;
       var opts = [String(e.y)], used = {}; used[e.y] = 1;
       var tries = 0;
       while (opts.length < 4 && tries++ < 60) {
@@ -1213,6 +1285,8 @@
       opts.sort();
       qs.push({ p: e.t, c: opts, r: String(e.y) });
     });
+    // a thin period may be all self-dated events — a small round beats none
+    if (qs.length < 4 && !keepDated) return yearRound(n, true);
     return qs;
   }
 
@@ -1422,9 +1496,16 @@
     var s = '<svg viewBox="0 0 320 190" class="tg" aria-label="Graph of a trig function">';
     s += '<line class="tg-axis" x1="10" y1="95" x2="310" y2="95"/>';
     s += '<line class="tg-axis" x1="160" y1="10" x2="160" y2="180"/>';
-    [-2, -1, 1, 2].forEach(function (k) {   // ticks at multiples of pi
-      var px = 160 + k * 75;
+    var XL = { '-2': '−2π', '-1': '−π', '1': 'π', '2': '2π' };
+    [-2, -1, 1, 2].forEach(function (k) {   // labeled ticks — amplitude and
+      var px = 160 + k * 75;                // period must be readable, not guessed
       s += '<line class="tg-axis" x1="' + px + '" y1="91" x2="' + px + '" y2="99"/>';
+      s += '<text class="tg-lab" x="' + px + '" y="110" text-anchor="middle">' + XL[k] + '</text>';
+    });
+    [1, 2].forEach(function (v) {
+      var py = 95 - v * 28;
+      s += '<line class="tg-axis" x1="156" y1="' + py + '" x2="164" y2="' + py + '"/>';
+      s += '<text class="tg-lab" x="168" y="' + (py + 3) + '">' + v + '</text>';
     });
     var segs = [], cur = [];
     for (var px = 0; px <= 300; px++) {

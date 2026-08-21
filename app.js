@@ -112,6 +112,7 @@
              : '<h1>' + esc(hero) + '</h1>') + '</div>' +
       '<ul class="list tight">' + rows + '</ul>' +
       '<div class="lnav">' +
+        '<button class="textbtn" data-go="#/review">Review</button>' +
         '<button class="textbtn" data-go="#/search">Search</button>' +
         '<button class="textbtn" data-go="#/stats">Progress</button>' +
         '<button class="textbtn" data-go="#/games">Games</button>' +
@@ -126,9 +127,26 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1700);
   }
+  var pushDepth = 0;   // in-app pushes behind us — back falls back to a parent at zero
   function go(hash) {
     var next = hash.charAt(0) === '#' ? hash : '#' + hash;
-    if (location.hash === next) route(); else location.hash = next;
+    if (location.hash === next) route();
+    else { pushDepth++; location.hash = next; }
+  }
+  // replace, don't push: leaving no history entry behind
+  function goReplace(hash) {
+    var next = hash.charAt(0) === '#' ? hash : '#' + hash;
+    if (location.hash === next) route(); else location.replace(next);
+  }
+  /* where "back" lands when the app was opened right here (deep link, PWA
+     restore) and there is nothing behind us to go back to */
+  function parentOf(h) {
+    var p = h.replace(/^#/, '').split('/').filter(Boolean);
+    if (p[0] === 'game') return '#/games';
+    if (p[0] === 'games') return '#/';
+    if (p[0] === 'd' && p[2] === 'u') return '#/d/' + p[1];
+    if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1];
+    return '#/';
   }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
   // Shorten the label before the type (skill §3): the course identity, one line.
@@ -208,14 +226,11 @@
         '</button></li>';
     }).join('');
 
-    // the name is the way back; the number steps to the next course (skill §7.1:
-    // tappable text instead of buttons wherever text can navigate)
-    var ids = S.getIndex().courses.map(function (c) { return c.id; });
-    var nextId = ids[(ids.indexOf(deckId) + 1) % ids.length];
+    // the name is the way back; the number is a fact, not a hidden link
     mount(
       '<div class="dhero">' +
         '<button class="dn" data-go="#/">' + esc(nice(d)) + '</button>' +
-        '<button class="dv num" data-go="#/d/' + nextId + '">' + st.total + '</button>' +
+        '<span class="dv num">' + st.total + '</span>' +
       '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due : 'Study') + '</button>' +
       '<div class="modes">' +
@@ -250,15 +265,11 @@
         '</button></li>';
     }).join('');
 
-    // units with content, in course order — the number steps through them
-    var withCards = d.units.filter(function (x) { return S.unitStats(d, x.id).total; });
-    var pos = withCards.map(function (x) { return x.id; }).indexOf(unitId);
-    var nextU = withCards[(pos + 1) % withCards.length];
     mount(
       '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n + '</div>' +
       '<div class="dhero">' +
         '<button class="dn" data-go="#/d/' + deckId + '">' + esc(u.title) + '</button>' +
-        '<button class="dv num" data-go="#/d/' + deckId + '/u/' + nextU.id + '">' + us.total + '</button>' +
+        '<span class="dv num">' + us.total + '</span>' +
       '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due : 'Study') + '</button>' +
       '<div class="modes">' +
@@ -282,6 +293,7 @@
     if (!queue.length) return renderEmptySession(d, unitId, mode);
     sess = {
       deck: d, unitId: unitId || null, mode: mode, quiz: !!quiz,
+      typing: !quiz && S.getSettings().typing,
       queue: queue, done: 0, planned: queue.length,
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0,
       history: [], answered: false, typed: ''
@@ -298,8 +310,20 @@
       d.cards.forEach(function (card) { if (S.isDue(card.i)) all.push(card); });
     });
     if (!all.length) {
+      // say when the next card comes back, not just that none are due
+      var today = S.dayNum(), next = null;
+      ix.courses.forEach(function (c) {
+        var d = S.getDeck(c.id); if (!d) return;
+        d.cards.forEach(function (card) {
+          var st = S.cs(card.i);
+          if (st && st.d > today && (!next || st.d < next)) next = st.d;
+        });
+      });
+      var when = next === null ? '' :
+        next - today === 1 ? 'Next cards tomorrow' : 'Next cards in ' + (next - today) + ' days';
       return mount(
-        '<div class="head"><h1>Nothing due</h1></div>' +
+        '<div class="head"><h1>Nothing due</h1>' +
+        (when ? '<div class="sub">' + when + '</div>' : '') + '</div>' +
         '<button class="textbtn" data-go="#/">Decks</button>'
       );
     }
@@ -307,6 +331,7 @@
     var limit = S.getSettings().sessionSize;
     sess = {
       deck: null, unitId: null, mode: 'due', quiz: false, mixed: true,
+      typing: S.getSettings().typing,
       queue: all.slice(0, Math.max(limit, 10)), done: 0, planned: Math.min(all.length, Math.max(limit, 10)),
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0, history: [], answered: false, typed: ''
     };
@@ -341,16 +366,13 @@
   }
   // Done / Undo / Star as quiet text — the affordances survive, the chrome does not.
   function sessUtil(starred) {
-    var set = S.getSettings();
     return '<div class="sess-util">' +
       '<button class="iconbtn" data-exit aria-label="Close"><svg><use href="#i-close"/></svg></button>' +
       (sess.history.length ? '<button class="iconbtn" data-undo aria-label="Undo"><svg><use href="#i-undo"/></svg></button>' : '') +
       (starred != null ? '<button class="iconbtn" data-star aria-label="Star" aria-pressed="' + starred + '">' +
         '<svg><use href="#i-star' + (starred ? '-fill' : '') + '"/></svg></button>' : '') +
-      // session length is set where it is felt, not buried in Settings
-      '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'MCQ' : (set.typing ? 'Typing' : 'Flip')) + '</button>' +
-      '<button class="sizebtn num" data-cycle="sessionSize">' + set.sessionSize + ' per session</button>' +
-      '<button class="sizebtn num" data-cycle="newPerSession">' + set.newPerSession + ' new</button>' +
+      // the mode word changes THIS session only — Settings owns the default
+      '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'MCQ' : (sess.typing ? 'Typing' : 'Flip')) + '</button>' +
       '</div>';
   }
 
@@ -387,7 +409,7 @@
 
     if (!sess.revealed) {
       // the prompt itself is the tap; no "Tap to reveal" caption (skill §8)
-      if (settings.typing) body += '<div class="typewrap"><input class="typein" id="typein" autocomplete="off" autocorrect="off" ' +
+      if (sess.typing) body += '<div class="typewrap"><input class="typein" id="typein" autocomplete="off" autocorrect="off" ' +
           'autocapitalize="none" spellcheck="false" placeholder="Type your answer"></div>';
     } else {
       body += '<div class="rule reveal"></div>' +
@@ -429,7 +451,10 @@
         }
         var why = sess.answered && ch.correct && c.n
           ? '<span class="why">' + T.html(c.n) + '</span>' : '';
-        return '<button class="choice' + (stacked(ch.text) ? ' mathy' : '') + '" data-pick="' + n + '"' + (state ? ' data-state="' + state + '"' : '') +
+        // long prose options drop a size so four of them still read as
+        // options under the question, not four paragraphs over it
+        var cls = (stacked(ch.text) ? ' mathy' : '') + (T.plain(ch.text).length > 110 ? ' small' : '');
+        return '<button class="choice' + cls + '" data-pick="' + n + '"' + (state ? ' data-state="' + state + '"' : '') +
           (sess.answered ? ' disabled' : '') + '>' + T.html(ch.text) + why + '</button>';
       }).join('') + '</div>';
 
@@ -454,8 +479,14 @@
     return S.shuffle(out);
   }
   function trim(a) {
+    // an option cut mid-sentence is unanswerable — show whole answers; only a
+    // rare outlier is cut, at a sentence end, and math is never sliced open
     var t = String(a);
-    return t.length > 170 ? t.slice(0, 167).replace(/\s+\S*$/, '') + '…' : t;
+    if (t.length <= 400 || /[\\$^_{}]/.test(t)) return t;
+    var cut = t.slice(0, 430);
+    var s = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('; '));
+    if (s > 200) return cut.slice(0, s + 1);
+    return cut.slice(0, 400).replace(/\s+\S*$/, '') + '…';
   }
 
   /* ---- interaction ------------------------------------------------------ */
@@ -493,7 +524,12 @@
       var want = normalize(targets[i]);
       if (!want) continue;
       if (got === want) return { ok: 'hit', text: 'exact' };
-      if (want.indexOf(got) === 0 && got.length >= Math.min(6, want.length)) return { ok: 'hit', text: 'close enough' };
+      // a prefix only counts when it covers most of the answer — two words
+      // of a long sentence is not knowing it
+      if (want.indexOf(got) === 0 &&
+          got.length >= Math.min(want.length, Math.max(6, Math.ceil(want.length * 0.6)))) {
+        return { ok: 'hit', text: 'close enough' };
+      }
       if (got.indexOf(want) > -1 || want.indexOf(got) > -1) {
         var ratio = Math.min(got.length, want.length) / Math.max(got.length, want.length);
         if (ratio > 0.55) return { ok: 'hit', text: 'close enough' };
@@ -505,13 +541,14 @@
   function reveal() {
     if (!sess || sess.revealed) return;
     var c = sess.queue[0];
-    if (S.getSettings().typing) {
+    if (sess.typing) {
       var input = document.getElementById('typein');
       var typed = input ? input.value : sess.typed;
       sess.verdict = checkTyped(c, typed);
       if (input) try { input.blur(); } catch (e) {}
     }
     sess.revealed = true;
+    sess.revealedAt = Date.now();
     renderCard();
   }
 
@@ -520,8 +557,11 @@
     var c = sess.queue.shift();
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     S.grade(c.i, g);
-    sess.history.push({ card: c, before: before, index: 0 });
-    if (g === 0) { sess.again++; sess.queue.splice(Math.min(4, sess.queue.length), 0, c); }
+    sess.history.push({ card: c, before: before, g: g });
+    if (g === 0) {
+      sess.again++; sess.planned++;   // a re-queued card is one more to do
+      sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
+    }
     else if (g === 1) sess.good++;
     else sess.easy++;
     sess.done++;
@@ -531,6 +571,17 @@
 
   function undo() {
     if (!sess || !sess.history.length) return;
+    if (sess.quiz) {
+      // in quiz mode, undo takes back the answer you just gave
+      if (!sess.answered) return;
+      var hq = sess.history.pop();
+      S.restore(hq.card.i, hq.before);
+      if (hq.g === 1) sess.right = Math.max(0, sess.right - 1);
+      else sess.wrong = Math.max(0, sess.wrong - 1);
+      sess.answered = false; sess.picked = -1;
+      S.save(true);
+      renderCard(); return;
+    }
     var h = sess.history.pop();
     // pull the card back out of the queue if "Again" re-queued it
     for (var i = 0; i < sess.queue.length; i++) {
@@ -539,6 +590,9 @@
     S.restore(h.card.i, h.before);
     sess.queue.unshift(h.card);
     sess.done = Math.max(0, sess.done - 1);
+    if (h.g === 0) { sess.again = Math.max(0, sess.again - 1); sess.planned = Math.max(1, sess.planned - 1); }
+    else if (h.g === 1) sess.good = Math.max(0, sess.good - 1);
+    else sess.easy = Math.max(0, sess.easy - 1);
     sess.revealed = true; sess.verdict = null;
     S.save(true);
     renderCard();
@@ -549,13 +603,21 @@
     sess.picked = n; sess.answered = true;
     var c = sess.queue[0];
     var correct = sess.choices[n] && sess.choices[n].correct;
+    var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     if (correct) sess.right++; else sess.wrong++;
+    sess.history.push({ card: c, before: before, g: correct ? 1 : 0 });
     S.grade(c.i, correct ? 1 : 0);
     renderCard();
+    // the result must be seen, not hunted for
+    requestAnimationFrame(function () {
+      var el = document.querySelector('.choice[data-state="right"]');
+      if (el) el.scrollIntoView({ block: 'nearest' });
+    });
   }
   function nextQuiz() {
     var c = sess.queue.shift();
     if (!sess.choices[sess.picked] || !sess.choices[sess.picked].correct) {
+      sess.planned++;                 // the miss comes back — the meter says so
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
     }
     sess.done++; sess.answered = false; sess.picked = -1; sess.choices = null;
@@ -598,7 +660,11 @@
     var on = S.toggleStar(sess.queue[0].i);
     toast(on ? 'Starred' : 'Unstarred');
     var btn = document.querySelector('[data-star]');
-    if (btn) { btn.setAttribute('aria-pressed', String(on)); btn.textContent = on ? 'Starred' : 'Star'; }
+    if (btn) {
+      btn.setAttribute('aria-pressed', String(on));
+      var use = btn.querySelector('use');
+      if (use) use.setAttribute('href', on ? '#i-star-fill' : '#i-star');
+    }
   }
 
   /* ---- session complete -------------------------------------------------- */
@@ -616,6 +682,9 @@
     var again = sess.mixed ? '#/review' :
       '#/' + (sess.quiz ? 'quiz' : 'study') + '/' + d.id + '/' + sess.mode + (sess.unitId ? '/' + sess.unitId : '');
     sess = null;
+    // the session is over — a reload or a back gesture should land on the
+    // deck, not silently deal a brand-new session (no hashchange fires here)
+    try { history.replaceState(null, '', location.href.replace(/#.*$/, '') + (d ? '#/d/' + d.id : '#/')); } catch (e) {}
     mount(
       '<div class="done-hero">' +
         '<span class="k">Session complete</span>' +
@@ -711,16 +780,22 @@
         }).join('') + '</div>';
     }
 
+    // the hero states what is true today — "0 of 4,097" over "12 cards today"
+    // reads as a contradiction, so lead with the day until cards are known
+    var hero = totals.known ? totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString()
+      : S.studiedToday() ? plural(S.studiedToday(), 'card') + ' today'
+      : totals.total.toLocaleString() + ' cards';
     var caption = [];
-    if (S.studiedToday()) caption.push(plural(S.studiedToday(), 'card') + ' today');
+    if (totals.known && S.studiedToday()) caption.push(plural(S.studiedToday(), 'card') + ' today');
     if (S.streak() > 1) caption.push(S.streak() + '-day streak');
     mount(
       '<div class="head">' +
-      '<h1>' + totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString() + '</h1>' +
+      '<h1>' + hero + '</h1>' +
       (caption.length ? '<div class="sub">' + caption.join(' · ') + '</div>' : '') + '</div>' +
       (rows ? '<ul class="list tight">' + rows + '</ul>' : '') +
       spark +
-      (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due + '</button></div>' : '')
+      (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due + '</button></div>'
+        : !totals.seen ? '<button class="textbtn" data-go="#/">Decks</button>' : '')
     );
   }
 
@@ -744,6 +819,10 @@
           '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
       '<div class="setrow"><div class="sname">Typing</div>' +
         '<button class="cyc" data-typing-cycle>' + (s.typing ? 'On' : 'Off') + '</button></div>' +
+      '<div class="setrow"><div class="sname">Session</div>' +
+        '<button class="cyc num" data-cycle="sessionSize">' + s.sessionSize + '</button></div>' +
+      '<div class="setrow"><div class="sname">New cards</div>' +
+        '<button class="cyc num" data-cycle="newPerSession">' + s.newPerSession + '</button></div>' +
       '</div>' +
 
       '<div class="data-list">' +
@@ -791,10 +870,15 @@
     var t = e.target;
     var goEl = t.closest('[data-go]');
     if (goEl) { go(goEl.getAttribute('data-go')); return; }
-    if (t.closest('[data-back]')) { history.back(); return; }
+    if (t.closest('[data-back]')) {
+      if (pushDepth > 0) { pushDepth--; history.back(); }
+      else goReplace(parentOf(location.hash));   // opened here — never leave the app
+      return;
+    }
     if (t.closest('[data-exit]')) {
+      // replace, so the platform back gesture cannot fall into a dead session
       var back = sess && sess.deck ? '#/d/' + sess.deck.id : '#/';
-      sess = null; go(back); return;
+      sess = null; goReplace(back); return;
     }
     if (t.closest('[data-undo]')) { undo(); return; }
     if (t.closest('[data-reveal]')) { reveal(); return; }
@@ -817,9 +901,9 @@
       viewSettings(); return;
     }
     if (t.closest('[data-qmode]') && sess) {
-      var typ = S.getSettings().typing;
-      if (sess.quiz) { sess.quiz = false; S.setSetting('typing', true); }
-      else if (typ) { S.setSetting('typing', false); }
+      // cycles MCQ → Typing → Flip for THIS session; Settings owns the default
+      if (sess.quiz) { sess.quiz = false; sess.typing = true; }
+      else if (sess.typing) { sess.typing = false; }
       else { sess.quiz = true; }
       sess.choices = null; sess.answered = false; sess.picked = -1;
       sess.revealed = false; sess.verdict = null; sess.typed = null;
@@ -904,18 +988,28 @@
     document.body.appendChild(w); w.select();
     toast('Select and copy, then tap outside');
     setTimeout(function () {
-      document.addEventListener('click', function rm() { w.remove(); document.removeEventListener('click', rm); });
+      document.addEventListener('click', function rm(ev) {
+        if (ev.target === w) return;             // selecting inside must not dismiss
+        w.remove(); document.removeEventListener('click', rm);
+      });
     }, 400);
   }
 
   /* keyboard */
   document.addEventListener('keydown', function (e) {
     if (!sess) return;
+    if (e.repeat) return;                        // holding a key never burns cards
     if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
     if (e.code === 'Space' || e.key === 'Enter') {
       e.preventDefault();
       if (sess.quiz) { if (sess.answered) nextQuiz(); }
-      else if (!sess.revealed) reveal(); else doGrade(1);
+      else if (!sess.revealed) reveal();
+      else {
+        // a breath after the reveal, and the shortcut grades what the verdict
+        // says — a scored miss must never default to Good
+        if (Date.now() - (sess.revealedAt || 0) < 300) return;
+        doGrade(sess.verdict && sess.verdict.ok === 'miss' ? 0 : 1);
+      }
       return;
     }
     if (!sess.quiz && sess.revealed) {
@@ -977,13 +1071,20 @@
   }
 
   var TAB_ROUTES = ['/', '/review', '/search', '/stats', '/settings'];
+  // tab-to-tab movement replaces the entry — fourteen tab taps must not
+  // become fourteen steps for the platform back gesture to unwind
+  function goTab(r) {
+    var cur = location.hash.replace(/^#/, '') || '/';
+    if (TAB_ROUTES.indexOf(cur) > -1) goReplace('#' + r);
+    else go('#' + r);
+  }
   tabbar.addEventListener('lg-change', function (e) {
     var r = TAB_ROUTES[e.detail];
-    if (r) go('#' + r);
+    if (r) goTab(r);
   });
   tabbar.addEventListener('click', function (e) {
     var tab = e.target.closest('[data-route]');
-    if (tab) go('#' + tab.getAttribute('data-route'));
+    if (tab) goTab(tab.getAttribute('data-route'));
   });
 
   window.addEventListener('hashchange', route);
