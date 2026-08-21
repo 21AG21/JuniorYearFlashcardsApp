@@ -345,6 +345,29 @@
     return n + (s.length - last);
   }
 
+  /* unit / period filters for the games that draw from real data.
+     FILT[id] is a cycling index — 0 is All; tapping the word restarts. */
+  var GFILT = { timeline: 'apush', yearquiz: 'apush', langmatch: 'lang', langboard: 'lang' };
+  var FILT = {};
+  function filtOpts(id) {
+    if (GFILT[id] === 'apush') return PERIODS.map(function (p) { return p[0]; });
+    var d = S.getDeck('lang');
+    return d ? d.units.map(function (u) { return 'Unit ' + u.n; }) : [];
+  }
+  function filtVal(id) {          // apush → [label, from, to]; lang → unit id; null = all
+    var fi = FILT[id] || 0;
+    if (!fi) return null;
+    if (GFILT[id] === 'apush') return PERIODS[fi - 1];
+    var d = S.getDeck('lang');
+    return d ? d.units[fi - 1].id : null;
+  }
+  function filtCtl(id) {
+    if (!GFILT[id]) return '';
+    var fi = FILT[id] || 0;
+    return '<button class="textbtn quiet gfilt" data-gfilter>' +
+      esc(fi ? filtOpts(id)[fi - 1] : 'All') + '</button>';
+  }
+
   function best() { return S.getSettings().gameBest || {}; }
   function saveBest(id, n, label) {
     var b = best();
@@ -452,7 +475,9 @@
     var d = S.getDeck('lang');
     var out = [], used = {};
     if (!d) return out;
-    shuffle(d.cards.slice()).forEach(function (c) {
+    var unitId = filtVal('langboard');
+    var src = unitId ? d.cards.filter(function (c) { return c.u === unitId; }) : d.cards;
+    shuffle(src.slice()).forEach(function (c) {
       if (out.length >= n || c.v !== 'DEFINE') return;
       var m = /^Define (?:the |an? )?([^.(]{2,26}?)\.?$/i.exec(clean(c.q));
       if (!m) return;
@@ -495,7 +520,7 @@
       ? STAGES[st.stage][0] + ' · ' + st.score + ' first try'
       : st.score + ' first try';
     ctx.mount(
-      ctx.backbar(GAMES[st.id].name) +
+      ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(scope, (st.played + st.i + 1) + ' of ' + (st.stage != null ? 48 : st.total)) +
       '<div class="gcur bcur' + (still ? '' : ' swap') + '">' +
         '<div class="gname num' + (flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
@@ -554,11 +579,20 @@
 
   function timelineRound(n) {
     // real events, well separated in time so the ordering is fair
-    var pool = shuffle(TIMELINE.slice()), picked = [], used = {};
+    var range = filtVal('timeline');
+    var src = range ? TIMELINE.filter(function (e) { return e.y >= range[1] && e.y <= range[2]; })
+                    : TIMELINE;
+    var pool = shuffle(src.slice()), picked = [], used = {};
     pool.forEach(function (e) {
       if (picked.length >= n) return;
       if (used[e.y]) return;                       // one event per year
       if (picked.some(function (p) { return Math.abs(p.v - e.y) < 6; })) return;
+      used[e.y] = 1;
+      picked.push({ n: e.t, v: e.y, vl: String(e.y), d: e.d });
+    });
+    // a single period is a tight span — fill out the round without the gap rule
+    pool.forEach(function (e) {
+      if (picked.length >= n || used[e.y]) return;
       used[e.y] = 1;
       picked.push({ n: e.t, v: e.y, vl: String(e.y), d: e.d });
     });
@@ -626,7 +660,7 @@
         '<button class="gap" data-gap="' + (i + 1) + '" aria-label="Place after ' + esc(p.n) + '"></button>';
     });
     ctx.mount(
-      ctx.backbar(GAMES[st.id].name) +
+      ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(st.axis.title, (st.done + 1) + ' of ' + st.total) +
       '<div class="gcur"><div class="gname">' + esc(st.cur.n) + '</div></div>' +
       '<div class="gline">' + rows + '</div>',
@@ -660,13 +694,14 @@
      MATCH — two columns of text; pair them up. Boards come from the decks
      themselves or from symbolic generators — a fresh board every round.
      ========================================================================== */
-  function deckPairs(deckId) {
+  function deckPairs(deckId, unitId) {
     var d = S.getDeck(deckId);
     var tiers = [[40, 60], [60, 90], [80, 120]];
     var cands = [], seenQ = {}, seenA = {};
     if (d) {
+      var src = unitId ? d.cards.filter(function (c) { return c.u === unitId; }) : d.cards;
       for (var t = 0; t < tiers.length && cands.length < 24; t++) {
-        shuffle(d.cards.slice()).forEach(function (c) {
+        shuffle(src.slice()).forEach(function (c) {
           if (cands.length >= 60) return;
           var q = clean(c.q), a = clean(c.a);
           if (q.length < 3 || a.length < 2 || q.length > tiers[t][0] || a.length > tiers[t][1]) return;
@@ -800,7 +835,7 @@
       id === 'ionmatch' ? refPairs(IONS) :
       id === 'elemmatch' ? elemPairs() :
       id === 'frmatch' ? (FRVOCAB && FRVOCAB.length ? sample(FRVOCAB, 6) : deckPairs('french')) :
-      deckPairs('lang');
+      deckPairs('lang', filtVal('langmatch'));
     if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
     var left = [], right = [];
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });
@@ -833,7 +868,7 @@
       }).join('');
     }
     ctx.mount(
-      ctx.backbar(GAMES[st.id].name) +
+      ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(st.hits + ' of ' + st.total, st.tries + (st.tries === 1 ? ' try' : ' tries')) +
       '<div class="mcols' + (st.anim ? ' deal' : '') + '">' +
         '<div><div class="k mhead">' + esc(head[0]) + '</div>' + col(st.left, 'l', st.selL) + '</div>' +
@@ -1161,7 +1196,10 @@
   /* year quiz: real events, distractor years pulled close enough to test */
   function yearRound(n) {
     var qs = [];
-    shuffle(TIMELINE.slice()).forEach(function (e) {
+    var range = filtVal('yearquiz');
+    var src = range ? TIMELINE.filter(function (e) { return e.y >= range[1] && e.y <= range[2]; })
+                    : TIMELINE;
+    shuffle(src.slice()).forEach(function (e) {
       if (qs.length >= n) return;
       var opts = [String(e.y)], used = {}; used[e.y] = 1;
       var tries = 0;
@@ -1296,7 +1334,7 @@
     if (st.qs.length - st.i < 3) refillQuiz();
     var q = st.qs[st.i];
     ctx.mount(
-      ctx.backbar(GAMES[st.id].name) +
+      ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(st.score + ' right' + (st.streak > 2 ? ' · ' + st.streak + ' straight' : ''), String(st.i + 1)) +
       '<div class="gcur' + (st.lock ? '' : ' swap') + '">' +
         '<div class="gname num' + (flat(q.p).length > 44 ? ' gsm' : '') + '" data-plain="' + esc(flat(q.p)) + '">' + fx(q.p) + '</div></div>' +
@@ -1454,6 +1492,10 @@
     var t = e.target;
     var el;
     if ((el = t.closest('[data-gagain]'))) { play(el.getAttribute('data-gagain')); return; }
+    if (t.closest('[data-gfilter]') && st) {
+      FILT[st.id] = ((FILT[st.id] || 0) + 1) % (filtOpts(st.id).length + 1);
+      play(st.id); return;
+    }
     if (!st) return;
     if ((el = t.closest('[data-gap]'))) { placeAt(parseInt(el.getAttribute('data-gap'), 10)); return; }
     if ((el = t.closest('[data-ml]'))) { pickMatch('l', parseInt(el.getAttribute('data-ml'), 10)); return; }

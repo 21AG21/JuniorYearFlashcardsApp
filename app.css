@@ -167,7 +167,11 @@ button.hero-tap:active{ opacity:.55; }
 .dhero.tallval .dv{ line-height:1; letter-spacing:-.04em; }
 
 .backbar{ display:flex; align-items:center; gap:8px; margin:0 0 var(--s-3); }
-.backbar .k{ color:var(--muted); }
+/* the screen's name is the back control — a word, never an arrow */
+.backbar .bk{ background:none; border:0; padding:12px 0; min-height:44px; font:inherit;
+  font-size:14px; font-weight:500; color:var(--muted); cursor:pointer; letter-spacing:0; }
+.backbar .bk:active{ opacity:.5; }
+.backbar .gfilt{ margin-left:auto; padding:12px 0; min-height:44px; font-size:14px; }
 .iconbtn{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; margin-left:-11px;
   background:none; border:0; padding:0; color:var(--ink-soft); cursor:pointer; }
 .iconbtn svg{ width:24px; height:24px; }
@@ -298,6 +302,9 @@ button.hero-tap:active{ opacity:.55; }
 .choice[data-state="right"]{ color:var(--ink); }
 .choice[data-state="wrong"]{ color:var(--muted); text-decoration:line-through; text-decoration-thickness:1px; }
 .choice[data-state="mute"]{ color:var(--muted); }
+/* the justification rides as the second line of the right answer */
+.choice .why{ display:block; font-size:15px; font-weight:430; color:var(--ink-soft);
+  line-height:1.45; margin-top:6px; letter-spacing:0; }
 
 /* --- browse / search rows -------------------------------------------------- */
 .qrow{ display:block; width:100%; text-align:left; background:none; border:0; padding:0; color:inherit; font:inherit; cursor:pointer;

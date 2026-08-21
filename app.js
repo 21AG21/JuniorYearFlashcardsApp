@@ -115,9 +115,9 @@
   function verb(v) { return v ? v.charAt(0) + v.slice(1).toLowerCase() : ''; }
 
   function backbar(title, rightHtml) {
+    // no arrows anywhere: the screen's name is the way back, like the heroes
     return '<div class="backbar">' +
-      '<button class="iconbtn" data-back aria-label="Back"><svg><use href="#i-back"/></svg></button>' +
-      '<span class="k">' + esc(title) + '</span>' +
+      '<button class="bk" data-back>' + esc(title) + '</button>' +
       (rightHtml || '') + '</div>';
   }
 
@@ -325,6 +325,7 @@
       (starred != null ? '<button class="iconbtn" data-star aria-label="Star" aria-pressed="' + starred + '">' +
         '<svg><use href="#i-star' + (starred ? '-fill' : '') + '"/></svg></button>' : '') +
       // session length is set where it is felt, not buried in Settings
+      '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'MCQ' : (set.typing ? 'Typing' : 'Flip')) + '</button>' +
       '<button class="sizebtn num" data-cycle="sessionSize">' + set.sessionSize + ' per session</button>' +
       '<button class="sizebtn num" data-cycle="newPerSession">' + set.newPerSession + ' new</button>' +
       '</div>';
@@ -403,10 +404,11 @@
         if (sess.answered) {
           state = ch.correct ? 'right' : (n === sess.picked ? 'wrong' : 'mute');
         }
+        var why = sess.answered && ch.correct && c.n
+          ? '<span class="why">' + T.html(c.n) + '</span>' : '';
         return '<button class="choice' + (stacked(ch.text) ? ' mathy' : '') + '" data-pick="' + n + '"' + (state ? ' data-state="' + state + '"' : '') +
-          (sess.answered ? ' disabled' : '') + '>' + T.html(ch.text) + '</button>';
-      }).join('') + '</div>' +
-      (sess.answered && c.n ? '<div class="note reveal">' + T.html(c.n) + '</div>' : '');
+          (sess.answered ? ' disabled' : '') + '>' + T.html(ch.text) + why + '</button>';
+      }).join('') + '</div>';
 
     var footer = sess.answered
       ? '<div class="rate"><button class="r-good" data-next><span class="lab">Next</span></button></div>'
@@ -802,6 +804,15 @@
     if (t.closest('[data-typing-cycle]')) {
       S.setSetting('typing', !S.getSettings().typing);
       viewSettings(); return;
+    }
+    if (t.closest('[data-qmode]') && sess) {
+      var typ = S.getSettings().typing;
+      if (sess.quiz) { sess.quiz = false; S.setSetting('typing', true); }
+      else if (typ) { S.setSetting('typing', false); }
+      else { sess.quiz = true; }
+      sess.choices = null; sess.answered = false; sess.picked = -1;
+      sess.revealed = false; sess.verdict = null; sess.typed = null;
+      renderCard(); return;
     }
     var rq = t.closest('[data-req]');
     if (rq) {
