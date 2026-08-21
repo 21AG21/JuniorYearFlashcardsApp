@@ -1140,7 +1140,10 @@
 
   window.addEventListener('hashchange', route);
   WIDE_MQ.addEventListener('change', function () {
-    if (sess) renderCard(); else route();   // never restart a session over a resize
+    // never restart a session — or a live game round — over a resize
+    if (sess) renderCard();
+    else if (window.Games && window.Games.onResize()) {}
+    else route();
   });
   // Some engines never fire the MQ change event under emulation or in-page
   // resizes — watch resize too and re-render only when the split actually flips.
@@ -1150,7 +1153,9 @@
     sizeTimer = setTimeout(function () {
       if (isWide() === wasWide) { fitVals(); return; }   // widths moved — refit values
       wasWide = isWide();
-      if (sess) renderCard(); else route();
+      if (sess) renderCard();
+      else if (window.Games && window.Games.onResize()) {}
+      else route();
     }, 120);
   });
 

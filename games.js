@@ -137,8 +137,16 @@
     ['cos 2x', '{1 − tan²x}⁄{1 + tan²x}', 't2x'], ['sin 2x', '{2 tan x}⁄{1 + tan²x}', 't2x'],
     /* triple angle for tangent */
     ['tan 3x', '{3 tan x − tan³x}⁄{1 − 3 tan²x}', 'tri'],
-    /* half angle with the radical */
-    ['sin({x}⁄{2})', '±√({1 − cos x}⁄2)', 'rad'], ['cos({x}⁄{2})', '±√({1 + cos x}⁄2)', 'rad']
+    /* half angle with the radical — braced denominators keep the paren out */
+    ['sin({x}⁄{2})', '±√({1 − cos x}⁄{2})', 'rad'], ['cos({x}⁄{2})', '±√({1 + cos x}⁄{2})', 'rad'],
+    /* quarter-turn shifts and their reciprocals — the families that were thin */
+    ['sin(x + 90°)', 'cos x', 'shf'], ['cos(x + 90°)', '−sin x', 'shf'],
+    ['sin(x − 90°)', '−cos x', 'shf'], ['cos(x − 90°)', 'sin x', 'shf'],
+    ['tan(x + 90°)', '−cot x', 'shf'], ['sec(π − x)', '−sec x', 'shf'],
+    ['csc(π − x)', 'csc x', 'shf'],
+    /* more double-angle shapes */
+    ['cot 2x', '{cot²x − 1}⁄{2 cot x}', 'dbl'], ['sin x cos x', '{sin 2x}⁄2', 'dbl'],
+    ['csc 2x', '{sec x csc x}⁄2', 'dbl']
   ];
   /* the board runs four stages of twelve, easy families first */
   var STAGES = [
@@ -293,20 +301,36 @@
   }
 
   /* ---------------- helpers ---------------------------------------------- */
+  /* a failed fetch is never memoized — the next visit retries, and the
+     caller renders a real screen instead of dereferencing an empty deal */
   function loadTimeline() {
-    if (TIMELINE) return Promise.resolve(TIMELINE);
+    if (TIMELINE && TIMELINE.length) return Promise.resolve(TIMELINE);
     return fetch('data/timeline.json', { cache: 'no-cache' })
       .then(function (r) { return r.json(); })
-      .then(function (j) { TIMELINE = j; return j; })
-      .catch(function () { return (TIMELINE = []); });
+      .then(function (j) { TIMELINE = j && j.length ? j : null; return TIMELINE || []; })
+      .catch(function () { TIMELINE = null; return []; });
   }
 
   function loadVocab() {
-    if (FRVOCAB) return Promise.resolve(FRVOCAB);
+    if (FRVOCAB && FRVOCAB.length) return Promise.resolve(FRVOCAB);
     return fetch('data/fr-vocab.json', { cache: 'no-cache' })
       .then(function (r) { return r.json(); })
-      .then(function (j) { FRVOCAB = j; return j; })
-      .catch(function () { return (FRVOCAB = []); });
+      .then(function (j) { FRVOCAB = j && j.length ? j : null; return FRVOCAB || []; })
+      .catch(function () { FRVOCAB = null; return []; });
+  }
+
+  /* the screen a game shows when its data cannot be fetched right now */
+  function renderNoData(id) {
+    st = null;
+    ctx.mount(
+      ctx.backbar(GAMES[id].name) +
+      '<div class="done-hero"><span class="k">' + esc(GAMES[id].name) + '</span>' +
+      '<div class="v">Offline</div>' +
+      '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">This game needs its data — try again in a moment</div></div>' +
+      '<button class="act" data-gagain="' + id + '">Try again</button>' +
+      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games">Games</button></div>',
+      { session: true }
+    );
   }
 
   function shuffle(a) {
@@ -370,7 +394,8 @@
 
   function best() { return S.getSettings().gameBest || {}; }
   function saveBest(id, n, label) {
-    if (n == null || !isFinite(n) || !label) return;   // never store a blank best
+    // never store a blank best — and a zero is a result, not a best
+    if (n == null || !isFinite(n) || n <= 0 || !label) return;
     var b = best();
     if (!b[id] || b[id].n == null || n > b[id].n) { b[id] = { n: n, label: label }; S.setSetting('gameBest', b); }
   }
@@ -403,15 +428,21 @@
     var g = GAMES[id];
     if (!g) return ctx.go('#/games');
     clearTimeout(timer);
-    if ((id === 'timeline' || id === 'periodquiz' || id === 'yearquiz') && !TIMELINE) {
-      return loadTimeline().then(function () {
-        if (location.hash.indexOf('#/game/' + id) === 0) play(id);
-      });
+    if (id === 'timeline' || id === 'periodquiz' || id === 'yearquiz') {
+      if (!TIMELINE || !TIMELINE.length) {
+        return loadTimeline().then(function (j) {
+          if (location.hash.indexOf('#/game/' + id) !== 0) return;
+          if (j.length) play(id); else renderNoData(id);
+        });
+      }
     }
-    if ((id === 'frmatch' || id === 'frgender') && !FRVOCAB) {
-      return loadVocab().then(function () {
-        if (location.hash.indexOf('#/game/' + id) === 0) play(id);
-      });
+    if (id === 'frmatch' || id === 'frgender') {
+      if (!FRVOCAB || !FRVOCAB.length) {
+        return loadVocab().then(function (j) {
+          if (location.hash.indexOf('#/game/' + id) !== 0) return;
+          if (j.length) play(id); else renderNoData(id);
+        });
+      }
     }
     if (g.kind === 'order') startOrder(id);
     else if (g.kind === 'match') startMatch(id);
@@ -540,7 +571,13 @@
       dealBoard(st.rounds[0]);
     } else if (id === 'langboard') {
       var facts = termRound(9, filtVal('langboard'));
-      if (facts.length < 4) facts = termRound(9, null);   // a thin unit never bricks the board
+      if (facts.length < 4 && FILT.langboard) {
+        // a thin unit never bricks the board — and the filter word must not
+        // claim a scope the board is not honoring
+        FILT.langboard = 0;
+        facts = termRound(9, null);
+        ctx.toast('That unit is thin — showing all');
+      }
       dealBoard(facts);
     } else {
       dealBoard(conjRound(10));
@@ -580,12 +617,17 @@
   }
   function tapTile(i) {
     if (!st || st.kind !== 'board') return;
+    // after a hit the board advances — a trailing double-tap half must not
+    // spend the next prompt's first try
+    if (st.lockUntil && Date.now() < st.lockUntil) return;
     var tl = st.tiles[i], f = st.facts[st.i];
     if (!tl || tl.done) return;
     if (tl.t === f[1]) {
+      clearTimeout(timer);                       // no stale flash re-render later
       tl.done = true;
       if (st.firstTry) st.score++;
       st.i++; st.firstTry = true; st.flash = -1;
+      st.lockUntil = Date.now() + 250;
       renderBoard();
     } else {
       st.firstTry = false; st.flash = i;
@@ -602,10 +644,14 @@
     return '<div class="sess-top"><span class="scope">' + esc(scopeText) + '</span>' +
       '<span class="pos num">' + esc(posText) + '</span></div>';
   }
+  var doneAt = 0;   // the ghost half of a double tap must not dismiss the score
   function gameDone(id, score, total, label) {
-    if (total > 0) saveBest(id, score / total, label);
+    // a filtered round plays a different game than the hub's best describes —
+    // bests are earned on the full game only
+    if (total > 0 && !FILT[id]) saveBest(id, score / total, label);
     var g = GAMES[id];
     st = null;
+    doneAt = Date.now();
     ctx.mount(
       ctx.backbar(GAMES[id].name) +
       '<div class="done-hero"><span class="k">' + esc(g.name) + '</span>' +
@@ -716,6 +762,9 @@
 
   function placeAt(gapIdx) {
     if (!st || st.kind !== 'order' || !st.cur) return;
+    // the second half of a double tap must not place a card sight-unseen
+    if (st.lockUntil && Date.now() < st.lockUntil) return;
+    st.lockUntil = Date.now() + 300;
     var item = st.cur, placed = st.placed;
     var okBefore = gapIdx === 0 || placed[gapIdx - 1].v <= item.v;
     var okAfter = gapIdx === placed.length || item.v <= placed[gapIdx].v;
@@ -784,8 +833,12 @@
         case 7: var m = 1 + Math.floor(Math.random() * 3);
           pair = ['1⁄' + (m > 1 ? '{x' + sup(m) + '}' : 'x'), '{−' + m + '}⁄{x' + sup(m + 1) + '}']; break;
       }
-      if (seenL[pair[0]] || seenR[pair[1]]) continue;
+      // no expression may sit in both columns (eˣ ↔ eˣ, or 1⁄x as one pair's
+      // answer and another's question) — a repeated tile reads as a mis-deal
+      if (pair[0] === pair[1]) continue;
+      if (seenL[pair[0]] || seenR[pair[1]] || seenL[pair[1]] || seenR[pair[0]]) continue;
       seenL[pair[0]] = seenR[pair[1]] = 1;
+      seenL[pair[1]] = seenR[pair[0]] = 1;
       out.push(pair);
     }
     return out;
@@ -858,11 +911,21 @@
     var apart = (an[3] && nAn > 1 ? '(' + an[1] + ')' : an[1]) + subNum(nAn);
     return cpart + apart;
   }
+  /* the crossing rule balances charges for any pair, but not every crossing
+     is a real bottle — nitrides form with few metals, ammonium skips O/N */
+  function validCombo(cat, an) {
+    if (an[0] === 'nitride') {
+      return ['lithium', 'magnesium', 'calcium', 'barium', 'aluminum', 'zinc'].indexOf(cat[0]) > -1;
+    }
+    if (cat[0] === 'ammonium') return an[0] !== 'oxide' && an[0] !== 'nitride';
+    return true;
+  }
   function genFormulaPairs(n) {
     var out = [], seenL = {}, seenR = {}, guard = 0;
     while (out.length < n && guard++ < 200) {
       var cat = CATS[Math.floor(Math.random() * CATS.length)];
       var an = ANIONS[Math.floor(Math.random() * ANIONS.length)];
+      if (!validCombo(cat, an)) continue;
       var name = cat[0] + ' ' + an[0], f = formulaOf(cat, an);
       if (seenL[name] || seenR[f]) continue;
       seenL[name] = 1; seenR[f] = 1;
@@ -882,7 +945,13 @@
       id === 'elemmatch' ? elemPairs() :
       id === 'frmatch' ? (FRVOCAB && FRVOCAB.length ? sample(FRVOCAB, 6) : deckPairs('french')) :
       langPairs(filtVal('langmatch'));
-    // a thin unit falls back to its own subject, never to another one
+    // a thin unit falls back to its own subject, never to another one —
+    // and the filter word resets so it never claims a scope it isn't honoring
+    if (id === 'langmatch' && pairs.length < 4 && FILT.langmatch) {
+      FILT.langmatch = 0;
+      pairs = langPairs(null);
+      ctx.toast('That unit is thin — showing all');
+    }
     if (id === 'langmatch' && pairs.length < 4) pairs = langPairs(null);
     if (!pairs.length) pairs = deckPairs(GAMES[id].deck) ;
     if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
@@ -1095,10 +1164,15 @@
       if (t === 4) {                              // continuity: plug in, fully generated
         var pa = 1 + Math.floor(Math.random() * 4), pb = 1 + Math.floor(Math.random() * 6);
         var pc = 1 + Math.floor(Math.random() * 9), pk = 1 + Math.floor(Math.random() * 4);
-        p = 'lim x→' + pk + '  (' + pa + 'x² + ' + pb + 'x + ' + pc + ')';
-        r = String(pa * pk * pk + pb * pk + pc);
+        var co = function (n) { return n === 1 ? '' : String(n); };   // never "1x²"
+        p = 'lim x→' + pk + '  (' + co(pa) + 'x² + ' + co(pb) + 'x + ' + pc + ')';
+        var rv = pa * pk * pk + pb * pk + pc;
+        r = String(rv);
+        // near-misses guarantee four distinct options even when the computed
+        // distractors collapse onto each other
         pool = [String(pa * pk * pk - pb * pk + pc), String(pb * pk + pc),
-                String(pa * pk * pk + pb * pk), String(pa * pk + pb + pc), '∞'];
+                String(pa * pk * pk + pb * pk), String(pa * pk + pb + pc),
+                String(rv + 1), String(rv - 1), '∞'];
       } else if (t === 5) {                       // tan takes sine's place, still generated
         var ta = 2 + Math.floor(Math.random() * 6), tb = 2 + Math.floor(Math.random() * 6);
         if (Math.random() < 0.5) {
@@ -1176,13 +1250,17 @@
     while (qs.length < n && guard++ < 200) {
       var style = Math.floor(Math.random() * 5), num = '';
       var d = function () { return 1 + Math.floor(Math.random() * 9); };
+      // every number has ONE defensible count — bare trailing-zero integers
+      // ("8000") are ambiguous by the convention AP actually teaches, so the
+      // trailing-zero drill uses captive zeros and decimal-point forms instead
       if (style === 0) num = '0.00' + d() + [0, d(), '0', d() + '0'][Math.floor(Math.random() * 4)];
-      else if (style === 1) num = '' + d() + (Math.random() < 0.4 ? d() : '') + '0'.repeat(1 + Math.floor(Math.random() * 3));
+      else if (style === 1) num = '' + d() + '0'.repeat(1 + Math.floor(Math.random() * 3)) + d();
       else if (style === 2) num = '' + d() + d() + '0.' + [0, '0', d()][Math.floor(Math.random() * 3)];
       else if (style === 3) num = d() + '.0' + d();
       else {
-        // mantissas of varied length, zeros included — never one fixed shape
-        var frac = '', fl = 1 + Math.floor(Math.random() * 3);
+        // mantissas of varied length, zeros included — counts reach 6, so a
+        // high option row never names the answer by elimination
+        var frac = '', fl = 1 + Math.floor(Math.random() * 5);
         for (var fi = 0; fi < fl; fi++) frac += (Math.random() < 0.35 ? '0' : d());
         num = d() + '.' + frac + ' × 10' + sup(2 + Math.floor(Math.random() * 4));
       }
@@ -1190,11 +1268,11 @@
       if (seen[num]) continue;
       seen[num] = 1;
       var r0 = countSig(num), r = String(r0);
-      // a sliding window of four counts — the answer's position in the sorted
-      // row varies, so the option list itself teaches nothing
-      var lo = Math.max(1, r0 - Math.floor(Math.random() * 4));
-      if (lo + 3 < r0) lo = r0 - 3;
-      var opts = [lo, lo + 1, lo + 2, lo + 3].map(String);
+      // four nearby counts, dealt shuffled — sorting them re-taught the
+      // answer's slot whenever the window clamped at 1
+      var span = Math.min(4, r0);
+      var lo = r0 - Math.floor(Math.random() * span);
+      var opts = shuffle([lo, lo + 1, lo + 2, lo + 3].map(String));
       qs.push({ p: num, c: opts, r: r });
     }
     return qs;
@@ -1274,11 +1352,20 @@
       // an event whose name contains its year answers itself — sit those out
       if (!keepDated && /\b(1[4-9]\d\d|20\d\d)\b/.test(e.t)) return;
       var opts = [String(e.y)], used = {}; used[e.y] = 1;
+      // symmetric offsets always center the answer in a sorted row — lean the
+      // window to one side often enough that every slot stays live
+      var side = Math.random();
+      var pool = side < 0.3 ? [2, 3, 5, 8, 10, 12]
+               : side < 0.6 ? [-2, -3, -5, -8, -10, -12]
+               : [2, -2, 3, -3, 5, -5, 8, -8, 10, -10];
       var tries = 0;
       while (opts.length < 4 && tries++ < 60) {
-        var off = [2, -2, 3, -3, 5, -5, 8, -8, 10, -10][Math.floor(Math.random() * 10)];
+        var off = pool[Math.floor(Math.random() * pool.length)];
         var y = e.y + off;
         if (used[y] || y > 2026) continue;
+        // a year the event's own note mentions is a defensible answer, not a
+        // distractor (Schenck 1919 beside the Espionage Act 1917)
+        if (e.d && String(e.d).indexOf(String(y)) > -1) continue;
         used[y] = 1; opts.push(String(y));
       }
       if (opts.length < 4) return;
@@ -1309,7 +1396,8 @@
       var opts = [r], used = {}; used[r] = 1;
       var tries = 0;
       while (opts.length < 4 && tries++ < 40) {
-        var dz = z + [-2, -1, 1, 2][Math.floor(Math.random() * 4)];
+        // ±3 keeps the light elements askable — hydrogen has no Z−1 or Z−2
+        var dz = z + [-3, -2, -1, 1, 2, 3][Math.floor(Math.random() * 6)];
         if (dz < 1 || dz > 36) continue;
         var w = configOf(dz);
         if (used[w]) continue;
@@ -1363,13 +1451,19 @@
     return qs;
   }
 
-  /* le or la, straight from the vocabulary’s own articles */
+  /* le or la, straight from the vocabulary’s own articles. Nouns that are
+     standard French in BOTH genders (le/la mode, le/la greffe…) sit out —
+     with two options, an ambiguous noun makes the key indefensible. */
+  var DUAL_GENDER = { mode: 1, greffe: 1, tour: 1, poste: 1, livre: 1, somme: 1,
+    voile: 1, manche: 1, mousse: 1, moule: 1, 'mémoire': 1, critique: 1,
+    page: 1, 'crêpe': 1, physique: 1, garde: 1, aide: 1, 'pendule': 1, vase: 1 };
   function genderRound(n) {
     var qs = [];
     shuffle(FRVOCAB.slice()).forEach(function (v) {
       if (qs.length >= n) return;
       var m = /^(le|la) ([a-zàâçéèêëîïôöûùüÿœæ’' -]+)$/i.exec(v[0]);
       if (!m) return;
+      if (DUAL_GENDER[m[2].toLowerCase().trim()]) return;
       qs.push({ p: m[2], c: ['le', 'la'], r: m[1].toLowerCase() });
     });
     return qs;
@@ -1407,6 +1501,7 @@
   function renderQuiz() {
     if (st.qs.length - st.i < 3) refillQuiz();
     var q = st.qs[st.i];
+    if (!q) return renderNoData(st.id);      // a deal can come up empty offline
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(st.score + ' right' + (st.streak > 2 ? ' · ' + st.streak + ' straight' : ''), String(st.i + 1)) +
@@ -1437,7 +1532,8 @@
     var right = q.c[i] === q.r;
     if (right) {
       st.score++; st.streak++;
-      if (st.streak > st.bestRun) {
+      // a streak on a thin filter recycles a few prompts — full-game runs only
+      if (st.streak > st.bestRun && !FILT[st.id]) {
         st.bestRun = st.streak;
         saveBest(st.id, st.streak, st.streak + ' straight');
       }
@@ -1572,7 +1668,10 @@
   function onClick(e) {
     var t = e.target;
     var el;
-    if ((el = t.closest('[data-gagain]'))) { play(el.getAttribute('data-gagain')); return; }
+    if ((el = t.closest('[data-gagain]'))) {
+      if (Date.now() - doneAt < 400) return;   // the tap that ended the round
+      play(el.getAttribute('data-gagain')); return;
+    }
     if (t.closest('[data-gfilter]') && st) {
       FILT[st.id] = ((FILT[st.id] || 0) + 1) % (filtOpts(st.id).length + 1);
       play(st.id); return;
@@ -1603,6 +1702,17 @@
     onRoute: function (root) {
       // leaving the games clears live state and any pending advance timer
       if (root !== 'game') { clearTimeout(timer); st = null; }
+    },
+    onResize: function () {
+      // a viewport crossing re-renders the live round — it never re-deals
+      if (!st) return false;
+      if (st.kind === 'order') renderOrder();
+      else if (st.kind === 'match') renderMatch();
+      else if (st.kind === 'board') renderBoard(true);
+      else if (st.kind === 'quiz') renderQuiz();
+      else if (st.kind === 'graph') renderGraph();
+      else renderCircle();
+      return true;
     },
     linksFor: function (deckId) {
       var out = [];
