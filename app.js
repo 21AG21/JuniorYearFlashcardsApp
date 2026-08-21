@@ -58,17 +58,6 @@
         }
       });
     });
-    var seg = app.querySelector('#themeseg');
-    if (seg && !seg._wired) {
-      seg._wired = true;
-      seg.addEventListener('lg-change', function (e) {
-        var items = seg.querySelectorAll('[data-mode]');
-        var pick = items[e.detail];
-        if (!pick) return;
-        S.setSetting('theme', pick.getAttribute('data-mode'));
-        applyTheme();
-      });
-    }
   }
 
   /* ---------------- two-pane wide layout (skill §5.6) -------------------- */
@@ -118,6 +107,8 @@
   var NICE = { lang: 'English', chem: 'Chemistry', french: 'French', calcbc: 'Calc BC', apush: 'US History' };
   function nice(idOrDeck) { var id = typeof idOrDeck === 'string' ? idOrDeck : idOrDeck.id; return NICE[id] || (typeof idOrDeck === 'string' ? id : idOrDeck.short); }
   function pct(x) { return Math.round(x * 100) + '%'; }
+  // verbs arrive from the data in caps — never render them that way
+  function verb(v) { return v ? v.charAt(0) + v.slice(1).toLowerCase() : ''; }
 
   function backbar(title, rightHtml) {
     return '<div class="backbar">' +
@@ -191,9 +182,15 @@
         '</button></li>';
     }).join('');
 
+    // the name is the way back; the number steps to the next course (skill §7.1:
+    // tappable text instead of buttons wherever text can navigate)
+    var ids = S.getIndex().courses.map(function (c) { return c.id; });
+    var nextId = ids[(ids.indexOf(deckId) + 1) % ids.length];
     mount(
-      backbar('') +
-      '<div class="dhero"><span class="dn">' + esc(nice(d)) + '</span><span class="dv">' + st.total + '</span></div>' +
+      '<div class="dhero">' +
+        '<button class="dn" data-go="#/">' + esc(nice(d)) + '</button>' +
+        '<button class="dv num" data-go="#/d/' + nextId + '">' + st.total + '</button>' +
+      '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
@@ -223,14 +220,21 @@
       return '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
         '<span class="qq' + (known ? ' dim' : '') + '">' + T.html(c.q) + '</span>' +
         '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
-        '<span class="qmeta">' + esc(c.v) + (topicLabel(c) ? ' · ' + esc(topicLabel(c)) : '') +
+        '<span class="qmeta">' + esc(verb(c.v)) + (topicLabel(c) ? ' · ' + esc(topicLabel(c)) : '') +
           (known ? ' · known' : (S.isNew(c.i) ? '' : ' · learning')) + '</span>' +
         '</button></li>';
     }).join('');
 
+    // units with content, in course order — the number steps through them
+    var withCards = d.units.filter(function (x) { return S.unitStats(d, x.id).total; });
+    var pos = withCards.map(function (x) { return x.id; }).indexOf(unitId);
+    var nextU = withCards[(pos + 1) % withCards.length];
     mount(
-      backbar(nice(d) + ' · Unit ' + u.n) +
-      '<div class="dhero"><span class="dn">' + esc(u.title) + '</span><span class="dv">' + us.total + '</span></div>' +
+      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n + '</div>' +
+      '<div class="dhero' + (u.title.length > 20 ? ' long' : '') + '">' +
+        '<button class="dn" data-go="#/d/' + deckId + '">' + esc(u.title) + '</button>' +
+        '<button class="dv num" data-go="#/d/' + deckId + '/u/' + nextU.id + '">' + us.total + '</button>' +
+      '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
@@ -303,7 +307,9 @@
     // One small label line: scope on the left, position on the right (skill §4.3).
     var d = c ? cardDeckOf(c) : sess.deck;
     var unit = c && d ? d.unitById[c.u] : null;
-    var scope = d ? nice(d) + (unit ? ' · ' + unit.title : '') : 'Review';
+    // never truncated, and it names the CED topic the card comes from
+    var ced = c && c.t && /^\d+\.\d+$/.test(c.t) ? ' · CED ' + c.t : '';
+    var scope = d ? nice(d) + (unit ? ' · ' + unit.title : '') + ced : 'Review';
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
       '<span class="pos num">' + Math.min(sess.done + 1, sess.planned) + ' of ' + sess.planned + '</span>' +
@@ -311,10 +317,15 @@
   }
   // Done / Undo / Star as quiet text — the affordances survive, the chrome does not.
   function sessUtil(starred) {
+    var set = S.getSettings();
     return '<div class="sess-util">' +
-      '<button class="textbtn quiet" data-exit>Done</button>' +
-      (sess.history.length ? '<button class="textbtn quiet" data-undo>Undo</button>' : '') +
-      (starred != null ? '<button class="textbtn quiet" data-star aria-pressed="' + starred + '">' + (starred ? 'Starred' : 'Star') + '</button>' : '') +
+      '<button class="iconbtn" data-exit aria-label="Close"><svg><use href="#i-close"/></svg></button>' +
+      (sess.history.length ? '<button class="iconbtn" data-undo aria-label="Undo"><svg><use href="#i-undo"/></svg></button>' : '') +
+      (starred != null ? '<button class="iconbtn" data-star aria-label="Star" aria-pressed="' + starred + '">' +
+        '<svg><use href="#i-star' + (starred ? '-fill' : '') + '"/></svg></button>' : '') +
+      // session length is set where it is felt, not buried in Settings
+      '<button class="sizebtn num" data-cycle="sessionSize">' + set.sessionSize + ' per session</button>' +
+      '<button class="sizebtn num" data-cycle="newPerSession">' + set.newPerSession + ' new</button>' +
       '</div>';
   }
 
@@ -587,8 +598,7 @@
           plural(total, 'card') + ' reviewed · ' + plural(S.streak(), 'day') + ' streak</div>' +
       '</div>' +
       '<div style="margin:var(--s-4) 0 var(--s-5)">' + rows + '</div>' +
-      (st && st.due ? '<button class="act" data-go="' + again + '" style="margin-bottom:16px">Keep going</button>' : '') +
-      '<div><button class="textbtn" data-go="' + (d ? '#/d/' + d.id : '#/') + '">Done</button></div>'
+      (st && st.due ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
     );
   }
 
@@ -679,7 +689,7 @@
     if (S.studiedToday()) caption.push(plural(S.studiedToday(), 'card') + ' today');
     if (S.streak() > 1) caption.push(S.streak() + '-day streak');
     mount(
-      '<div class="head"><span class="k">Known</span>' +
+      '<div class="head">' +
       '<h1>' + totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString() + '</h1>' +
       (caption.length ? '<div class="sub">' + caption.join(' · ') + '</div>' : '') + '</div>' +
       (rows ? '<ul class="list tight">' + rows + '</ul>' : '') +
@@ -704,19 +714,11 @@
 
       '<div class="sect">Session</div>' +
       setRow('Typing mode', 'typing', s.typing) +
-      setRow('High-yield first', 'coreFirst', s.coreFirst) +
-      numRow('Cards per session', 'sessionSize', s.sessionSize, [15, 20, 30, 50, 100]) +
-      numRow('New cards per session', 'newPerSession', s.newPerSession, [5, 10, 20, 40]) +
 
       '<div class="sect">Appearance</div>' +
-      '<div class="lg lg-seg" id="themeseg">' +
-        // data-mode, not data-theme: the kit's [data-theme] selectors must
-        // never match a seg item, only the root element
-        ['auto', 'light', 'dark'].map(function (t) {
-          return '<div class="lg-seg-item' + (s.theme === t ? ' is-active' : '') + '" data-mode="' + t + '">' +
-            t.charAt(0).toUpperCase() + t.slice(1) + '</div>';
-        }).join('') + '</div>' +
-      setRow('Glass material', 'glass', s.glass) +
+      // one word that cycles auto -> light -> dark on every tap
+      '<div class="setrow"><div class="sname">Theme</div>' +
+        '<button class="cyc" data-theme-cycle>' + s.theme.charAt(0).toUpperCase() + s.theme.slice(1) + '</button></div>' +
 
       '<div class="sect">Account</div>' +
       (S.account.connected()
@@ -759,12 +761,7 @@
     return '<div class="setrow"><div class="sname">' + esc(name) + '</div>' +
       '<div class="lg lg-toggle' + (on ? ' is-on' : '') + '" data-set="' + key + '" role="switch" tabindex="0" aria-checked="' + !!on + '" aria-label="' + esc(name) + '"><div class="lg-knob"></div></div></div>';
   }
-  function numRow(name, key, val, choices) {
-    return '<div class="setrow stack"><div class="sname">' + esc(name) + '</div>' +
-      '<div class="numchips">' + choices.map(function (n) {
-        return '<button class="chip" data-num="' + key + '" data-val="' + n + '" aria-pressed="' + (val === n) + '">' + n + '</button>';
-      }).join('') + '</div></div>';
-  }
+
 
   /* ==========================================================================
      global delegation
@@ -794,10 +791,20 @@
       peek.classList.toggle('open', !a.hidden);
       return;
     }
-    var numEl = t.closest('[data-num]');
-    if (numEl) {
-      S.setSetting(numEl.getAttribute('data-num'), parseInt(numEl.getAttribute('data-val'), 10));
-      viewSettings(); return;
+    if (t.closest('[data-theme-cycle]')) {
+      var order = ['auto', 'light', 'dark'];
+      var cur = S.getSettings().theme;
+      S.setSetting('theme', order[(order.indexOf(cur) + 1) % order.length]);
+      applyTheme(); viewSettings(); return;
+    }
+    var cyc = t.closest('[data-cycle]');
+    if (cyc) {
+      var ckey = cyc.getAttribute('data-cycle');
+      var opts = ckey === 'sessionSize' ? [15, 20, 30, 50, 100] : [5, 10, 20, 40];
+      var at = opts.indexOf(S.getSettings()[ckey]);
+      S.setSetting(ckey, opts[(at + 1) % opts.length]);
+      if (sess) renderCard(); else route();
+      return;
     }
     var pr = t.closest('[data-profile]');
     if (pr) { S.switchProfile(pr.getAttribute('data-profile')); applyTheme(); viewSettings(); toast('Switched profile'); return; }

@@ -7,6 +7,8 @@
   'use strict';
 
   var ctx = null;                 // {mount, esc, go, toast, nice, backbar}
+  var TIMELINE = null;            // the real APUSH timeline, 171 dated events
+  var FRVOCAB = null;             // AP French vocabulary, 558 pairs
   var S = null, T = null;
   var st = null;                  // live game state
   var timer = null;
@@ -45,28 +47,56 @@
   ];
 
   /* equivalence facts for the identities board: prompt → the tile it equals */
+  /* Every standard trig identity, by family. The board draws whichever fit
+     its columns; the rest stay available as the bank grows with the layout. */
   var EQUIV = [
-    ['sin²x', '1 − cos²x'],
-    ['cos²x', '1 − sin²x'],
-    ['1', 'sin²x + cos²x'],
-    ['sec²x', '1 + tan²x'],
-    ['csc²x', '1 + cot²x'],
-    ['tan²x', 'sec²x − 1'],
-    ['cot²x', 'csc²x − 1'],
-    ['tan x', 'sin x / cos x'],
-    ['cot x', 'cos x / sin x'],
-    ['sec x', '1 / cos x'],
-    ['csc x', '1 / sin x'],
-    ['sin(−x)', '−sin x'],
-    ['tan(−x)', '−tan x'],
-    ['cos(−x)', 'cos x'],
-    ['sin(90° − x)', 'cos x'],
-    ['cos(90° − x)', 'sin x'],
-    ['csc(90° − x)', 'sec x'],
-    ['sec(90° − x)', 'csc x'],
-    ['tan(90° − x)', 'cot x'],
-    ['sin 2x', '2 sin x cos x'],
-    ['cos 2x', 'cos²x − sin²x']
+    /* reciprocal */
+    ['sec x', '1 / cos x'], ['csc x', '1 / sin x'], ['cot x', '1 / tan x'],
+    ['sin x', '1 / csc x'], ['cos x', '1 / sec x'], ['tan x', '1 / cot x'],
+    /* quotient */
+    ['tan x', 'sin x / cos x'], ['cot x', 'cos x / sin x'],
+    /* Pythagorean, and every rearrangement */
+    ['1', 'sin²x + cos²x'], ['sec²x', '1 + tan²x'], ['csc²x', '1 + cot²x'],
+    ['sin²x', '1 − cos²x'], ['cos²x', '1 − sin²x'],
+    ['tan²x', 'sec²x − 1'], ['cot²x', 'csc²x − 1'],
+    ['sec²x − tan²x', '1'], ['csc²x − cot²x', '1'],
+    /* even and odd */
+    ['sin(−x)', '−sin x'], ['cos(−x)', 'cos x'], ['tan(−x)', '−tan x'],
+    ['csc(−x)', '−csc x'], ['sec(−x)', 'sec x'], ['cot(−x)', '−cot x'],
+    /* cofunction */
+    ['sin(90° − x)', 'cos x'], ['cos(90° − x)', 'sin x'], ['tan(90° − x)', 'cot x'],
+    ['cot(90° − x)', 'tan x'], ['sec(90° − x)', 'csc x'], ['csc(90° − x)', 'sec x'],
+    /* supplementary and shifted */
+    ['sin(180° − x)', 'sin x'], ['cos(180° − x)', '−cos x'], ['tan(180° − x)', '−tan x'],
+    ['sin(180° + x)', '−sin x'], ['cos(180° + x)', '−cos x'], ['tan(180° + x)', 'tan x'],
+    /* periodicity */
+    ['sin(x + 360°)', 'sin x'], ['cos(x + 360°)', 'cos x'], ['tan(x + 180°)', 'tan x'],
+    /* double angle */
+    ['sin 2x', '2 sin x cos x'], ['cos 2x', 'cos²x − sin²x'],
+    ['cos 2x', '2 cos²x − 1'], ['cos 2x', '1 − 2 sin²x'],
+    ['tan 2x', '2 tan x / (1 − tan²x)'],
+    /* power reduction */
+    ['sin²x', '(1 − cos 2x) / 2'], ['cos²x', '(1 + cos 2x) / 2'],
+    ['tan²x', '(1 − cos 2x)/(1 + cos 2x)'],
+    /* half angle */
+    ['tan(x/2)', '(1 − cos x) / sin x'], ['tan(x/2)', 'sin x / (1 + cos x)'],
+    ['sin²(x/2)', '(1 − cos x) / 2'], ['cos²(x/2)', '(1 + cos x) / 2'],
+    /* triple angle */
+    ['sin 3x', '3 sin x − 4 sin³x'], ['cos 3x', '4 cos³x − 3 cos x'],
+    /* sum and difference */
+    ['sin(x + y)', 'sin x cos y + cos x sin y'],
+    ['sin(x − y)', 'sin x cos y − cos x sin y'],
+    ['cos(x + y)', 'cos x cos y − sin x sin y'],
+    ['cos(x − y)', 'cos x cos y + sin x sin y'],
+    ['tan(x + y)', '(tan x + tan y)/(1 − tan x tan y)'],
+    ['tan(x − y)', '(tan x − tan y)/(1 + tan x tan y)'],
+    /* product to sum */
+    ['2 sin x cos y', 'sin(x + y) + sin(x − y)'],
+    ['2 cos x cos y', 'cos(x + y) + cos(x − y)'],
+    ['2 sin x sin y', 'cos(x − y) − cos(x + y)'],
+    /* simplifications worth knowing cold */
+    ['tan x · cot x', '1'], ['sin x · csc x', '1'], ['cos x · sec x', '1'],
+    ['sin x / tan x', 'cos x'], ['cos x · tan x', 'sin x'], ['sec x / csc x', 'tan x']
   ];
 
   /* graph base functions; every question is a generated A·f(Bx) with a sign */
@@ -117,6 +147,22 @@
   }
 
   /* ---------------- helpers ---------------------------------------------- */
+  function loadTimeline() {
+    if (TIMELINE) return Promise.resolve(TIMELINE);
+    return fetch('data/timeline.json', { cache: 'no-cache' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { TIMELINE = j; return j; })
+      .catch(function () { return (TIMELINE = []); });
+  }
+
+  function loadVocab() {
+    if (FRVOCAB) return Promise.resolve(FRVOCAB);
+    return fetch('data/fr-vocab.json', { cache: 'no-cache' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { FRVOCAB = j; return j; })
+      .catch(function () { return (FRVOCAB = []); });
+  }
+
   function shuffle(a) {
     for (var i = a.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
@@ -155,6 +201,16 @@
     var g = GAMES[id];
     if (!g) return ctx.go('#/games');
     clearTimeout(timer);
+    if (id === 'timeline' && !TIMELINE) {
+      return loadTimeline().then(function () {
+        if (location.hash.indexOf('#/game/timeline') === 0) play(id);
+      });
+    }
+    if (id === 'frmatch' && !FRVOCAB) {
+      return loadVocab().then(function () {
+        if (location.hash.indexOf('#/game/frmatch') === 0) play(id);
+      });
+    }
     if (g.kind === 'order') startOrder(id);
     else if (g.kind === 'match') startMatch(id);
     else if (g.kind === 'graph') startGraph(id);
@@ -168,7 +224,17 @@
      ========================================================================== */
   function boardRound(n) {
     var picked = [], used = {};
-    shuffle(EQUIV.slice()).forEach(function (f) {
+    // exact values, generated fresh, mixed in with the identity facts
+    var vals = [];
+    shuffle(ANGLES.map(function (_, i) { return i; })).slice(0, 8).forEach(function (i) {
+      var fn = ['sin', 'cos', 'tan'][Math.floor(Math.random() * 3)];
+      var v = fn === 'sin' ? ANGLES[i][2] : fn === 'cos' ? ANGLES[i][1] : ANGLES[i][3];
+      if (v !== 'undefined') vals.push([fn + ' ' + DEG[i], v]);
+    });
+    // only facts that fit a column cleanly — the long two-variable ones stay
+    // in the bank for other rounds but never crowd the board
+    shuffle(EQUIV.concat(vals)).forEach(function (f) {
+      if (f[0].length > 20 || f[1].length > 26) return;
       if (picked.length >= n) return;
       // prompts and tiles must all be distinct — and no tile may read the
       // same as any prompt in the round, or the board answers itself
@@ -246,36 +312,17 @@
      ========================================================================== */
   function clean(s) { return T.plain(s).replace(/\s+/g, ' ').trim(); }
 
-  function datedCards() {
-    var d = S.getDeck('apush'), out = [], seenYear = {};
-    if (!d) return out;
-    shuffle(d.cards.slice()).forEach(function (c) {
-      var q = clean(c.q);
-      if (q.length < 8 || q.length > 70) return;
-      var ys = (q + ' ' + T.plain(c.a)).match(/\b(1[4-9]\d\d|20[0-2]\d)\b/g);
-      if (!ys) return;
-      var uniq = {}; ys.forEach(function (y) { uniq[y] = 1; });
-      var keys = Object.keys(uniq);
-      if (keys.length !== 1) return;                          // exactly one year → unambiguous
-      if (new RegExp('\\b' + keys[0] + '\\b').test(q)) return; // never print the answer in the prompt
-      var y = parseInt(keys[0], 10);
-      if (seenYear[y]) return;
-      seenYear[y] = 1;
-      out.push({ n: q, v: y, vl: String(y) });
+  function timelineRound(n) {
+    // real events, well separated in time so the ordering is fair
+    var pool = shuffle(TIMELINE.slice()), picked = [], used = {};
+    pool.forEach(function (e) {
+      if (picked.length >= n) return;
+      if (used[e.y]) return;                       // one event per year
+      if (picked.some(function (p) { return Math.abs(p.v - e.y) < 6; })) return;
+      used[e.y] = 1;
+      picked.push({ n: e.t, v: e.y, vl: String(e.y), d: e.d });
     });
-    return out;
-  }
-  function topicCards() {
-    var d = S.getDeck('apush'), out = [], seenT = {};
-    if (!d) return out;
-    shuffle(d.cards.slice()).forEach(function (c) {
-      var q = clean(c.q);
-      if (q.length < 8 || q.length > 70 || !c.t || !/^\d+\.\d+$/.test(c.t) || seenT[c.t]) return;
-      seenT[c.t] = 1;
-      var m = c.t.split('.');
-      out.push({ n: q, v: parseInt(m[0], 10) * 100 + parseInt(m[1], 10), vl: 'Topic ' + c.t });
-    });
-    return out;
+    return picked;
   }
 
   function chemRound() {
@@ -300,14 +347,8 @@
   function startOrder(id) {
     var axis, pool;
     if (id === 'timeline') {
-      pool = datedCards();
-      if (pool.length >= 8) {
-        axis = { title: 'Earliest at the top' };
-        pool = pool.slice(0, 8);
-      } else {
-        axis = { title: 'Course order, earliest first' };
-        pool = topicCards().slice(0, 8);
-      }
+      axis = { title: 'Earliest at the top' };
+      pool = timelineRound(8);
     } else {
       var ax = chemRound();
       axis = { title: ax.title };
@@ -352,7 +393,7 @@
       item.miss = true;
       idx = 0;
       while (idx < placed.length && placed[idx].v < item.v) idx++;
-      ctx.toast(item.n + ' — ' + item.vl);
+      ctx.toast(item.n + ', ' + item.vl);
     }
     placed.splice(idx, 0, item);
     st.done++;
@@ -430,7 +471,8 @@
   function startMatch(id) {
     var pairs =
       id === 'derivmatch' ? genDerivPairs(6) :
-      deckPairs(id === 'frmatch' ? 'french' : 'lang');
+      id === 'frmatch' ? (FRVOCAB && FRVOCAB.length ? sample(FRVOCAB, 6) : deckPairs('french')) :
+      deckPairs('lang');
     if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
     var left = [], right = [];
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });

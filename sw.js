@@ -1,11 +1,11 @@
 /* AP Decks service worker — precache the shell and every deck, serve offline. */
-var VERSION = 'apdecks-v12';
+var VERSION = 'apdecks-v15';
 var ASSETS = [
   './', './index.html', './app.css', './app.js', './store.js', './tex.js', './games.js',
   './liquid-glass.css', './liquid-glass.js',
   './manifest.webmanifest',
   './icon-180.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png',
-  './data/index.json',
+  './data/index.json', './data/timeline.json', './data/fr-vocab.json',
   './data/lang.json', './data/chem.json', './data/french.json',
   './data/calcbc.json', './data/apush.json'
 ];

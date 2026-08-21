@@ -149,7 +149,7 @@
     // content-sized icon+label items. A glyph-only bar with fixed-width tabs is
     // already padded, so the pill hugs the tab instead of eating its neighbors.
     var hasLabel = isTabbar && !!el.querySelector(itemSel + ' span');
-    var EXTRA = isTabbar ? (hasLabel ? 20 : -4) : 0;
+    var EXTRA = isTabbar ? (hasLabel ? 20 : -8) : 0;
     var geo = function (i) { var it = items[i]; return { x: it.offsetLeft - EXTRA, w: it.offsetWidth + 2 * EXTRA }; };
     var bounds = function () { var first = items[0], last = items[items.length - 1]; return { min: first.offsetLeft - EXTRA, max: last.offsetLeft + last.offsetWidth + EXTRA }; };
     var nearest = function (cx) { var best = 0, bd = 1e9; items.forEach(function (it, k) { var d = Math.abs(it.offsetLeft + it.offsetWidth / 2 - cx); if (d < bd) { bd = d; best = k; } }); return best; };

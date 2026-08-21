@@ -29,6 +29,12 @@
                'ln log exp lim sup inf max min det dim gcd deg arg').split(' ');
   var BIGOPS = { int:'∫', iint:'∬', oint:'∮', sum:'∑', prod:'∏' };
   var THIN = { ',':' ', ';':' ', ':':' ', '!':'', ' ':' ' };
+  /* relations and binary operators need air on both sides; LaTeX eats the
+     space that follows the command name, so we supply the spacing ourselves */
+  var REL = ('to rightarrow leftarrow leftrightarrow mapsto implies iff Rightarrow ' +
+             'le leq ge geq ne neq approx equiv sim propto ll gg pm mp times div ' +
+             'in notin subset subseteq rightleftharpoons longrightarrow').split(' ');
+  var inText = 0;
 
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -42,6 +48,7 @@
   Parser.prototype.group = function () {
     this.skipSpace();
     if (this.peek() === '{') {
+      this.tookGroup = true;
       var depth = 0, start = ++this.i;
       while (this.i < this.s.length) {
         var ch = this.s.charAt(this.i);
@@ -56,8 +63,9 @@
     }
     if (this.peek() === '\\') {
       var m = /^\\([a-zA-Z]+|.)/.exec(this.s.slice(this.i));
-      if (m) { this.i += m[0].length; var h = this.command(m[1]);
-        if (m[1].length > 1) { while (this.s.charAt(this.i) === ' ') this.i++; }
+      if (m) { this.i += m[0].length; this.tookGroup = false;
+        var h = this.command(m[1]);
+        if (m[1].length > 1 && !this.tookGroup) { while (this.s.charAt(this.i) === ' ') this.i++; }
         return h; }
     }
     var c = this.s.charAt(this.i++);
@@ -109,10 +117,16 @@
       return ''; // the delimiter itself is emitted by the next literal char
     }
     if (name === 'text' || name === 'mathrm' || name === 'mathit' || name === 'operatorname') {
-      return '<span class="mfn">' + this.group() + '</span>';
+      inText++;
+      var body = this.group();
+      inText--;
+      return '<span class="mfn">' + body + '</span>';
     }
     if (FUNCS.indexOf(name) > -1) return '<span class="mfn">' + name + '</span>';
-    if (Object.prototype.hasOwnProperty.call(SYM, name)) return SYM[name];
+    if (Object.prototype.hasOwnProperty.call(SYM, name)) {
+      if (REL.indexOf(name) > -1) return '<span class="mrel">' + SYM[name] + '</span>';
+      return SYM[name];
+    }
     if (Object.prototype.hasOwnProperty.call(THIN, name)) return THIN[name];
     if (name === '\\') return '<br>';
     return esc(name.length > 1 ? '\\' + name : name);
@@ -128,14 +142,22 @@
         var m = /^\\([a-zA-Z]+|.)/.exec(p.s.slice(p.i));
         if (!m) { p.i++; continue; }
         p.i += m[0].length;
+        p.tookGroup = false;
         var html = p.command(m[1]);
-        if (m[1].length > 1) { while (p.s.charAt(p.i) === ' ') p.i++; }
+        // \pi x eats its delimiter space; \frac{a}{b} x must not
+        if (m[1].length > 1 && !p.tookGroup) { while (p.s.charAt(p.i) === ' ') p.i++; }
+        // a relation supplies its own spacing — drop a literal space in front
+        if (html.indexOf('class="mrel"') > -1 && last() === ' ') out.pop();
         out.push(html);
         continue;
       }
       if (ch === '^' || ch === '_') {
         p.i++;
         var body = p.group();
+        if (ch === '^' && (body === '\u00b0' || body === '&deg;')) {
+          if (out.length) out[out.length - 1] = last() + '\u00b0'; else out.push('\u00b0');
+          continue;
+        }
         var tag = ch === '^' ? 'sup' : 'sub';
         // attach to the previous atom rather than floating on its own
         if (out.length) out[out.length - 1] = last() + '<' + tag + '>' + body + '</' + tag + '>';
@@ -145,6 +167,8 @@
       if (ch === '{' || ch === '}') { p.i++; continue; }
       if (ch === '~') { p.i++; out.push(' '); continue; }
       p.i++;
+      // a real minus sign, not a hyphen — but never inside \text{}
+      if (ch === '-' && !inText) { out.push('\u2212'); continue; }
       out.push(esc(ch));
     }
     return out.join('');
