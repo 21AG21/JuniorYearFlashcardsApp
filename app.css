@@ -413,6 +413,7 @@ sub,sup{ font-size:.68em; }
 .board .tile{ background:none; border:0; padding:12px 2px; min-height:52px; font:inherit;
   font-size:clamp(17px,5.2vw,22px); font-weight:430; color:var(--ink-soft); cursor:pointer;
   text-align:center; line-height:1.22; font-variant-numeric:tabular-nums;
+  min-width:0; overflow-wrap:break-word; hyphens:auto;   /* long terms wrap, never widen */
   transition:opacity .12s ease; }
 /* the board's prompt sits centered over its centered field */
 .bcur{ text-align:center; }
@@ -493,6 +494,8 @@ sub,sup{ font-size:.68em; }
 .board.deal .tile:nth-child(8){ animation-delay:.21s; }
 .board.deal .tile:nth-child(9){ animation-delay:.24s; }
 .board.deal .tile:nth-child(10){ animation-delay:.27s; }
+.board.deal .tile:nth-child(11){ animation-delay:.3s; }
+.board.deal .tile:nth-child(12){ animation-delay:.33s; }
 .uc-dot.on{ animation:dotPop .32s ease-out both; }
 .done-hero .v{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
 .grow.reveal{ animation:riseIn .26s cubic-bezier(.32,.72,0,1); }

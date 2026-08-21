@@ -113,13 +113,37 @@
     /* product to sum */
     ['2 sin x cos y', 'sin(x + y) + sin(x − y)', 'pts'],
     ['2 cos x cos y', 'cos(x + y) + cos(x − y)', 'pts'],
-    ['2 sin x sin y', 'cos(x − y) − cos(x + y)', 'pts']
+    ['2 sin x sin y', 'cos(x − y) − cos(x + y)', 'pts'],
+    /* more Pythagorean shapes */
+    ['sin²x − 1', '−cos²x', 'pyt'], ['cos²x − 1', '−sin²x', 'pyt'],
+    ['sin²3x + cos²3x', '1', 'pyt'],
+    /* more products worth knowing cold */
+    ['sin x · sec x', 'tan x', 'sim'], ['cos x · csc x', 'cot x', 'sim'],
+    ['tan x · csc x', 'sec x', 'sim'], ['cot x · sec x', 'csc x', 'sim'],
+    /* cofunction, radian form */
+    ['sin({π}⁄{2} − x)', 'cos x', 'cof'], ['cos({π}⁄{2} − x)', 'sin x', 'cof'],
+    ['tan({π}⁄{2} − x)', 'cot x', 'cof'], ['cot({π}⁄{2} − x)', 'tan x', 'cof'],
+    ['sec({π}⁄{2} − x)', 'csc x', 'cof'], ['csc({π}⁄{2} − x)', 'sec x', 'cof'],
+    /* shifts, radian form, and the rest of the periodicity table */
+    ['sin(π − x)', 'sin x', 'shf'], ['cos(π − x)', '−cos x', 'shf'],
+    ['tan(π − x)', '−tan x', 'shf'], ['sin(π + x)', '−sin x', 'shf'],
+    ['cos(π + x)', '−cos x', 'shf'],
+    ['sec(x + 360°)', 'sec x', 'shf'], ['csc(x + 360°)', 'csc x', 'shf'],
+    ['cot(x + 180°)', 'cot x', 'shf'],
+    /* everything through tan 2x and cos 2x in terms of tan */
+    ['tan x', '{sin 2x}⁄{1 + cos 2x}', 't2x'], ['tan x', '{1 − cos 2x}⁄{sin 2x}', 't2x'],
+    ['cos 2x', '{1 − tan²x}⁄{1 + tan²x}', 't2x'], ['sin 2x', '{2 tan x}⁄{1 + tan²x}', 't2x'],
+    /* triple angle for tangent */
+    ['tan 3x', '{3 tan x − tan³x}⁄{1 − 3 tan²x}', 'tri'],
+    /* half angle with the radical */
+    ['sin({x}⁄{2})', '±√({1 − cos x}⁄2)', 'rad'], ['cos({x}⁄{2})', '±√({1 + cos x}⁄2)', 'rad']
   ];
-  /* the board runs three stages, easy families first */
+  /* the board runs four stages of twelve, easy families first */
   var STAGES = [
     ['Fundamentals', ['rec', 'quo', 'pyt', 'evo', 'sim']],
-    ['Angle arithmetic', ['cof', 'shf', 'dbl', 'hlf']],
-    ['Advanced', ['pwr', 'tri', 'sum', 'pts']]
+    ['Angles and shifts', ['cof', 'shf']],
+    ['Double and half', ['dbl', 'hlf', 'pwr', 't2x']],
+    ['Advanced', ['tri', 'sum', 'pts', 'rad']]
   ];
 
   /* graph base functions; every question is a generated A·f(Bx) with a sign */
@@ -307,6 +331,16 @@
     return out + esc(s.slice(last));
   }
   function flat(s) { return String(s).replace(/[{}]/g, '').replace(/⁄/g, '/'); }
+  function estLen(s) {   // rendered width: a fraction is only as wide as its widest half
+    var n = 0, last = 0, m;
+    FRAC_RE.lastIndex = 0;
+    while ((m = FRAC_RE.exec(s)) !== null) {
+      n += s.slice(last, m.index).length;
+      n += Math.max(unbrace(m[1]).length, unbrace(m[2]).length);
+      last = FRAC_RE.lastIndex;
+    }
+    return n + (s.length - last);
+  }
 
   function best() { return S.getSettings().gameBest || {}; }
   function saveBest(id, n, label) {
@@ -371,7 +405,8 @@
         shuffle(ANGLES.map(function (_, i) { return i; })).slice(0, 6).forEach(function (i) {
           var fn = ['sin', 'cos', 'tan'][Math.floor(Math.random() * 3)];
           var v = fn === 'sin' ? ANGLES[i][2] : fn === 'cos' ? ANGLES[i][1] : ANGLES[i][3];
-          if (v !== 'undefined') vals.push([fn + ' ' + DEG[i], v]);
+          var lbl = Math.random() < 0.5 ? DEG[i] : ANGLES[i][0];
+          if (v !== 'undefined') vals.push([fn + ' ' + lbl, v]);
         });
         pool = pool.concat(vals);
       }
@@ -379,8 +414,8 @@
       pool = EQUIV.slice();
     }
     shuffle(pool.slice()).forEach(function (f) {
+      if (estLen(f[0]) > 26 || estLen(f[1]) > 26) return;
       var pl = flat(f[0]), tl = flat(f[1]);
-      if (pl.length > 26 || tl.length > 26) return;
       if (picked.length >= n) return;
       // prompts and tiles must all be distinct — and no tile may read the
       // same as any prompt in the round, or the board answers itself
@@ -436,7 +471,7 @@
     st = { id: id, kind: 'board', score: 0, played: 0, stage: id === 'identities' ? 0 : null };
     dealBoard(id === 'frconj' ? conjRound(10)
             : id === 'langboard' ? termRound(9)
-            : boardRound(10, 0));
+            : boardRound(12, 0));
     renderBoard();
   }
   function renderBoard(still) {
@@ -445,7 +480,7 @@
       if (st.stage != null && st.stage < STAGES.length - 1) {
         st.played += st.total;
         st.stage++;
-        dealBoard(boardRound(10, st.stage));
+        dealBoard(boardRound(12, st.stage));
       } else {
         var grand = st.played + st.total;
         return gameDone(st.id, st.score, grand, st.score + ' of ' + grand);
@@ -457,7 +492,7 @@
       : st.score + ' first try';
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
-      gameTop(scope, (st.played + st.i + 1) + ' of ' + (st.stage != null ? 30 : st.total)) +
+      gameTop(scope, (st.played + st.i + 1) + ' of ' + (st.stage != null ? 48 : st.total)) +
       '<div class="gcur bcur' + (still ? '' : ' swap') + '">' +
         '<div class="gname num' + (flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
       '<div class="board' + (st.anim ? ' deal' : '') + '">' + st.tiles.map(function (tl, i) {
