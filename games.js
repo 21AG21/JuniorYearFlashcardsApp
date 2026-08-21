@@ -16,14 +16,26 @@
   /* ---------------- registry --------------------------------------------- */
   var GAMES = {
     timeline:   { name: 'Timeline',         deck: 'apush',  kind: 'order'  },
+    presorder:  { name: 'Presidents',       deck: 'apush',  kind: 'order'  },
+    periodquiz: { name: 'Periods',          deck: 'apush',  kind: 'quiz'   },
     chemorder:  { name: 'Order it',         deck: 'chem',   kind: 'order'  },
+    ionmatch:   { name: 'Polyatomic ions',  deck: 'chem',   kind: 'match'  },
+    elemmatch:  { name: 'Elements',         deck: 'chem',   kind: 'match'  },
+    sigfigs:    { name: 'Sig figs',         deck: 'chem',   kind: 'quiz'   },
     langmatch:  { name: 'Device match',     deck: 'lang',   kind: 'match'  },
+    langboard:  { name: 'Terms',            deck: 'lang',   kind: 'board'  },
     frmatch:    { name: 'Vocab match',      deck: 'french', kind: 'match'  },
+    frconj:     { name: 'Conjugation',      deck: 'french', kind: 'board'  },
+    frgender:   { name: 'Le or la',         deck: 'french', kind: 'quiz'   },
     unitcircle: { name: 'Unit circle',      deck: 'calcbc', kind: 'circle' },
     degcircle:  { name: 'Degrees on the circle', deck: 'calcbc', kind: 'circle' },
     triggraphs: { name: 'Name that graph',  deck: 'calcbc', kind: 'graph'  },
     identities: { name: 'Identities',       deck: 'calcbc', kind: 'board'  },
-    derivmatch: { name: 'Derivative match', deck: 'calcbc', kind: 'match'  }
+    derivmatch: { name: 'Derivative match', deck: 'calcbc', kind: 'match'  },
+    antideriv:  { name: 'Antiderivatives',  deck: 'calcbc', kind: 'match'  },
+    seriesmatch:{ name: 'Series',           deck: 'calcbc', kind: 'match'  },
+    radmatch:   { name: 'Radians',          deck: 'calcbc', kind: 'match'  },
+    limitsquiz: { name: 'Limits',           deck: 'calcbc', kind: 'quiz'   }
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush'];
 
@@ -133,6 +145,84 @@
   /* the same angles as fractions of π, for generating coterminal labels */
   var FRAC = [[0, 1], [1, 6], [1, 4], [1, 3], [1, 2], [2, 3], [3, 4], [5, 6], [1, 1],
               [7, 6], [5, 4], [4, 3], [3, 2], [5, 3], [7, 4], [11, 6]];
+
+  /* element names, index-parallel to ELEMENTS */
+  var ELEM_NAMES = ['Hydrogen', 'Helium', 'Lithium', 'Beryllium', 'Boron', 'Carbon',
+    'Nitrogen', 'Oxygen', 'Fluorine', 'Neon', 'Sodium', 'Magnesium', 'Aluminum',
+    'Silicon', 'Phosphorus', 'Sulfur', 'Chlorine', 'Argon', 'Potassium', 'Calcium',
+    'Titanium', 'Chromium', 'Manganese', 'Iron', 'Nickel', 'Copper', 'Zinc', 'Bromine',
+    'Silver', 'Tin', 'Iodine', 'Cesium', 'Barium', 'Gold', 'Mercury', 'Lead'];
+
+  /* the common polyatomic ions: name, formula */
+  var IONS = [
+    ['ammonium', 'NH₄⁺'], ['hydronium', 'H₃O⁺'], ['acetate', 'C₂H₃O₂⁻'],
+    ['nitrate', 'NO₃⁻'], ['nitrite', 'NO₂⁻'], ['hydroxide', 'OH⁻'],
+    ['cyanide', 'CN⁻'], ['permanganate', 'MnO₄⁻'], ['perchlorate', 'ClO₄⁻'],
+    ['chlorate', 'ClO₃⁻'], ['chlorite', 'ClO₂⁻'], ['hypochlorite', 'ClO⁻'],
+    ['bicarbonate', 'HCO₃⁻'], ['carbonate', 'CO₃²⁻'], ['sulfate', 'SO₄²⁻'],
+    ['sulfite', 'SO₃²⁻'], ['chromate', 'CrO₄²⁻'], ['dichromate', 'Cr₂O₇²⁻'],
+    ['peroxide', 'O₂²⁻'], ['oxalate', 'C₂O₄²⁻'], ['phosphate', 'PO₄³⁻'],
+    ['thiosulfate', 'S₂O₃²⁻'], ['thiocyanate', 'SCN⁻'], ['cyanate', 'OCN⁻']
+  ];
+
+  /* every president: name, first year in office */
+  var PRES = [
+    ['Washington', 1789], ['J. Adams', 1797], ['Jefferson', 1801], ['Madison', 1809],
+    ['Monroe', 1817], ['J. Q. Adams', 1825], ['Jackson', 1829], ['Van Buren', 1837],
+    ['W. H. Harrison', 1841], ['Tyler', 1841], ['Polk', 1845], ['Taylor', 1849],
+    ['Fillmore', 1850], ['Pierce', 1853], ['Buchanan', 1857], ['Lincoln', 1861],
+    ['A. Johnson', 1865], ['Grant', 1869], ['Hayes', 1877], ['Garfield', 1881],
+    ['Arthur', 1881], ['Cleveland', 1885], ['B. Harrison', 1889], ['McKinley', 1897],
+    ['T. Roosevelt', 1901], ['Taft', 1909], ['Wilson', 1913], ['Harding', 1921],
+    ['Coolidge', 1923], ['Hoover', 1929], ['F. D. Roosevelt', 1933], ['Truman', 1945],
+    ['Eisenhower', 1953], ['Kennedy', 1961], ['L. B. Johnson', 1963], ['Nixon', 1969],
+    ['Ford', 1974], ['Carter', 1977], ['Reagan', 1981], ['G. H. W. Bush', 1989],
+    ['Clinton', 1993], ['G. W. Bush', 2001], ['Obama', 2009], ['Trump', 2017],
+    ['Biden', 2021]
+  ];
+
+  /* the APUSH periods; events are quizzed only where exactly one period fits */
+  var PERIODS = [
+    ['Period 1', 1491, 1607], ['Period 2', 1607, 1754], ['Period 3', 1754, 1800],
+    ['Period 4', 1800, 1848], ['Period 5', 1844, 1877], ['Period 6', 1865, 1898],
+    ['Period 7', 1890, 1945], ['Period 8', 1945, 1980], ['Period 9', 1980, 2030]
+  ];
+
+  /* the Maclaurin series every BC student memorizes */
+  var SERIES = [
+    ['eˣ', '1 + x + x²/2! + x³/3! + ⋯'],
+    ['sin x', 'x − x³/3! + x⁵/5! − ⋯'],
+    ['cos x', '1 − x²/2! + x⁴/4! − ⋯'],
+    ['1/(1 − x)', '1 + x + x² + x³ + ⋯'],
+    ['1/(1 + x)', '1 − x + x² − x³ + ⋯'],
+    ['ln(1 + x)', 'x − x²/2 + x³/3 − ⋯'],
+    ['arctan x', 'x − x³/3 + x⁵/5 − ⋯'],
+    ['e⁻ˣ', '1 − x + x²/2! − x³/3! + ⋯'],
+    ['x eˣ', 'x + x² + x³/2! + x⁴/3! + ⋯'],
+    ['sin(x²)', 'x² − x⁶/3! + x¹⁰/5! − ⋯'],
+    ['x sin x', 'x² − x⁴/3! + x⁶/5! − ⋯'],
+    ['cos(2x)', '1 − 2x² + 2x⁴/3 − ⋯']
+  ];
+
+  /* irregular-verb kernel: présent forms plus futur and imparfait stems —
+     every question is a generated person × verb × tense, never a fixed list */
+  var CONJ = {
+    'être':    { pr: ['suis', 'es', 'est', 'sommes', 'êtes', 'sont'], fu: 'ser', im: 'ét' },
+    'avoir':   { pr: ['ai', 'as', 'a', 'avons', 'avez', 'ont'], fu: 'aur', im: 'av' },
+    'aller':   { pr: ['vais', 'vas', 'va', 'allons', 'allez', 'vont'], fu: 'ir', im: 'all' },
+    'faire':   { pr: ['fais', 'fais', 'fait', 'faisons', 'faites', 'font'], fu: 'fer', im: 'fais' },
+    'pouvoir': { pr: ['peux', 'peux', 'peut', 'pouvons', 'pouvez', 'peuvent'], fu: 'pourr', im: 'pouv' },
+    'vouloir': { pr: ['veux', 'veux', 'veut', 'voulons', 'voulez', 'veulent'], fu: 'voudr', im: 'voul' },
+    'venir':   { pr: ['viens', 'viens', 'vient', 'venons', 'venez', 'viennent'], fu: 'viendr', im: 'ven' },
+    'prendre': { pr: ['prends', 'prends', 'prend', 'prenons', 'prenez', 'prennent'], fu: 'prendr', im: 'pren' },
+    'savoir':  { pr: ['sais', 'sais', 'sait', 'savons', 'savez', 'savent'], fu: 'saur', im: 'sav' },
+    'devoir':  { pr: ['dois', 'dois', 'doit', 'devons', 'devez', 'doivent'], fu: 'devr', im: 'dev' },
+    'voir':    { pr: ['vois', 'vois', 'voit', 'voyons', 'voyez', 'voient'], fu: 'verr', im: 'voy' },
+    'dire':    { pr: ['dis', 'dis', 'dit', 'disons', 'dites', 'disent'], fu: 'dir', im: 'dis' }
+  };
+  var PERSONS = ['je', 'tu', 'il', 'nous', 'vous', 'ils'];
+  var FUT_END = ['ai', 'as', 'a', 'ons', 'ez', 'ont'];
+  var IMP_END = ['ais', 'ais', 'ait', 'ions', 'iez', 'aient'];
   function gcd(a, b) { return b ? gcd(b, a % b) : a; }
   function radLabel(i, k) {
     var num = FRAC[i][0] + 2 * k * FRAC[i][1], den = FRAC[i][1];
@@ -201,20 +291,21 @@
     var g = GAMES[id];
     if (!g) return ctx.go('#/games');
     clearTimeout(timer);
-    if (id === 'timeline' && !TIMELINE) {
+    if ((id === 'timeline' || id === 'periodquiz') && !TIMELINE) {
       return loadTimeline().then(function () {
-        if (location.hash.indexOf('#/game/timeline') === 0) play(id);
+        if (location.hash.indexOf('#/game/' + id) === 0) play(id);
       });
     }
-    if (id === 'frmatch' && !FRVOCAB) {
+    if ((id === 'frmatch' || id === 'frgender') && !FRVOCAB) {
       return loadVocab().then(function () {
-        if (location.hash.indexOf('#/game/frmatch') === 0) play(id);
+        if (location.hash.indexOf('#/game/' + id) === 0) play(id);
       });
     }
     if (g.kind === 'order') startOrder(id);
     else if (g.kind === 'match') startMatch(id);
     else if (g.kind === 'graph') startGraph(id);
     else if (g.kind === 'board') startBoard(id);
+    else if (g.kind === 'quiz') startQuiz(id);
     else startCircle(id);
   }
 
@@ -244,9 +335,49 @@
     });
     return picked;
   }
+  /* conjugation board: person × verb × tense, the form is computed */
+  function conjRound(n) {
+    var verbs = Object.keys(CONJ);
+    var out = [], used = {}, guard = 0;
+    while (out.length < n && guard++ < 400) {
+      var v = verbs[Math.floor(Math.random() * verbs.length)];
+      var t = ['présent', 'imparfait', 'futur'][Math.floor(Math.random() * 3)];
+      var p = Math.floor(Math.random() * 6);
+      var c = CONJ[v];
+      var form = t === 'présent' ? c.pr[p] : t === 'futur' ? c.fu + FUT_END[p] : c.im + IMP_END[p];
+      var prompt = PERSONS[p] + ' · ' + v + ' · ' + t;
+      if (used[prompt] || used[form]) continue;
+      used[prompt] = 1; used[form] = 1;
+      out.push([prompt, form]);
+    }
+    return out;
+  }
+
+  /* term board: a definition from the Lang deck; tap the term it defines */
+  function termRound(n) {
+    var d = S.getDeck('lang');
+    var out = [], used = {};
+    if (!d) return out;
+    shuffle(d.cards.slice()).forEach(function (c) {
+      if (out.length >= n || c.v !== 'DEFINE') return;
+      var m = /^Define (?:the |an? )?([^.(]{2,26}?)\.?$/i.exec(clean(c.q));
+      if (!m) return;
+      var term = m[1].trim(), def = clean(c.a);
+      if (def.length > 130) def = def.slice(0, 127).replace(/\s+\S*$/, '') + '…';
+      var kt = term.toLowerCase();
+      if (used[kt] || used[def]) return;
+      used[kt] = 1; used[def] = 1;
+      out.push([def, term]);
+    });
+    return out;
+  }
+
   function startBoard(id) {
-    var facts = boardRound(10);
-    st = { id: id, kind: 'board', facts: shuffle(facts.slice()),
+    var facts, klabel;
+    if (id === 'frconj') { facts = conjRound(10); klabel = 'Tap the form'; }
+    else if (id === 'langboard') { facts = termRound(9); klabel = 'Tap the term it defines'; }
+    else { facts = boardRound(10); klabel = 'Tap what this equals'; }
+    st = { id: id, kind: 'board', k: klabel, facts: shuffle(facts.slice()),
            tiles: shuffle(facts.map(function (f) { return { t: f[1], done: false }; })),
            i: 0, score: 0, total: facts.length, firstTry: true, flash: -1 };
     renderBoard();
@@ -259,7 +390,8 @@
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' first try', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur"><span class="k">Tap what this equals</span><div class="gname num">' + esc(f[0]) + '</div></div>' +
+      '<div class="gcur"><span class="k">' + esc(st.k) + '</span>' +
+        '<div class="gname num' + (f[0].length > 44 ? ' gsm' : '') + '">' + esc(f[0]) + '</div></div>' +
       '<div class="board">' + st.tiles.map(function (tl, i) {
         var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
         return '<button class="' + cls + '" data-tile="' + i + '"' + (tl.done ? ' disabled' : '') + '>' + esc(tl.t) + '</button>';
@@ -344,11 +476,25 @@
       items: picked.map(function (e) { return { n: e[0], v: -ax.get(e), vl: ax.vl(e) }; }) };
   }
 
+  /* presidents, spaced apart so the ordering is fair */
+  function presRound(n) {
+    var pool = shuffle(PRES.slice()), picked = [];
+    pool.forEach(function (p) {
+      if (picked.length >= n) return;
+      if (picked.some(function (q) { return Math.abs(q.v - p[1]) < 8; })) return;
+      picked.push({ n: p[0], v: p[1], vl: String(p[1]) });
+    });
+    return picked;
+  }
+
   function startOrder(id) {
     var axis, pool;
     if (id === 'timeline') {
       axis = { title: 'Earliest at the top' };
       pool = timelineRound(8);
+    } else if (id === 'presorder') {
+      axis = { title: 'Earliest at the top' };
+      pool = presRound(8);
     } else {
       var ax = chemRound();
       axis = { title: ax.title };
@@ -468,9 +614,58 @@
     }
     return out;
   }
+  /* antiderivatives, generated the same way the derivatives are */
+  function genIntPairs(n) {
+    var out = [], seenL = {}, seenR = {}, guard = 0;
+    while (out.length < n && guard++ < 200) {
+      var p = 2 + Math.floor(Math.random() * 5);           // 2..6
+      var pair;
+      switch (Math.floor(Math.random() * 8)) {
+        case 0: pair = ['x' + sup(p), 'x' + sup(p + 1) + '/' + (p + 1) + ' + C']; break;
+        case 1: var a = (p + 1) * (1 + Math.floor(Math.random() * 3)), c0 = a / (p + 1);
+          pair = [a + 'x' + sup(p), (c0 > 1 ? c0 : '') + 'x' + sup(p + 1) + ' + C']; break;
+        case 2: pair = ['cos x', 'sin x + C']; break;
+        case 3: pair = ['sin x', '−cos x + C']; break;
+        case 4: pair = ['sec²x', 'tan x + C']; break;
+        case 5: pair = ['1/x', 'ln|x| + C']; break;
+        case 6: pair = ['eˣ', 'eˣ + C']; break;
+        case 7: pair = ['1/(1 + x²)', 'arctan x + C']; break;
+      }
+      if (seenL[pair[0]] || seenR[pair[1]]) continue;
+      seenL[pair[0]] = seenR[pair[1]] = 1;
+      out.push(pair);
+    }
+    return out;
+  }
+
+  /* the same angle in both notations, coterminal spins included */
+  function genRadPairs(n) {
+    var out = [], seenL = {}, seenR = {}, guard = 0;
+    while (out.length < n && guard++ < 200) {
+      var i = Math.floor(Math.random() * 16);
+      var k = [0, 0, -1, 1][Math.floor(Math.random() * 4)];
+      var L = radLabel(i, k), R = degLabel(i, k);
+      if (L === '0') R = '0°';
+      if (seenL[L] || seenR[R]) continue;
+      seenL[L] = 1; seenR[R] = 1;
+      out.push([L, R]);
+    }
+    return out;
+  }
+
+  function refPairs(table) { return sample(table, 6).map(function (r) { return [r[0], r[1]]; }); }
+  function elemPairs() {
+    return sample(ELEMENTS.map(function (e, i) { return [ELEM_NAMES[i], e[0]]; }), 6);
+  }
+
   function startMatch(id) {
     var pairs =
       id === 'derivmatch' ? genDerivPairs(6) :
+      id === 'antideriv' ? genIntPairs(6) :
+      id === 'radmatch' ? genRadPairs(6) :
+      id === 'seriesmatch' ? refPairs(SERIES) :
+      id === 'ionmatch' ? refPairs(IONS) :
+      id === 'elemmatch' ? elemPairs() :
       id === 'frmatch' ? (FRVOCAB && FRVOCAB.length ? sample(FRVOCAB, 6) : deckPairs('french')) :
       deckPairs('lang');
     if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
@@ -487,8 +682,15 @@
       var label = st.total + ' in ' + st.tries;
       return gameDone(st.id, st.total / Math.max(st.tries, st.total), label);
     }
-    var head = st.id === 'derivmatch' ? ['f(x)', "f′(x)"]
-      : st.id === 'frmatch' ? ['French', 'English'] : ['Device', 'What it is'];
+    var head = {
+      derivmatch: ['f(x)', 'f′(x)'],
+      antideriv: ['f(x)', '∫ f(x) dx'],
+      radmatch: ['Radians', 'Degrees'],
+      seriesmatch: ['f(x)', 'Maclaurin series'],
+      ionmatch: ['Ion', 'Formula'],
+      elemmatch: ['Element', 'Symbol'],
+      frmatch: ['French', 'English']
+    }[st.id] || ['Device', 'What it is'];
     function col(items, side, sel) {
       return items.map(function (it, i) {
         var cls = 'mrow' + (it.done ? ' done' : i === sel ? ' sel' : '');
@@ -650,6 +852,174 @@
   }
 
   /* ==========================================================================
+     QUIZ — one generated prompt, choices as text rows. Same feedback grammar
+     as the circle: the right answer settles to ink, the miss recedes.
+     ========================================================================== */
+  function fracLabel(a, b) {
+    var g = gcd(a, b); a /= g; b /= g;
+    return b === 1 ? String(a) : a + '/' + b;
+  }
+  function pick3(pool, right) {
+    var seen = {}; seen[right] = 1;
+    var out = [];
+    shuffle(pool.slice()).forEach(function (v) {
+      if (out.length >= 3 || seen[v]) return;
+      seen[v] = 1; out.push(v);
+    });
+    return out;
+  }
+
+  function limitsRound(n) {
+    var qs = [], seen = {}, guard = 0;
+    while (qs.length < n && guard++ < 200) {
+      var t = Math.floor(Math.random() * 4), p, r, pool;
+      if (t === 0) {                              // rational function at infinity
+        var dp = 1 + Math.floor(Math.random() * 3), dq = 1 + Math.floor(Math.random() * 3);
+        var a = 2 + Math.floor(Math.random() * 8), b = 2 + Math.floor(Math.random() * 8);
+        p = 'lim x→∞  (' + a + (dp > 1 ? 'x' + sup(dp) : 'x') + ' + 1) / (' +
+            b + (dq > 1 ? 'x' + sup(dq) : 'x') + ' − 2)';
+        r = dp < dq ? '0' : dp > dq ? '∞' : fracLabel(a, b);
+        pool = ['0', '∞', '−∞', fracLabel(a, b), fracLabel(b, a), '1'];
+      } else if (t === 1) {                       // sin over x families
+        var c1 = 2 + Math.floor(Math.random() * 6), c2 = 2 + Math.floor(Math.random() * 6);
+        if (Math.random() < 0.5) {
+          p = 'lim x→0  sin ' + c1 + 'x / x';
+          r = String(c1);
+        } else {
+          p = 'lim x→0  sin ' + c1 + 'x / sin ' + c2 + 'x';
+          r = fracLabel(c1, c2);
+        }
+        pool = ['0', '1', String(c1), String(c2), fracLabel(c1, c2), fracLabel(c2, c1), '∞'];
+      } else if (t === 2) {                       // removable factor
+        var k = 2 + Math.floor(Math.random() * 5);
+        p = 'lim x→' + k + '  (x² − ' + (k * k) + ') / (x − ' + k + ')';
+        r = String(2 * k);
+        pool = [String(k), String(k * k), '0', String(2 * k), 'does not exist'];
+      } else {                                    // the classics
+        var pickQ = [
+          ['lim x→0  (1 − cos x) / x', '0', ['1', '1/2', '∞']],
+          ['lim x→0⁺  ln x', '−∞', ['0', '∞', '1']],
+          ['lim x→∞  (1 + 1/x)ˣ', 'e', ['1', '∞', '0']],
+          ['lim x→0  (eˣ − 1) / x', '1', ['0', 'e', '∞']],
+          ['lim x→∞  ln x / x', '0', ['1', '∞', 'e']]
+        ][Math.floor(Math.random() * 5)];
+        p = pickQ[0]; r = pickQ[1]; pool = pickQ[2].concat([r]);
+      }
+      if (seen[p]) continue;
+      seen[p] = 1;
+      qs.push({ p: p, k: 'Evaluate', c: shuffle([r].concat(pick3(pool, r))), r: r });
+    }
+    return qs;
+  }
+
+  /* significant figures: the number is generated, the count is computed */
+  function countSig(s) {
+    s = s.replace(/\s*×\s*10.*$/, '');
+    if (s.indexOf('.') > -1) return s.replace(/\./g, '').replace(/^0+/, '').length;
+    return s.replace(/0+$/, '').replace(/^0+/, '').length;
+  }
+  function sigfigRound(n) {
+    var qs = [], seen = {}, guard = 0;
+    while (qs.length < n && guard++ < 200) {
+      var style = Math.floor(Math.random() * 5), num = '';
+      var d = function () { return 1 + Math.floor(Math.random() * 9); };
+      if (style === 0) num = '0.00' + d() + [0, d(), '0', d() + '0'][Math.floor(Math.random() * 4)];
+      else if (style === 1) num = '' + d() + '0'.repeat(1 + Math.floor(Math.random() * 3));
+      else if (style === 2) num = '' + d() + d() + '0.' + [0, '0', d()][Math.floor(Math.random() * 3)];
+      else if (style === 3) num = d() + '.0' + d();
+      else num = d() + '.' + d() + '0 × 10' + sup(2 + Math.floor(Math.random() * 4));
+      num = String(num);
+      if (seen[num]) continue;
+      seen[num] = 1;
+      var r = String(countSig(num));
+      var opts = [r];
+      [-2, -1, 1, 2, 3].forEach(function (o) {
+        var v = countSig(num) + o;
+        if (v >= 1 && opts.length < 4 && opts.indexOf(String(v)) < 0) opts.push(String(v));
+      });
+      opts.sort(function (a, b) { return a - b; });
+      qs.push({ p: num, k: 'How many significant figures?', c: opts, r: r });
+    }
+    return qs;
+  }
+
+  /* period quiz: real events, only where exactly one period can claim the year */
+  function plabel(pd) { return pd[0] + ' · ' + pd[1] + '–' + (pd[2] > 2020 ? 'now' : pd[2]); }
+  function periodRound(n) {
+    var qs = [];
+    shuffle(TIMELINE.slice()).forEach(function (e) {
+      if (qs.length >= n) return;
+      var fits = PERIODS.filter(function (pd) { return e.y >= pd[1] && e.y <= pd[2]; });
+      if (fits.length !== 1) return;
+      var r = plabel(fits[0]);
+      var others = sample(PERIODS.filter(function (pd) { return pd !== fits[0]; }), 3).map(plabel);
+      qs.push({ p: e.t, k: 'Which period?', c: shuffle([r].concat(others)), r: r });
+    });
+    return qs;
+  }
+
+  /* le or la, straight from the vocabulary’s own articles */
+  function genderRound(n) {
+    var qs = [];
+    shuffle(FRVOCAB.slice()).forEach(function (v) {
+      if (qs.length >= n) return;
+      var m = /^(le|la) ([a-zàâçéèêëîïôöûùüÿœæ’' -]+)$/i.exec(v[0]);
+      if (!m) return;
+      qs.push({ p: m[2], k: 'Le or la?', c: ['le', 'la'], r: m[1].toLowerCase() });
+    });
+    return qs;
+  }
+
+  function startQuiz(id) {
+    var qs =
+      id === 'limitsquiz' ? limitsRound(10) :
+      id === 'sigfigs' ? sigfigRound(10) :
+      id === 'periodquiz' ? periodRound(10) :
+      genderRound(12);
+    st = { id: id, kind: 'quiz', qs: qs, i: 0, score: 0, total: qs.length,
+           lock: false, wrongChoice: -1 };
+    renderQuiz();
+  }
+
+  function renderQuiz() {
+    if (st.i >= st.total) {
+      return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
+    }
+    var q = st.qs[st.i];
+    ctx.mount(
+      ctx.backbar(GAMES[st.id].name) +
+      gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
+      '<div class="gcur"><span class="k">' + esc(q.k) + '</span>' +
+        '<div class="gname num' + (q.p.length > 44 ? ' gsm' : '') + '">' + esc(q.p) + '</div></div>' +
+      '<div class="choices">' + q.c.map(function (cl, i) {
+        var state = '';
+        if (st.lock) state = cl === q.r ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
+        return '<button class="choice num" data-gc="' + i + '"' +
+          (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
+          esc(cl) + '</button>';
+      }).join('') + '</div>',
+      { session: true, keepScroll: st.i > 0 }
+    );
+  }
+
+  function nextQuizQ() {
+    if (!st || st.kind !== 'quiz') return;
+    if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
+    st.i++; st.lock = false; st.wrongChoice = -1;
+    renderQuiz();
+  }
+
+  function tapQuizGame(i) {
+    if (!st || st.kind !== 'quiz' || st.lock) return;
+    var q = st.qs[st.i];
+    st.lock = true;
+    var right = q.c[i] === q.r;
+    if (right) { st.score++; } else { st.wrongChoice = i; }
+    renderQuiz();
+    timer = setTimeout(nextQuizQ, right ? 550 : 1400);
+  }
+
+  /* ==========================================================================
      GRAPH — which trig function is this?
      ========================================================================== */
   function graphLabel(g) {
@@ -777,7 +1147,9 @@
     if ((el = t.closest('[data-dot]'))) { tapDot(parseInt(el.getAttribute('data-dot'), 10)); return; }
     if ((el = t.closest('[data-gc]'))) {
       var ci = parseInt(el.getAttribute('data-gc'), 10);
-      if (st.kind === 'graph') tapGraphChoice(ci); else tapChoice(ci);
+      if (st.kind === 'graph') tapGraphChoice(ci);
+      else if (st.kind === 'quiz') tapQuizGame(ci);
+      else tapChoice(ci);
       return;
     }
   }

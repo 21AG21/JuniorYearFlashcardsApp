@@ -31,32 +31,36 @@
     app.classList.toggle('is-quiz', !!(opts && opts.quiz));
     tabs.hidden = isWide() || !!(opts && opts.session);
     if (window.LG) window.LG.init(app);
-    wireGlassControls();
+    fitVals();
     if (!(opts && opts.keepScroll)) {
       var pr = app.querySelector('.pane-r');
       if (pr) pr.scrollTop = 0; else window.scrollTo(0, 0);
     }
   }
-  function wireGlassControls() {
-    app.querySelectorAll('.lg-toggle[data-set]').forEach(function (el) {
-      if (el._wired) return; el._wired = true;
-      el.addEventListener('lg-change', function (e) {
-        var on = !!e.detail;
-        S.setSetting(el.getAttribute('data-set'), on);
-        el.setAttribute('aria-checked', String(on));
-        if (el.getAttribute('data-set') === 'glass') applyTheme();
-      });
-      el.addEventListener('keydown', function (e) {
-        if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault();
-          var on = !el.classList.contains('is-on');
-          el.classList.toggle('is-on', on);
-          if (el.lgSet) el.lgSet(on ? 1 : 0);
-          S.setSetting(el.getAttribute('data-set'), on);
-          el.setAttribute('aria-checked', String(on));
-          if (el.getAttribute('data-set') === 'glass') applyTheme();
-        }
-      });
+
+  /* When a row's name wraps tall, its number grows to match the text block —
+     the value fills the height the name takes, one gesture app-wide. */
+  function fitPair(row, name, val) {
+    row.classList.remove('tallval'); val.style.fontSize = '';
+    var base = parseFloat(getComputedStyle(val).fontSize);
+    for (var pass = 0; pass < 3; pass++) {        // growing the value can re-wrap
+      var nh = name.getBoundingClientRect().height;                // the name —
+      var lh = parseFloat(getComputedStyle(name).lineHeight) || nh; // settle it
+      var target = nh > lh * 1.5 ? Math.min(Math.round(nh), Math.round(base * 2.6)) : base;
+      var curr = parseFloat(getComputedStyle(val).fontSize);
+      if (Math.abs(target - curr) < 2) break;
+      row.classList.toggle('tallval', target > base);
+      val.style.fontSize = target > base ? target + 'px' : '';
+    }
+  }
+  function fitVals() {
+    app.querySelectorAll('.ledger').forEach(function (row) {
+      var name = row.querySelector('.lname'), val = row.querySelector('.lval');
+      if (name && val && val.textContent.trim()) fitPair(row, name, val);
+    });
+    app.querySelectorAll('.dhero').forEach(function (hero) {
+      var dn = hero.querySelector('.dn'), dv = hero.querySelector('.dv');
+      if (dn && dv && dv.textContent.trim()) fitPair(hero, dn, dv);
     });
   }
 
@@ -127,7 +131,6 @@
     var m = document.createElement('meta');
     m.name = 'theme-color'; m.content = dark ? '#000000' : '#f2f2f4';
     document.head.appendChild(m);
-    document.documentElement.classList.toggle('no-glass', S.getSettings().glass === false);
   }
 
   /* ==========================================================================
@@ -220,8 +223,7 @@
       return '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
         '<span class="qq' + (known ? ' dim' : '') + '">' + T.html(c.q) + '</span>' +
         '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
-        '<span class="qmeta">' + esc(verb(c.v)) + (topicLabel(c) ? ' · ' + esc(topicLabel(c)) : '') +
-          (known ? ' · known' : (S.isNew(c.i) ? '' : ' · learning')) + '</span>' +
+        '<span class="qmeta">' + esc(verb(c.v)) + (topicLabel(c) ? ' · ' + esc(topicLabel(c)) : '') + '</span>' +
         '</button></li>';
     }).join('');
 
@@ -231,7 +233,7 @@
     var nextU = withCards[(pos + 1) % withCards.length];
     mount(
       '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n + '</div>' +
-      '<div class="dhero' + (u.title.length > 20 ? ' long' : '') + '">' +
+      '<div class="dhero">' +
         '<button class="dn" data-go="#/d/' + deckId + '">' + esc(u.title) + '</button>' +
         '<button class="dv num" data-go="#/d/' + deckId + '/u/' + nextU.id + '">' + us.total + '</button>' +
       '</div>' +
@@ -274,8 +276,7 @@
     });
     if (!all.length) {
       return mount(
-        '<div class="head"><h1>Nothing due</h1>' +
-        '<div class="sub">Next: whatever comes due tomorrow</div></div>' +
+        '<div class="head"><h1>Nothing due</h1></div>' +
         '<button class="textbtn" data-go="#/">Decks</button>'
       );
     }
@@ -595,7 +596,7 @@
         '<span class="k">Session complete</span>' +
         '<div class="v">' + total + '</div>' +
         '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">' +
-          plural(total, 'card') + ' reviewed · ' + plural(S.streak(), 'day') + ' streak</div>' +
+          plural(S.streak(), 'day') + ' streak</div>' +
       '</div>' +
       '<div style="margin:var(--s-4) 0 var(--s-5)">' + rows + '</div>' +
       (st && st.due ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
@@ -640,7 +641,7 @@
         hits.push(card);
       });
     });
-    if (!hits.length) { out.innerHTML = '<div class="empty">No card matches.</div>'; return; }
+    if (!hits.length) { out.innerHTML = '<div class="empty">No matches</div>'; return; }
     hits.sort(function (a, b) {
       var aq = T.plain(a.q).toLowerCase().indexOf(q), bq = T.plain(b.q).toLowerCase().indexOf(q);
       return (aq === -1 ? 999 : aq) - (bq === -1 ? 999 : bq);
@@ -653,7 +654,7 @@
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
           '<span class="qmeta">' + esc(nice(d)) + ' · ' + esc(u ? u.title : '') + '</span></button></li>';
       }).join('') + '</ul>' +
-      (hits.length > 120 ? '<div class="empty cap">Showing the first 120.</div>' : '');
+      (hits.length > 120 ? '<div class="empty cap">First 120</div>' : '');
   }
 
   /* ==========================================================================
@@ -710,31 +711,28 @@
       '<div class="head"><h1 class="uhead">Settings</h1></div>' +
       '<div class="profile">' + profs.map(function (p) {
         return '<button class="chip" data-profile="' + p.id + '" aria-pressed="' + (p.id === active.id) + '">' + esc(p.name) + '</button>';
-      }).join('') + '<button class="chip" data-addprofile>+ Add</button></div>' +
+      }).join('') + '<button class="chip" data-addprofile aria-label="Add profile">+</button></div>' +
 
-      '<div class="sect">Session</div>' +
-      setRow('Typing mode', 'typing', s.typing) +
-
-      '<div class="sect">Appearance</div>' +
-      // one word that cycles auto -> light -> dark on every tap
+      // every setting is a word: tap the value to change it
+      '<div class="setgroup">' +
+      '<div class="setrow"><div class="sname">Typing</div>' +
+        '<button class="cyc" data-typing-cycle>' + (s.typing ? 'On' : 'Off') + '</button></div>' +
       '<div class="setrow"><div class="sname">Theme</div>' +
         '<button class="cyc" data-theme-cycle>' + s.theme.charAt(0).toUpperCase() + s.theme.slice(1) + '</button></div>' +
-
-      '<div class="sect">Account</div>' +
       (S.account.connected()
         ? '<div class="setrow"><div class="sname">Synced</div>' +
           '<button class="textbtn" data-acct-off>Disconnect</button></div>'
-        : '<div class="setrow stack"><div class="sname">Connect</div>' +
-          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="paste your account token"></div></div>') +
-
-      '<div class="sect">Data</div>' +
-      '<div class="data-list">' +
-        '<button class="textbtn" data-export>Copy backup to clipboard</button>' +
-        '<button class="textbtn" data-import>Restore from a backup</button>' +
-        '<button class="textbtn" data-reset>Reset this profile’s progress</button>' +
-        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete this profile</button>' : '') +
+        : '<div class="setrow stack"><div class="sname">Sync</div>' +
+          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token"></div></div>') +
       '</div>' +
-      '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards · runs offline once installed</div>'
+
+      '<div class="data-list">' +
+        '<button class="textbtn" data-export>Copy backup</button>' +
+        '<button class="textbtn" data-import>Restore backup</button>' +
+        '<button class="textbtn" data-reset>Reset progress</button>' +
+        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile</button>' : '') +
+      '</div>' +
+      '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
   }
 
@@ -756,12 +754,6 @@
     btn.classList.remove('armed');
     if (btn._label) btn.textContent = btn._label;
   }
-
-  function setRow(name, key, on) {
-    return '<div class="setrow"><div class="sname">' + esc(name) + '</div>' +
-      '<div class="lg lg-toggle' + (on ? ' is-on' : '') + '" data-set="' + key + '" role="switch" tabindex="0" aria-checked="' + !!on + '" aria-label="' + esc(name) + '"><div class="lg-knob"></div></div></div>';
-  }
-
 
   /* ==========================================================================
      global delegation
@@ -796,6 +788,10 @@
       var cur = S.getSettings().theme;
       S.setSetting('theme', order[(order.indexOf(cur) + 1) % order.length]);
       applyTheme(); viewSettings(); return;
+    }
+    if (t.closest('[data-typing-cycle]')) {
+      S.setSetting('typing', !S.getSettings().typing);
+      viewSettings(); return;
     }
     var cyc = t.closest('[data-cycle]');
     if (cyc) {
@@ -938,7 +934,7 @@
   window.addEventListener('resize', function () {
     clearTimeout(sizeTimer);
     sizeTimer = setTimeout(function () {
-      if (isWide() === wasWide) return;
+      if (isWide() === wasWide) { fitVals(); return; }   // widths moved — refit values
       wasWide = isWide();
       if (sess) renderCard(); else route();
     }, 120);

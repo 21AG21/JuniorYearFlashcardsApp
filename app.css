@@ -61,8 +61,6 @@
 }
 /* the active tab is ink, never iOS blue (required override, skill §2) */
 .lg-tab.is-active{ color:rgb(var(--lg-ink)); }
-/* the toggle's on-state reads through shade, not green */
-.lg-toggle.is-on{ --lg-tint:var(--lg-ink); --lg-tint-a:.92; }
 
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; height:100%; }
@@ -155,7 +153,9 @@ button.hero-tap:active{ opacity:.55; }
 .dhero .dn:active,.dhero .dv:active{ opacity:.5; }
 .dhero .dn{ color:var(--ink-soft); min-width:0; }   /* the title always shows in full */
 .dhero .dv{ color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; }
-.dhero.long .dn,.dhero.long .dv{ font-size:clamp(26px,8.4vw,36px); line-height:1.2; }
+/* a wrapped name doesn't shrink — the number grows to the height of the text */
+.dhero.tallval{ align-items:center; }
+.dhero.tallval .dv{ line-height:1; letter-spacing:-.04em; }
 
 .backbar{ display:flex; align-items:center; gap:8px; margin:0 0 var(--s-3); }
 .backbar .k{ color:var(--muted); }
@@ -183,6 +183,9 @@ button.hero-tap:active{ opacity:.55; }
 /* smaller ledger for unit lists and summary rows */
 .ledger.mid .lname,.ledger.mid .lval{ font-size:clamp(24px,7.7vw,30px); letter-spacing:-.02em; line-height:1.25; }
 .ledger.mid .lname{ white-space:normal; overflow:visible; text-overflow:clip; }  /* unit names wrap — nothing clipped, ever */
+/* wrapped name → the number scales up to the height of the text block */
+.ledger.tallval{ align-items:center; }
+.ledger.tallval .lval{ line-height:1; letter-spacing:-.04em; }
 .ulabel{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:var(--s-3) 0 2px; }
 .ulabel:first-child{ margin-top:0; }
 
@@ -355,7 +358,7 @@ sub,sup{ font-size:.68em; }
    groups sections (≈40px above a label, 10px below); a single hairline
    separates rows within a section. No sublabels, no boxes, no chevrons. */
 .head h1.uhead{ font-size:clamp(32px,10vw,40px); }
-.sect{ font-size:var(--t-label); font-weight:500; color:var(--ink-soft); margin:var(--s-5) 0 10px; }
+.setgroup{ margin-top:var(--s-4); }
 .setrow{ display:flex; align-items:center; justify-content:space-between; gap:16px;
   padding:12px 0; min-height:var(--row); }
 .setrow + .setrow{ border-top:1px solid var(--hair-soft); }
@@ -365,14 +368,13 @@ sub,sup{ font-size:.68em; }
   cursor:pointer; padding:14px 0; margin:-14px 0; }   /* hit area grows, row height does not */
 .cyc:active{ opacity:.5; }
 .setrow.stack{ display:block; padding-bottom:0; }   /* the chips carry their own 12px — keeps the hairline centered between rows */
-.lg-toggle{ flex:0 0 auto; }
 /* profiles and choice values are weighted text, never chips (banned house-wide) */
 .profile{ display:flex; flex-wrap:wrap; gap:2px 22px; margin-top:var(--s-1); }
 .profile .chip, .numchips .chip{ font-size:17px; font-variant-numeric:tabular-nums; }
 .lg-seg{ width:100%; margin:var(--s-2) 0; }   /* flush right on phones; 12+12 below matches the hairline rows' 24px rhythm */
 .setrow.stack .searchbar{ margin:0; }
 .setrow.stack .searchbar input{ font-size:19px; font-weight:500; padding:12px 0; }
-.data-list{ display:flex; flex-direction:column; align-items:stretch; }
+.data-list{ display:flex; flex-direction:column; align-items:stretch; margin-top:var(--s-5); }
 .data-list .textbtn{ text-align:left; font-size:19px; font-weight:500; padding:12px 0; min-height:var(--row); }
 .data-list .textbtn + .textbtn{ border-top:1px solid var(--hair-soft); }
 /* destructive arm state: ink and heavy, never red, never a dialog */
@@ -385,6 +387,7 @@ sub,sup{ font-size:.68em; }
 .gcur{ margin:var(--s-3) 0 var(--s-4); }
 .gcur .k{ display:block; margin-bottom:4px; }
 .gcur .gname{ font-size:clamp(30px,9vw,40px); font-weight:430; letter-spacing:-.02em; line-height:1.22; color:var(--ink); }
+.gcur .gname.gsm{ font-size:clamp(20px,6vw,26px); line-height:1.35; letter-spacing:-.012em; }
 .gline{ display:flex; flex-direction:column; }
 .gline .gap{ position:relative; display:block; width:100%; height:36px; background:none; border:0; padding:0; cursor:pointer; }
 .gline .gap::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:var(--hair-soft); }
@@ -427,28 +430,23 @@ sub,sup{ font-size:.68em; }
 .uc-dot.on{ fill:var(--ink); r:7; }
 .uc-dot.off{ fill:var(--hair); }
 .uc-hit{ fill:transparent; cursor:pointer; }
-@media (min-width:900px) and (min-height:500px){ .pane-r .uc{ width:min(44vh, 440px); } }
+/* desktop: games use the pane, sized so a whole round sits on screen at once */
+@media (min-width:900px) and (min-height:500px){
+  .pane-r .uc{ width:min(44vh, 440px); }
+  .pane-r .tg{ width:min(56vh, 640px); }
+  .pane-r .gcur .gname{ font-size:clamp(34px, 2.8vw, 44px); }
+  .pane-r .gcur .gname.gsm{ font-size:clamp(22px, 1.8vw, 28px); }
+  .pane-r .mcols{ max-width:960px; }
+  .pane-r .board{ max-width:1040px; column-gap:36px; }
+  .pane-r .choices{ max-width:640px; }
+  .pane-r .gline{ max-width:760px; }
+}
 
 /* --- activity: 2px ink bars on the ground, latest in ink, history muted ---- */
 .spark{ display:flex; align-items:flex-end; gap:3px; height:64px; width:100%; }
 .spark i{ flex:1; min-width:0; background:var(--muted); border-radius:1px; }
 .spark i:last-child{ background:var(--ink); }
 .spark i.zero{ background:var(--hair-soft); }
-
-/* --- glass off (a settings choice) ----------------------------------------- */
-.no-glass .lg{
-  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
-  background:var(--wall) !important; box-shadow:0 0 0 1px var(--hair-soft) !important;
-}
-.no-glass .lg::before, .no-glass .lg::after{ display:none !important; }
-
-/* --- toggles keep a readable knob in both themes --------------------------- */
-:root[data-theme="dark"] .lg-toggle.is-on .lg-knob{ background:#0a0a0b;
-  box-shadow:0 3px 8px rgba(0,0,0,.5), inset 0 0 0 .5px rgba(255,255,255,.08); }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .lg-toggle.is-on .lg-knob{ background:#0a0a0b;
-  box-shadow:0 3px 8px rgba(0,0,0,.5), inset 0 0 0 .5px rgba(255,255,255,.08); } }
-@media (prefers-color-scheme:light){ :root:not([data-theme="dark"]) .lg-toggle.is-on .lg-knob{ background:#fff; } }
-:root[data-theme="light"] .lg-toggle.is-on .lg-knob{ background:#fff; }
 
 /* --- short screens (skill §3): a review card must fit without scrolling ---- */
 @media (max-height:620px){
