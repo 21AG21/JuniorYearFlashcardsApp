@@ -578,6 +578,31 @@ sub,sup{ font-size:.68em; }
 .done-hero .v{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
 .grow.reveal{ animation:riseIn .26s cubic-bezier(.32,.72,0,1); }
 
+/* --- print: a unit page becomes a two-column paper cheat sheet -------------
+   The unit view already holds every question AND answer in the DOM — print
+   unlocks the app scroller, reveals the answers, drops the chrome, and sets
+   dense black-ink columns. Cmd+P on any unit page is the whole feature. */
+@media print{
+  @page{ margin:14mm; }
+  html, body{ height:auto; overflow:visible; background:#fff; }
+  #app{ height:auto; max-width:none; overflow:visible; padding:0; display:block; }
+  .pane-l{ display:none; }
+  .pane-r{ height:auto; overflow:visible; padding:0; }
+  .pane-r .inner{ max-width:none; }
+  .tabs, #toast, .modes, .act, .backbar, .reqwrap, .data-list, .lnav{ display:none !important; }
+  .dhero .dv{ display:none; }              /* the count is noise on paper */
+  .dhero .dn{ font-size:20pt; color:#000; }
+  .ulabel{ font-size:9pt; }
+  .list.tight{ display:block; column-count:2; column-gap:10mm; }
+  .list.tight > li{ break-inside:avoid; animation:none; }
+  .qrow{ break-inside:avoid; margin-bottom:4mm; }
+  .qrow .qq{ font-size:10pt; color:#000; display:block; -webkit-line-clamp:none; overflow:visible; }
+  .qrow [hidden]{ display:block !important; }   /* answers print, always */
+  .qrow .qa{ font-size:9.5pt; color:#000; margin-top:1mm; }
+  .qrow .qmeta{ display:none; }            /* CED codes are screen furniture */
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+
 /* --- accessibility ---------------------------------------------------------- */
 :focus-visible{ outline:2px solid var(--ink); outline-offset:3px; border-radius:6px; }
 @media (prefers-reduced-motion:reduce){
