@@ -647,7 +647,7 @@
       return (aq === -1 ? 999 : aq) - (bq === -1 ? 999 : bq);
     });
     out.innerHTML = '<div class="k" style="margin-bottom:var(--s-3)">' + plural(hits.length, 'card') + '</div>' +
-      '<ul class="list tight">' + hits.slice(0, 120).map(function (c) {
+      '<ul class="list tight still">' + hits.slice(0, 120).map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u];
         return '<li><button class="qrow" data-peek="' + c.i + '">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
@@ -732,9 +732,19 @@
         '<button class="textbtn" data-reset>Reset progress</button>' +
         (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile</button>' : '') +
       '</div>' +
+      reqHTML('Request a feature') +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
   }
+
+  /* the request line: write it here, it lands as a GitHub issue under the
+     owner's own login — the site itself holds no token at all */
+  function reqHTML(label) {
+    return '<div class="reqwrap"><button class="textbtn" data-req>' + esc(label) + '</button>' +
+      '<div class="reqbox" hidden><textarea rows="3" placeholder="a feature, a game, a fix"></textarea>' +
+      '<button class="textbtn" data-req-send>Send</button></div></div>';
+  }
+  window.__reqHTML = reqHTML;   // the games hub renders the same line
 
   /* destructive actions arm on the first tap and revert after ~3s — ink and
      weight say "are you sure", never a dialog and never red */
@@ -792,6 +802,28 @@
     if (t.closest('[data-typing-cycle]')) {
       S.setSetting('typing', !S.getSettings().typing);
       viewSettings(); return;
+    }
+    var rq = t.closest('[data-req]');
+    if (rq) {
+      var bx = rq.parentElement.querySelector('.reqbox');
+      bx.hidden = !bx.hidden;
+      if (!bx.hidden) {
+        bx.querySelector('textarea').focus();
+        bx.scrollIntoView({ block: 'center' });   // clear of the glass bar
+      }
+      return;
+    }
+    if (t.closest('[data-req-send]')) {
+      var ta = t.closest('.reqbox').querySelector('textarea');
+      var txt = ta.value.trim();
+      if (!txt) { ta.focus(); return; }
+      var subj = 'Request: ' + txt.replace(/\s+/g, ' ').slice(0, 60);
+      window.open('https://github.com/21AG21/JuniorYearFlashcardsApp/issues/new?title=' +
+        encodeURIComponent(subj) + '&body=' + encodeURIComponent(txt + '\n\n— sent from the app'),
+        '_blank', 'noopener');
+      ta.value = '';
+      toast('Finish on GitHub — it posts from your account');
+      return;
     }
     var cyc = t.closest('[data-cycle]');
     if (cyc) {

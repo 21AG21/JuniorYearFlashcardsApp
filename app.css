@@ -104,10 +104,12 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-r .inner{ max-width:1280px; }
   .pane-l .head h1{ font-size:clamp(30px, 2.3vw, 38px); }
   .pane-l .ledger .lname,.pane-l .ledger .lval{ font-size:clamp(22px, 1.8vw, 28px); }
-  .pane-l .lnav{ flex-wrap:wrap; gap:2px 18px; }
-  .pane-l .lnav .textbtn{ font-size:15px; }
+
   .pane-l .ledger.on .lname{ color:var(--ink); }
-  .pane-l .lnav{ margin-top:auto; padding-top:var(--s-5); display:flex; gap:26px; }
+  .pane-l .lnav{ margin-top:auto; padding-top:var(--s-5); display:flex; flex-direction:column; align-items:flex-start; gap:0; }
+  .pane-l .lnav .textbtn{ font-size:16px; padding:8px 0; min-height:40px; }
+  /* the rail is furniture — it never re-animates */
+  .pane-l .head, .pane-l .list > li, .pane-l .lnav .textbtn{ animation:none; }
   /* the right pane scales up — same content, bigger type */
   .pane-r .head h1{ font-size:clamp(64px, 5vw, 92px); }
   .pane-r .dhero .dn,.pane-r .dhero .dv{ font-size:clamp(48px, 3.8vw, 72px); }
@@ -477,6 +479,43 @@ sub,sup{ font-size:.68em; }
   .sess-top{ margin-bottom:var(--s-3); }
 }
 
+
+
+/* every screen arrives: heads and heroes rise, rows follow in a wave */
+.head, .dhero{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
+.act{ animation:riseIn .28s cubic-bezier(.32,.72,0,1) both .04s; }
+.list:not(.still) > li{ animation:riseIn .34s cubic-bezier(.32,.72,0,1) both; }
+.list:not(.still) > li:nth-child(2){ animation-delay:.03s; }
+.list:not(.still) > li:nth-child(3){ animation-delay:.06s; }
+.list:not(.still) > li:nth-child(4){ animation-delay:.09s; }
+.list:not(.still) > li:nth-child(5){ animation-delay:.12s; }
+.list:not(.still) > li:nth-child(6){ animation-delay:.15s; }
+.list:not(.still) > li:nth-child(7){ animation-delay:.18s; }
+.list:not(.still) > li:nth-child(n+8){ animation-delay:.21s; }
+.modes .textbtn{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
+.modes .textbtn:nth-child(2){ animation-delay:.03s; }
+.modes .textbtn:nth-child(3){ animation-delay:.06s; }
+.modes .textbtn:nth-child(4){ animation-delay:.09s; }
+.modes .textbtn:nth-child(n+5){ animation-delay:.12s; }
+.profile{ animation:riseIn .28s both .02s; }
+.setgroup .setrow{ animation:riseIn .3s both; }
+.setgroup .setrow:nth-child(2){ animation-delay:.04s; }
+.setgroup .setrow:nth-child(3){ animation-delay:.08s; }
+.data-list .textbtn{ animation:riseIn .3s both .08s; }
+.reqwrap, .foot{ animation:riseIn .3s both .12s; }
+.ulabel{ animation:riseIn .28s both; }
+/* progress bars grow up from the baseline */
+@keyframes barUp{ from{ transform:scaleY(0); } }
+.spark i{ animation:barUp .55s cubic-bezier(.32,.72,0,1) both; transform-origin:bottom; }
+.spark i:nth-child(odd){ animation-delay:.05s; }
+.spark i:last-child{ animation-delay:.16s; }
+
+/* the request line: a quiet composer, hairline for a floor */
+.reqbox{ margin-top:2px; }
+.reqbox textarea{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--hair);
+  padding:10px 0; font:inherit; font-size:19px; color:var(--ink); resize:none; line-height:1.4; }
+.reqbox textarea::placeholder{ color:var(--muted); }
+.reqbox textarea:focus{ outline:none; border-bottom-color:var(--ink-soft); }
 
 /* --- motion: things arrive, they never pop ------------------------------- */
 @keyframes riseIn{ from{ opacity:0; transform:translateY(9px); } to{ opacity:1; transform:none; } }

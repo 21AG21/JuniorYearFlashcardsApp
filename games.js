@@ -367,6 +367,7 @@
       });
       if (rows) html += '<div class="ulabel">' + esc(ctx.nice(deckId)) + '</div><ul class="list" style="gap:0">' + rows + '</ul>';
     });
+    if (window.__reqHTML) html += '<div style="margin-top:var(--s-5)">' + window.__reqHTML('Request a game') + '</div>';
     ctx.mount(html);
   }
 
@@ -1262,9 +1263,10 @@
     return qs;
   }
 
-  function startQuiz(id) {
-    var qs =
-      id === 'limitsquiz' ? limitsRound(10) :
+  /* Quizzes never end: questions arrive in generated batches for as long as
+     you keep answering. The hub remembers your best streak. */
+  function quizBatch(id) {
+    return id === 'limitsquiz' ? limitsRound(10) :
       id === 'sigfigs' ? sigfigRound(10) :
       id === 'periodquiz' ? periodRound(10) :
       id === 'yearquiz' ? yearRound(10) :
@@ -1272,19 +1274,30 @@
       id === 'frtime' ? timeRound(10) :
       id === 'econfig' ? econfigRound(10) :
       genderRound(12);
-    st = { id: id, kind: 'quiz', qs: qs, i: 0, score: 0, total: qs.length,
-           lock: false, wrongChoice: -1 };
+  }
+  function refillQuiz() {
+    var batch = quizBatch(st.id);
+    var fresh = batch.filter(function (q) { return !st.recent[q.p]; });
+    if (!fresh.length) fresh = batch;        // small pools may recycle, never back to back
+    fresh.forEach(function (q) {
+      st.qs.push(q);
+      st.recent[q.p] = 1; st.recentQ.push(q.p);
+    });
+    while (st.recentQ.length > 40) delete st.recent[st.recentQ.shift()];
+  }
+  function startQuiz(id) {
+    st = { id: id, kind: 'quiz', qs: [], i: 0, score: 0, streak: 0, bestRun: 0,
+           recent: {}, recentQ: [], lock: false, wrongChoice: -1 };
+    refillQuiz();
     renderQuiz();
   }
 
   function renderQuiz() {
-    if (st.i >= st.total) {
-      return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
-    }
+    if (st.qs.length - st.i < 3) refillQuiz();
     var q = st.qs[st.i];
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
-      gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
+      gameTop(st.score + ' right' + (st.streak > 2 ? ' · ' + st.streak + ' straight' : ''), String(st.i + 1)) +
       '<div class="gcur' + (st.lock ? '' : ' swap') + '">' +
         '<div class="gname num' + (flat(q.p).length > 44 ? ' gsm' : '') + '" data-plain="' + esc(flat(q.p)) + '">' + fx(q.p) + '</div></div>' +
       '<div class="choices' + (st.lock ? '' : ' deal') + '">' + q.c.map(function (cl, i) {
@@ -1310,7 +1323,13 @@
     var q = st.qs[st.i];
     st.lock = true;
     var right = q.c[i] === q.r;
-    if (right) { st.score++; } else { st.wrongChoice = i; }
+    if (right) {
+      st.score++; st.streak++;
+      if (st.streak > st.bestRun) {
+        st.bestRun = st.streak;
+        saveBest(st.id, st.streak, st.streak + ' straight');
+      }
+    } else { st.wrongChoice = i; st.streak = 0; }
     renderQuiz();
     timer = setTimeout(nextQuizQ, right ? 550 : 1400);
   }
