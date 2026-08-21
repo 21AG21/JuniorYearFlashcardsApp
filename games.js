@@ -63,57 +63,63 @@
     ['Ba', 56, 137.3, 0.89], ['Au', 79, 197.0, 2.54], ['Hg', 80, 200.6, 2.00], ['Pb', 82, 207.2, 1.87]
   ];
 
-  /* equivalence facts for the identities board: prompt → the tile it equals */
-  /* Every standard trig identity, by family. The board draws whichever fit
-     its columns; the rest stay available as the bank grows with the layout. */
+  /* equivalence facts for the identities board: prompt → the tile it equals.
+     Third slot is the family; fractions use the ⁄ stack marker ({num}⁄{den})
+     so every one renders as a real built-up fraction, never a slash. */
   var EQUIV = [
     /* reciprocal */
-    ['sec x', '1 / cos x'], ['csc x', '1 / sin x'], ['cot x', '1 / tan x'],
-    ['sin x', '1 / csc x'], ['cos x', '1 / sec x'], ['tan x', '1 / cot x'],
+    ['sec x', '1⁄{cos x}', 'rec'], ['csc x', '1⁄{sin x}', 'rec'], ['cot x', '1⁄{tan x}', 'rec'],
+    ['sin x', '1⁄{csc x}', 'rec'], ['cos x', '1⁄{sec x}', 'rec'], ['tan x', '1⁄{cot x}', 'rec'],
     /* quotient */
-    ['tan x', 'sin x / cos x'], ['cot x', 'cos x / sin x'],
+    ['tan x', '{sin x}⁄{cos x}', 'quo'], ['cot x', '{cos x}⁄{sin x}', 'quo'],
     /* Pythagorean, and every rearrangement */
-    ['1', 'sin²x + cos²x'], ['sec²x', '1 + tan²x'], ['csc²x', '1 + cot²x'],
-    ['sin²x', '1 − cos²x'], ['cos²x', '1 − sin²x'],
-    ['tan²x', 'sec²x − 1'], ['cot²x', 'csc²x − 1'],
-    ['sec²x − tan²x', '1'], ['csc²x − cot²x', '1'],
+    ['1', 'sin²x + cos²x', 'pyt'], ['sec²x', '1 + tan²x', 'pyt'], ['csc²x', '1 + cot²x', 'pyt'],
+    ['sin²x', '1 − cos²x', 'pyt'], ['cos²x', '1 − sin²x', 'pyt'],
+    ['tan²x', 'sec²x − 1', 'pyt'], ['cot²x', 'csc²x − 1', 'pyt'],
+    ['sec²x − tan²x', '1', 'pyt'], ['csc²x − cot²x', '1', 'pyt'],
     /* even and odd */
-    ['sin(−x)', '−sin x'], ['cos(−x)', 'cos x'], ['tan(−x)', '−tan x'],
-    ['csc(−x)', '−csc x'], ['sec(−x)', 'sec x'], ['cot(−x)', '−cot x'],
-    /* cofunction */
-    ['sin(90° − x)', 'cos x'], ['cos(90° − x)', 'sin x'], ['tan(90° − x)', 'cot x'],
-    ['cot(90° − x)', 'tan x'], ['sec(90° − x)', 'csc x'], ['csc(90° − x)', 'sec x'],
-    /* supplementary and shifted */
-    ['sin(180° − x)', 'sin x'], ['cos(180° − x)', '−cos x'], ['tan(180° − x)', '−tan x'],
-    ['sin(180° + x)', '−sin x'], ['cos(180° + x)', '−cos x'], ['tan(180° + x)', 'tan x'],
-    /* periodicity */
-    ['sin(x + 360°)', 'sin x'], ['cos(x + 360°)', 'cos x'], ['tan(x + 180°)', 'tan x'],
-    /* double angle */
-    ['sin 2x', '2 sin x cos x'], ['cos 2x', 'cos²x − sin²x'],
-    ['cos 2x', '2 cos²x − 1'], ['cos 2x', '1 − 2 sin²x'],
-    ['tan 2x', '2 tan x / (1 − tan²x)'],
-    /* power reduction */
-    ['sin²x', '(1 − cos 2x) / 2'], ['cos²x', '(1 + cos 2x) / 2'],
-    ['tan²x', '(1 − cos 2x)/(1 + cos 2x)'],
-    /* half angle */
-    ['tan(x/2)', '(1 − cos x) / sin x'], ['tan(x/2)', 'sin x / (1 + cos x)'],
-    ['sin²(x/2)', '(1 − cos x) / 2'], ['cos²(x/2)', '(1 + cos x) / 2'],
-    /* triple angle */
-    ['sin 3x', '3 sin x − 4 sin³x'], ['cos 3x', '4 cos³x − 3 cos x'],
-    /* sum and difference */
-    ['sin(x + y)', 'sin x cos y + cos x sin y'],
-    ['sin(x − y)', 'sin x cos y − cos x sin y'],
-    ['cos(x + y)', 'cos x cos y − sin x sin y'],
-    ['cos(x − y)', 'cos x cos y + sin x sin y'],
-    ['tan(x + y)', '(tan x + tan y)/(1 − tan x tan y)'],
-    ['tan(x − y)', '(tan x − tan y)/(1 + tan x tan y)'],
-    /* product to sum */
-    ['2 sin x cos y', 'sin(x + y) + sin(x − y)'],
-    ['2 cos x cos y', 'cos(x + y) + cos(x − y)'],
-    ['2 sin x sin y', 'cos(x − y) − cos(x + y)'],
+    ['sin(−x)', '−sin x', 'evo'], ['cos(−x)', 'cos x', 'evo'], ['tan(−x)', '−tan x', 'evo'],
+    ['csc(−x)', '−csc x', 'evo'], ['sec(−x)', 'sec x', 'evo'], ['cot(−x)', '−cot x', 'evo'],
     /* simplifications worth knowing cold */
-    ['tan x · cot x', '1'], ['sin x · csc x', '1'], ['cos x · sec x', '1'],
-    ['sin x / tan x', 'cos x'], ['cos x · tan x', 'sin x'], ['sec x / csc x', 'tan x']
+    ['tan x · cot x', '1', 'sim'], ['sin x · csc x', '1', 'sim'], ['cos x · sec x', '1', 'sim'],
+    ['{sin x}⁄{tan x}', 'cos x', 'sim'], ['cos x · tan x', 'sin x', 'sim'],
+    ['{sec x}⁄{csc x}', 'tan x', 'sim'],
+    /* cofunction */
+    ['sin(90° − x)', 'cos x', 'cof'], ['cos(90° − x)', 'sin x', 'cof'], ['tan(90° − x)', 'cot x', 'cof'],
+    ['cot(90° − x)', 'tan x', 'cof'], ['sec(90° − x)', 'csc x', 'cof'], ['csc(90° − x)', 'sec x', 'cof'],
+    /* supplementary and shifted */
+    ['sin(180° − x)', 'sin x', 'shf'], ['cos(180° − x)', '−cos x', 'shf'], ['tan(180° − x)', '−tan x', 'shf'],
+    ['sin(180° + x)', '−sin x', 'shf'], ['cos(180° + x)', '−cos x', 'shf'], ['tan(180° + x)', 'tan x', 'shf'],
+    ['sin(x + 360°)', 'sin x', 'shf'], ['cos(x + 360°)', 'cos x', 'shf'], ['tan(x + 180°)', 'tan x', 'shf'],
+    /* double angle */
+    ['sin 2x', '2 sin x cos x', 'dbl'], ['cos 2x', 'cos²x − sin²x', 'dbl'],
+    ['cos 2x', '2 cos²x − 1', 'dbl'], ['cos 2x', '1 − 2 sin²x', 'dbl'],
+    ['tan 2x', '{2 tan x}⁄{1 − tan²x}', 'dbl'],
+    /* half angle */
+    ['tan({x}⁄{2})', '{1 − cos x}⁄{sin x}', 'hlf'], ['tan({x}⁄{2})', '{sin x}⁄{1 + cos x}', 'hlf'],
+    ['sin²({x}⁄{2})', '{1 − cos x}⁄2', 'hlf'], ['cos²({x}⁄{2})', '{1 + cos x}⁄2', 'hlf'],
+    /* power reduction */
+    ['sin²x', '{1 − cos 2x}⁄2', 'pwr'], ['cos²x', '{1 + cos 2x}⁄2', 'pwr'],
+    ['tan²x', '{1 − cos 2x}⁄{1 + cos 2x}', 'pwr'],
+    /* triple angle */
+    ['sin 3x', '3 sin x − 4 sin³x', 'tri'], ['cos 3x', '4 cos³x − 3 cos x', 'tri'],
+    /* sum and difference */
+    ['sin(x + y)', 'sin x cos y + cos x sin y', 'sum'],
+    ['sin(x − y)', 'sin x cos y − cos x sin y', 'sum'],
+    ['cos(x + y)', 'cos x cos y − sin x sin y', 'sum'],
+    ['cos(x − y)', 'cos x cos y + sin x sin y', 'sum'],
+    ['tan(x + y)', '{tan x + tan y}⁄{1 − tan x tan y}', 'sum'],
+    ['tan(x − y)', '{tan x − tan y}⁄{1 + tan x tan y}', 'sum'],
+    /* product to sum */
+    ['2 sin x cos y', 'sin(x + y) + sin(x − y)', 'pts'],
+    ['2 cos x cos y', 'cos(x + y) + cos(x − y)', 'pts'],
+    ['2 sin x sin y', 'cos(x − y) − cos(x + y)', 'pts']
+  ];
+  /* the board runs three stages, easy families first */
+  var STAGES = [
+    ['Fundamentals', ['rec', 'quo', 'pyt', 'evo', 'sim']],
+    ['Angle arithmetic', ['cof', 'shf', 'dbl', 'hlf']],
+    ['Advanced', ['pwr', 'tri', 'sum', 'pts']]
   ];
 
   /* graph base functions; every question is a generated A·f(Bx) with a sign */
@@ -128,21 +134,21 @@
   /* label, cos display, sin display, tan display, cos value, sin value */
   var ANGLES = [
     ['0',     '1',     '0',     '0',          1,      0],
-    ['π/6',   '√3/2',  '1/2',   '√3/3',       0.866,  0.5],
-    ['π/4',   '√2/2',  '√2/2',  '1',          0.707,  0.707],
-    ['π/3',   '1/2',   '√3/2',  '√3',         0.5,    0.866],
-    ['π/2',   '0',     '1',     'undefined',  0,      1],
-    ['2π/3',  '−1/2',  '√3/2',  '−√3',       -0.5,    0.866],
-    ['3π/4',  '−√2/2', '√2/2',  '−1',        -0.707,  0.707],
-    ['5π/6',  '−√3/2', '1/2',   '−√3/3',     -0.866,  0.5],
+    ['π⁄6',   '√3⁄2',  '1⁄2',   '√3⁄3',       0.866,  0.5],
+    ['π⁄4',   '√2⁄2',  '√2⁄2',  '1',          0.707,  0.707],
+    ['π⁄3',   '1⁄2',   '√3⁄2',  '√3',         0.5,    0.866],
+    ['π⁄2',   '0',     '1',     'undefined',  0,      1],
+    ['2π⁄3',  '−1⁄2',  '√3⁄2',  '−√3',       -0.5,    0.866],
+    ['3π⁄4',  '−√2⁄2', '√2⁄2',  '−1',        -0.707,  0.707],
+    ['5π⁄6',  '−√3⁄2', '1⁄2',   '−√3⁄3',     -0.866,  0.5],
     ['π',     '−1',    '0',     '0',         -1,      0],
-    ['7π/6',  '−√3/2', '−1/2',  '√3/3',      -0.866, -0.5],
-    ['5π/4',  '−√2/2', '−√2/2', '1',         -0.707, -0.707],
-    ['4π/3',  '−1/2',  '−√3/2', '√3',        -0.5,   -0.866],
-    ['3π/2',  '0',     '−1',    'undefined',  0,     -1],
-    ['5π/3',  '1/2',   '−√3/2', '−√3',        0.5,   -0.866],
-    ['7π/4',  '√2/2',  '−√2/2', '−1',         0.707, -0.707],
-    ['11π/6', '√3/2',  '−1/2',  '−√3/3',      0.866, -0.5]
+    ['7π⁄6',  '−√3⁄2', '−1⁄2',  '√3⁄3',      -0.866, -0.5],
+    ['5π⁄4',  '−√2⁄2', '−√2⁄2', '1',         -0.707, -0.707],
+    ['4π⁄3',  '−1⁄2',  '−√3⁄2', '√3',        -0.5,   -0.866],
+    ['3π⁄2',  '0',     '−1',    'undefined',  0,     -1],
+    ['5π⁄3',  '1⁄2',   '−√3⁄2', '−√3',        0.5,   -0.866],
+    ['7π⁄4',  '√2⁄2',  '−√2⁄2', '−1',         0.707, -0.707],
+    ['11π⁄6', '√3⁄2',  '−1⁄2',  '−√3⁄3',      0.866, -0.5]
   ];
   /* degree labels, index-parallel to ANGLES */
   var DEG = ['0°', '30°', '45°', '60°', '90°', '120°', '135°', '150°', '180°',
@@ -195,18 +201,18 @@
 
   /* the Maclaurin series every BC student memorizes */
   var SERIES = [
-    ['eˣ', '1 + x + x²/2! + x³/3! + ⋯'],
-    ['sin x', 'x − x³/3! + x⁵/5! − ⋯'],
-    ['cos x', '1 − x²/2! + x⁴/4! − ⋯'],
-    ['1/(1 − x)', '1 + x + x² + x³ + ⋯'],
-    ['1/(1 + x)', '1 − x + x² − x³ + ⋯'],
-    ['ln(1 + x)', 'x − x²/2 + x³/3 − ⋯'],
-    ['arctan x', 'x − x³/3 + x⁵/5 − ⋯'],
-    ['e⁻ˣ', '1 − x + x²/2! − x³/3! + ⋯'],
-    ['x eˣ', 'x + x² + x³/2! + x⁴/3! + ⋯'],
-    ['sin(x²)', 'x² − x⁶/3! + x¹⁰/5! − ⋯'],
-    ['x sin x', 'x² − x⁴/3! + x⁶/5! − ⋯'],
-    ['cos(2x)', '1 − 2x² + 2x⁴/3 − ⋯']
+    ['eˣ', '1 + x + {x²}⁄{2!} + {x³}⁄{3!} + ⋯'],
+    ['sin x', 'x − {x³}⁄{3!} + {x⁵}⁄{5!} − ⋯'],
+    ['cos x', '1 − {x²}⁄{2!} + {x⁴}⁄{4!} − ⋯'],
+    ['1⁄{1 − x}', '1 + x + x² + x³ + ⋯'],
+    ['1⁄{1 + x}', '1 − x + x² − x³ + ⋯'],
+    ['ln(1 + x)', 'x − {x²}⁄2 + {x³}⁄3 − ⋯'],
+    ['arctan x', 'x − {x³}⁄3 + {x⁵}⁄5 − ⋯'],
+    ['e⁻ˣ', '1 − x + {x²}⁄{2!} − {x³}⁄{3!} + ⋯'],
+    ['x eˣ', 'x + x² + {x³}⁄{2!} + {x⁴}⁄{3!} + ⋯'],
+    ['sin(x²)', 'x² − {x⁶}⁄{3!} + {x¹⁰}⁄{5!} − ⋯'],
+    ['x sin x', 'x² − {x⁴}⁄{3!} + {x⁶}⁄{5!} − ⋯'],
+    ['cos(2x)', '1 − 2x² + {2x⁴}⁄3 − ⋯']
   ];
 
   /* irregular-verb kernel: présent forms plus futur and imparfait stems —
@@ -251,7 +257,8 @@
     if (!num) return '0';
     var g = gcd(Math.abs(num), den); num /= g; den /= g;
     var sign = num < 0 ? '−' : ''; num = Math.abs(num);
-    return sign + (num === 1 ? '' : num) + 'π' + (den === 1 ? '' : '/' + den);
+    var top = sign + (num === 1 ? '' : num) + 'π';
+    return den === 1 ? top : top + '⁄' + den;
   }
   function degLabel(i, k) {
     var d = parseInt(DEG[i], 10) + 360 * k;
@@ -283,6 +290,23 @@
   }
   function sample(arr, n) { return shuffle(arr.slice()).slice(0, n); }
   function esc(s) { return ctx.esc(s); }
+
+  /* '⁄' stacks a real fraction: A⁄B or {multi word}⁄{multi word}.
+     fx() renders a display string to HTML; plain() flattens it for tests,
+     labels, and length checks. */
+  var FRAC_RE = /(\{[^}]*\}|[^\s{}⁄]+)⁄(\{[^}]*\}|[^\s{}⁄]+)/g;
+  function unbrace(t) { return t.charAt(0) === '{' ? t.slice(1, -1) : t; }
+  function fx(s) {
+    var out = '', last = 0, m;
+    FRAC_RE.lastIndex = 0;
+    while ((m = FRAC_RE.exec(s)) !== null) {
+      out += esc(s.slice(last, m.index));
+      out += '<span class="mfrac"><span>' + esc(unbrace(m[1])) + '</span><span>' + esc(unbrace(m[2])) + '</span></span>';
+      last = FRAC_RE.lastIndex;
+    }
+    return out + esc(s.slice(last));
+  }
+  function flat(s) { return String(s).replace(/[{}]/g, '').replace(/⁄/g, '/'); }
 
   function best() { return S.getSettings().gameBest || {}; }
   function saveBest(id, n, label) {
@@ -335,24 +359,33 @@
      BOARD — one prompt at a time over a persistent field of expressions;
      tap the one it equals. First-try hits score.
      ========================================================================== */
-  function boardRound(n) {
+  function boardRound(n, stage) {
     var picked = [], used = {};
-    // exact values, generated fresh, mixed in with the identity facts
-    var vals = [];
-    shuffle(ANGLES.map(function (_, i) { return i; })).slice(0, 8).forEach(function (i) {
-      var fn = ['sin', 'cos', 'tan'][Math.floor(Math.random() * 3)];
-      var v = fn === 'sin' ? ANGLES[i][2] : fn === 'cos' ? ANGLES[i][1] : ANGLES[i][3];
-      if (v !== 'undefined') vals.push([fn + ' ' + DEG[i], v]);
-    });
-    // only facts that fit a column cleanly — the long two-variable ones stay
-    // in the bank for other rounds but never crowd the board
-    shuffle(EQUIV.concat(vals)).forEach(function (f) {
-      if (f[0].length > 20 || f[1].length > 26) return;
+    var pool;
+    if (stage != null) {
+      var fams = STAGES[stage][1];
+      pool = EQUIV.filter(function (f) { return fams.indexOf(f[2]) > -1; });
+      if (stage === 0) {
+        // exact values, generated fresh, belong with the fundamentals
+        var vals = [];
+        shuffle(ANGLES.map(function (_, i) { return i; })).slice(0, 6).forEach(function (i) {
+          var fn = ['sin', 'cos', 'tan'][Math.floor(Math.random() * 3)];
+          var v = fn === 'sin' ? ANGLES[i][2] : fn === 'cos' ? ANGLES[i][1] : ANGLES[i][3];
+          if (v !== 'undefined') vals.push([fn + ' ' + DEG[i], v]);
+        });
+        pool = pool.concat(vals);
+      }
+    } else {
+      pool = EQUIV.slice();
+    }
+    shuffle(pool.slice()).forEach(function (f) {
+      var pl = flat(f[0]), tl = flat(f[1]);
+      if (pl.length > 26 || tl.length > 26) return;
       if (picked.length >= n) return;
       // prompts and tiles must all be distinct — and no tile may read the
       // same as any prompt in the round, or the board answers itself
-      if (used[f[0]] || used[f[1]]) return;
-      used[f[0]] = used[f[1]] = 1;
+      if (used[pl] || used[tl]) return;
+      used[pl] = used[tl] = 1;
       picked.push(f);
     });
     return picked;
@@ -394,32 +427,46 @@
     return out;
   }
 
+  function dealBoard(facts) {
+    st.facts = shuffle(facts.slice());
+    st.tiles = shuffle(facts.map(function (f) { return { t: f[1], done: false }; }));
+    st.i = 0; st.total = facts.length; st.firstTry = true; st.flash = -1; st.anim = true;
+  }
   function startBoard(id) {
-    var facts;
-    if (id === 'frconj') facts = conjRound(10);
-    else if (id === 'langboard') facts = termRound(9);
-    else facts = boardRound(10);
-    st = { id: id, kind: 'board', facts: shuffle(facts.slice()),
-           tiles: shuffle(facts.map(function (f) { return { t: f[1], done: false }; })),
-           i: 0, score: 0, total: facts.length, firstTry: true, flash: -1 };
+    st = { id: id, kind: 'board', score: 0, played: 0, stage: id === 'identities' ? 0 : null };
+    dealBoard(id === 'frconj' ? conjRound(10)
+            : id === 'langboard' ? termRound(9)
+            : boardRound(10, 0));
     renderBoard();
   }
-  function renderBoard() {
+  function renderBoard(still) {
     if (st.i >= st.total) {
-      return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
+      // Identities runs three stages, easy families first — the score rides through
+      if (st.stage != null && st.stage < STAGES.length - 1) {
+        st.played += st.total;
+        st.stage++;
+        dealBoard(boardRound(10, st.stage));
+      } else {
+        var grand = st.played + st.total;
+        return gameDone(st.id, st.score, grand, st.score + ' of ' + grand);
+      }
     }
     var f = st.facts[st.i];
+    var scope = st.stage != null
+      ? STAGES[st.stage][0] + ' · ' + st.score + ' first try'
+      : st.score + ' first try';
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
-      gameTop(st.score + ' first try', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur bcur">' +
-        '<div class="gname num' + (f[0].length > 44 ? ' gsm' : '') + '">' + esc(f[0]) + '</div></div>' +
-      '<div class="board">' + st.tiles.map(function (tl, i) {
+      gameTop(scope, (st.played + st.i + 1) + ' of ' + (st.stage != null ? 30 : st.total)) +
+      '<div class="gcur bcur' + (still ? '' : ' swap') + '">' +
+        '<div class="gname num' + (flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
+      '<div class="board' + (st.anim ? ' deal' : '') + '">' + st.tiles.map(function (tl, i) {
         var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
-        return '<button class="' + cls + '" data-tile="' + i + '"' + (tl.done ? ' disabled' : '') + '>' + esc(tl.t) + '</button>';
+        return '<button class="' + cls + '" data-tile="' + i + '"' + (tl.done ? ' disabled' : '') + '>' + fx(tl.t) + '</button>';
       }).join('') + '</div>',
       { session: true, keepScroll: st.i > 0 }
     );
+    st.anim = false;
   }
   function tapTile(i) {
     if (!st || st.kind !== 'board') return;
@@ -432,11 +479,11 @@
       renderBoard();
     } else {
       st.firstTry = false; st.flash = i;
-      renderBoard();
+      renderBoard(true);
       clearTimeout(timer);
       timer = setTimeout(function () {
         if (!st || st.kind !== 'board') return;
-        st.flash = -1; renderBoard();
+        st.flash = -1; renderBoard(true);
       }, 450);
     }
   }
@@ -613,9 +660,9 @@
         case 3: pair = ['cos ' + ax, '−' + pre + 'sin ' + ax]; break;
         case 4: pair = ['tan ' + ax, pre + 'sec² ' + ax]; break;
         case 5: pair = [A > 1 ? 'e' + sup(A) + 'ˣ' : 'eˣ', A > 1 ? A + ' e' + sup(A) + 'ˣ' : 'eˣ']; break;
-        case 6: pair = ['ln ' + ax, '1/x']; break;
+        case 6: pair = ['ln ' + ax, '1⁄x']; break;
         case 7: var m = 1 + Math.floor(Math.random() * 3);
-          pair = ['1/x' + (m > 1 ? sup(m) : ''), '−' + m + '/x' + sup(m + 1)]; break;
+          pair = ['1⁄' + (m > 1 ? '{x' + sup(m) + '}' : 'x'), '{−' + m + '}⁄{x' + sup(m + 1) + '}']; break;
       }
       if (seenL[pair[0]] || seenR[pair[1]]) continue;
       seenL[pair[0]] = seenR[pair[1]] = 1;
@@ -643,15 +690,15 @@
       var p = 2 + Math.floor(Math.random() * 5);           // 2..6
       var pair;
       switch (Math.floor(Math.random() * 8)) {
-        case 0: pair = ['x' + sup(p), 'x' + sup(p + 1) + '/' + (p + 1) + ' + C']; break;
+        case 0: pair = ['x' + sup(p), '{x' + sup(p + 1) + '}⁄' + (p + 1) + ' + C']; break;
         case 1: var a = (p + 1) * (1 + Math.floor(Math.random() * 3)), c0 = a / (p + 1);
           pair = [a + 'x' + sup(p), (c0 > 1 ? c0 : '') + 'x' + sup(p + 1) + ' + C']; break;
         case 2: pair = ['cos x', 'sin x + C']; break;
         case 3: pair = ['sin x', '−cos x + C']; break;
         case 4: pair = ['sec²x', 'tan x + C']; break;
-        case 5: pair = ['1/x', 'ln|x| + C']; break;
+        case 5: pair = ['1⁄x', 'ln|x| + C']; break;
         case 6: pair = ['eˣ', 'eˣ + C']; break;
-        case 7: pair = ['1/(1 + x²)', 'arctan x + C']; break;
+        case 7: pair = ['1⁄{1 + x²}', 'arctan x + C']; break;
       }
       if (seenL[pair[0]] || seenR[pair[1]]) continue;
       seenL[pair[0]] = seenR[pair[1]] = 1;
@@ -720,7 +767,7 @@
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });
     shuffle(left); shuffle(right);
     st = { id: id, kind: 'match', left: left, right: right, selL: -1, selR: -1,
-           tries: 0, hits: 0, total: pairs.length };
+           tries: 0, hits: 0, total: pairs.length, anim: true };
     renderMatch();
   }
 
@@ -743,18 +790,19 @@
       return items.map(function (it, i) {
         var cls = 'mrow' + (it.done ? ' done' : i === sel ? ' sel' : '');
         return '<button class="' + cls + '" data-m' + side + '="' + i + '"' + (it.done ? ' disabled' : '') + '>' +
-          esc(it.t) + '</button>';
+          fx(it.t) + '</button>';
       }).join('');
     }
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.hits + ' of ' + st.total, st.tries + (st.tries === 1 ? ' try' : ' tries')) +
-      '<div class="mcols">' +
+      '<div class="mcols' + (st.anim ? ' deal' : '') + '">' +
         '<div><div class="k mhead">' + esc(head[0]) + '</div>' + col(st.left, 'l', st.selL) + '</div>' +
         '<div><div class="k mhead">' + esc(head[1]) + '</div>' + col(st.right, 'r', st.selR) + '</div>' +
       '</div>',
       { session: true, keepScroll: true }
     );
+    st.anim = false;
   }
 
   function pickMatch(side, i) {
@@ -836,9 +884,9 @@
       } else {
         var a = ANGLES[q.a];
         var right = q.fn === 'cos' ? a[1] : q.fn === 'sin' ? a[2] : a[3];
-        var pool = { cos: ['1', '√3/2', '√2/2', '1/2', '0', '−1/2', '−√2/2', '−√3/2', '−1'],
-                     sin: ['1', '√3/2', '√2/2', '1/2', '0', '−1/2', '−√2/2', '−√3/2', '−1'],
-                     tan: ['0', '√3/3', '1', '√3', 'undefined', '−√3', '−1', '−√3/3'] }[q.fn];
+        var pool = { cos: ['1', '√3⁄2', '√2⁄2', '1⁄2', '0', '−1⁄2', '−√2⁄2', '−√3⁄2', '−1'],
+                     sin: ['1', '√3⁄2', '√2⁄2', '1⁄2', '0', '−1⁄2', '−√2⁄2', '−√3⁄2', '−1'],
+                     tan: ['0', '√3⁄3', '1', '√3', 'undefined', '−√3', '−1', '−√3⁄3'] }[q.fn];
         q.choices = shuffle([right].concat(sample(pool.filter(function (v) { return v !== right; }), 3)));
         q.right = right;
       }
@@ -848,7 +896,7 @@
       if (st.lock) state = c === q.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
       return '<button class="choice num" data-gc="' + i + '"' +
         (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
-        esc(c) + '</button>';
+        fx(c) + '</button>';
     }).join('') + '</div>';
   }
 
@@ -862,7 +910,7 @@
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur"><div class="gname">' + esc(prompt) + '</div></div>' +
+      '<div class="gcur"><div class="gname" data-plain="' + esc(flat(prompt)) + '">' + fx(prompt) + '</div></div>' +
       '<div class="ucwrap">' + circleSVG(q) + '</div>' +
       circleChoices(q),
       { session: true, keepScroll: st.i > 0 }
@@ -905,7 +953,7 @@
      ========================================================================== */
   function fracLabel(a, b) {
     var g = gcd(a, b); a /= g; b /= g;
-    return b === 1 ? String(a) : a + '/' + b;
+    return b === 1 ? String(a) : a + '⁄' + b;
   }
   function pick3(pool, right) {
     var seen = {}; seen[right] = 1;
@@ -924,32 +972,32 @@
       if (t === 0) {                              // rational function at infinity
         var dp = 1 + Math.floor(Math.random() * 3), dq = 1 + Math.floor(Math.random() * 3);
         var a = 2 + Math.floor(Math.random() * 8), b = 2 + Math.floor(Math.random() * 8);
-        p = 'lim x→∞  (' + a + (dp > 1 ? 'x' + sup(dp) : 'x') + ' + 1) / (' +
-            b + (dq > 1 ? 'x' + sup(dq) : 'x') + ' − 2)';
+        p = 'lim x→∞  {' + a + (dp > 1 ? 'x' + sup(dp) : 'x') + ' + 1}⁄{' +
+            b + (dq > 1 ? 'x' + sup(dq) : 'x') + ' − 2}';
         r = dp < dq ? '0' : dp > dq ? '∞' : fracLabel(a, b);
         pool = ['0', '∞', '−∞', fracLabel(a, b), fracLabel(b, a), '1'];
       } else if (t === 1) {                       // sin over x families
         var c1 = 2 + Math.floor(Math.random() * 6), c2 = 2 + Math.floor(Math.random() * 6);
         if (Math.random() < 0.5) {
-          p = 'lim x→0  sin ' + c1 + 'x / x';
+          p = 'lim x→0  {sin ' + c1 + 'x}⁄x';
           r = String(c1);
         } else {
-          p = 'lim x→0  sin ' + c1 + 'x / sin ' + c2 + 'x';
+          p = 'lim x→0  {sin ' + c1 + 'x}⁄{sin ' + c2 + 'x}';
           r = fracLabel(c1, c2);
         }
         pool = ['0', '1', String(c1), String(c2), fracLabel(c1, c2), fracLabel(c2, c1), '∞'];
       } else if (t === 2) {                       // removable factor
         var k = 2 + Math.floor(Math.random() * 5);
-        p = 'lim x→' + k + '  (x² − ' + (k * k) + ') / (x − ' + k + ')';
+        p = 'lim x→' + k + '  {x² − ' + (k * k) + '}⁄{x − ' + k + '}';
         r = String(2 * k);
         pool = [String(k), String(k * k), '0', String(2 * k), 'does not exist'];
       } else {                                    // the classics
         var pickQ = [
-          ['lim x→0  (1 − cos x) / x', '0', ['1', '1/2', '∞']],
+          ['lim x→0  {1 − cos x}⁄x', '0', ['1', '1⁄2', '∞']],
           ['lim x→0⁺  ln x', '−∞', ['0', '∞', '1']],
-          ['lim x→∞  (1 + 1/x)ˣ', 'e', ['1', '∞', '0']],
-          ['lim x→0  (eˣ − 1) / x', '1', ['0', 'e', '∞']],
-          ['lim x→∞  ln x / x', '0', ['1', '∞', 'e']]
+          ['lim x→∞  (1 + 1⁄x)ˣ', 'e', ['1', '∞', '0']],
+          ['lim x→0  {eˣ − 1}⁄x', '1', ['0', 'e', '∞']],
+          ['lim x→∞  {ln x}⁄x', '0', ['1', '∞', 'e']]
         ][Math.floor(Math.random() * 5)];
         p = pickQ[0]; r = pickQ[1]; pool = pickQ[2].concat([r]);
       }
@@ -1182,14 +1230,14 @@
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur">' +
-        '<div class="gname num' + (q.p.length > 44 ? ' gsm' : '') + '">' + esc(q.p) + '</div></div>' +
-      '<div class="choices">' + q.c.map(function (cl, i) {
+      '<div class="gcur' + (st.lock ? '' : ' swap') + '">' +
+        '<div class="gname num' + (flat(q.p).length > 44 ? ' gsm' : '') + '" data-plain="' + esc(flat(q.p)) + '">' + fx(q.p) + '</div></div>' +
+      '<div class="choices' + (st.lock ? '' : ' deal') + '">' + q.c.map(function (cl, i) {
         var state = '';
         if (st.lock) state = cl === q.r ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
         return '<button class="choice num" data-gc="' + i + '"' +
           (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
-          esc(cl) + '</button>';
+          fx(cl) + '</button>';
       }).join('') + '</div>',
       { session: true, keepScroll: st.i > 0 }
     );
