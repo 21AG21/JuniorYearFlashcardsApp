@@ -18,25 +18,25 @@
     timeline:   { name: 'Timeline',         deck: 'apush',  kind: 'order'  },
     presorder:  { name: 'Presidents',       deck: 'apush',  kind: 'order'  },
     periodquiz: { name: 'Periods',          deck: 'apush',  kind: 'quiz'   },
-    yearquiz:   { name: 'Year it',          deck: 'apush',  kind: 'quiz'   },
-    chemorder:  { name: 'Order it',         deck: 'chem',   kind: 'order'  },
+    yearquiz:   { name: 'Years',          deck: 'apush',  kind: 'quiz'   },
+    chemorder:  { name: 'Order',         deck: 'chem',   kind: 'order'  },
     chemformula:{ name: 'Formulas',         deck: 'chem',   kind: 'match'  },
-    ionmatch:   { name: 'Polyatomic ions',  deck: 'chem',   kind: 'match'  },
+    ionmatch:   { name: 'Ions',  deck: 'chem',   kind: 'match'  },
     elemmatch:  { name: 'Elements',         deck: 'chem',   kind: 'match'  },
     sigfigs:    { name: 'Sig figs',         deck: 'chem',   kind: 'quiz'   },
     econfig:    { name: 'Configurations',   deck: 'chem',   kind: 'quiz'   },
-    langmatch:  { name: 'Device match',     deck: 'lang',   kind: 'match'  },
+    langmatch:  { name: 'Devices',     deck: 'lang',   kind: 'match'  },
     langboard:  { name: 'Terms',            deck: 'lang',   kind: 'board'  },
-    frmatch:    { name: 'Vocab match',      deck: 'french', kind: 'match'  },
+    frmatch:    { name: 'Vocab',      deck: 'french', kind: 'match'  },
     frconj:     { name: 'Conjugation',      deck: 'french', kind: 'board'  },
     frgender:   { name: 'Le or la',         deck: 'french', kind: 'quiz'   },
     frnumbers:  { name: 'Numbers',          deck: 'french', kind: 'quiz'   },
     frtime:     { name: 'L’heure',          deck: 'french', kind: 'quiz'   },
     unitcircle: { name: 'Unit circle',      deck: 'calcbc', kind: 'circle' },
-    degcircle:  { name: 'Degrees on the circle', deck: 'calcbc', kind: 'circle' },
-    triggraphs: { name: 'Name that graph',  deck: 'calcbc', kind: 'graph'  },
+    degcircle:  { name: 'Degrees', deck: 'calcbc', kind: 'circle' },
+    triggraphs: { name: 'Graphs',  deck: 'calcbc', kind: 'graph'  },
     identities: { name: 'Identities',       deck: 'calcbc', kind: 'board'  },
-    derivmatch: { name: 'Derivative match', deck: 'calcbc', kind: 'match'  },
+    derivmatch: { name: 'Derivatives', deck: 'calcbc', kind: 'match'  },
     antideriv:  { name: 'Antiderivatives',  deck: 'calcbc', kind: 'match'  },
     seriesmatch:{ name: 'Series',           deck: 'calcbc', kind: 'match'  },
     radmatch:   { name: 'Radians',          deck: 'calcbc', kind: 'match'  },
@@ -395,11 +395,11 @@
   }
 
   function startBoard(id) {
-    var facts, klabel;
-    if (id === 'frconj') { facts = conjRound(10); klabel = 'Tap the form'; }
-    else if (id === 'langboard') { facts = termRound(9); klabel = 'Tap the term it defines'; }
-    else { facts = boardRound(10); klabel = 'Tap what this equals'; }
-    st = { id: id, kind: 'board', k: klabel, facts: shuffle(facts.slice()),
+    var facts;
+    if (id === 'frconj') facts = conjRound(10);
+    else if (id === 'langboard') facts = termRound(9);
+    else facts = boardRound(10);
+    st = { id: id, kind: 'board', facts: shuffle(facts.slice()),
            tiles: shuffle(facts.map(function (f) { return { t: f[1], done: false }; })),
            i: 0, score: 0, total: facts.length, firstTry: true, flash: -1 };
     renderBoard();
@@ -412,7 +412,7 @@
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' first try', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur"><span class="k">' + esc(st.k) + '</span>' +
+      '<div class="gcur">' +
         '<div class="gname num' + (f[0].length > 44 ? ' gsm' : '') + '">' + esc(f[0]) + '</div></div>' +
       '<div class="board">' + st.tiles.map(function (tl, i) {
         var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
@@ -454,7 +454,7 @@
       '<div class="done-hero"><span class="k">' + esc(g.name) + '</span>' +
       '<div class="v num">' + esc(label) + '</div></div>' +
       '<button class="act" data-gagain="' + id + '">Play again</button>' +
-      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games">All games</button></div>',
+      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games">Games</button></div>',
       { session: true }
     );
   }
@@ -542,7 +542,7 @@
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.axis.title, (st.done + 1) + ' of ' + st.total) +
-      '<div class="gcur"><span class="k">Place this</span><div class="gname">' + esc(st.cur.n) + '</div></div>' +
+      '<div class="gcur"><div class="gname">' + esc(st.cur.n) + '</div></div>' +
       '<div class="gline">' + rows + '</div>',
       { session: true, keepScroll: st.done > 0 }
     );
@@ -748,7 +748,7 @@
     }
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
-      gameTop(st.hits + ' of ' + st.total + ' matched', st.tries + (st.tries === 1 ? ' try' : ' tries')) +
+      gameTop(st.hits + ' of ' + st.total, st.tries + (st.tries === 1 ? ' try' : ' tries')) +
       '<div class="mcols">' +
         '<div><div class="k mhead">' + esc(head[0]) + '</div>' + col(st.left, 'l', st.selL) + '</div>' +
         '<div><div class="k mhead">' + esc(head[1]) + '</div>' + col(st.right, 'r', st.selR) + '</div>' +
@@ -813,18 +813,18 @@
     if (q.type === 0) {
       // half the time the label is a generated coterminal form (17π/6, −210°…)
       if (q.k == null) q.k = Math.random() < 0.5 ? 0 : [-1, 1, 2][Math.floor(Math.random() * 3)];
-      return 'Tap ' + (st.deg ? degLabel(q.a, q.k) : radLabel(q.a, q.k));
+      return st.deg ? degLabel(q.a, q.k) : radLabel(q.a, q.k);
     }
     if (q.type === 1) {
       // half coordinate-pair phrasing (the classic unit-circle test), half cos/sin
       if (q.coord == null) q.coord = Math.random() < 0.5;
-      return q.coord ? 'Tap (' + a[1] + ', ' + a[2] + ')'
-                     : 'Tap the angle where cos θ = ' + a[1] + ' and sin θ = ' + a[2];
+      return q.coord ? '(' + a[1] + ', ' + a[2] + ')'
+                     : 'cos θ = ' + a[1] + ' · sin θ = ' + a[2];
     }
-    if (q.type === 3) return 'Which angle is marked?';
+    if (q.type === 3) return 'θ = ?';
     var fn = ['cos', 'sin', 'tan'][q.a % 3];
     q.fn = fn;
-    return 'What is ' + fn + ' θ at the marked point?';
+    return fn + ' θ = ?';
   }
 
   function circleChoices(q) {
@@ -848,7 +848,7 @@
       if (st.lock) state = c === q.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
       return '<button class="choice num" data-gc="' + i + '"' +
         (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
-        (q.type === 3 ? esc(c) : q.fn + ' θ = ' + esc(c)) + '</button>';
+        esc(c) + '</button>';
     }).join('') + '</div>';
   }
 
@@ -955,7 +955,7 @@
       }
       if (seen[p]) continue;
       seen[p] = 1;
-      qs.push({ p: p, k: 'Evaluate', c: shuffle([r].concat(pick3(pool, r))), r: r });
+      qs.push({ p: p, c: shuffle([r].concat(pick3(pool, r))), r: r });
     }
     return qs;
   }
@@ -986,7 +986,7 @@
         if (v >= 1 && opts.length < 4 && opts.indexOf(String(v)) < 0) opts.push(String(v));
       });
       opts.sort(function (a, b) { return a - b; });
-      qs.push({ p: num, k: 'How many significant figures?', c: opts, r: r });
+      qs.push({ p: num, c: opts, r: r });
     }
     return qs;
   }
@@ -1001,7 +1001,7 @@
       if (fits.length !== 1) return;
       var r = plabel(fits[0]);
       var others = sample(PERIODS.filter(function (pd) { return pd !== fits[0]; }), 3).map(plabel);
-      qs.push({ p: e.t, k: 'Which period?', c: shuffle([r].concat(others)), r: r });
+      qs.push({ p: e.t, c: shuffle([r].concat(others)), r: r });
     });
     return qs;
   }
@@ -1049,7 +1049,7 @@
         used[w] = 1; opts.push(w);
       }
       if (opts.length < 4) continue;
-      qs.push({ p: String(v), k: 'In French', c: shuffle(opts), r: r });
+      qs.push({ p: String(v), c: shuffle(opts), r: r });
     }
     return qs;
   }
@@ -1069,7 +1069,7 @@
       }
       if (opts.length < 4) return;
       opts.sort();
-      qs.push({ p: e.t, k: 'Which year?', c: opts, r: String(e.y) });
+      qs.push({ p: e.t, c: opts, r: String(e.y) });
     });
     return qs;
   }
@@ -1101,7 +1101,7 @@
       }
       if (opts.length < 4) return;
       var name = ELEM_NAMES[ELEMENTS.indexOf(e)];
-      qs.push({ p: name + ' (' + e[0] + ')', k: 'Electron configuration', c: shuffle(opts), r: r });
+      qs.push({ p: name + ' (' + e[0] + ')', c: shuffle(opts), r: r });
     });
     return qs;
   }
@@ -1142,7 +1142,7 @@
       }
       if (opts.length < 4) continue;
       var disp = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-      qs.push({ p: disp, k: 'In French', c: shuffle(opts), r: r });
+      qs.push({ p: disp, c: shuffle(opts), r: r });
     }
     return qs;
   }
@@ -1154,7 +1154,7 @@
       if (qs.length >= n) return;
       var m = /^(le|la) ([a-zàâçéèêëîïôöûùüÿœæ’' -]+)$/i.exec(v[0]);
       if (!m) return;
-      qs.push({ p: m[2], k: 'Le or la?', c: ['le', 'la'], r: m[1].toLowerCase() });
+      qs.push({ p: m[2], c: ['le', 'la'], r: m[1].toLowerCase() });
     });
     return qs;
   }
@@ -1182,7 +1182,7 @@
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur"><span class="k">' + esc(q.k) + '</span>' +
+      '<div class="gcur">' +
         '<div class="gname num' + (q.p.length > 44 ? ' gsm' : '') + '">' + esc(q.p) + '</div></div>' +
       '<div class="choices">' + q.c.map(function (cl, i) {
         var state = '';
@@ -1299,12 +1299,12 @@
       if (st.lock) state = cl === g.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
       return '<button class="choice" data-gc="' + i + '"' +
         (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') +
-        '>y = ' + esc(cl) + '</button>';
+        '>' + esc(cl) + '</button>';
     }).join('') + '</div>';
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur"><div class="gname">Which function is this?</div></div>' +
+      '<div class="gcur"><div class="gname num">y = ?</div></div>' +
       '<div class="tgwrap">' + graphSVG(g) + '</div>' + ch,
       { session: true, keepScroll: st.i > 0 }
     );

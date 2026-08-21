@@ -197,10 +197,10 @@
       '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
-        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Multiple choice</button>' +
+        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Quiz</button>' +
         (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Starred</button>' : '') +
         '<button class="textbtn" data-go="#/study/' + deckId + '/hard">Trouble spots</button>' +
-        '<button class="textbtn" data-go="#/study/' + deckId + '/all">Shuffle all</button>' +
+        '<button class="textbtn" data-go="#/study/' + deckId + '/all">Shuffle</button>' +
         (window.Games && window.Games.linksFor(deckId).length
           ? '<button class="textbtn" data-go="#/games">Games</button>' : '') +
       '</div>' +
@@ -240,8 +240,8 @@
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
-        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Multiple choice</button>' +
-        '<button class="textbtn" data-go="#/study/' + deckId + '/all/' + unitId + '">Shuffle all</button>' +
+        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Quiz</button>' +
+        '<button class="textbtn" data-go="#/study/' + deckId + '/all/' + unitId + '">Shuffle</button>' +
       '</div>' +
       '<ul class="list tight" style="margin-top:var(--s-4)">' + list + '</ul>'
     );
@@ -727,8 +727,8 @@
       '</div>' +
 
       '<div class="data-list">' +
-        '<button class="textbtn" data-export>Copy backup</button>' +
-        '<button class="textbtn" data-import>Restore backup</button>' +
+        '<button class="textbtn" data-export>Backup</button>' +
+        '<button class="textbtn" data-import>Restore</button>' +
         '<button class="textbtn" data-reset>Reset progress</button>' +
         (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile</button>' : '') +
       '</div>' +
@@ -811,14 +811,14 @@
     }
     var del = t.closest('[data-delprofile]');
     if (del) {
-      if (armConfirm(del, 'Delete — tap again to confirm')) {
+      if (armConfirm(del, 'Tap again to delete')) {
         S.removeProfile(S.activeProfile().id); viewSettings(); toast('Profile deleted');
       }
       return;
     }
     var rst = t.closest('[data-reset]');
     if (rst) {
-      if (armConfirm(rst, 'Reset — tap again to confirm')) {
+      if (armConfirm(rst, 'Tap again to reset')) {
         S.resetProgress(); viewSettings(); toast('Progress reset');
       }
       return;

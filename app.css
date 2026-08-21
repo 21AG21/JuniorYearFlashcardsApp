@@ -123,10 +123,13 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 .tabs{ position:fixed; z-index:40; left:0; right:0; margin-inline:auto;
   bottom:max(calc(env(safe-area-inset-bottom, 0px) - 16px), 10px);
   width:fit-content; max-width:calc(100vw - 32px); }
-.lg-tab{ width:60px; }             /* glyphs only, hit targets ≥44pt */
+/* the whole capsule runs shorter than the stock bar: tighter tabs, tighter
+   ends — the pill is untouched, it just rides in a smaller boat */
+.lg-tabbar{ padding:4px 14px; }
+.lg-tab{ width:54px; }             /* glyphs only, hit targets ≥44pt */
 @media (max-width:360px){
-  .lg-tabbar{ padding:4px 14px; }
-  .lg-tab{ width:52px; }
+  .lg-tabbar{ padding:4px 10px; }
+  .lg-tab{ width:48px; }
 }
 .lg, .lg-btn, .lg-tab, .lg-seg-item, .lg-title, .lg-sub,
 .lg-search-input, .lg-header-title{ font-family:var(--font-sf); }
