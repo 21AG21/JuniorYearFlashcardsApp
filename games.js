@@ -57,8 +57,10 @@
     ['F', 9, 19.0, 3.98], ['Ne', 10, 20.2, 0], ['Na', 11, 23.0, 0.93], ['Mg', 12, 24.3, 1.31],
     ['Al', 13, 27.0, 1.61], ['Si', 14, 28.1, 1.90], ['P', 15, 31.0, 2.19], ['S', 16, 32.1, 2.58],
     ['Cl', 17, 35.5, 3.16], ['Ar', 18, 39.9, 0], ['K', 19, 39.1, 0.82], ['Ca', 20, 40.1, 1.00],
-    ['Ti', 22, 47.9, 1.54], ['Cr', 24, 52.0, 1.66], ['Mn', 25, 54.9, 1.55], ['Fe', 26, 55.8, 1.83],
-    ['Ni', 28, 58.7, 1.91], ['Cu', 29, 63.5, 1.90], ['Zn', 30, 65.4, 1.65], ['Br', 35, 79.9, 2.96],
+    ['Sc', 21, 45.0, 1.36], ['Ti', 22, 47.9, 1.54], ['V', 23, 50.9, 1.63], ['Cr', 24, 52.0, 1.66],
+    ['Mn', 25, 54.9, 1.55], ['Fe', 26, 55.8, 1.83], ['Co', 27, 58.9, 1.88], ['Ni', 28, 58.7, 1.91],
+    ['Cu', 29, 63.5, 1.90], ['Zn', 30, 65.4, 1.65], ['Ga', 31, 69.7, 1.81], ['Ge', 32, 72.6, 2.01],
+    ['As', 33, 74.9, 2.18], ['Se', 34, 79.0, 2.55], ['Br', 35, 79.9, 2.96],
     ['Ag', 47, 107.9, 1.93], ['Sn', 50, 118.7, 1.96], ['I', 53, 126.9, 2.66], ['Cs', 55, 132.9, 0.79],
     ['Ba', 56, 137.3, 0.89], ['Au', 79, 197.0, 2.54], ['Hg', 80, 200.6, 2.00], ['Pb', 82, 207.2, 1.87]
   ];
@@ -185,8 +187,9 @@
   var ELEM_NAMES = ['Hydrogen', 'Helium', 'Lithium', 'Beryllium', 'Boron', 'Carbon',
     'Nitrogen', 'Oxygen', 'Fluorine', 'Neon', 'Sodium', 'Magnesium', 'Aluminum',
     'Silicon', 'Phosphorus', 'Sulfur', 'Chlorine', 'Argon', 'Potassium', 'Calcium',
-    'Titanium', 'Chromium', 'Manganese', 'Iron', 'Nickel', 'Copper', 'Zinc', 'Bromine',
-    'Silver', 'Tin', 'Iodine', 'Cesium', 'Barium', 'Gold', 'Mercury', 'Lead'];
+    'Scandium', 'Titanium', 'Vanadium', 'Chromium', 'Manganese', 'Iron', 'Cobalt',
+    'Nickel', 'Copper', 'Zinc', 'Gallium', 'Germanium', 'Arsenic', 'Selenium',
+    'Bromine', 'Silver', 'Tin', 'Iodine', 'Cesium', 'Barium', 'Gold', 'Mercury', 'Lead'];
 
   /* the common polyatomic ions: name, formula */
   var IONS = [
@@ -1003,8 +1006,25 @@
   function limitsRound(n) {
     var qs = [], seen = {}, guard = 0;
     while (qs.length < n && guard++ < 200) {
-      var t = Math.floor(Math.random() * 4), p, r, pool;
-      if (t === 0) {                              // rational function at infinity
+      var t = Math.floor(Math.random() * 6), p, r, pool;
+      if (t === 4) {                              // continuity: plug in, fully generated
+        var pa = 1 + Math.floor(Math.random() * 4), pb = 1 + Math.floor(Math.random() * 6);
+        var pc = 1 + Math.floor(Math.random() * 9), pk = 1 + Math.floor(Math.random() * 4);
+        p = 'lim x→' + pk + '  (' + pa + 'x² + ' + pb + 'x + ' + pc + ')';
+        r = String(pa * pk * pk + pb * pk + pc);
+        pool = [String(pa * pk * pk - pb * pk + pc), String(pb * pk + pc),
+                String(pa * pk * pk + pb * pk), String(pa * pk + pb + pc), '∞'];
+      } else if (t === 5) {                       // tan takes sine's place, still generated
+        var ta = 2 + Math.floor(Math.random() * 6), tb = 2 + Math.floor(Math.random() * 6);
+        if (Math.random() < 0.5) {
+          p = 'lim x→0  {tan ' + ta + 'x}⁄x';
+          r = String(ta);
+        } else {
+          p = 'lim x→0  {sin ' + ta + 'x}⁄{tan ' + tb + 'x}';
+          r = fracLabel(ta, tb);
+        }
+        pool = ['0', '1', String(ta), String(tb), fracLabel(ta, tb), fracLabel(tb, ta), '∞'];
+      } else if (t === 0) {                       // rational function at infinity
         var dp = 1 + Math.floor(Math.random() * 3), dq = 1 + Math.floor(Math.random() * 3);
         var a = 2 + Math.floor(Math.random() * 8), b = 2 + Math.floor(Math.random() * 8);
         p = 'lim x→∞  {' + a + (dp > 1 ? 'x' + sup(dp) : 'x') + ' + 1}⁄{' +
