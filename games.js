@@ -24,12 +24,14 @@
     ionmatch:   { name: 'Polyatomic ions',  deck: 'chem',   kind: 'match'  },
     elemmatch:  { name: 'Elements',         deck: 'chem',   kind: 'match'  },
     sigfigs:    { name: 'Sig figs',         deck: 'chem',   kind: 'quiz'   },
+    econfig:    { name: 'Configurations',   deck: 'chem',   kind: 'quiz'   },
     langmatch:  { name: 'Device match',     deck: 'lang',   kind: 'match'  },
     langboard:  { name: 'Terms',            deck: 'lang',   kind: 'board'  },
     frmatch:    { name: 'Vocab match',      deck: 'french', kind: 'match'  },
     frconj:     { name: 'Conjugation',      deck: 'french', kind: 'board'  },
     frgender:   { name: 'Le or la',         deck: 'french', kind: 'quiz'   },
     frnumbers:  { name: 'Numbers',          deck: 'french', kind: 'quiz'   },
+    frtime:     { name: 'L’heure',          deck: 'french', kind: 'quiz'   },
     unitcircle: { name: 'Unit circle',      deck: 'calcbc', kind: 'circle' },
     degcircle:  { name: 'Degrees on the circle', deck: 'calcbc', kind: 'circle' },
     triggraphs: { name: 'Name that graph',  deck: 'calcbc', kind: 'graph'  },
@@ -1072,6 +1074,79 @@
     return qs;
   }
 
+  /* electron configurations built by aufbau — Cr and Cu sit out (exceptions) */
+  var ORBS = [['1s', 2], ['2s', 2], ['2p', 6], ['3s', 2], ['3p', 6], ['4s', 2], ['3d', 10], ['4p', 6]];
+  function configOf(z) {
+    var parts = [];
+    for (var i = 0; i < ORBS.length && z > 0; i++) {
+      var take = Math.min(z, ORBS[i][1]);
+      parts.push(ORBS[i][0] + sup(take));
+      z -= take;
+    }
+    return parts.join(' ');
+  }
+  function econfigRound(n) {
+    var pool = ELEMENTS.filter(function (e) { return e[1] <= 36 && e[1] !== 24 && e[1] !== 29; });
+    var qs = [];
+    sample(pool, Math.min(n, pool.length)).forEach(function (e) {
+      var z = e[1], r = configOf(z);
+      var opts = [r], used = {}; used[r] = 1;
+      var tries = 0;
+      while (opts.length < 4 && tries++ < 40) {
+        var dz = z + [-2, -1, 1, 2][Math.floor(Math.random() * 4)];
+        if (dz < 1 || dz > 36) continue;
+        var w = configOf(dz);
+        if (used[w]) continue;
+        used[w] = 1; opts.push(w);
+      }
+      if (opts.length < 4) return;
+      var name = ELEM_NAMES[ELEMENTS.indexOf(e)];
+      qs.push({ p: name + ' (' + e[0] + ')', k: 'Electron configuration', c: shuffle(opts), r: r });
+    });
+    return qs;
+  }
+
+  /* the clock in conversational French — et quart, et demie, moins le quart */
+  function frTime(h, m) {
+    var base = m > 30 ? (h + 1) % 24 : h;
+    var hr12 = base % 12;
+    var hw = base === 0 ? 'minuit' : base === 12 ? 'midi'
+           : (hr12 === 1 ? 'une heure' : frBelow100(hr12 === 0 ? 12 : hr12) + ' heures');
+    var special = base === 0 || base === 12;   // midi/minuit take "demi", no e
+    if (m === 0) return hw;
+    if (m <= 30) {
+      if (m === 15) return hw + ' et quart';
+      if (m === 30) return hw + (special ? ' et demi' : ' et demie');
+      return hw + ' ' + frBelow100(m);
+    }
+    if (m === 45) return hw + ' moins le quart';
+    return hw + ' moins ' + frBelow100(60 - m);
+  }
+  function timeRound(n) {
+    var qs = [], seen = {}, guard = 0;
+    while (qs.length < n && guard++ < 200) {
+      var h = Math.floor(Math.random() * 24);
+      var m = 5 * Math.floor(Math.random() * 12);
+      var key = h + ':' + m;
+      if (seen[key]) continue;
+      seen[key] = 1;
+      var r = frTime(h, m);
+      var opts = [r], used = {}; used[r] = 1;
+      var tries = 0;
+      while (opts.length < 4 && tries++ < 60) {
+        var dh = (h + [0, 0, 1, 23][Math.floor(Math.random() * 4)]) % 24;
+        var dm = (m + [5, 55, 15, 45, 30][Math.floor(Math.random() * 5)]) % 60;
+        var w = frTime(dh, dm);
+        if (used[w]) continue;
+        used[w] = 1; opts.push(w);
+      }
+      if (opts.length < 4) continue;
+      var disp = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+      qs.push({ p: disp, k: 'In French', c: shuffle(opts), r: r });
+    }
+    return qs;
+  }
+
   /* le or la, straight from the vocabulary’s own articles */
   function genderRound(n) {
     var qs = [];
@@ -1091,6 +1166,8 @@
       id === 'periodquiz' ? periodRound(10) :
       id === 'yearquiz' ? yearRound(10) :
       id === 'frnumbers' ? numbersRound(10) :
+      id === 'frtime' ? timeRound(10) :
+      id === 'econfig' ? econfigRound(10) :
       genderRound(12);
     st = { id: id, kind: 'quiz', qs: qs, i: 0, score: 0, total: qs.length,
            lock: false, wrongChoice: -1 };
