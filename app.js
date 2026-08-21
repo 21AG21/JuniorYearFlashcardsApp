@@ -307,7 +307,12 @@
     ix.courses.forEach(function (c) {
       var d = S.getDeck(c.id);
       if (!d) return;
-      d.cards.forEach(function (card) { if (S.isDue(card.i)) all.push(card); });
+      d.cards.forEach(function (card) {
+        // due means studied-and-owed — starring alone must not conjure a review
+        // (the same guard deckStats uses, so the two due counts always agree)
+        var s = S.cs(card.i);
+        if (s && (s.r || s.t || s.l) && S.isDue(card.i)) all.push(card);
+      });
     });
     if (!all.length) {
       // say when the next card comes back, not just that none are due
@@ -368,7 +373,10 @@
   function sessUtil(starred) {
     return '<div class="sess-util">' +
       '<button class="iconbtn" data-exit aria-label="Close"><svg><use href="#i-close"/></svg></button>' +
-      (sess.history.length ? '<button class="iconbtn" data-undo aria-label="Undo"><svg><use href="#i-undo"/></svg></button>' : '') +
+      // in quiz mode undo can only take back the just-given answer — the
+      // control shows exactly when it can act
+      (sess.history.length && (!sess.quiz || sess.answered)
+        ? '<button class="iconbtn" data-undo aria-label="Undo"><svg><use href="#i-undo"/></svg></button>' : '') +
       (starred != null ? '<button class="iconbtn" data-star aria-label="Star" aria-pressed="' + starred + '">' +
         '<svg><use href="#i-star' + (starred ? '-fill' : '') + '"/></svg></button>' : '') +
       // the mode word changes THIS session only — Settings owns the default
@@ -525,12 +533,15 @@
       if (!want) continue;
       if (got === want) return { ok: 'hit', text: 'exact' };
       // a prefix only counts when it covers most of the answer — two words
-      // of a long sentence is not knowing it
-      if (want.indexOf(got) === 0 &&
-          got.length >= Math.min(want.length, Math.max(6, Math.ceil(want.length * 0.6)))) {
-        return { ok: 'hit', text: 'close enough' };
+      // of a long sentence is not knowing it. Prefixes are judged HERE only,
+      // never re-admitted by the looser substring rule below.
+      if (want.indexOf(got) === 0) {
+        if (got.length >= Math.min(want.length, Math.max(6, Math.ceil(want.length * 0.6)))) {
+          return { ok: 'hit', text: 'close enough' };
+        }
+        continue;
       }
-      if (got.indexOf(want) > -1 || want.indexOf(got) > -1) {
+      if (got.indexOf(want) > -1 || want.indexOf(got) > 0) {
         var ratio = Math.min(got.length, want.length) / Math.max(got.length, want.length);
         if (ratio > 0.55) return { ok: 'hit', text: 'close enough' };
       }
@@ -544,7 +555,9 @@
     if (sess.typing) {
       var input = document.getElementById('typein');
       var typed = input ? input.value : sess.typed;
-      sess.verdict = checkTyped(c, typed);
+      // typing nothing is not knowing it — the shortcut must never grade
+      // an unattempted card as Good
+      sess.verdict = checkTyped(c, typed) || { ok: 'miss', text: 'nothing typed' };
       if (input) try { input.blur(); } catch (e) {}
     }
     sess.revealed = true;
@@ -557,7 +570,7 @@
     var c = sess.queue.shift();
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     S.grade(c.i, g);
-    sess.history.push({ card: c, before: before, g: g });
+    sess.history.push({ card: c, before: before, g: g, rq: g === 0 });
     if (g === 0) {
       sess.again++; sess.planned++;   // a re-queued card is one more to do
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
@@ -590,7 +603,10 @@
     S.restore(h.card.i, h.before);
     sess.queue.unshift(h.card);
     sess.done = Math.max(0, sess.done - 1);
-    if (h.g === 0) { sess.again = Math.max(0, sess.again - 1); sess.planned = Math.max(1, sess.planned - 1); }
+    // planned only shrinks if this grade actually grew it (a quiz miss bumps
+    // planned at Next time, not at answer time — h.rq records the truth)
+    if (h.rq) sess.planned = Math.max(1, sess.planned - 1);
+    if (h.g === 0) sess.again = Math.max(0, sess.again - 1);
     else if (h.g === 1) sess.good = Math.max(0, sess.good - 1);
     else sess.easy = Math.max(0, sess.easy - 1);
     sess.revealed = true; sess.verdict = null;
@@ -605,7 +621,7 @@
     var correct = sess.choices[n] && sess.choices[n].correct;
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     if (correct) sess.right++; else sess.wrong++;
-    sess.history.push({ card: c, before: before, g: correct ? 1 : 0 });
+    sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false });
     S.grade(c.i, correct ? 1 : 0);
     renderCard();
     // the result must be seen, not hunted for
@@ -615,10 +631,13 @@
     });
   }
   function nextQuiz() {
+    if (!sess || !sess.answered) return;   // a ghost second tap must be inert
     var c = sess.queue.shift();
     if (!sess.choices[sess.picked] || !sess.choices[sess.picked].correct) {
       sess.planned++;                 // the miss comes back — the meter says so
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
+      var top = sess.history[sess.history.length - 1];
+      if (top && top.card.i === c.i) top.rq = true;
     }
     sess.done++; sess.answered = false; sess.picked = -1; sess.choices = null;
     renderCard();
@@ -671,9 +690,14 @@
   function renderDone() {
     var d = sess.deck;
     var total = sess.done;
-    var lines = sess.quiz
-      ? [['Correct', sess.right], ['Missed', sess.wrong]]
-      : [['Again', sess.again], ['Good', sess.good], ['Easy', sess.easy]];
+    // a session can cross modes — every tally that happened gets a row,
+    // so the rows always sum to the hero
+    var lines = [];
+    if (sess.right || sess.wrong) lines.push(['Correct', sess.right], ['Missed', sess.wrong]);
+    if (sess.again || sess.good || sess.easy) lines.push(['Again', sess.again], ['Good', sess.good], ['Easy', sess.easy]);
+    if (!lines.length) lines = sess.quiz
+      ? [['Correct', 0], ['Missed', 0]]
+      : [['Again', 0], ['Good', 0], ['Easy', 0]];
     var rows = lines.map(function (l) {
       return '<button class="ledger" style="pointer-events:none"><span class="lname">' + l[0] +
         '</span><span class="lval num">' + l[1] + '</span></button>';
@@ -807,6 +831,17 @@
   /* ==========================================================================
      VIEW · settings
      ========================================================================== */
+  /* the sync word tells the truth: when data last actually moved, not
+     whether a token string happens to exist */
+  function syncWord() {
+    var at = S.account.lastSyncAt();
+    if (!at) return 'Never';
+    var m = (Date.now() - at) / 60000;
+    if (m < 5) return 'Just now';
+    if (m < 120) return Math.round(m) + ' min ago';
+    if (m < 48 * 60) return Math.round(m / 60) + ' h ago';
+    return Math.round(m / 1440) + ' d ago';
+  }
   function viewSettings() {
     curDeckId = null;
     var s = S.getSettings();
@@ -818,7 +853,7 @@
       '<div class="setgroup">' +
       (S.account.connected()
         ? '<div class="setrow"><div class="sname">Sync</div>' +
-          '<button class="cyc" data-acct-off>On</button></div>'
+          '<button class="cyc" data-acct-off>' + esc(syncWord()) + '</button></div>'
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
           '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
           '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
@@ -906,6 +941,15 @@
       viewSettings(); return;
     }
     if (t.closest('[data-qmode]') && sess) {
+      // an answered-but-not-advanced question would be re-served and graded a
+      // second time — take the pending answer back before switching modes
+      if (sess.quiz && sess.answered && sess.history.length) {
+        var hm = sess.history.pop();
+        S.restore(hm.card.i, hm.before);
+        if (hm.g === 1) sess.right = Math.max(0, sess.right - 1);
+        else sess.wrong = Math.max(0, sess.wrong - 1);
+        S.save(true);
+      }
       // cycles MCQ → Typing → Flip for THIS session; Settings owns the default
       if (sess.quiz) { sess.quiz = false; sess.typing = true; }
       else if (sess.typing) { sess.typing = false; }
@@ -956,7 +1000,8 @@
       // the tap is the user gesture the clipboard API needs
       if (navigator.clipboard && navigator.clipboard.readText) {
         navigator.clipboard.readText().then(function (txt) {
-          if (txt && S.account.setToken(txt.trim())) { route(); toast('Synced'); }
+          // saving a token is not syncing — the row's word reports the truth
+          if (txt && S.account.setToken(txt.trim())) { route(); toast('Token saved'); }
           else { toast('That does not look like a token'); }
         }, function () {
           var f = document.getElementById('acct-tok');
@@ -1112,7 +1157,11 @@
   /* account: paste-token commit + disconnect + re-render when a pull merges */
   document.addEventListener('change', function (e) {
     if (e.target && e.target.id === 'acct-tok') {
-      if (S.account.setToken(e.target.value)) route();
+      if (S.account.setToken(e.target.value)) {
+        // never rebuild the DOM out from under the focused field mid-blur
+        try { e.target.blur(); } catch (err) {}
+        setTimeout(route, 0);
+      }
     }
   });
   document.addEventListener('click', function (e) {
