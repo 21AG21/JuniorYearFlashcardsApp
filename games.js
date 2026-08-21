@@ -412,7 +412,7 @@
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.score + ' first try', (st.i + 1) + ' of ' + st.total) +
-      '<div class="gcur">' +
+      '<div class="gcur bcur">' +
         '<div class="gname num' + (f[0].length > 44 ? ' gsm' : '') + '">' + esc(f[0]) + '</div></div>' +
       '<div class="board">' + st.tiles.map(function (tl, i) {
         var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
