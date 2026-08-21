@@ -678,7 +678,12 @@
       return '<button class="ledger" style="pointer-events:none"><span class="lname">' + l[0] +
         '</span><span class="lval num">' + l[1] + '</span></button>';
     }).join('');
-    var st = d ? S.deckStats(d) : null;
+    // "Keep going" must know what is left — a mixed review counts every deck
+    var dueLeft = 0;
+    if (d) dueLeft = S.deckStats(d).due;
+    else S.getIndex().courses.forEach(function (c) {
+      var dk = S.getDeck(c.id); if (dk) dueLeft += S.deckStats(dk).due;
+    });
     var again = sess.mixed ? '#/review' :
       '#/' + (sess.quiz ? 'quiz' : 'study') + '/' + d.id + '/' + sess.mode + (sess.unitId ? '/' + sess.unitId : '');
     sess = null;
@@ -693,7 +698,7 @@
           plural(S.streak(), 'day') + ' streak</div>' +
       '</div>' +
       '<div style="margin:var(--s-4) 0 var(--s-5)">' + rows + '</div>' +
-      (st && st.due ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
+      (dueLeft ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
     );
   }
 
@@ -1013,11 +1018,12 @@
       return;
     }
     if (!sess.quiz && sess.revealed) {
-      if (e.key === '1') doGrade(0);
-      if (e.key === '2') doGrade(1);
-      if (e.key === '3') doGrade(2);
+      // grading the last card ends the session and nulls sess — return, never fall through
+      if (e.key === '1') return doGrade(0);
+      if (e.key === '2') return doGrade(1);
+      if (e.key === '3') return doGrade(2);
     }
-    if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) pickChoice(parseInt(e.key, 10) - 1);
+    if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
     if (e.key === 's') starCurrent();
   });
 
