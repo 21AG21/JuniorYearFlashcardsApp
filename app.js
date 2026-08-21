@@ -45,19 +45,37 @@
   }
 
   /* When a row's name wraps tall, its number grows to match the text block —
-     the value fills the height the name takes, one gesture app-wide. */
+     but only when the name loses no room for it. A long title keeps its full
+     measure and a plain baseline number; matching height there just collides. */
   function fitPair(row, name, val) {
     row.classList.remove('tallval'); val.style.fontSize = '';
     var base = parseFloat(getComputedStyle(val).fontSize);
-    for (var pass = 0; pass < 3; pass++) {        // growing the value can re-wrap
-      var nh = name.getBoundingClientRect().height;                // the name —
-      var lh = parseFloat(getComputedStyle(name).lineHeight) || nh; // settle it
-      var target = nh > lh * 1.5 ? Math.min(Math.round(nh), Math.round(base * 2.6)) : base;
-      var curr = parseFloat(getComputedStyle(val).fontSize);
-      if (Math.abs(target - curr) < 2) break;
-      row.classList.toggle('tallval', target > base);
-      val.style.fontSize = target > base ? target + 'px' : '';
+    var lh = parseFloat(getComputedStyle(name).lineHeight) || base;
+    var nh0 = name.getBoundingClientRect().height;
+    // exactly two lines earns a two-line number; one line has nothing to
+    // match, and three or more would put a shouting numeral beside a long name
+    if (nh0 <= lh * 1.5 || nh0 > lh * 2.5) return;
+    var target = Math.min(Math.round(nh0), Math.round(base * 2.6));
+    if (target <= base + 2) return;
+    row.classList.add('tallval');
+    val.style.fontSize = target + 'px';
+    if (name.getBoundingClientRect().height > nh0 + 1) {   // the name re-wrapped —
+      row.classList.remove('tallval');                     // the number stole its
+      val.style.fontSize = '';                             // room; keep it plain
     }
+  }
+  /* The detail hero wears title type — a long unit name at that size wraps
+     word-per-line and fights the number. Step long names down a size first,
+     then let the number grow only if the (settled) name stays two lines. */
+  function fitHero(row, name, val) {
+    row.classList.remove('longname');
+    fitPair(row, name, val);
+    var lh = parseFloat(getComputedStyle(name).lineHeight);
+    if (name.getBoundingClientRect().height <= lh * 2.5 &&
+        name.scrollWidth <= name.clientWidth + 1) return;
+    row.classList.remove('tallval'); val.style.fontSize = '';
+    row.classList.add('longname');
+    fitPair(row, name, val);
   }
   function fitVals() {
     app.querySelectorAll('.ledger').forEach(function (row) {
@@ -66,7 +84,7 @@
     });
     app.querySelectorAll('.dhero').forEach(function (hero) {
       var dn = hero.querySelector('.dn'), dv = hero.querySelector('.dv');
-      if (dn && dv && dv.textContent.trim()) fitPair(hero, dn, dv);
+      if (dn && dv && dv.textContent.trim()) fitHero(hero, dn, dv);
     });
   }
 
@@ -722,7 +740,8 @@
         ? '<div class="setrow"><div class="sname">Sync</div>' +
           '<button class="cyc" data-acct-off>On</button></div>'
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
-          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token"></div></div>') +
+          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
+          '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
       '<div class="setrow"><div class="sname">Typing</div>' +
         '<button class="cyc" data-typing-cycle>' + (s.typing ? 'On' : 'Off') + '</button></div>' +
       '</div>' +
@@ -841,6 +860,23 @@
     if (rst) {
       if (armConfirm(rst, 'Tap again to reset')) {
         S.resetProgress(); viewSettings(); toast('Progress reset');
+      }
+      return;
+    }
+    if (t.closest('[data-tok-paste]')) {
+      // the tap is the user gesture the clipboard API needs
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        navigator.clipboard.readText().then(function (txt) {
+          if (txt && S.account.setToken(txt.trim())) { route(); toast('Synced'); }
+          else { toast('That does not look like a token'); }
+        }, function () {
+          var f = document.getElementById('acct-tok');
+          if (f) f.focus();
+          toast('Paste into the field instead');
+        });
+      } else {
+        var f2 = document.getElementById('acct-tok');
+        if (f2) f2.focus();
       }
       return;
     }
