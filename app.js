@@ -17,14 +17,20 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
   }
+  // set by the router when the active tab changes; the next mount slides in
+  // from the direction of travel, then the hint is spent
+  var pendingDir = '';
   function mount(html, opts) {
+    var dir = opts && opts.session ? '' : pendingDir;
+    pendingDir = '';
+    var shell = '<div class="screen' + (dir ? ' ' + dir : '') + '">' + html + '</div>';
     if (isWide()) {
       // Two full-height panes: the deck list lives on the left, every view on
       // the right — the same content as the phone, never extra chrome.
       app.innerHTML = '<div class="pane-l">' + decksListHTML() + '</div>' +
-        '<div class="pane-r"><div class="inner">' + html + '</div></div>';
+        '<div class="pane-r"><div class="inner">' + shell + '</div></div>';
     } else {
-      app.innerHTML = html;
+      app.innerHTML = shell;
     }
     app.classList.toggle('is-wide', isWide());
     app.classList.toggle('is-session', !!(opts && opts.session));
@@ -34,7 +40,7 @@
     fitVals();
     if (!(opts && opts.keepScroll)) {
       var pr = app.querySelector('.pane-r');
-      if (pr) pr.scrollTop = 0; else window.scrollTo(0, 0);
+      if (pr) pr.scrollTop = 0; else app.scrollTop = 0;
     }
   }
 
@@ -123,10 +129,9 @@
 
   /* ---------------- theme ------------------------------------------------ */
   function applyTheme() {
-    var t = S.getSettings().theme;
-    if (t === 'auto') document.documentElement.removeAttribute('data-theme');
-    else document.documentElement.setAttribute('data-theme', t);
-    var dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+    // the theme is always the system's — one fewer thing to set
+    document.documentElement.removeAttribute('data-theme');
+    var dark = matchMedia('(prefers-color-scheme: dark)').matches;
     document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
     var m = document.createElement('meta');
     m.name = 'theme-color'; m.content = dark ? '#000000' : '#f2f2f4';
@@ -707,32 +712,25 @@
   function viewSettings() {
     curDeckId = null;
     var s = S.getSettings();
-    var profs = S.listProfiles(), active = S.activeProfile();
     mount(
       // the screen's name, sized for a utility page — not the content hero
       '<div class="head"><h1 class="uhead">Settings</h1></div>' +
-      '<div class="profile">' + profs.map(function (p) {
-        return '<button class="chip" data-profile="' + p.id + '" aria-pressed="' + (p.id === active.id) + '">' + esc(p.name) + '</button>';
-      }).join('') + '<button class="chip" data-addprofile aria-label="Add profile">+</button></div>' +
 
-      // every setting is a word: tap the value to change it
+      // sync leads — the one setting that matters; every value is a word
       '<div class="setgroup">' +
-      '<div class="setrow"><div class="sname">Typing</div>' +
-        '<button class="cyc" data-typing-cycle>' + (s.typing ? 'On' : 'Off') + '</button></div>' +
-      '<div class="setrow"><div class="sname">Theme</div>' +
-        '<button class="cyc" data-theme-cycle>' + s.theme.charAt(0).toUpperCase() + s.theme.slice(1) + '</button></div>' +
       (S.account.connected()
-        ? '<div class="setrow"><div class="sname">Synced</div>' +
-          '<button class="textbtn" data-acct-off>Disconnect</button></div>'
+        ? '<div class="setrow"><div class="sname">Sync</div>' +
+          '<button class="cyc" data-acct-off>On</button></div>'
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
           '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token"></div></div>') +
+      '<div class="setrow"><div class="sname">Typing</div>' +
+        '<button class="cyc" data-typing-cycle>' + (s.typing ? 'On' : 'Off') + '</button></div>' +
       '</div>' +
 
       '<div class="data-list">' +
         '<button class="textbtn" data-export>Backup</button>' +
         '<button class="textbtn" data-import>Restore</button>' +
         '<button class="textbtn" data-reset>Reset progress</button>' +
-        (profs.length > 1 ? '<button class="textbtn" data-delprofile>Delete profile</button>' : '') +
       '</div>' +
       reqHTML('Request a feature') +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
@@ -795,12 +793,6 @@
       peek.classList.toggle('open', !a.hidden);
       return;
     }
-    if (t.closest('[data-theme-cycle]')) {
-      var order = ['auto', 'light', 'dark'];
-      var cur = S.getSettings().theme;
-      S.setSetting('theme', order[(order.indexOf(cur) + 1) % order.length]);
-      applyTheme(); viewSettings(); return;
-    }
     if (t.closest('[data-typing-cycle]')) {
       S.setSetting('typing', !S.getSettings().typing);
       viewSettings(); return;
@@ -843,20 +835,6 @@
       var at = opts.indexOf(S.getSettings()[ckey]);
       S.setSetting(ckey, opts[(at + 1) % opts.length]);
       if (sess) renderCard(); else route();
-      return;
-    }
-    var pr = t.closest('[data-profile]');
-    if (pr) { S.switchProfile(pr.getAttribute('data-profile')); applyTheme(); viewSettings(); toast('Switched profile'); return; }
-    if (t.closest('[data-addprofile]')) {
-      var name = prompt('Name for the new profile');
-      if (name && name.trim()) { S.addProfile(name.trim()); applyTheme(); viewSettings(); }
-      return;
-    }
-    var del = t.closest('[data-delprofile]');
-    if (del) {
-      if (armConfirm(del, 'Tap again to delete')) {
-        S.removeProfile(S.activeProfile().id); viewSettings(); toast('Profile deleted');
-      }
       return;
     }
     var rst = t.closest('[data-reset]');
@@ -916,8 +894,13 @@
   /* ==========================================================================
      router
      ========================================================================== */
+  var lastTabIdx = 0;
   function syncTabs(route) {
     var idx = route === '/review' ? 1 : route === '/search' ? 2 : route === '/stats' ? 3 : route === '/settings' ? 4 : 0;
+    if (idx !== lastTabIdx) {          // crossing tabs — the screen slides that way
+      pendingDir = idx > lastTabIdx ? 'fwd' : 'back';
+      lastTabIdx = idx;
+    }
     var items = tabbar.querySelectorAll('.lg-tab');
     items.forEach(function (el, i) { el.classList.toggle('is-active', i === idx); });
     // The sliding pill needs real geometry. Coming back from a session the bar
@@ -990,7 +973,8 @@
     }
   });
   document.addEventListener('click', function (e) {
-    if (e.target.closest('[data-acct-off]')) { S.account.clearToken(); route(); }
+    var off = e.target.closest('[data-acct-off]');
+    if (off && armConfirm(off, 'Tap again to turn off')) { S.account.clearToken(); route(); }
   });
   window.addEventListener('apdecks-sync', function (ev) {
     if (ev.detail && ev.detail.changed) route();   // fresher progress just merged in

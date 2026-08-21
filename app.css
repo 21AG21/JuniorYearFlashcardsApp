@@ -63,7 +63,9 @@
 .lg-tab.is-active{ color:rgb(var(--lg-ink)); }
 
 *{ box-sizing:border-box; }
-html,body{ margin:0; padding:0; height:100%; }
+/* the document never scrolls — #app is the scroller, so a short screen has no
+   rubber-band at all and the glass bar can never be dragged out of place */
+html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
 html{ background:var(--ground); }
 body{
   background:var(--ground);            /* one flat fill, edge to edge */
@@ -75,14 +77,14 @@ body{
   -webkit-user-select:none; user-select:none;
   overscroll-behavior-y:none;
   touch-action:manipulation;
-  overflow-x:hidden; max-width:100vw;
 }
 input,textarea{ -webkit-user-select:text; user-select:text; }
 
 /* --- app shell ------------------------------------------------------------ */
 #app{
   position:relative; z-index:1;
-  min-height:100%;
+  height:100%; overflow-y:auto; overflow-x:hidden;
+  overscroll-behavior-y:none;
   padding:calc(env(safe-area-inset-top, 0px) + 30px)
           calc(env(safe-area-inset-right, 0px) + var(--gutter))
           var(--tabh)
@@ -95,11 +97,11 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   /* two full-height panes, each its own scroller (skill §5.6) */
   #app{ max-width:none; height:100dvh; padding:0; display:flex; flex-direction:row; overflow:hidden; margin:0; }
   /* the list is an index, not a co-star: a slim rail, the work fills the rest */
-  .pane-l{ flex:0 0 26%; min-width:280px; max-width:360px; height:100%; overflow-y:auto;
+  .pane-l{ flex:0 0 26%; min-width:280px; max-width:360px; height:100%; overflow-y:auto; overscroll-behavior-y:none;
     display:flex; flex-direction:column;
     border-right:1px solid var(--hair-soft);
     padding:42px 36px 40px calc(env(safe-area-inset-left, 0px) + 40px); }
-  .pane-r{ flex:1 1 auto; height:100%; overflow-y:auto;
+  .pane-r{ flex:1 1 auto; height:100%; overflow-y:auto; overscroll-behavior-y:none;
     padding:46px calc(env(safe-area-inset-right, 0px) + 72px) 80px 72px; }
   .pane-r .inner{ max-width:1280px; }
   .pane-l .head h1{ font-size:clamp(30px, 2.3vw, 38px); }
@@ -217,19 +219,6 @@ button.hero-tap:active{ opacity:.55; }
 .textbtn.quiet{ font-size:15px; color:var(--muted); font-weight:500; }
 .modes{ display:flex; flex-direction:column; align-items:flex-start; margin-top:var(--s-2); }
 .modes .textbtn{ padding:12px 0; min-height:52px; font-size:clamp(20px,5.8vw,26px); letter-spacing:-.02em; }
-
-/* legacy .chip markup renders as a text button — chips do not exist here */
-.chips{ display:flex; flex-wrap:wrap; gap:2px 22px; margin:0 0 var(--s-3); padding:0; overflow:visible; }
-.chip{ flex:0 0 auto; padding:12px 0; min-height:44px; border-radius:0; border:0; background:none;
-  color:var(--ink-soft); font:inherit; font-size:19px; font-weight:500; cursor:pointer; white-space:nowrap; }
-.chip[aria-pressed="true"]{ color:var(--ink); }
-.chip:active{ opacity:.5; }
-/* number choices: content-width text so the GLYPH gaps are equal — a
-   min-width box reads ragged (a hole after "5", tight after "100").
-   The tap target widens invisibly instead of the layout box. */
-.numchips{ display:flex; gap:2px 26px; margin-top:6px; flex-wrap:wrap; }
-.numchips .chip{ position:relative; font-variant-numeric:tabular-nums; }
-.numchips .chip::before{ content:""; position:absolute; inset:0 -13px; }
 
 /* --- study session: the card is text on the ground (skill §4.3) ----------- */
 .session{ display:flex; flex-direction:column; }
@@ -384,10 +373,7 @@ sub,sup{ font-size:.68em; }
 .cyc{ background:none; border:0; font:inherit; font-size:21px; font-weight:500; color:var(--ink);
   cursor:pointer; padding:14px 0; margin:-14px 0; }   /* hit area grows, row height does not */
 .cyc:active{ opacity:.5; }
-.setrow.stack{ display:block; padding-bottom:0; }   /* the chips carry their own 12px — keeps the hairline centered between rows */
-/* profiles and choice values are weighted text, never chips (banned house-wide) */
-.profile{ display:flex; flex-wrap:wrap; gap:2px 22px; margin-top:var(--s-1); }
-.profile .chip, .numchips .chip{ font-size:19px; font-variant-numeric:tabular-nums; }
+.setrow.stack{ display:block; padding-bottom:0; }   /* the field carries its own 12px — keeps the hairline centered between rows */
 .lg-seg{ width:100%; margin:var(--s-2) 0; }   /* flush right on phones; 12+12 below matches the hairline rows' 24px rhythm */
 .setrow.stack .searchbar{ margin:0; }
 .setrow.stack .searchbar input{ font-size:21px; font-weight:500; padding:12px 0; }
@@ -504,7 +490,6 @@ sub,sup{ font-size:.68em; }
 .modes .textbtn:nth-child(3){ animation-delay:.06s; }
 .modes .textbtn:nth-child(4){ animation-delay:.09s; }
 .modes .textbtn:nth-child(n+5){ animation-delay:.12s; }
-.profile{ animation:riseIn .28s both .02s; }
 .setgroup .setrow{ animation:riseIn .3s both; }
 .setgroup .setrow:nth-child(2){ animation-delay:.04s; }
 .setgroup .setrow:nth-child(3){ animation-delay:.08s; }
@@ -525,6 +510,14 @@ sub,sup{ font-size:.68em; }
 .reqbox textarea:focus{ outline:none; border-bottom-color:var(--ink-soft); }
 
 /* --- motion: things arrive, they never pop ------------------------------- */
+/* switching tabs, the whole screen slides in from the direction of travel —
+   and while it slides, its rows keep still: one motion at a time */
+@keyframes slideFwd{ from{ opacity:0; transform:translateX(28px); } }
+@keyframes slideBack{ from{ opacity:0; transform:translateX(-28px); } }
+.screen.fwd{ animation:slideFwd .27s cubic-bezier(.32,.72,0,1) both; }
+.screen.back{ animation:slideBack .27s cubic-bezier(.32,.72,0,1) both; }
+.screen.fwd :is(.head,.dhero,.act,.list > li,.modes .textbtn,.setgroup .setrow,.data-list .textbtn,.reqwrap,.foot,.ulabel,.spark i),
+.screen.back :is(.head,.dhero,.act,.list > li,.modes .textbtn,.setgroup .setrow,.data-list .textbtn,.reqwrap,.foot,.ulabel,.spark i){ animation:none; }
 @keyframes riseIn{ from{ opacity:0; transform:translateY(9px); } to{ opacity:1; transform:none; } }
 @keyframes dotPop{ 0%{ r:5; } 45%{ r:9; } 100%{ r:7; } }
 .gcur.swap .gname{ animation:riseIn .24s cubic-bezier(.32,.72,0,1) both; }
