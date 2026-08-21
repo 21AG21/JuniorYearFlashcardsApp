@@ -18,7 +18,9 @@
     timeline:   { name: 'Timeline',         deck: 'apush',  kind: 'order'  },
     presorder:  { name: 'Presidents',       deck: 'apush',  kind: 'order'  },
     periodquiz: { name: 'Periods',          deck: 'apush',  kind: 'quiz'   },
+    yearquiz:   { name: 'Year it',          deck: 'apush',  kind: 'quiz'   },
     chemorder:  { name: 'Order it',         deck: 'chem',   kind: 'order'  },
+    chemformula:{ name: 'Formulas',         deck: 'chem',   kind: 'match'  },
     ionmatch:   { name: 'Polyatomic ions',  deck: 'chem',   kind: 'match'  },
     elemmatch:  { name: 'Elements',         deck: 'chem',   kind: 'match'  },
     sigfigs:    { name: 'Sig figs',         deck: 'chem',   kind: 'quiz'   },
@@ -27,6 +29,7 @@
     frmatch:    { name: 'Vocab match',      deck: 'french', kind: 'match'  },
     frconj:     { name: 'Conjugation',      deck: 'french', kind: 'board'  },
     frgender:   { name: 'Le or la',         deck: 'french', kind: 'quiz'   },
+    frnumbers:  { name: 'Numbers',          deck: 'french', kind: 'quiz'   },
     unitcircle: { name: 'Unit circle',      deck: 'calcbc', kind: 'circle' },
     degcircle:  { name: 'Degrees on the circle', deck: 'calcbc', kind: 'circle' },
     triggraphs: { name: 'Name that graph',  deck: 'calcbc', kind: 'graph'  },
@@ -223,6 +226,23 @@
   var PERSONS = ['je', 'tu', 'il', 'nous', 'vous', 'ils'];
   var FUT_END = ['ai', 'as', 'a', 'ons', 'ez', 'ont'];
   var IMP_END = ['ais', 'ais', 'ait', 'ions', 'iez', 'aient'];
+
+  /* ions for building formulas: name, symbol, charge, needs-parentheses */
+  var CATS = [
+    ['sodium', 'Na', 1, false], ['potassium', 'K', 1, false], ['lithium', 'Li', 1, false],
+    ['silver', 'Ag', 1, false], ['ammonium', 'NH₄', 1, true], ['calcium', 'Ca', 2, false],
+    ['magnesium', 'Mg', 2, false], ['barium', 'Ba', 2, false], ['zinc', 'Zn', 2, false],
+    ['aluminum', 'Al', 3, false], ['iron(II)', 'Fe', 2, false], ['iron(III)', 'Fe', 3, false],
+    ['copper(II)', 'Cu', 2, false], ['lead(II)', 'Pb', 2, false]
+  ];
+  var ANIONS = [
+    ['chloride', 'Cl', 1, false], ['bromide', 'Br', 1, false], ['iodide', 'I', 1, false],
+    ['fluoride', 'F', 1, false], ['oxide', 'O', 2, false], ['sulfide', 'S', 2, false],
+    ['nitride', 'N', 3, false], ['nitrate', 'NO₃', 1, true], ['nitrite', 'NO₂', 1, true],
+    ['sulfate', 'SO₄', 2, true], ['carbonate', 'CO₃', 2, true], ['phosphate', 'PO₄', 3, true],
+    ['hydroxide', 'OH', 1, true], ['acetate', 'C₂H₃O₂', 1, true],
+    ['chlorate', 'ClO₃', 1, true], ['bicarbonate', 'HCO₃', 1, true]
+  ];
   function gcd(a, b) { return b ? gcd(b, a % b) : a; }
   function radLabel(i, k) {
     var num = FRAC[i][0] + 2 * k * FRAC[i][1], den = FRAC[i][1];
@@ -291,7 +311,7 @@
     var g = GAMES[id];
     if (!g) return ctx.go('#/games');
     clearTimeout(timer);
-    if ((id === 'timeline' || id === 'periodquiz') && !TIMELINE) {
+    if ((id === 'timeline' || id === 'periodquiz' || id === 'yearquiz') && !TIMELINE) {
       return loadTimeline().then(function () {
         if (location.hash.indexOf('#/game/' + id) === 0) play(id);
       });
@@ -658,11 +678,36 @@
     return sample(ELEMENTS.map(function (e, i) { return [ELEM_NAMES[i], e[0]]; }), 6);
   }
 
+  /* ionic formulas assembled by charge balance — cross, reduce, parenthesize */
+  function subNum(n) {
+    return n === 1 ? '' : String(n).split('').map(function (c) { return '₀₁₂₃₄₅₆₇₈₉'.charAt(+c); }).join('');
+  }
+  function formulaOf(cat, an) {
+    var g = gcd(cat[2], an[2]);
+    var nCat = an[2] / g, nAn = cat[2] / g;
+    var cpart = (cat[3] && nCat > 1 ? '(' + cat[1] + ')' : cat[1]) + subNum(nCat);
+    var apart = (an[3] && nAn > 1 ? '(' + an[1] + ')' : an[1]) + subNum(nAn);
+    return cpart + apart;
+  }
+  function genFormulaPairs(n) {
+    var out = [], seenL = {}, seenR = {}, guard = 0;
+    while (out.length < n && guard++ < 200) {
+      var cat = CATS[Math.floor(Math.random() * CATS.length)];
+      var an = ANIONS[Math.floor(Math.random() * ANIONS.length)];
+      var name = cat[0] + ' ' + an[0], f = formulaOf(cat, an);
+      if (seenL[name] || seenR[f]) continue;
+      seenL[name] = 1; seenR[f] = 1;
+      out.push([name, f]);
+    }
+    return out;
+  }
+
   function startMatch(id) {
     var pairs =
       id === 'derivmatch' ? genDerivPairs(6) :
       id === 'antideriv' ? genIntPairs(6) :
       id === 'radmatch' ? genRadPairs(6) :
+      id === 'chemformula' ? genFormulaPairs(6) :
       id === 'seriesmatch' ? refPairs(SERIES) :
       id === 'ionmatch' ? refPairs(IONS) :
       id === 'elemmatch' ? elemPairs() :
@@ -689,6 +734,7 @@
       seriesmatch: ['f(x)', 'Maclaurin series'],
       ionmatch: ['Ion', 'Formula'],
       elemmatch: ['Element', 'Symbol'],
+      chemformula: ['Compound', 'Formula'],
       frmatch: ['French', 'English']
     }[st.id] || ['Device', 'What it is'];
     function col(items, side, sel) {
@@ -958,6 +1004,74 @@
     return qs;
   }
 
+  /* French numbers, spelled by rule — the whole 0–999 line is generated */
+  var FR_ONES = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit',
+    'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize'];
+  function frBelow100(n) {
+    if (n < 17) return FR_ONES[n];
+    if (n < 20) return 'dix-' + FR_ONES[n - 10];
+    if (n < 70) {
+      var t = Math.floor(n / 10), u = n % 10;
+      var tens = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante'][t];
+      if (!u) return tens;
+      if (u === 1) return tens + ' et un';
+      return tens + '-' + FR_ONES[u];
+    }
+    if (n === 71) return 'soixante et onze';
+    if (n < 80) return 'soixante-' + frBelow100(n - 60);
+    if (n === 80) return 'quatre-vingts';
+    return 'quatre-vingt-' + frBelow100(n - 80);
+  }
+  function frNum(n) {
+    if (n < 100) return frBelow100(n);
+    var h = Math.floor(n / 100), r = n % 100;
+    var hpart = h === 1 ? 'cent' : FR_ONES[h] + ' cent' + (r ? '' : 's');
+    return r ? hpart + ' ' + frBelow100(r) : hpart;
+  }
+  function numbersRound(n) {
+    var qs = [], seen = {}, guard = 0;
+    while (qs.length < n && guard++ < 200) {
+      // half the rounds live where French numbers bite: 60–99
+      var v = Math.random() < 0.5 ? 60 + Math.floor(Math.random() * 40)
+                                  : Math.floor(Math.random() * 1000);
+      if (seen[v]) continue;
+      seen[v] = 1;
+      var r = frNum(v);
+      var opts = [r], used = {}; used[r] = 1;
+      var tries = 0;
+      while (opts.length < 4 && tries++ < 60) {
+        var d = [v + 1, v - 1, v + 10, v - 10, v + 20, v - 20, v + 2, v - 2][Math.floor(Math.random() * 8)];
+        if (d < 0 || d > 999) continue;
+        var w = frNum(d);
+        if (used[w]) continue;
+        used[w] = 1; opts.push(w);
+      }
+      if (opts.length < 4) continue;
+      qs.push({ p: String(v), k: 'In French', c: shuffle(opts), r: r });
+    }
+    return qs;
+  }
+
+  /* year quiz: real events, distractor years pulled close enough to test */
+  function yearRound(n) {
+    var qs = [];
+    shuffle(TIMELINE.slice()).forEach(function (e) {
+      if (qs.length >= n) return;
+      var opts = [String(e.y)], used = {}; used[e.y] = 1;
+      var tries = 0;
+      while (opts.length < 4 && tries++ < 60) {
+        var off = [2, -2, 3, -3, 5, -5, 8, -8, 10, -10][Math.floor(Math.random() * 10)];
+        var y = e.y + off;
+        if (used[y] || y > 2026) continue;
+        used[y] = 1; opts.push(String(y));
+      }
+      if (opts.length < 4) return;
+      opts.sort();
+      qs.push({ p: e.t, k: 'Which year?', c: opts, r: String(e.y) });
+    });
+    return qs;
+  }
+
   /* le or la, straight from the vocabulary’s own articles */
   function genderRound(n) {
     var qs = [];
@@ -975,6 +1089,8 @@
       id === 'limitsquiz' ? limitsRound(10) :
       id === 'sigfigs' ? sigfigRound(10) :
       id === 'periodquiz' ? periodRound(10) :
+      id === 'yearquiz' ? yearRound(10) :
+      id === 'frnumbers' ? numbersRound(10) :
       genderRound(12);
     st = { id: id, kind: 'quiz', qs: qs, i: 0, score: 0, total: qs.length,
            lock: false, wrongChoice: -1 };
