@@ -3,7 +3,7 @@
 A home-screen web app for five AP courses. **2,277 cards**, written unit by unit
 against the current College Board Course and Exam Descriptions.
 
-**Live:** https://cards.betteraeries.workers.dev  (Cloudflare Worker — the same worker serves the app and the account API)
+**Live:** https://myfleshcards.vercel.app  (Vercel — the same project serves the app and the account API)
 
 | Deck | Cards | Organised by |
 |---|---|---|
@@ -15,13 +15,9 @@ against the current College Board Course and Exam Descriptions.
 
 ## Deploying
 
-```
-npx wrangler deploy
-```
-
-That is the whole deploy: the app is served as Worker static assets from this
-folder (see .assetsignore for what stays out), and /api/* runs worker/index.mjs.
-No build step, no framework, no dependency to install.
+Push to `main`. Vercel's GitHub integration deploys every push: the app is
+served as static files from this folder, and `/api/state` runs
+`api/state.js` as a serverless function. No build step, no framework.
 
 ## Putting it on a phone
 
@@ -33,20 +29,25 @@ student on the device gets their own profile under Settings.
 
 ## Accounts (optional)
 
-By default progress never leaves the phone. An **account** is a token: open a
-magic link (`…/#t=YOURTOKEN`) once — or paste the token under Settings →
-Account — and that profile's progress syncs through a small Cloudflare Worker
-(`worker/`), so a phone and a laptop stay in step. Tokens are provisioned by
-hand: generate one, then register its hash so the Worker will accept it —
+By default progress never leaves the phone. An **account** is a token: paste
+it under Settings → Sync and progress syncs through `/api/state`
+(`api/state.js`, a Vercel function storing one JSON blob per account in
+Vercel Blob), so a phone and a laptop stay in step. The app merges per card,
+so two devices reviewing offline both keep their work.
 
-```
-TOKEN=$(node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))")
-HASH=$(node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "$TOKEN")
-npx wrangler kv key put "tok:$HASH" 1 --namespace-id <CARDS_KV_ID> --remote
-```
+Setting it up once, in the Vercel dashboard:
 
-The worker stores one JSON blob per account; the app merges per card, so two
-devices reviewing offline both keep their work.
+1. **Storage → Create → Blob**, connected to this project (this injects
+   `BLOB_READ_WRITE_TOKEN` automatically).
+2. **Settings → Environment Variables**: add `SYNC_TOKEN` = the token you
+   will paste into the app (16–128 characters of `A–Z a–z 0–9 _ -`; generate
+   one with `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`).
+   `SYNC_TOKEN_HASH` with sha256 hex works too, if you'd rather not store
+   the token itself.
+3. Redeploy so the environment applies.
+
+The API refuses to sync until `SYNC_TOKEN` is configured, and rejects every
+token that doesn't match — an account still IS a token, provisioned by hand.
 
 ## How studying works
 

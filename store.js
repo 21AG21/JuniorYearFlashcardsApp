@@ -87,11 +87,11 @@
   }
 
   /* ---- account: sync ----------------------------------------------------
-     One JSON blob per account on a tiny Worker; the merge happens here.
-     Cards merge per card by last-touched day (t), so two devices reviewing
-     offline both keep their work; the day log takes the max per day; settings
-     follow whichever side wrote the blob later. */
-  var API = 'https://cards.betteraeries.workers.dev/api/state';
+     One JSON blob per account behind /api on this same origin; the merge
+     happens here. Cards merge per card by last-touched day (t), so two
+     devices reviewing offline both keep their work; the day log takes the
+     max per day; settings follow whichever side wrote the blob later. */
+  var API = '/api/state';
   var pushTimer = null, lastSyncAt = read('syncat', 0), syncing = false;
 
   function mergeRemote(remote) {

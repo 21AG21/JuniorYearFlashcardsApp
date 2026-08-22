@@ -1,5 +1,5 @@
 /* AP Decks service worker — precache the shell and every deck, serve offline. */
-var VERSION = 'apdecks-v36';
+var VERSION = 'apdecks-v37';
 var ASSETS = [
   './', './index.html', './app.css', './app.js', './store.js', './tex.js', './games.js',
   './liquid-glass.css', './liquid-glass.js',
@@ -34,6 +34,7 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== location.origin) return;
+  if (url.pathname.indexOf('/api/') === 0) return;   // sync is live data — never cached
 
   e.respondWith(
     caches.match(req, { ignoreSearch: true }).then(function (hit) {

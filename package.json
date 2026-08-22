@@ -1,0 +1,8 @@
+{
+  "name": "ap-decks",
+  "private": true,
+  "description": "AP Decks — static PWA plus one serverless sync function",
+  "dependencies": {
+    "@vercel/blob": "*"
+  }
+}

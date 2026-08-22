@@ -1,10 +1,7 @@
 # Deploying
 
-The app lives on Cloudflare, not GitHub Pages:
+The app lives on Vercel:
 
-```
-npx wrangler deploy
-```
-
-https://cards.betteraeries.workers.dev — app and account API on one origin.
-GitHub is just the code host; push with `git push` as usual.
+Every push to `main` deploys — the GitHub integration builds nothing, serves
+this folder statically, and runs `api/state.js` as the account API on the
+same origin (https://myfleshcards.vercel.app). Push with `git push` as usual.
