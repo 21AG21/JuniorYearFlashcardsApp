@@ -11,6 +11,7 @@
 
 const ALLOW_ORIGINS = [
   'https://21ag21.github.io',
+  'https://myfleshcards.vercel.app',
   'http://localhost:8791',
   'http://127.0.0.1:8791',
 ];
