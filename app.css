@@ -127,9 +127,11 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 
 /* a centered capsule that shrink-wraps its glyphs — margin centering, not
    transform, so the kit's pill measurements stay untouched (5Star direction).
-   It rides low, just above the home indicator, like the real iOS 26 bar. */
+   It rides low, just above the home indicator, like the real iOS 26 bar —
+   clamped, because Safari can report a huge bottom inset that would float it
+   half an inch up the screen. */
 .tabs{ position:fixed; z-index:40; left:0; right:0; margin-inline:auto;
-  bottom:max(calc(env(safe-area-inset-bottom, 0px) - 16px), 10px);
+  bottom:clamp(10px, calc(env(safe-area-inset-bottom, 0px) - 22px), 28px);
   width:calc(100vw - 24px); max-width:500px; }
 /* icon + label tabs, Phone-app style: content-sized items spread across the
    capsule, the pill hugging the active pair (kit default geometry) */
