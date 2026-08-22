@@ -1,5 +1,5 @@
 /* AP Decks service worker — precache the shell and every deck, serve offline. */
-var VERSION = 'apdecks-v34';
+var VERSION = 'apdecks-v35';
 var ASSETS = [
   './', './index.html', './app.css', './app.js', './store.js', './tex.js', './games.js',
   './liquid-glass.css', './liquid-glass.js',
@@ -37,6 +37,9 @@ self.addEventListener('fetch', function (e) {
 
   e.respondWith(
     caches.match(req, { ignoreSearch: true }).then(function (hit) {
+      // deck data ships with the shell and only changes when VERSION does —
+      // a background refetch of megabytes of JSON on every open buys nothing
+      if (hit && url.pathname.indexOf('/data/') > -1) return hit;
       var net = fetch(req).then(function (res) {
         if (res && res.ok && res.type === 'basic') {
           var copy = res.clone();

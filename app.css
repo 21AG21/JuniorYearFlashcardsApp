@@ -248,6 +248,10 @@ button.hero-tap:active{ opacity:.55; }
 .card .q.small{ font-size:clamp(20px,6vw,26px); line-height:1.32; }
 .card .q.tiny{ font-size:18px; font-weight:500; line-height:1.4; letter-spacing:-.012em; }
 .card .hint{ margin-top:14px; font-size:13.5px; color:var(--muted); }
+/* the hint waits to be asked — a quiet word, its hit area padded invisibly */
+.card .hint-btn{ align-self:flex-start; margin-top:14px; font:inherit; font-size:13.5px; font-weight:500;
+  color:var(--muted); background:none; border:0; padding:0; position:relative; cursor:pointer; }
+.card .hint-btn::after{ content:""; position:absolute; inset:-14px -18px; }
 .card .rule{ height:1px; background:var(--hair-soft); margin:24px 0 20px; }
 .card .a{ font-size:var(--t-answer); font-weight:440; letter-spacing:-.015em; line-height:1.32; color:var(--ink); }
 .card .a.small{ font-size:clamp(17px,4.6vw,20px); font-weight:440; line-height:1.42; }

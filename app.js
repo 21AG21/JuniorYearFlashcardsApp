@@ -146,6 +146,8 @@
     if (p[0] === 'games') return '#/';
     if (p[0] === 'd' && p[2] === 'u') return '#/d/' + p[1];
     if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1];
+    if (p[0] === 'cram' && p[1]) return p[2] ? '#/d/' + p[1] + '/u/' + p[2] : '#/d/' + p[1];
+    if (p[0] === 'weak') return '#/stats';
     return '#/';
   }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
@@ -161,6 +163,159 @@
     return '<div class="backbar">' +
       '<button class="bk" data-back>' + esc(title) + '</button>' +
       (rightHtml || '') + '</div>';
+  }
+
+  /* ==========================================================================
+     THE YEAR — the app knows when the exams are, and says whether the
+     high-yield core is on schedule. The whole deck is out of reach at any
+     realistic pace; the core is the mission.
+     ========================================================================== */
+  var EXAM = { chem: [2027, 5, 3], apush: [2027, 5, 7], calcbc: [2027, 5, 10],
+               lang: [2027, 5, 11], french: [2027, 5, 13] };
+  var MONTHS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function examDayNum(id) {
+    var e = EXAM[id];
+    return e ? S.dayNum(new Date(e[0], e[1] - 1, e[2])) : 0;
+  }
+  function examName(id) { var e = EXAM[id]; return e ? MONTHS[e[1]] + ' ' + e[2] : ''; }
+  function firstStudyDay() {
+    var h = S.history(400);
+    for (var i = 0; i < h.length; i++) if (h[i].count > 0) return h[i].day;
+    return null;
+  }
+  function corePace(d) {
+    var exam = examDayNum(d.id), today = S.dayNum();
+    if (!exam || exam <= today) return null;
+    var core = S.pool(d, null, 'core'), known = 0;
+    core.forEach(function (c) { if (S.isKnown(c.i)) known++; });
+    var out = { days: exam - today, left: core.length - known, drift: 0, rate: 0, sure: false };
+    var start = firstStudyDay();
+    if (start === null || today - start < 14 || !core.length) return out;   // no verdict before two weeks
+    var span = Math.max(1, exam - start);
+    var expected = Math.min(1, (today - start) / span);
+    out.drift = Math.round((known / core.length - expected) * span);
+    out.rate = Math.ceil(out.left / Math.max(1, out.days - 14));
+    out.sure = true;
+    return out;
+  }
+  function paceLine(d) {
+    var p = corePace(d);
+    if (!p) return '';
+    var out = examName(d.id) + ' · ' + p.days + ' days';
+    if (!p.left) return out + ' · core done';
+    if (!p.sure) return out;                       // the countdown, no verdict yet
+    if (p.drift <= -20) return out + ' · ' + (-p.drift) + ' days behind · ' + p.rate + ' a day';
+    if (p.drift <= -3) return out + ' · ' + (-p.drift) + ' days behind';
+    if (p.drift >= 3) return out + ' · ' + p.drift + ' days ahead';
+    return out + ' · on pace';
+  }
+  function paceWord(d) {
+    var p = corePace(d);
+    if (!p) return '';
+    if (!p.left) return 'done';
+    if (!p.sure) return '';
+    if (p.drift <= -3) return (-p.drift) + ' days behind';
+    if (p.drift >= 3) return p.drift + ' days ahead';
+    return 'on pace';
+  }
+  /* the units that keep biting back — enough attempts, too many misses */
+  function weakBuckets() {
+    var out = [];
+    S.getIndex().courses.forEach(function (c) {
+      var d = S.getDeck(c.id); if (!d) return;
+      var per = {};
+      d.cards.forEach(function (card) {
+        var s = S.cs(card.i);
+        if (!s || !(s.r || s.t || s.l)) return;
+        var b = per[card.u] || (per[card.u] = { studied: 0, bad: 0 });
+        b.studied++;
+        if ((s.l || 0) > 0 && !S.isKnown(card.i)) b.bad++;
+      });
+      Object.keys(per).forEach(function (uid) {
+        var b = per[uid];
+        if (b.studied >= 6 && b.bad >= 3 && d.unitById[uid])
+          out.push({ deck: d, unit: d.unitById[uid], studied: b.studied, bad: b.bad,
+                     score: b.bad / (b.studied + 4) });
+      });
+    });
+    out.sort(function (a, b) { return b.score - a.score; });
+    return out;
+  }
+  /* "18–22%" → 20; anything unparseable is neutral */
+  var W_CACHE = {};
+  function unitWeight(d, unitId) {
+    var k = d.id + unitId;
+    if (W_CACHE[k] !== undefined) return W_CACHE[k];
+    var u = d.unitById[unitId];
+    var m = u && u.weight ? /(\d+)\s*[–-]\s*(\d+)\s*%/.exec(String(u.weight)) || /(\d+)\s*%/.exec(String(u.weight)) : null;
+    return (W_CACHE[k] = m ? (m[2] ? (+m[1] + +m[2]) / 2 : +m[1]) : 10);
+  }
+  function weightText(u) {
+    return u && u.weight && /\d\s*%/.test(String(u.weight)) ? String(u.weight) + ' of the exam' : '';
+  }
+
+  /* ==========================================================================
+     THE CHOSEN QUEUE — the daily session admits high-yield, heavily weighted,
+     overdue and stuck cards first, always keeps room for new ones, and never
+     lets one deck own a mixed session.
+     ========================================================================== */
+  function cardScore(c, d, today) {
+    var s = S.cs(c.i);
+    var score = 1;
+    if (c.c) score += 2;                                      // high-yield core
+    score += unitWeight(d, c.u) / 10;                         // 18–22% → +2
+    if (S.isStarred(c.i)) score += 1.5;
+    if (s) {
+      if ((s.l || 0) >= 5) score += 1;                        // stuck
+      if (s.d <= today && (s.r || s.t || s.l)) score += Math.min(2, (today - s.d) / 7);
+    }
+    return score;
+  }
+  function interleave(list) {                                 // one deck never runs deep
+    var lanes = {}, order = [];
+    list.forEach(function (c) {
+      if (!lanes[c.deck]) { lanes[c.deck] = []; order.push(c.deck); }
+      lanes[c.deck].push(c);
+    });
+    var out = [], left = list.length;
+    while (left) order.forEach(function (k) {
+      if (lanes[k].length) { out.push(lanes[k].shift()); left--; }
+    });
+    return out;
+  }
+  function buildDaily(opts) {
+    var today = S.dayNum(), set = S.getSettings();
+    var limit = (opts && opts.limit) || set.sessionSize;
+    var decks = opts && opts.deck ? [opts.deck]
+      : S.getIndex().courses.map(function (c) { return S.getDeck(c.id); }).filter(Boolean);
+    var due = [], fresh = [];
+    decks.forEach(function (d) {
+      S.pool(d, (opts && opts.unit) || null, null).forEach(function (c) {
+        var s = S.cs(c.i);
+        var studied = s && (s.r || s.t || s.l);
+        c._sc = cardScore(c, d, today);
+        if (S.isNew(c.i) || !studied) fresh.push(c);
+        else if (S.isDue(c.i, today)) due.push(c);
+      });
+    });
+    // the floor: the app must never stop teaching new cards
+    var newSlots = Math.min(set.newPerSession, fresh.length, Math.max(1, Math.round(limit * 0.25)));
+    if (!due.length) newSlots = Math.min(set.newPerSession, fresh.length, limit);
+    var byScore = function (a, b) { return b._sc - a._sc; };
+    S.shuffle(due); S.shuffle(fresh);          // ties break fresh every day
+    due.sort(byScore); fresh.sort(byScore);
+    var picked = due.slice(0, Math.max(0, limit - newSlots)).concat(fresh.slice(0, newSlots));
+    if (decks.length > 1 && picked.length) {
+      var cap = Math.ceil(limit * 0.4), per = {}, kept = [], spill = [];
+      picked.forEach(function (c) {
+        per[c.deck] = (per[c.deck] || 0) + 1;
+        (per[c.deck] <= cap ? kept : spill).push(c);
+      });
+      picked = interleave(kept.concat(spill).slice(0, limit));
+    } else {
+      picked = S.shuffle(picked);
+    }
+    return picked;
   }
 
   /* ---------------- theme ------------------------------------------------ */
@@ -179,11 +334,11 @@
      ========================================================================== */
   function viewDecks() {
     var ix = S.getIndex();
-    var due = 0;
+    var due = 0, seen = 0;
     var rows = ix.courses.map(function (c) {
       var d = S.getDeck(c.id);
       var st = d ? S.deckStats(d) : { due: 0, known: 0, total: c.count, pct: 0, fresh: c.count };
-      due += st.due;
+      due += st.due; seen += st.seen || 0;
       // one meaning per column: every row shows its total; a due count is a
       // second line on the rows where it is true (skill §4.1)
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
@@ -193,6 +348,16 @@
         '</button></li>';
     }).join('');
 
+    // real progress deserves a copy that survives the phone — nudge quietly
+    // after a month, on a key Reset progress never clears
+    var lastBk = 0; try { lastBk = +localStorage.getItem('apdecks.backup.last') || 0; } catch (e) {}
+    var nudge = '';
+    if (seen > 50 && Date.now() - lastBk > 30 * 864e5) {
+      nudge = '<div class="foot"><button class="textbtn quiet" data-go="#/settings">' +
+        (lastBk ? 'Last backup ' + Math.round((Date.now() - lastBk) / 864e5) + ' days ago'
+                : 'Progress lives only on this phone — back it up') + '</button></div>';
+    }
+
     // The hero is the fact, and when there is one obvious action it IS the tap.
     var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
     mount(
@@ -201,7 +366,10 @@
              : '<h1>' + esc(hero) + '</h1>') +
       '</div>' +
       '<ul class="list tight">' + rows + '</ul>' +
-      '<div style="margin-top:var(--s-5)"><button class="textbtn" data-go="#/games">Games</button></div>'
+      '<div class="modes" style="margin-top:var(--s-5)">' +
+        '<button class="textbtn" data-go="#/ten">Quick ten</button>' +
+        '<button class="textbtn" data-go="#/games">Games</button>' +
+      '</div>' + nudge
     );
   }
 
@@ -214,20 +382,32 @@
     curDeckId = lastDeckId = deckId;
     var st = S.deckStats(d);
     // units in course order, each under a small muted label — never a header (skill §4.2)
+    // once anything in the deck is studied the column flips to mastery, all
+    // rows at once — never a % beside a count in the same column
+    var anySeen = st.seen > 0;
     var units = d.units.map(function (u) {
       var us = S.unitStats(d, u.id);
       if (!us.total) return '';
+      var bits = [];
+      var wt = weightText(u);
+      if (wt) bits.push(wt);
+      if (anySeen && !us.seen) bits.push('not started');
+      if (us.due) bits.push(us.due + ' due');
       return '<li>' +
         '<div class="ulabel">Unit ' + u.n + '</div>' +
         '<button class="ledger mid' + (us.pct >= 0.9 ? ' done' : '') + '" data-go="#/d/' + deckId + '/u/' + u.id + '">' +
         '<span class="lname">' + esc(u.title) + '</span>' +
-        '<span class="lval num">' + us.total + '</span>' +
-        (us.due ? '<span class="lsub">' + us.due + ' due</span>' : '') +
+        '<span class="lval num">' + (anySeen ? pct(us.pct) : us.total) + '</span>' +
+        (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
         '</button></li>';
     }).join('');
 
+    // the app knows when the exam is — the countdown sits over the course name
+    var pl = paceLine(d);
+
     // the name is the way back; the number is a fact, not a hidden link
     mount(
+      (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '') +
       '<div class="dhero">' +
         '<button class="dn" data-go="#/">' + esc(nice(d)) + '</button>' +
         '<span class="dv num">' + st.total + '</span>' +
@@ -266,7 +446,8 @@
     }).join('');
 
     mount(
-      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n + '</div>' +
+      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n +
+        (weightText(u) ? ' · ' + esc(weightText(u)) : '') + '</div>' +
       '<div class="dhero">' +
         '<button class="dn" data-go="#/d/' + deckId + '">' + esc(u.title) + '</button>' +
         '<span class="dv num">' + us.total + '</span>' +
@@ -275,7 +456,7 @@
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Quiz</button>' +
-        '<button class="textbtn" data-go="#/study/' + deckId + '/all/' + unitId + '">Shuffle</button>' +
+        '<button class="textbtn" data-go="#/cram/' + deckId + '/' + unitId + '">Cram</button>' +
       '</div>' +
       '<ul class="list tight" style="margin-top:var(--s-4)">' + list + '</ul>'
     );
@@ -289,7 +470,10 @@
   function startSession(deckId, mode, unitId, quiz) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
-    var queue = S.buildSession(d, unitId || null, mode || 'smart');
+    // the daily path deals the chosen queue; fixed modes stay literal
+    var queue = (mode || 'smart') === 'smart'
+      ? buildDaily({ deck: d, unit: unitId || null })
+      : S.buildSession(d, unitId || null, mode);
     if (!queue.length) return renderEmptySession(d, unitId, mode);
     sess = {
       deck: d, unitId: unitId || null, mode: mode, quiz: !!quiz,
@@ -301,46 +485,65 @@
     renderCard();
   }
 
-  /* review across every deck */
-  function startReview() {
-    var ix = S.getIndex(), all = [];
-    ix.courses.forEach(function (c) {
-      var d = S.getDeck(c.id);
-      if (!d) return;
-      d.cards.forEach(function (card) {
-        // due means studied-and-owed — starring alone must not conjure a review
-        // (the same guard deckStats uses, so the two due counts always agree)
-        var s = S.cs(card.i);
-        if (s && (s.r || s.t || s.l) && S.isDue(card.i)) all.push(card);
-      });
-    });
-    if (!all.length) {
-      // say when the next card comes back, not just that none are due
-      var today = S.dayNum(), next = null;
-      ix.courses.forEach(function (c) {
+  /* review across every deck — the chosen queue: due first by value, new
+     cards always seeping in, no deck owning the session */
+  function startReview(limit) {
+    var queue = buildDaily(limit ? { limit: limit } : null);
+    if (!queue.length) {
+      // say when the next card comes back, and where — not just that none are due
+      var today = S.dayNum(), next = null, nextDeck = null;
+      S.getIndex().courses.forEach(function (c) {
         var d = S.getDeck(c.id); if (!d) return;
         d.cards.forEach(function (card) {
           var st = S.cs(card.i);
-          if (st && st.d > today && (!next || st.d < next)) next = st.d;
+          if (st && st.d > today && (!next || st.d < next)) { next = st.d; nextDeck = d; }
         });
       });
-      var when = next === null ? '' :
-        next - today === 1 ? 'Next cards tomorrow' : 'Next cards in ' + (next - today) + ' days';
+      var when = '';
+      if (next !== null) {
+        var days = next - today;
+        var wd = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+          [new Date(Date.now() + days * 864e5).getDay()];
+        when = (days === 1 ? 'Tomorrow' : days < 7 ? wd : 'In ' + days + ' days') +
+          (nextDeck ? ', ' + nice(nextDeck) + ' comes back' : '');
+      }
       return mount(
         '<div class="head"><h1>Nothing due</h1>' +
-        (when ? '<div class="sub">' + when + '</div>' : '') + '</div>' +
+        (when ? '<div class="sub">' + esc(when) + '</div>' : '') + '</div>' +
         '<button class="textbtn" data-go="#/">Decks</button>'
       );
     }
-    S.shuffle(all);
-    var limit = S.getSettings().sessionSize;
     sess = {
       deck: null, unitId: null, mode: 'due', quiz: false, mixed: true,
       typing: S.getSettings().typing,
-      queue: all.slice(0, Math.max(limit, 10)), done: 0, planned: Math.min(all.length, Math.max(limit, 10)),
+      queue: queue, done: 0, planned: queue.length,
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0, history: [], answered: false, typed: ''
     };
     renderCard();
+  }
+
+  /* cram a unit before a test: every card, least-known first, and the
+     schedule stays honest — a pass never pushes a well-timed card away */
+  function startCram(deckId, unitId) {
+    var d = S.getDeck(deckId);
+    if (!d) return go('#/');
+    if (unitId && !d.unitById[unitId]) return go('#/d/' + deckId);
+    var cards = d.cards.filter(function (c) { return !unitId || c.u === unitId; });
+    if (!cards.length) return go('#/d/' + deckId);
+    S.shuffle(cards);
+    cards.sort(function (a, b) { return cramRank(a) - cramRank(b); });
+    sess = {
+      deck: d, unitId: unitId || null, mode: 'cram', cram: true, quiz: false,
+      typing: S.getSettings().typing,
+      queue: cards, done: 0, planned: cards.length,
+      revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0, history: [], answered: false, typed: ''
+    };
+    renderCard();
+  }
+  function cramRank(c) {
+    var s = S.cs(c.i);
+    if (!s || !(s.r || s.t || s.l)) return 0;          // never studied — first
+    return (S.isKnown(c.i) ? 4 : 1) + (s.r || 0) - (s.l || 0) * 0.5;
   }
 
   function renderEmptySession(d, unitId, mode) {
@@ -413,7 +616,10 @@
 
     var body =
       '<div class="q' + sizeClass(c.q) + '">' + T.html(c.q) + '</div>' +
-      (!sess.revealed && c.h ? '<div class="hint">' + T.html(c.h) + '</div>' : '');
+      // a hint given unasked is the answer half-spoiled — it waits for the tap
+      (!sess.revealed && c.h ? (sess.hinted
+        ? '<div class="hint">' + T.html(c.h) + '</div>'
+        : '<button class="hint-btn" data-hint>Hint</button>') : '');
 
     if (!sess.revealed) {
       // the prompt itself is the tap; no "Tap to reveal" caption (skill §8)
@@ -505,7 +711,7 @@
 
     if (!sess.quiz && !sess.revealed) {
       card.addEventListener('click', function (e) {
-        if (e.target.closest('[data-star]') || e.target.closest('input')) return;
+        if (e.target.closest('[data-star]') || e.target.closest('input') || e.target.closest('[data-hint]')) return;
         reveal();
       });
     }
@@ -569,8 +775,11 @@
     if (!sess || !sess.revealed) return;
     var c = sess.queue.shift();
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
-    S.grade(c.i, g);
-    sess.history.push({ card: c, before: before, g: g, rq: g === 0 });
+    // cram is practice: a pass must not shove a well-timed card into the
+    // future, but a miss is real information and new or due cards earn grades
+    var wrote = !sess.cram || g === 0 || S.isNew(c.i) || S.isDue(c.i);
+    if (wrote) S.grade(c.i, g);
+    sess.history.push({ card: c, before: before, g: g, rq: g === 0, wrote: wrote });
     if (g === 0) {
       sess.again++; sess.planned++;   // a re-queued card is one more to do
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
@@ -578,7 +787,7 @@
     else if (g === 1) sess.good++;
     else sess.easy++;
     sess.done++;
-    sess.revealed = false; sess.verdict = null; sess.typed = '';
+    sess.revealed = false; sess.verdict = null; sess.typed = ''; sess.hinted = false;
     renderCard();
   }
 
@@ -588,7 +797,7 @@
       // in quiz mode, undo takes back the answer you just gave
       if (!sess.answered) return;
       var hq = sess.history.pop();
-      S.restore(hq.card.i, hq.before);
+      if (hq.wrote !== false) S.restore(hq.card.i, hq.before);
       if (hq.g === 1) sess.right = Math.max(0, sess.right - 1);
       else sess.wrong = Math.max(0, sess.wrong - 1);
       sess.answered = false; sess.picked = -1;
@@ -600,7 +809,7 @@
     for (var i = 0; i < sess.queue.length; i++) {
       if (sess.queue[i].i === h.card.i) { sess.queue.splice(i, 1); break; }
     }
-    S.restore(h.card.i, h.before);
+    if (h.wrote !== false) S.restore(h.card.i, h.before);   // a cram pass never wrote
     sess.queue.unshift(h.card);
     sess.done = Math.max(0, sess.done - 1);
     // planned only shrinks if this grade actually grew it (a quiz miss bumps
@@ -621,8 +830,10 @@
     var correct = sess.choices[n] && sess.choices[n].correct;
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     if (correct) sess.right++; else sess.wrong++;
-    sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false });
-    S.grade(c.i, correct ? 1 : 0);
+    // the same cram guard as doGrade — a switched-to-MCQ cram stays honest
+    var wrote = !sess.cram || !correct || S.isNew(c.i) || S.isDue(c.i);
+    sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false, wrote: wrote });
+    if (wrote) S.grade(c.i, correct ? 1 : 0);
     renderCard();
     // the result must be seen, not hunted for
     requestAnimationFrame(function () {
@@ -639,7 +850,7 @@
       var top = sess.history[sess.history.length - 1];
       if (top && top.card.i === c.i) top.rq = true;
     }
-    sess.done++; sess.answered = false; sess.picked = -1; sess.choices = null;
+    sess.done++; sess.answered = false; sess.picked = -1; sess.choices = null; sess.hinted = false;
     renderCard();
   }
 
@@ -709,7 +920,14 @@
       var dk = S.getDeck(c.id); if (dk) dueLeft += S.deckStats(dk).due;
     });
     var again = sess.mixed ? '#/review' :
+      sess.mode === 'cram' ? '#/cram/' + d.id + (sess.unitId ? '/' + sess.unitId : '') :
       '#/' + (sess.quiz ? 'quiz' : 'study') + '/' + d.id + '/' + sess.mode + (sess.unitId ? '/' + sess.unitId : '');
+    // one line under the number, and it earns its place: caught up beats a
+    // milestone streak beats the day's count — never the same rote line
+    var stk = S.streak();
+    var moment = !dueLeft ? 'All caught up' :
+      [3, 7, 14, 21, 30, 50, 75, 100, 150, 200].indexOf(stk) > -1 ? stk + '-day streak' :
+      plural(S.studiedToday(), 'card') + ' today';
     sess = null;
     // the session is over — a reload or a back gesture should land on the
     // deck, not silently deal a brand-new session (no hashchange fires here)
@@ -719,7 +937,7 @@
         '<span class="k">Session complete</span>' +
         '<div class="v">' + total + '</div>' +
         '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">' +
-          plural(S.streak(), 'day') + ' streak</div>' +
+          esc(moment) + '</div>' +
       '</div>' +
       '<div style="margin:var(--s-4) 0 var(--s-5)">' + rows + '</div>' +
       (dueLeft ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
@@ -797,6 +1015,35 @@
         '<span class="lval num">' + pct(st.pct) + '</span></button></li>';
     }).join('');
 
+    // the verdict per course, once two weeks of study have earned one
+    var paceRows = ix.courses.map(function (c) {
+      var d2 = S.getDeck(c.id); if (!d2) return '';
+      var w = paceWord(d2);
+      if (!w) return '';
+      return '<li><button class="ledger mid" data-go="#/d/' + c.id + '">' +
+        '<span class="lname">' + esc(nice(c.id)) + '</span>' +
+        '<span class="lval">' + esc(w) + '</span>' +
+        '<span class="lsub">' + esc(examName(c.id) + ' · ' + (examDayNum(c.id) - S.dayNum()) + ' days') + '</span>' +
+        '</button></li>';
+    }).join('');
+    var paceBlock = paceRows
+      ? '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">At this pace</div><ul class="list tight">' + paceRows + '</ul>'
+      : '';
+
+    // the three units that bite back hardest — each tap is the fix, not a report
+    var weak = weakBuckets(), weakBlock = '';
+    if (weak.length) {
+      weakBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">Weak spots</div><ul class="list tight">' +
+        weak.slice(0, 3).map(function (w) {
+          return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/hard/' + w.unit.id + '">' +
+            '<span class="lname">' + esc(w.unit.title) + '</span>' +
+            '<span class="lval num">' + w.bad + '</span>' +
+            '<span class="lsub">' + esc(nice(w.deck)) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
+            '</button></li>';
+        }).join('') + '</ul>' +
+        (weak.length > 3 ? '<button class="textbtn quiet" data-go="#/weak">All weak spots</button>' : '');
+    }
+
     // a chart only earns its place with 7+ real data points (skill §7.13)
     var hist = S.history(28);
     var real = hist.filter(function (h) { return h.count > 0; }).length;
@@ -822,9 +1069,29 @@
       '<h1>' + hero + '</h1>' +
       (caption.length ? '<div class="sub">' + caption.join(' · ') + '</div>' : '') + '</div>' +
       (rows ? '<ul class="list tight">' + rows + '</ul>' : '') +
+      paceBlock +
+      weakBlock +
       spark +
       (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due + '</button></div>'
         : !totals.seen ? '<button class="textbtn" data-go="#/">Decks</button>' : '')
+    );
+  }
+
+  /* every weak spot, when three rows are not the whole story */
+  function viewWeak() {
+    curDeckId = null;
+    var list = weakBuckets();
+    if (!list.length) return goReplace('#/stats');
+    mount(
+      backbar('Progress') +
+      '<div class="head"><h1 class="uhead">Weak spots</h1></div>' +
+      '<ul class="list tight">' + list.map(function (w) {
+        return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/hard/' + w.unit.id + '">' +
+          '<span class="lname">' + esc(w.unit.title) + '</span>' +
+          '<span class="lval num">' + w.bad + '</span>' +
+          '<span class="lsub">' + esc(nice(w.deck)) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
+          '</button></li>';
+      }).join('') + '</ul>'
     );
   }
 
@@ -921,6 +1188,10 @@
       sess = null; goReplace(back); return;
     }
     if (t.closest('[data-undo]')) { undo(); return; }
+    if (t.closest('[data-hint]')) {
+      if (sess && !sess.revealed) { sess.hinted = true; renderCard(); }
+      return;
+    }
     if (t.closest('[data-reveal]')) { reveal(); return; }
     if (t.closest('[data-star]')) { starCurrent(); return; }
     var g = t.closest('[data-grade]');
@@ -945,7 +1216,7 @@
       // second time — take the pending answer back before switching modes
       if (sess.quiz && sess.answered && sess.history.length) {
         var hm = sess.history.pop();
-        S.restore(hm.card.i, hm.before);
+        if (hm.wrote !== false) S.restore(hm.card.i, hm.before);
         if (hm.g === 1) sess.right = Math.max(0, sess.right - 1);
         else sess.wrong = Math.max(0, sess.wrong - 1);
         S.save(true);
@@ -955,7 +1226,7 @@
       else if (sess.typing) { sess.typing = false; }
       else { sess.quiz = true; }
       sess.choices = null; sess.answered = false; sess.picked = -1;
-      sess.revealed = false; sess.verdict = null; sess.typed = null;
+      sess.revealed = false; sess.verdict = null; sess.typed = null; sess.hinted = false;
       renderCard(); return;
     }
     var rq = t.closest('[data-req]');
@@ -1016,10 +1287,33 @@
     }
     if (t.closest('[data-export]')) {
       var data = S.exportData();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(data).then(function () { toast('Backup copied'); },
-          function () { showBackup(data); });
-      } else showBackup(data);
+      var d8 = new Date();
+      var fname = 'apdecks-' + d8.getFullYear() + '-' + ('0' + (d8.getMonth() + 1)).slice(-2) +
+        '-' + ('0' + d8.getDate()).slice(-2) + '.json';
+      // outside the v1 namespace on purpose — Reset progress must not erase
+      // the memory of when the last backup happened
+      var mark = function () { try { localStorage.setItem('apdecks.backup.last', String(Date.now())); } catch (e2) {} };
+      var asFile = null;
+      try { asFile = new File([data], fname, { type: 'application/json' }); } catch (e3) {}
+      // a real file beats a clipboard: it survives the phone
+      if (asFile && navigator.share && navigator.canShare && navigator.canShare({ files: [asFile] })) {
+        navigator.share({ files: [asFile] }).then(function () { mark(); toast('Backup saved'); },
+          function () { /* sheet dismissed — nothing left the phone */ });
+        return;
+      }
+      try {
+        var lnk = document.createElement('a');
+        lnk.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+        lnk.download = fname;
+        document.body.appendChild(lnk); lnk.click(); lnk.remove();
+        setTimeout(function () { URL.revokeObjectURL(lnk.href); }, 4000);
+        mark(); toast('Backup downloaded');
+      } catch (e4) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(data).then(function () { mark(); toast('Backup copied'); },
+            function () { showBackup(data); });
+        } else showBackup(data);
+      }
       return;
     }
     if (t.closest('[data-import]')) {
@@ -1095,8 +1389,9 @@
     var h = location.hash.replace(/^#/, '') || '/';
     var p = h.split('/').filter(Boolean);
     var root = '/' + (p[0] || '');
-    syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root : '/');
-    sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review') ? sess : null;
+    syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root
+      : p[0] === 'weak' ? '/stats' : '/');
+    sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' || p[0] === 'ten') ? sess : null;
     if (window.Games) window.Games.onRoute(p[0] || '');
 
     if (!p.length) {
@@ -1113,6 +1408,9 @@
     if (p[0] === 'study') return startSession(p[1], p[2] || 'smart', p[3], false);
     if (p[0] === 'quiz') return startSession(p[1], p[2] || 'smart', p[3], true);
     if (p[0] === 'review') return startReview();
+    if (p[0] === 'ten') return startReview(10);
+    if (p[0] === 'cram') return startCram(p[1], p[2]);
+    if (p[0] === 'weak') return viewWeak();
     if (p[0] === 'search') return viewSearch();
     if (p[0] === 'stats') return viewStats();
     if (p[0] === 'settings') return viewSettings();
