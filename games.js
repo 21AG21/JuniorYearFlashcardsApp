@@ -19,11 +19,13 @@
     presorder:  { name: 'Presidents',       deck: 'apush',  kind: 'order'  },
     periodquiz: { name: 'Periods',          deck: 'apush',  kind: 'quiz'   },
     yearquiz:   { name: 'Years',          deck: 'apush',  kind: 'quiz'   },
+    apterms:    { name: 'Named',          deck: 'apush',  kind: 'board'  },
     chemorder:  { name: 'Order',         deck: 'chem',   kind: 'order'  },
     chemformula:{ name: 'Formulas',         deck: 'chem',   kind: 'match'  },
     ionmatch:   { name: 'Ions',  deck: 'chem',   kind: 'match'  },
     elemmatch:  { name: 'Elements',         deck: 'chem',   kind: 'match'  },
     sigfigs:    { name: 'Sig figs',         deck: 'chem',   kind: 'quiz'   },
+    moles:      { name: 'Moles',            deck: 'chem',   kind: 'quiz'   },
     econfig:    { name: 'Configurations',   deck: 'chem',   kind: 'quiz'   },
     langmatch:  { name: 'Devices',     deck: 'lang',   kind: 'match'  },
     langboard:  { name: 'Terms',            deck: 'lang',   kind: 'board'  },
@@ -40,7 +42,8 @@
     antideriv:  { name: 'Antiderivatives',  deck: 'calcbc', kind: 'match'  },
     seriesmatch:{ name: 'Series',           deck: 'calcbc', kind: 'match'  },
     radmatch:   { name: 'Radians',          deck: 'calcbc', kind: 'match'  },
-    limitsquiz: { name: 'Limits',           deck: 'calcbc', kind: 'quiz'   }
+    limitsquiz: { name: 'Limits',           deck: 'calcbc', kind: 'quiz'   },
+    converge:   { name: 'Converge',         deck: 'calcbc', kind: 'quiz'   }
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush'];
 
@@ -271,20 +274,22 @@
   var IMP_END = ['ais', 'ais', 'ait', 'ions', 'iez', 'aient'];
 
   /* ions for building formulas: name, symbol, charge, needs-parentheses */
+  /* slot 5 is the ion's formula mass (u); anions carry their oxygen count in
+     slot 6 for percent-composition — thirty stored numbers beat a parser */
   var CATS = [
-    ['sodium', 'Na', 1, false], ['potassium', 'K', 1, false], ['lithium', 'Li', 1, false],
-    ['silver', 'Ag', 1, false], ['ammonium', 'NH₄', 1, true], ['calcium', 'Ca', 2, false],
-    ['magnesium', 'Mg', 2, false], ['barium', 'Ba', 2, false], ['zinc', 'Zn', 2, false],
-    ['aluminum', 'Al', 3, false], ['iron(II)', 'Fe', 2, false], ['iron(III)', 'Fe', 3, false],
-    ['copper(II)', 'Cu', 2, false], ['lead(II)', 'Pb', 2, false]
+    ['sodium', 'Na', 1, false, 23.0], ['potassium', 'K', 1, false, 39.1], ['lithium', 'Li', 1, false, 6.9],
+    ['silver', 'Ag', 1, false, 107.9], ['ammonium', 'NH₄', 1, true, 18.0], ['calcium', 'Ca', 2, false, 40.1],
+    ['magnesium', 'Mg', 2, false, 24.3], ['barium', 'Ba', 2, false, 137.3], ['zinc', 'Zn', 2, false, 65.4],
+    ['aluminum', 'Al', 3, false, 27.0], ['iron(II)', 'Fe', 2, false, 55.8], ['iron(III)', 'Fe', 3, false, 55.8],
+    ['copper(II)', 'Cu', 2, false, 63.5], ['lead(II)', 'Pb', 2, false, 207.2]
   ];
   var ANIONS = [
-    ['chloride', 'Cl', 1, false], ['bromide', 'Br', 1, false], ['iodide', 'I', 1, false],
-    ['fluoride', 'F', 1, false], ['oxide', 'O', 2, false], ['sulfide', 'S', 2, false],
-    ['nitride', 'N', 3, false], ['nitrate', 'NO₃', 1, true], ['nitrite', 'NO₂', 1, true],
-    ['sulfate', 'SO₄', 2, true], ['carbonate', 'CO₃', 2, true], ['phosphate', 'PO₄', 3, true],
-    ['hydroxide', 'OH', 1, true], ['acetate', 'C₂H₃O₂', 1, true],
-    ['chlorate', 'ClO₃', 1, true], ['bicarbonate', 'HCO₃', 1, true]
+    ['chloride', 'Cl', 1, false, 35.5, 0], ['bromide', 'Br', 1, false, 79.9, 0], ['iodide', 'I', 1, false, 126.9, 0],
+    ['fluoride', 'F', 1, false, 19.0, 0], ['oxide', 'O', 2, false, 16.0, 1], ['sulfide', 'S', 2, false, 32.1, 0],
+    ['nitride', 'N', 3, false, 14.0, 0], ['nitrate', 'NO₃', 1, true, 62.0, 3], ['nitrite', 'NO₂', 1, true, 46.0, 2],
+    ['sulfate', 'SO₄', 2, true, 96.1, 4], ['carbonate', 'CO₃', 2, true, 60.0, 3], ['phosphate', 'PO₄', 3, true, 95.0, 4],
+    ['hydroxide', 'OH', 1, true, 17.0, 1], ['acetate', 'C₂H₃O₂', 1, true, 59.0, 2],
+    ['chlorate', 'ClO₃', 1, true, 83.5, 3], ['bicarbonate', 'HCO₃', 1, true, 61.0, 3]
   ];
   function gcd(a, b) { return b ? gcd(b, a % b) : a; }
   function radLabel(i, k) {
@@ -371,19 +376,21 @@
 
   /* unit / period filters for the games that draw from real data.
      FILT[id] is a cycling index — 0 is All; tapping the word restarts. */
-  var GFILT = { timeline: 'apush', yearquiz: 'apush', langmatch: 'lang', langboard: 'lang' };
+  var GFILT = { timeline: 'apush', yearquiz: 'apush', langmatch: 'lang', langboard: 'lang',
+                apterms: 'apushunit' };
   var FILT = {};
   function filtOpts(id) {
     if (GFILT[id] === 'apush') return PERIODS.map(function (p) { return p[0]; });
-    var d = S.getDeck('lang');
-    return d ? d.units.map(function (u) { return 'Unit ' + u.n; }) : [];
+    // the US History deck's units ARE the nine periods — filter by unit id
+    var d = S.getDeck(GFILT[id] === 'apushunit' ? 'apush' : 'lang');
+    return d ? d.units.map(function (u) { return (GFILT[id] === 'apushunit' ? 'Period ' : 'Unit ') + u.n; }) : [];
   }
-  function filtVal(id) {          // apush → [label, from, to]; lang → unit id; null = all
+  function filtVal(id) {          // apush → [label, from, to]; unit modes → unit id; null = all
     var fi = FILT[id] || 0;
     if (!fi) return null;
     if (GFILT[id] === 'apush') return PERIODS[fi - 1];
-    var d = S.getDeck('lang');
-    return d ? d.units[fi - 1].id : null;
+    var d = S.getDeck(GFILT[id] === 'apushunit' ? 'apush' : 'lang');
+    return d && d.units[fi - 1] ? d.units[fi - 1].id : null;
   }
   function filtCtl(id) {
     if (!GFILT[id]) return '';
@@ -398,6 +405,51 @@
     if (n == null || !isFinite(n) || n <= 0 || !label) return;
     var b = best();
     if (!b[id] || b[id].n == null || n > b[id].n) { b[id] = { n: n, label: label }; S.setSetting('gameBest', b); }
+  }
+
+  /* ==========================================================================
+     ADAPTIVE — every generator can remember what the player misses and lean
+     the deal toward it. A miss warms a tag; a right answer cools it. No UI.
+     ========================================================================== */
+  function missMap(id) { return (S.getSettings().gameMiss || {})[id] || {}; }
+  function missLog(id, tag) {
+    if (!tag) return;
+    var m = S.getSettings().gameMiss || {};
+    var g = m[id] || (m[id] = {});
+    g[tag] = Math.min(8, (g[tag] || 0) + 2);
+    var keys = Object.keys(g);
+    if (keys.length > 40) {                     // shed the coldest tag, not the newest
+      keys.sort(function (a, b) { return g[a] - g[b]; });
+      delete g[keys[0]];
+    }
+    S.setSetting('gameMiss', m);
+  }
+  function missHeal(id, tag) {
+    if (!tag) return;
+    var m = S.getSettings().gameMiss || {};
+    if (m[id] && m[id][tag]) {
+      m[id][tag]--;
+      if (!m[id][tag]) delete m[id][tag];
+      S.setSetting('gameMiss', m);
+    }
+  }
+  /* sample one item, warmed tags counting extra */
+  function weightedPick(arr, keyFn, id) {
+    var m = missMap(id), tot = 0;
+    var ws = arr.map(function (x) { var w = 1 + (m[keyFn(x)] || 0); tot += w; return w; });
+    var r = Math.random() * tot;
+    for (var i = 0; i < arr.length; i++) { r -= ws[i]; if (r <= 0) return arr[i]; }
+    return arr[arr.length - 1];
+  }
+  /* reorder a shuffled list so missed items surface first */
+  function missFirst(list, keyFn, id) {
+    var m = missMap(id);
+    var any = false, k;
+    for (k in m) { any = true; break; }
+    if (!any) return list;
+    var hot = [], cold = [];
+    list.forEach(function (x) { (m[keyFn(x)] ? hot : cold).push(x); });
+    return hot.concat(cold);
   }
 
   /* ---------------- hub ---------------------------------------------------- */
@@ -522,7 +574,8 @@
     var out = [], used = {};
     if (!d) return out;
     var src = unitId ? d.cards.filter(function (c) { return c.u === unitId; }) : d.cards;
-    shuffle(src.slice()).forEach(function (c) {
+    missFirst(shuffle(src.slice()), function (c) { return termOf(clean(c.q)) || ''; }, 'langboard')
+      .forEach(function (c) {
       if (out.length >= n || c.v !== 'DEFINE') return;
       var term = termOf(clean(c.q));
       if (!term) return;
@@ -532,6 +585,43 @@
       if (used[kt] || used[def]) return;
       used[kt] = 1; used[def] = 1;
       out.push([def, term]);
+    });
+    return out;
+  }
+
+  /* NAMED — the langboard mechanic pointed at the US History deck: the clue
+     is the card's first sentence with every alias redacted; the tile is the
+     canonical short term the deck already carries in c.x[0]. */
+  function firstSentence(s) {
+    var m = /^.*?[.!?](?=\s|$)/.exec(s);
+    return m ? m[0] : s;
+  }
+  function redact(s, xs) {
+    xs.forEach(function (t) { if (!/^\d{3,4}$/.test(t)) s = s.split(t).join('—'); });
+    return s;
+  }
+  function namedRound(n, unitId) {
+    var d = S.getDeck('apush');
+    if (!d) return [];
+    var src = unitId ? d.cards.filter(function (c) { return c.u === unitId; }) : d.cards;
+    var out = [], used = {};
+    var list = shuffle(src.slice()).sort(function (a, b) { return (b.c || 0) - (a.c || 0); });
+    list = missFirst(list, function (c) { return c.x && c.x[0] || ''; }, 'apterms');
+    list.forEach(function (c) {
+      if (out.length >= n) return;
+      if (!c.x || !c.x[0] || c.x[0].length > 28) return;
+      var term = c.x[0];
+      var s = redact(firstSentence(clean(c.a)), c.x);
+      if (s.length < 40) return;                       // a stub is not a clue
+      // the term must not survive its own clue — a leading proper noun that
+      // outlived redaction gives the answer away
+      var w0 = term.split(/\s+/)[0].replace(/[’'‘]s$/, '');
+      if (w0.length > 3 && s.indexOf(w0) > -1) return;
+      if (s.length > 150) s = s.slice(0, 147).replace(/\s+\S*$/, '') + '…';
+      var k = term.toLowerCase();
+      if (used[k] || used[s]) return;
+      used[k] = used[s] = 1;
+      out.push([s, term]);
     });
     return out;
   }
@@ -579,6 +669,15 @@
         ctx.toast('That unit is thin — showing all');
       }
       dealBoard(facts);
+    } else if (id === 'apterms') {
+      var af = namedRound(9, filtVal('apterms'));
+      if (af.length < 4 && FILT.apterms) {
+        FILT.apterms = 0;
+        af = namedRound(9, null);
+        ctx.toast('That period is thin — showing all');
+      }
+      if (!af.length) return renderNoData(id);
+      dealBoard(af);
     } else {
       dealBoard(conjRound(10));
     }
@@ -625,11 +724,12 @@
     if (tl.t === f[1]) {
       clearTimeout(timer);                       // no stale flash re-render later
       tl.done = true;
-      if (st.firstTry) st.score++;
+      if (st.firstTry) { st.score++; missHeal(st.id, f[1]); }
       st.i++; st.firstTry = true; st.flash = -1;
       st.lockUntil = Date.now() + 250;
       renderBoard();
     } else {
+      if (st.firstTry) missLog(st.id, f[1]);     // one warm per prompt, not per flail
       st.firstTry = false; st.flash = i;
       renderBoard(true);
       clearTimeout(timer);
@@ -932,6 +1032,77 @@
       out.push([name, f]);
     }
     return out;
+  }
+
+  /* ==========================================================================
+     MOLES — the quantitative half of chemistry. Compounds come from the same
+     charge-balance rule as Formulas; every option wears three sig figs, so
+     the shape of a number never answers the question. Distractors are named
+     error modes: an inverted division, a dropped multiplier, a lost exponent.
+     ========================================================================== */
+  function molarMass(cat, an) {
+    var g = gcd(cat[2], an[2]);
+    return cat[4] * (an[2] / g) + an[4] * (cat[2] / g);
+  }
+  function sig3(v) {
+    if (!isFinite(v) || v <= 0) return '0';
+    if (v >= 1e5 || v < 0.01) {
+      var e = Math.floor(Math.log(v) / Math.LN10);
+      var m = Math.round((v / Math.pow(10, e)) * 100) / 100;
+      return m + ' × 10' + (e < 0 ? '⁻' : '') + sup(Math.abs(e));
+    }
+    return String(Number(v.toPrecision(3)));
+  }
+  var MOLE_TYPES = ['M', 'g2mol', 'mol2N', 'pct', 'conc'];
+  function moleRound(n) {
+    var qs = [], seen = {}, guard = 0;
+    while (qs.length < n && guard++ < 300) {
+      var cat = CATS[Math.floor(Math.random() * CATS.length)];
+      var an = ANIONS[Math.floor(Math.random() * ANIONS.length)];
+      if (!validCombo(cat, an)) continue;
+      var f = formulaOf(cat, an), M = molarMass(cat, an);
+      var g0 = gcd(cat[2], an[2]), nCat = an[2] / g0, nAn = cat[2] / g0;
+      var type = weightedPick(MOLE_TYPES, function (t) { return t; }, 'moles');
+      var p, r, pool, u;
+      if (type === 'pct') {
+        var nO = an[5] * nAn;
+        if (!nO) continue;                       // no oxygen, no percent question
+        var pc = 16.0 * nO / M * 100;
+        p = '% O in ' + f;
+        u = '%'; r = sig3(pc) + u;
+        pool = [16.0 * an[5] / M * 100, 16.0 / M * 100, 100 - pc, pc / 2];
+      } else if (type === 'M') {
+        p = 'M(' + f + ')';
+        u = ' g/mol'; r = sig3(M) + u;
+        pool = [cat[4] + an[4], cat[4] * nAn + an[4] * nCat, M - 16.0, M + 16.0];
+      } else if (type === 'g2mol') {
+        var k = [0.25, 0.5, 2, 3, 4, 5][Math.floor(Math.random() * 6)];
+        var grams = Number((M * k).toPrecision(3));
+        p = grams + ' g ' + f + ' → moles';
+        u = ' mol'; r = sig3(grams / M) + u;
+        pool = [M / grams, grams * M, grams / (2 * M), 2 * grams / M];
+      } else if (type === 'mol2N') {
+        var mols = [0.25, 0.5, 1.5, 2, 3, 4][Math.floor(Math.random() * 6)];
+        p = mols + ' mol ' + f + ' → particles';
+        r = sig3(mols * 6.02) + ' × 10²³';
+        pool = [sig3(mols * 6.02) + ' × 10²²', sig3(mols * 6.02) + ' × 10²⁴',
+                sig3(mols / 6.02) + ' × 10²³', sig3(6.02 / mols) + ' × 10²³'];
+      } else {
+        var mm = [0.1, 0.2, 0.25, 0.5][Math.floor(Math.random() * 4)];
+        var mL = [100, 250, 500][Math.floor(Math.random() * 3)];
+        var grams2 = Number((M * mm).toPrecision(3));
+        p = grams2 + ' g ' + f + ' in ' + mL + ' mL → molarity';
+        u = ' M'; r = sig3(mm / (mL / 1000)) + u;
+        pool = [mm * mL / 1000, mm, grams2 / mL, mm / mL];
+      }
+      if (seen[p]) continue;
+      if (type !== 'mol2N') pool = pool.map(function (v) { return sig3(v) + u; });
+      var c3 = pick3(pool, r);
+      if (c3.length < 3) continue;               // a collapsed pool is no question
+      seen[p] = 1;
+      qs.push({ p: p, c: shuffle([r].concat(c3)), r: r, tag: type });
+    }
+    return qs;
   }
 
   function startMatch(id) {
@@ -1240,6 +1411,87 @@
   }
 
   /* significant figures: the number is generated, the count is computed */
+  /* ==========================================================================
+     CONVERGE — Unit 10 at last. Series are generated from rule families and
+     the verdict is computed from the family's rule, never looked up. Streaks
+     unlock harder families; "which test" only offers tests that are wrong.
+     ========================================================================== */
+  var CV = { A: 'converges absolutely', C: 'converges conditionally', D: 'diverges' };
+  var CV_TESTS = ['nth-term test', 'geometric series', 'p-series', 'ratio test',
+                  'alternating series test', 'comparison test', 'integral test'];
+  var FAMS = [
+    { id: 'p', tier: 1, test: 'p-series', also: ['integral test', 'comparison test'],
+      gen: function () {
+        var p = [1, 2, 3, '½'][Math.floor(Math.random() * 4)];
+        var show = p === 1 ? 'Σ 1⁄{n}' : p === '½' ? 'Σ 1⁄{√n}' : 'Σ 1⁄{n' + sup(p) + '}';
+        return { show: show, v: p === 2 || p === 3 ? 'A' : 'D' };
+      } },
+    { id: 'geo', tier: 1, test: 'geometric series', also: ['ratio test', 'nth-term test'],
+      gen: function () {
+        var b = 2 + Math.floor(Math.random() * 7);
+        var a = 1 + Math.floor(Math.random() * (b + 2));
+        if (a === b) a++;
+        var neg = Math.random() < 0.35;
+        return { show: 'Σ ({' + (neg ? '−' : '') + a + '}⁄{' + b + '})ⁿ', v: a < b ? 'A' : 'D' };
+      } },
+    { id: 'nth', tier: 1, test: 'nth-term test', also: [],
+      gen: function () {
+        var a = 2 + Math.floor(Math.random() * 4), b = 1 + Math.floor(Math.random() * 9);
+        var c = 2 + Math.floor(Math.random() * 4), d = 1 + Math.floor(Math.random() * 9);
+        if (a === c) c++;
+        return { show: 'Σ {' + a + 'n + ' + b + '}⁄{' + c + 'n + ' + d + '}', v: 'D' };
+      } },
+    { id: 'cmp', tier: 2, test: 'comparison test', also: ['p-series', 'integral test'],
+      gen: function () {
+        var p = 2 + Math.floor(Math.random() * 2);
+        var c = 1 + Math.floor(Math.random() * 9);
+        return { show: 'Σ 1⁄{n' + sup(p) + ' + ' + c + '}', v: 'A' };
+      } },
+    { id: 'int', tier: 2, test: 'integral test', also: ['comparison test'],
+      gen: function () {
+        return Math.random() < 0.5
+          ? { show: 'Σ 1⁄{n (ln n)²}', v: 'A' }
+          : { show: 'Σ 1⁄{n ln n}', v: 'D' };
+      } },
+    { id: 'alt', tier: 2, test: 'alternating series test', also: ['p-series'],
+      gen: function () {
+        var p = [1, 2, '½'][Math.floor(Math.random() * 3)];
+        var den = p === 1 ? 'n' : p === '½' ? '√n' : 'n' + sup(p);
+        return { show: 'Σ (−1)ⁿ⁄{' + den + '}', v: p === 2 ? 'A' : 'C' };
+      } },
+    { id: 'ratio', tier: 3, test: 'ratio test', also: [],
+      gen: function () {
+        var k = 2 + Math.floor(Math.random() * 3);
+        var c = 2 + Math.floor(Math.random() * 4);
+        return Math.random() < 0.5
+          ? { show: 'Σ {n' + sup(k) + '}⁄{n!}', v: 'A' }
+          : { show: 'Σ {n!}⁄{' + c + 'ⁿ}', v: 'D' };
+      } }
+  ];
+  function convergeRound(n) {
+    var qs = [], seen = {}, guard = 0;
+    var tier = st && st.streak >= 12 ? 3 : st && st.streak >= 5 ? 2 : 1;
+    var fams = FAMS.filter(function (f) { return f.tier <= tier; });
+    while (qs.length < n && guard++ < 200) {
+      var fam = weightedPick(fams, function (f) { return f.id; }, 'converge');
+      var k = fam.gen();
+      if (seen[k.show]) continue;
+      seen[k.show] = 1;
+      var testMode = tier > 1 && Math.random() < 0.35;
+      // the absolute alternating case is settled by p-series, not AST —
+      // never ask "which test" where two answers are defensible
+      if (fam.id === 'alt' && k.v !== 'C') testMode = false;
+      if (testMode) {
+        var pool = CV_TESTS.filter(function (t) { return t !== fam.test && fam.also.indexOf(t) < 0; });
+        qs.push({ p: k.show, c: shuffle([fam.test].concat(pick3(pool, fam.test))),
+                  r: fam.test, tag: fam.id + ':t' });
+      } else {
+        qs.push({ p: k.show, c: shuffle([CV.A, CV.C, CV.D]), r: CV[k.v], tag: fam.id });
+      }
+    }
+    return qs;
+  }
+
   function countSig(s) {
     s = s.replace(/\s*×\s*10.*$/, '');
     if (s.indexOf('.') > -1) return s.replace(/\./g, '').replace(/^0+/, '').length;
@@ -1282,13 +1534,14 @@
   function plabel(pd) { return pd[0] + ' · ' + pd[1] + '–' + (pd[2] > 2020 ? 'now' : pd[2]); }
   function periodRound(n) {
     var qs = [];
-    shuffle(TIMELINE.slice()).forEach(function (e) {
+    var ekey = function (e) { return e.t; };
+    missFirst(shuffle(TIMELINE.slice()), ekey, 'periodquiz').forEach(function (e) {
       if (qs.length >= n) return;
       var fits = PERIODS.filter(function (pd) { return e.y >= pd[1] && e.y <= pd[2]; });
       if (fits.length !== 1) return;
       var r = plabel(fits[0]);
       var others = sample(PERIODS.filter(function (pd) { return pd !== fits[0]; }), 3).map(plabel);
-      qs.push({ p: e.t, c: shuffle([r].concat(others)), r: r });
+      qs.push({ p: e.t, c: shuffle([r].concat(others)), r: r, tag: e.t });
     });
     return qs;
   }
@@ -1347,7 +1600,7 @@
     var range = filtVal('yearquiz');
     var src = range ? TIMELINE.filter(function (e) { return e.y >= range[1] && e.y <= range[2]; })
                     : TIMELINE;
-    shuffle(src.slice()).forEach(function (e) {
+    missFirst(shuffle(src.slice()), function (e) { return e.t; }, 'yearquiz').forEach(function (e) {
       if (qs.length >= n) return;
       // an event whose name contains its year answers itself — sit those out
       if (!keepDated && /\b(1[4-9]\d\d|20\d\d)\b/.test(e.t)) return;
@@ -1370,7 +1623,7 @@
       }
       if (opts.length < 4) return;
       opts.sort();
-      qs.push({ p: e.t, c: opts, r: String(e.y) });
+      qs.push({ p: e.t, c: opts, r: String(e.y), tag: e.t });
     });
     // a thin period may be all self-dated events — a small round beats none
     if (qs.length < 4 && !keepDated) return yearRound(n, true);
@@ -1391,7 +1644,8 @@
   function econfigRound(n) {
     var pool = ELEMENTS.filter(function (e) { return e[1] <= 36 && e[1] !== 24 && e[1] !== 29; });
     var qs = [];
-    sample(pool, Math.min(n, pool.length)).forEach(function (e) {
+    var ekey = function (e) { return e[0]; };
+    missFirst(shuffle(pool.slice()), ekey, 'econfig').slice(0, Math.min(n, pool.length)).forEach(function (e) {
       var z = e[1], r = configOf(z);
       var opts = [r], used = {}; used[r] = 1;
       var tries = 0;
@@ -1405,7 +1659,7 @@
       }
       if (opts.length < 4) return;
       var name = ELEM_NAMES[ELEMENTS.indexOf(e)];
-      qs.push({ p: name + ' (' + e[0] + ')', c: shuffle(opts), r: r });
+      qs.push({ p: name + ' (' + e[0] + ')', c: shuffle(opts), r: r, tag: e[0] });
     });
     return qs;
   }
@@ -1459,12 +1713,14 @@
     page: 1, 'crêpe': 1, physique: 1, garde: 1, aide: 1, 'pendule': 1, vase: 1 };
   function genderRound(n) {
     var qs = [];
-    shuffle(FRVOCAB.slice()).forEach(function (v) {
+    // missed nouns come back sooner — the ledger keys on the bare noun
+    var vkey = function (v) { return v[0].replace(/^(le|la) /i, '').toLowerCase(); };
+    missFirst(shuffle(FRVOCAB.slice()), vkey, 'frgender').forEach(function (v) {
       if (qs.length >= n) return;
       var m = /^(le|la) ([a-zàâçéèêëîïôöûùüÿœæ’' -]+)$/i.exec(v[0]);
       if (!m) return;
       if (DUAL_GENDER[m[2].toLowerCase().trim()]) return;
-      qs.push({ p: m[2], c: ['le', 'la'], r: m[1].toLowerCase() });
+      qs.push({ p: m[2], c: ['le', 'la'], r: m[1].toLowerCase(), tag: m[2].toLowerCase().trim() });
     });
     return qs;
   }
@@ -1473,6 +1729,8 @@
      you keep answering. The hub remembers your best streak. */
   function quizBatch(id) {
     return id === 'limitsquiz' ? limitsRound(10) :
+      id === 'converge' ? convergeRound(10) :
+      id === 'moles' ? moleRound(10) :
       id === 'sigfigs' ? sigfigRound(10) :
       id === 'periodquiz' ? periodRound(10) :
       id === 'yearquiz' ? yearRound(10) :
@@ -1531,13 +1789,13 @@
     st.lock = true;
     var right = q.c[i] === q.r;
     if (right) {
-      st.score++; st.streak++;
+      st.score++; st.streak++; missHeal(st.id, q.tag);
       // a streak on a thin filter recycles a few prompts — full-game runs only
       if (st.streak > st.bestRun && !FILT[st.id]) {
         st.bestRun = st.streak;
         saveBest(st.id, st.streak, st.streak + ' straight');
       }
-    } else { st.wrongChoice = i; st.streak = 0; }
+    } else { st.wrongChoice = i; st.streak = 0; missLog(st.id, q.tag); }
     renderQuiz();
     timer = setTimeout(nextQuizQ, right ? 550 : 1400);
   }
