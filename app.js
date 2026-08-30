@@ -865,6 +865,13 @@
     renderCard();
   }
 
+  /* the exit control's one true path, shared with the Escape key — replace,
+     so the platform back gesture cannot fall into a dead session */
+  function exitSession() {
+    var back = sess && sess.deck ? '#/d/' + sess.deck.id : '#/';
+    sess = null; goReplace(back);
+  }
+
   /* ---- swipe ------------------------------------------------------------ */
   function attachSwipe(wrap) {
     var startX = 0, startY = 0, dx = 0, dy = 0, active = false, id = null;
@@ -963,6 +970,15 @@
      VIEW · search
      ========================================================================== */
   var searchState = { q: '' };
+  var wantSearchFocus = false;   // "/" was pressed — the next search mount focuses
+  /* the "/" shortcut: land on Search with the field focused, the old query
+     selected so typing replaces it — never appends to it */
+  function goSearchFocus() {
+    var q = document.getElementById('q');
+    if ((location.hash.replace(/^#/, '') || '/') === '/search' && q) {
+      try { q.focus(); q.select(); } catch (e) {}
+    } else { wantSearchFocus = true; goTab('/search'); }
+  }
   function viewSearch() {
     curDeckId = null;
     // the field and the results — no hero, no scope chips, no instructions (skill §4.4)
@@ -977,7 +993,10 @@
       searchState.q = input.value;
       clearTimeout(timer); timer = setTimeout(runSearch, 130);
     });
-    if (!searchState.q) { try { input.focus(); } catch (e) {} }
+    if (wantSearchFocus || !searchState.q) {
+      try { input.focus(); if (wantSearchFocus) input.select(); } catch (e) {}
+    }
+    wantSearchFocus = false;
     runSearch();
   }
 
@@ -1153,6 +1172,10 @@
         '<button class="textbtn" data-reset>Reset progress</button>' +
       '</div>' +
       reqHTML('Request a feature') +
+      // the keys, said once, where a keyboard exists — CSS hides this line on
+      // coarse-pointer screens, where it would only be clutter
+      '<div class="keyline">Keyboard — space reveal · 1 2 3 grade · s star · ' +
+        '1–9 answer · enter next · / search · ← → tabs · esc back</div>' +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
   }
@@ -1197,11 +1220,7 @@
       else goReplace(parentOf(location.hash));   // opened here — never leave the app
       return;
     }
-    if (t.closest('[data-exit]')) {
-      // replace, so the platform back gesture cannot fall into a dead session
-      var back = sess && sess.deck ? '#/d/' + sess.deck.id : '#/';
-      sess = null; goReplace(back); return;
-    }
+    if (t.closest('[data-exit]')) { exitSession(); return; }
     if (t.closest('[data-undo]')) { undo(); return; }
     if (t.closest('[data-hint]')) {
       if (sess && !sess.revealed) { sess.hinted = true; renderCard(); }
@@ -1354,31 +1373,60 @@
     }, 400);
   }
 
-  /* keyboard */
+  /* keyboard — the session's keys first, then a quiet set for the list
+     screens. A key typed into any field, and any modified key, is never
+     intercepted; a live game's route belongs to games.js. */
+  function tabIdxOf(p0) {
+    var i = ['review', 'search', 'stats', 'settings'].indexOf(p0);
+    return i > -1 ? i + 1 : p0 === 'weak' ? 3 : 0;
+  }
   document.addEventListener('keydown', function (e) {
-    if (!sess) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;   // never a shortcut's shortcut
+    var el = e.target;
+    if (el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable)) return;
     if (e.repeat) return;                        // holding a key never burns cards
-    if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
-    if (e.code === 'Space' || e.key === 'Enter') {
-      e.preventDefault();
-      if (sess.quiz) { if (sess.answered) nextQuiz(); }
-      else if (!sess.revealed) reveal();
-      else {
-        // a breath after the reveal, and the shortcut grades what the verdict
-        // says — a scored miss must never default to Good
-        if (Date.now() - (sess.revealedAt || 0) < 300) return;
-        doGrade(sess.verdict && sess.verdict.ok === 'miss' ? 0 : 1);
+    if (sess) {
+      if (e.code === 'Space' || e.key === 'Enter') {
+        e.preventDefault();
+        if (sess.quiz) { if (sess.answered) nextQuiz(); }
+        else if (!sess.revealed) reveal();
+        else {
+          // a breath after the reveal, and the shortcut grades what the verdict
+          // says — a scored miss must never default to Good
+          if (Date.now() - (sess.revealedAt || 0) < 300) return;
+          doGrade(sess.verdict && sess.verdict.ok === 'miss' ? 0 : 1);
+        }
+        return;
       }
+      // the exit control's own path — never a raw hash jump
+      if (e.key === 'Escape') return exitSession();
+      if (!sess.quiz && sess.revealed) {
+        // grading the last card ends the session and nulls sess — return, never fall through
+        if (e.key === '1') return doGrade(0);
+        if (e.key === '2') return doGrade(1);
+        if (e.key === '3') return doGrade(2);
+      }
+      if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
+      if (e.key === 's') starCurrent();
       return;
     }
-    if (!sess.quiz && sess.revealed) {
-      // grading the last card ends the session and nulls sess — return, never fall through
-      if (e.key === '1') return doGrade(0);
-      if (e.key === '2') return doGrade(1);
-      if (e.key === '3') return doGrade(2);
+    var h = location.hash.replace(/^#/, '') || '/';
+    var p = h.split('/').filter(Boolean);
+    if (p[0] === 'game') return;                 // a live round owns its keys
+    if (e.key === '/') { e.preventDefault(); goSearchFocus(); return; }
+    if (e.key === 'Escape') {
+      var par = parentOf(location.hash);
+      if (h !== '/' && par !== '#' + h) goReplace(par);   // a no-op at the root
+      return;
     }
-    if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
-    if (e.key === 's') starCurrent();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      var idx = tabIdxOf(p[0] || '');
+      var next = idx + (e.key === 'ArrowRight' ? 1 : -1);
+      // the bar stops at its ends — wrapping would slide against the arrow
+      if (next < 0 || next >= TAB_ROUTES.length) return;
+      e.preventDefault();
+      goTab(TAB_ROUTES[next]);
+    }
   });
 
   /* ==========================================================================

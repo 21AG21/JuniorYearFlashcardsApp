@@ -434,6 +434,10 @@ sub,sup{ font-size:.68em; }
 /* destructive arm state: ink and heavy, never red, never a dialog */
 .textbtn.armed{ color:var(--ink); }
 .foot{ margin-top:var(--s-5); font-size:14px; color:var(--muted); }
+/* the keyboard caption exists only where a keyboard does — same rule as the
+   session's "space" hint; a coarse-pointer phone never sees it */
+.keyline{ display:none; margin-top:var(--s-5); font-size:var(--t-label); font-weight:500; color:var(--muted); }
+@media (hover:hover) and (pointer:fine){ .keyline{ display:block; } }
 
 /* --- games ------------------------------------------------------------------
    Same mono rules as everything else: rows of text, hairlines for structure,

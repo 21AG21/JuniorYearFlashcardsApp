@@ -1764,8 +1764,8 @@
     return qs;
   }
 
-  /* Quizzes never end: questions arrive in generated batches for as long as
-     you keep answering. The hub remembers your best streak. */
+  /* Quizzes deal a generated batch per round: classic plays it out and stops,
+     sprint races the clock, streak ends on the first miss. */
   function quizBatch(id) {
     return id === 'limitsquiz' ? limitsRound(10) :
       id === 'converge' ? convergeRound(10) :
@@ -2080,11 +2080,42 @@
     }
   }
 
+  /* keyboard — on a game route only. Quiz rounds answer by number through
+     the very same click path as a tap (first-try scoring, tap locks, the
+     adaptive miss log, Sprint's instant advance all ride along); Enter on a
+     quiz score screen is its primary action, Play again; Escape always leads
+     back to the hub. Spatial games — board, match, order, graph, circle —
+     take Escape only: their answers are places, not a numbered list. A key
+     typed into any field, and any modified key, is never intercepted. */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return;
+    if (location.hash.indexOf('#/game/') !== 0) return;   // app.js owns the rest
+    if (e.repeat) return;                        // a held key is one press
+    if (e.key === 'Escape') { ctx.go('#/games'); return; }
+    if (st && st.kind === 'quiz' && /^[1-9]$/.test(e.key)) {
+      var els = document.querySelectorAll('.choices .choice[data-gc]');
+      var ch = els[+e.key - 1];
+      if (ch && !ch.disabled) { e.preventDefault(); ch.click(); }
+      return;
+    }
+    if (e.key === 'Enter' && !st) {
+      // the quiz score screen (or a quiz's offline screen): Enter is the
+      // primary action. The 400 ms doneAt guard in the click path keeps the
+      // Enter that rode in with a round's end from instantly re-dealing.
+      var again = document.querySelector('.act[data-gagain]');
+      var gid = again && again.getAttribute('data-gagain');
+      if (gid && GAMES[gid] && GAMES[gid].kind === 'quiz') { e.preventDefault(); again.click(); }
+    }
+  }
+
   /* ---------------- public ------------------------------------------------ */
   window.Games = {
     init: function (c) {
       ctx = c; S = window.Store; T = window.Tex;
       document.addEventListener('click', onClick);
+      document.addEventListener('keydown', onKey);
     },
     hub: hub,
     play: play,
