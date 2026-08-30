@@ -121,7 +121,14 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-r .qrow .qq{ font-size:22px; }
   .pane-r .searchbar input{ font-size:28px; }
   .pane-r .prose, .pane-r .card .a, .pane-r .card .note{ max-width:62ch; }
+  /* one reading measure for session content on a wide screen: the card, its
+     header line, the grades and the quiet utilities share a right edge, and
+     browse/search rows stop at the same measure — no 100-char prose lines,
+     no grade word a metre from its neighbours */
+  .pane-r .sess-top, .pane-r .card, .pane-r .rate, .pane-r .sess-util,
+  .pane-r .qrow, .pane-r .searchbar, .pane-r .done-rows, .pane-r .backbar{ max-width:860px; }
   .pane-r .setrow{ max-width:560px; }   /* a toggle never sits a metre from its name */
+  .pane-r .data-list, .pane-r .reqwrap{ max-width:560px; }  /* the data rows keep the settings measure */
   .pane-r .lg-seg{ max-width:340px; }
 }
 
@@ -198,7 +205,7 @@ button.hero-tap:active{ opacity:.55; }
 .ledger .lname small{ display:none; }   /* taglines are gone; the row is name + number */
 .ledger .lval{ font-size:var(--t-row); font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-.03em;
   color:var(--ink); white-space:nowrap; }
-.ledger .lsub{ grid-column:1 / -1; font-size:var(--t-label); font-weight:500; color:var(--muted); padding-left:14px; margin-top:-2px; }
+.ledger .lsub{ grid-column:1 / -1; font-size:var(--t-label); font-weight:500; color:var(--muted); margin-top:-2px; }
 .ledger.done .lname,.ledger.done .lval{ color:var(--muted); }
 
 /* smaller ledger for unit lists and summary rows */
@@ -208,6 +215,9 @@ button.hero-tap:active{ opacity:.55; }
 /* wrapped name → the number scales up to the height of the text block */
 .ledger.tallval{ align-items:center; }
 .ledger.tallval .lval{ line-height:1; letter-spacing:-.04em; }
+/* a value that is a word, not a number (the pace verdict): a quiet ink word
+   beside the big name — never a phrase shouting at ledger size */
+.ledger .lval.word, .ledger.mid .lval.word{ font-size:17px; font-weight:500; letter-spacing:-.01em; }
 .ulabel{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:var(--s-3) 0 2px; }
 .ulabel:first-child{ margin-top:0; }
 
@@ -273,6 +283,9 @@ button.hero-tap:active{ opacity:.55; }
 .rate button:active{ opacity:.5; }
 .rate .lab{ font-size:17px; font-weight:500; letter-spacing:-.01em; color:var(--ink-soft); }
 .rate .r-good .lab{ color:var(--ink); }
+/* a scored typing miss recommends Again — the heavier ink moves with it */
+.rate.miss .r-good .lab{ color:var(--ink-soft); }
+.rate.miss .r-again .lab{ color:var(--ink); }
 .rate .when{ font-size:11px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--muted); }
 /* the keyboard hint exists only where a keyboard does */
 .rate .when.kbd{ display:none; }
@@ -350,6 +363,7 @@ button.hero-tap:active{ opacity:.55; }
 .empty.cap{ font-size:var(--t-label); font-weight:500; color:var(--muted); letter-spacing:0; }
 .done-hero{ padding:var(--s-4) 0 var(--s-3); }
 .done-hero .v{ font-size:var(--t-hero); font-weight:460; letter-spacing:-.035em; line-height:1.1; color:var(--ink); }
+.done-rows{ margin:var(--s-4) 0 var(--s-5); }
 
 /* --- math ------------------------------------------------------------------
    Every inline atom keeps the text baseline, so a formula never tilts the
@@ -547,7 +561,9 @@ sub,sup{ font-size:.68em; }
 .spark i:nth-child(odd){ animation-delay:.05s; }
 .spark i:last-child{ animation-delay:.16s; }
 
-/* the request line: a quiet composer, hairline for a floor */
+/* the request line: a quiet composer, hairline for a floor; the trigger sits
+   in the same 21px row voice as the data actions above it */
+.reqwrap > .textbtn{ font-size:21px; padding:12px 0; min-height:var(--row); }
 .reqbox{ margin-top:2px; }
 .reqbox textarea{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--hair);
   padding:10px 0; font:inherit; font-size:19px; color:var(--ink); resize:none; line-height:1.4; }

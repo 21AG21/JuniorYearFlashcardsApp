@@ -12,6 +12,8 @@
   var S = null, T = null;
   var st = null;                  // live game state
   var timer = null;
+  var sclock = null;              // the sprint countdown interval — never survives navigation
+  var lastMiss = null;            // {id, qs} — the misses behind a classic score screen
 
   /* ---------------- registry --------------------------------------------- */
   var GAMES = {
@@ -392,11 +394,24 @@
     var d = S.getDeck(GFILT[id] === 'apushunit' ? 'apush' : 'lang');
     return d && d.units[fi - 1] ? d.units[fi - 1].id : null;
   }
-  function filtCtl(id) {
+  function filtCtl(id, tight) {
     if (!GFILT[id]) return '';
     var fi = FILT[id] || 0;
-    return '<button class="textbtn quiet gfilt" data-gfilter>' +
+    // tight sits beside the mode word — only the first right-hand word may
+    // carry the auto margin, or the pair spreads across the bar
+    return '<button class="textbtn quiet gfilt" data-gfilter' +
+      (tight ? ' style="margin-left:18px"' : '') + '>' +
       esc(fi ? filtOpts(id)[fi - 1] : 'All') + '</button>';
+  }
+
+  /* quiz modes, cycled by a header word exactly like the filter word.
+     In-memory per game id, like FILT. */
+  var MODE = {};
+  var MODE_NAMES = ['Classic', 'Sprint', 'Streak'];
+  function modeCtl(id) {
+    if (GAMES[id].kind !== 'quiz') return '';
+    return '<button class="textbtn quiet gfilt" data-gmode>' +
+      esc(MODE_NAMES[MODE[id] || 0]) + '</button>';
   }
 
   function best() { return S.getSettings().gameBest || {}; }
@@ -459,6 +474,15 @@
     Object.keys(b).forEach(function (k) {      // heal any blank best a past bug stored
       if (!b[k] || b[k].n == null || !b[k].label) { delete b[k]; dirty = true; }
     });
+    // pre-modes quiz bests were streaks under the classic key — a streak count
+    // and a score/total ratio never compare, so those move to the streak key
+    Object.keys(GAMES).forEach(function (id) {
+      var e = b[id];
+      if (GAMES[id].kind !== 'quiz' || !e || !/ straight$/.test(e.label || '')) return;
+      var sk = id + '!streak';
+      if (!b[sk] || b[sk].n == null || e.n > b[sk].n) b[sk] = e;
+      delete b[id]; dirty = true;
+    });
     if (dirty) S.setSetting('gameBest', b);
     var html = '<div class="head"><h1>Games</h1></div>';
     ORDER_BY_DECK.forEach(function (deckId) {
@@ -476,10 +500,18 @@
     ctx.mount(html);
   }
 
-  function play(id) {
+  function play(id, filt) {
     var g = GAMES[id];
     if (!g) return ctx.go('#/games');
     clearTimeout(timer);
+    clearInterval(sclock);
+    // an optional 1-based filter index (a string off the hash) pre-scopes the
+    // game; anything invalid leaves the filter exactly as it was
+    if (filt != null && GFILT[id]) {
+      var fi = parseInt(filt, 10);
+      var fmax = filtOpts(id).length;
+      if (fi >= 1 && fmax) FILT[id] = Math.min(fi, fmax);
+    }
     if (id === 'timeline' || id === 'periodquiz' || id === 'yearquiz') {
       if (!TIMELINE || !TIMELINE.length) {
         return loadTimeline().then(function (j) {
@@ -618,6 +650,13 @@
       var w0 = term.split(/\s+/)[0].replace(/[’'‘]s$/, '');
       if (w0.length > 3 && s.indexOf(w0) > -1) return;
       if (s.length > 150) s = s.slice(0, 147).replace(/\s+\S*$/, '') + '…';
+      // …nor another round-mate's clue: a "pre-Columbian" clue beside the
+      // Columbian Exchange tile whispers across the board
+      for (var oi = 0; oi < out.length; oi++) {
+        var ow = out[oi][1].split(/\s+/)[0].replace(/[’'‘]s$/, '');
+        if (ow.length > 3 && s.indexOf(ow) > -1) return;
+        if (w0.length > 3 && out[oi][0].indexOf(w0) > -1) return;
+      }
       var k = term.toLowerCase();
       if (used[k] || used[s]) return;
       used[k] = used[s] = 1;
@@ -1750,19 +1789,63 @@
     while (st.recentQ.length > 40) delete st.recent[st.recentQ.shift()];
   }
   function startQuiz(id) {
-    st = { id: id, kind: 'quiz', qs: [], i: 0, score: 0, streak: 0, bestRun: 0,
-           recent: {}, recentQ: [], lock: false, wrongChoice: -1 };
+    var mode = ['classic', 'sprint', 'streak'][MODE[id] || 0];
+    st = { id: id, kind: 'quiz', mode: mode, qs: [], i: 0, score: 0, streak: 0,
+           recent: {}, recentQ: [], lock: false, wrongChoice: -1, missed: [] };
     refillQuiz();
+    st.total = st.qs.length;                 // classic plays the dealt batch and stops
+    if (mode === 'sprint') {
+      st.endAt = Date.now() + 60000;
+      sclock = setInterval(sprintTick, 250);
+    }
+    renderQuiz();
+  }
+  /* replay the classic batch's misses, and nothing else — never for a best */
+  function replayMisses() {
+    if (!lastMiss || !GAMES[lastMiss.id]) return;
+    clearTimeout(timer); clearInterval(sclock);
+    var qs = lastMiss.qs.map(function (q) {
+      return { p: q.p, c: shuffle(q.c.slice()), r: q.r, tag: q.tag };
+    });
+    st = { id: lastMiss.id, kind: 'quiz', mode: 'classic', qs: qs, i: 0, score: 0,
+           streak: 0, recent: {}, recentQ: [], lock: false, wrongChoice: -1,
+           missed: [], total: qs.length, noBest: true };
     renderQuiz();
   }
 
+  function clockLabel() {
+    return Math.max(0, Math.ceil((st.endAt - Date.now()) / 1000)) + ' s';
+  }
+  function sprintTick() {
+    if (!st || st.kind !== 'quiz' || st.mode !== 'sprint') { clearInterval(sclock); return; }
+    if (location.hash.indexOf('#/game/' + st.id) !== 0) { clearInterval(sclock); st = null; return; }
+    if (Date.now() >= st.endAt) return quizDone();
+    var el = document.querySelector('[data-clock]');
+    if (el) el.textContent = clockLabel();
+  }
+
   function renderQuiz() {
-    if (st.qs.length - st.i < 3) refillQuiz();
+    if (st.mode === 'sprint' && Date.now() >= st.endAt) return quizDone();
+    if (st.mode === 'classic') {
+      if (st.total && st.i >= st.qs.length) return quizDone();
+    } else if (st.qs.length - st.i < 3) refillQuiz();
     var q = st.qs[st.i];
     if (!q) return renderNoData(st.id);      // a deal can come up empty offline
+    var top;
+    if (st.mode === 'sprint') {
+      // the countdown updates in place via [data-clock] — a full re-render
+      // every tick would eat taps mid-answer
+      top = '<div class="sess-top"><span class="scope">' + esc(st.score + ' right') + '</span>' +
+        '<span class="pos num" data-clock>' + esc(clockLabel()) + '</span></div>';
+    } else if (st.mode === 'streak') {
+      top = gameTop(st.score + ' straight', String(st.i + 1));
+    } else {
+      top = gameTop(st.score + ' right' + (st.streak > 2 ? ' · ' + st.streak + ' straight' : ''),
+        (st.i + 1) + ' of ' + st.total);
+    }
     ctx.mount(
-      ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
-      gameTop(st.score + ' right' + (st.streak > 2 ? ' · ' + st.streak + ' straight' : ''), String(st.i + 1)) +
+      ctx.backbar(GAMES[st.id].name, modeCtl(st.id) + filtCtl(st.id, true)) +
+      top +
       '<div class="gcur' + (st.lock ? '' : ' swap') + '">' +
         '<div class="gname num' + (flat(q.p).length > 44 ? ' gsm' : '') + '" data-plain="' + esc(flat(q.p)) + '">' + fx(q.p) + '</div></div>' +
       '<div class="choices' + (st.lock ? '' : ' deal') + '">' + q.c.map(function (cl, i) {
@@ -1786,18 +1869,58 @@
   function tapQuizGame(i) {
     if (!st || st.kind !== 'quiz' || st.lock) return;
     var q = st.qs[st.i];
-    st.lock = true;
     var right = q.c[i] === q.r;
-    if (right) {
-      st.score++; st.streak++; missHeal(st.id, q.tag);
-      // a streak on a thin filter recycles a few prompts — full-game runs only
-      if (st.streak > st.bestRun && !FILT[st.id]) {
-        st.bestRun = st.streak;
-        saveBest(st.id, st.streak, st.streak + ' straight');
-      }
-    } else { st.wrongChoice = i; st.streak = 0; missLog(st.id, q.tag); }
+    if (right) { st.score++; st.streak++; missHeal(st.id, q.tag); }
+    else {
+      st.streak = 0; missLog(st.id, q.tag);
+      if (st.missed.indexOf(q) < 0) st.missed.push(q);
+    }
+    if (st.mode === 'sprint' && right) {
+      // the clock is the pressure — a right answer deals the next one now
+      st.i++; st.wrongChoice = -1;
+      renderQuiz();
+      return;
+    }
+    st.lock = true;
+    st.wrongChoice = right ? -1 : i;
     renderQuiz();
-    timer = setTimeout(nextQuizQ, right ? 550 : 1400);
+    clearTimeout(timer);
+    if (st.mode === 'streak' && !right) { timer = setTimeout(quizDone, 1400); return; }
+    timer = setTimeout(nextQuizQ, right ? 550 : st.mode === 'sprint' ? 900 : 1400);
+  }
+
+  /* the quiz score screen — one per mode, each showing that mode's best */
+  function quizDone() {
+    if (!st || st.kind !== 'quiz') return;
+    clearInterval(sclock);
+    clearTimeout(timer);
+    var id = st.id, mode = st.mode;
+    var key = mode === 'sprint' ? id + '!sprint' : mode === 'streak' ? id + '!streak' : id;
+    var n, label;
+    if (mode === 'sprint') { n = st.score; label = st.score + ' in 60 s'; }
+    else if (mode === 'streak') { n = st.score; label = st.score + ' straight'; }
+    else { n = st.total > 0 ? st.score / st.total : 0; label = st.score + ' of ' + st.total; }
+    // a filtered round plays a different game than the best describes — and a
+    // miss replay is a fraction of one; neither ever earns a best
+    if (!FILT[id] && !st.noBest) saveBest(key, n, label);
+    lastMiss = mode === 'classic' && st.missed.length
+      ? { id: id, qs: st.missed.slice() } : null;
+    var bb = best()[key];
+    st = null;
+    doneAt = Date.now();
+    ctx.mount(
+      ctx.backbar(GAMES[id].name) +
+      '<div class="done-hero"><span class="k">' +
+        esc(GAMES[id].name + (mode === 'classic' ? '' : ' · ' + (mode === 'sprint' ? 'Sprint' : 'Streak'))) + '</span>' +
+      '<div class="v num">' + esc(label) + '</div>' +
+      (bb ? '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">best ' + esc(bb.label) + '</div>' : '') +
+      '</div>' +
+      '<button class="act" data-gagain="' + id + '">Play again</button>' +
+      '<div style="margin-top:var(--s-3)">' +
+        (lastMiss ? '<button class="textbtn" data-gmiss style="margin-right:18px">Replay misses</button>' : '') +
+        '<button class="textbtn" data-go="#/games">Games</button></div>',
+      { session: true }
+    );
   }
 
   /* ==========================================================================
@@ -1930,8 +2053,16 @@
       if (Date.now() - doneAt < 400) return;   // the tap that ended the round
       play(el.getAttribute('data-gagain')); return;
     }
+    if (t.closest('[data-gmiss]')) {
+      if (Date.now() - doneAt < 400) return;
+      replayMisses(); return;
+    }
     if (t.closest('[data-gfilter]') && st) {
       FILT[st.id] = ((FILT[st.id] || 0) + 1) % (filtOpts(st.id).length + 1);
+      play(st.id); return;
+    }
+    if (t.closest('[data-gmode]') && st) {
+      MODE[st.id] = ((MODE[st.id] || 0) + 1) % MODE_NAMES.length;
       play(st.id); return;
     }
     if (!st) return;
@@ -1958,8 +2089,9 @@
     hub: hub,
     play: play,
     onRoute: function (root) {
-      // leaving the games clears live state and any pending advance timer
-      if (root !== 'game') { clearTimeout(timer); st = null; }
+      // leaving the games clears live state and any pending advance timer —
+      // the sprint clock included, so no interval survives navigation
+      if (root !== 'game') { clearTimeout(timer); clearInterval(sclock); st = null; }
     },
     onResize: function () {
       // a viewport crossing re-renders the live round — it never re-deals
@@ -1977,6 +2109,34 @@
       Object.keys(GAMES).forEach(function (id) {
         if (GAMES[id].deck === deckId) out.push([GAMES[id].name, id]);
       });
+      return out;
+    },
+    /* the games that can be played scoped to exactly this unit, as
+       [label, hash] pairs — the hash's 1-based index is the filter that
+       play(id, n) applies. Only honest scopes: the APUSH deck's units ARE
+       the nine periods, so unit n selects Period n; Lang units scope by card
+       unit tag where the unit holds enough definable terms. Everything else
+       (reference-table generators, the theme-less French vocabulary) has no
+       unit dimension to scope by. */
+    forUnit: function (deckId, unitId) {
+      var out = [];
+      var d = S.getDeck(deckId);
+      if (!d || !d.units) return out;
+      var idx = -1;
+      d.units.forEach(function (u, i) { if (u.id === unitId) idx = i; });
+      if (idx < 0) return out;
+      var n = idx + 1;
+      if (deckId === 'apush') {
+        if (namedRound(9, unitId).length >= 4) out.push([GAMES.apterms.name, '#/game/apterms/' + n]);
+        if (n <= PERIODS.length) {
+          out.push([GAMES.timeline.name, '#/game/timeline/' + n]);
+          out.push([GAMES.yearquiz.name, '#/game/yearquiz/' + n]);
+        }
+      } else if (deckId === 'lang') {
+        // a thin unit would just bounce back to All — never offer it
+        if (langPairs(unitId).length >= 4) out.push([GAMES.langmatch.name, '#/game/langmatch/' + n]);
+        if (termRound(9, unitId).length >= 4) out.push([GAMES.langboard.name, '#/game/langboard/' + n]);
+      }
       return out;
     }
   };

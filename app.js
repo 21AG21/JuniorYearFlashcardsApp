@@ -79,7 +79,8 @@
   }
   function fitVals() {
     app.querySelectorAll('.ledger').forEach(function (row) {
-      var name = row.querySelector('.lname'), val = row.querySelector('.lval');
+      // numbers grow to match a wrapped name; a word value keeps its size
+      var name = row.querySelector('.lname'), val = row.querySelector('.lval.num');
       if (name && val && val.textContent.trim()) fitPair(row, name, val);
     });
     app.querySelectorAll('.dhero').forEach(function (hero) {
@@ -436,6 +437,14 @@
     var u = d.unitById[unitId], us = S.unitStats(d, unitId);
     var cards = d.cards.filter(function (c) { return c.u === unitId; });
 
+    // unit-scoped games, same grammar as the other modes — text, no chrome;
+    // nothing renders (and no space is held) when no game covers this unit
+    var ugames = (window.Games && window.Games.forUnit)
+      ? (window.Games.forUnit(deckId, unitId) || []) : [];
+    var gameLinks = ugames.map(function (g) {
+      return '<button class="textbtn" data-go="' + esc(g[1]) + '">' + esc(g[0]) + '</button>';
+    }).join('');
+
     var list = cards.map(function (c, n) {
       var known = S.isKnown(c.i);
       return '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
@@ -457,6 +466,7 @@
         '<button class="textbtn" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Quiz</button>' +
         '<button class="textbtn" data-go="#/cram/' + deckId + '/' + unitId + '">Cram</button>' +
+        gameLinks +
       '</div>' +
       '<ul class="list tight" style="margin-top:var(--s-4)">' + list + '</ul>'
     );
@@ -633,9 +643,10 @@
         (topicLabel(c) ? '<div class="meta reveal">' + esc(topicLabel(c)) + '</div>' : '');
     }
 
-    // grades in the flow, as text; the recommended grade is the heavier ink
+    // grades in the flow, as text; the recommended grade is the heavier ink —
+    // and after a scored miss the recommendation is Again, not Good
     var footer = sess.revealed
-      ? '<div class="rate">' +
+      ? '<div class="rate' + (sess.verdict && sess.verdict.ok === 'miss' ? ' miss' : '') + '">' +
           '<button class="r-again" data-grade="0"><span class="lab">Again</span><span class="when">' + S.preview(c.i, 0) + '</span></button>' +
           '<button class="r-good" data-grade="1"><span class="lab">Good</span><span class="when">' + S.preview(c.i, 1) + '</span></button>' +
           '<button class="r-easy" data-grade="2"><span class="lab">Easy</span><span class="when">' + S.preview(c.i, 2) + '</span></button>' +
@@ -939,9 +950,13 @@
         '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">' +
           esc(moment) + '</div>' +
       '</div>' +
-      '<div style="margin:var(--s-4) 0 var(--s-5)">' + rows + '</div>' +
+      '<div class="done-rows">' + rows + '</div>' +
       (dueLeft ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
     );
+    // the bar comes back with this screen but no hashchange fired — the
+    // sliding pill was measured while hidden, so re-seat it once visible
+    syncTabs('/');
+    pendingDir = '';               // this mount already happened — no stray slide
   }
 
   /* ==========================================================================
@@ -1022,7 +1037,7 @@
       if (!w) return '';
       return '<li><button class="ledger mid" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
-        '<span class="lval">' + esc(w) + '</span>' +
+        '<span class="lval word">' + esc(w) + '</span>' +
         '<span class="lsub">' + esc(examName(c.id) + ' · ' + (examDayNum(c.id) - S.dayNum()) + ' days') + '</span>' +
         '</button></li>';
     }).join('');
@@ -1415,7 +1430,7 @@
     if (p[0] === 'stats') return viewStats();
     if (p[0] === 'settings') return viewSettings();
     if (p[0] === 'games' && window.Games) return window.Games.hub();
-    if (p[0] === 'game' && p[1] && window.Games) return window.Games.play(p[1]);
+    if (p[0] === 'game' && p[1] && window.Games) return window.Games.play(p[1], p[2]);
     return viewDecks();
   }
 
