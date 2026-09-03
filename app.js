@@ -578,7 +578,7 @@
     var h = esc(String(s || ''));
     h = h.replace(/`([^`]+)`/g, function (_, c) { return '<code>' + c + '</code>'; });
     h = h.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-    h = h.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+    h = h.replace(/\*\*([^*<>]+)\*\*/g, '<b>$1</b>');
     h = h.replace(/(^|[\s(])_([^_<>]+)_(?=[\s.,;:)]|$)/g, '$1<em>$2</em>');
     return markTerms(h);
   }
@@ -647,11 +647,11 @@
   }
 
   /* ---- words: every term a page uses, explained at all six rungs ---------- */
-  function termPanelHTML(t) {
+  function termPanelHTML(t, withDef) {
     var lv = (t.levels || []).map(function (s, i) {
       return '<div class="lv' + (i === ladder.lvl ? ' cur' : '') + '" data-level="' + LVL_KEYS[i] + '"><span class="lk ' + LVL_KEYS[i] + '">' + esc(LVL_NAMES[i]) + '</span> ' + md(s) + '</div>';
     }).join('');
-    return '<div class="tmx"><div class="tt">' + esc(t.term) + '</div>' + (t.def ? '<p class="d">' + md(t.def) + '</p>' : '') + lv + '</div>';
+    return '<div class="tmx">' + (withDef ? '<div class="tt">' + esc(t.term) + '</div>' + (t.def ? '<p class="d">' + md(t.def) + '</p>' : '') : '') + lv + '</div>';
   }
   function wordsHTML(bk, ids) {
     var list = (ids || []).map(function (i) { return bk.terms[i]; }).filter(Boolean);
@@ -1902,7 +1902,8 @@
       var root = app.querySelector('.book'), deckId = curDeckId, bk = deckId && bookOf(deckId);
       var t = bk && bk.terms[tb.getAttribute('data-term')];
       if (!t || !root) return;
-      var panel = document.createElement('div'); panel.innerHTML = termPanelHTML(t);
+      // in the list the word and its definition already show; inline, only the word does
+      var panel = document.createElement('div'); panel.innerHTML = termPanelHTML(t, !tb.closest('.term'));
       var el = panel.firstChild;
       if (tb.closest('.term')) host.appendChild(el); else host.insertAdjacentElement('afterend', el);
       tb.classList.add('on');
