@@ -533,7 +533,8 @@
         return n.length <= 3 ? e : e + '(?:s|es)?';
       });
       t._rx = new RegExp('(^|[^\\w.])(' + alts.join('|') + ')(?![\\w])', 'i');
-      t._short = t.names.filter(function (n) { return n.length <= 3; });
+      // AP is not "ap", WHERE is not "where": these aliases keep their own case
+      t._exact = t.names.filter(function (n) { return n.length <= 3 || (n.toUpperCase() === n && /[A-Z]{2}/.test(n)); });
     }
     return t._rx;
   }
@@ -549,7 +550,9 @@
         var m = termRx(t).exec(rest);
         if (!m) continue;
         var word = m[2], at = m.index + m[1].length;
-        if (word.length <= 3 && t._short.indexOf(word) < 0) continue;   // AP is not "ap"
+        var strict = t.names.filter(function (n) { return n.toLowerCase() === word.toLowerCase(); })
+                            .some(function (n) { return t._exact.indexOf(n) > -1; });
+        if (strict && t._exact.indexOf(word) < 0) continue;
         if (bestAt < 0 || at < bestAt) { best = t; bestAt = at; bestWord = word; }
       }
       if (!best) return out + rest;
