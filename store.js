@@ -22,6 +22,25 @@
   })();
   function token() { try { return localStorage.getItem(TOK_KEY) || ''; } catch (e) { return ''; } }
 
+  /* ---- account: owner id ------------------------------------------------
+     A course in data/index.json may carry "owner": the first 16 hex digits
+     of sha256('apdecks-owner:' + token). Only a device holding that token
+     shelves the deck. It is a gate on the shelf, not on the file — and it is
+     salted apart from the sync blob's own hash, so a committed owner id says
+     nothing about where anyone's progress lives. */
+  var OWNER_SALT = 'apdecks-owner:';
+  var ownerHex = '';                       // for the token on this device
+  function computeOwner(tok) {
+    if (!tok || !global.crypto || !global.crypto.subtle || !global.TextEncoder) return Promise.resolve('');
+    return global.crypto.subtle.digest('SHA-256', new TextEncoder().encode(OWNER_SALT + tok))
+      .then(function (buf) {
+        var b = new Uint8Array(buf), s = '';
+        for (var i = 0; i < 8; i++) s += (b[i] < 16 ? '0' : '') + b[i].toString(16);
+        return s;
+      })
+      .catch(function () { return ''; });
+  }
+
   /* ---- day numbers in the user's own timezone --------------------------- */
   function dayNum(d) {
     d = d || new Date();
@@ -157,9 +176,10 @@
     if (!/^[A-Za-z0-9_-]{16,128}$/.test(t)) return false;
     try { localStorage.setItem(TOK_KEY, t); } catch (e) { return false; }
     pull();
+    reshelve();
     return true;
   }
-  function clearToken() { try { localStorage.removeItem(TOK_KEY); } catch (e) {} }
+  function clearToken() { try { localStorage.removeItem(TOK_KEY); } catch (e) {} reshelve(); }
 
   if (token()) {
     pull();                                      // merge whatever another device did
@@ -170,14 +190,40 @@
   }
 
   /* ---- decks ------------------------------------------------------------ */
-  var index = null, decks = {}, loading = {};
+  var rawIndex = null, index = null, decks = {}, loading = {};
 
+  /* the shelf: every course without an owner, plus the ones this device owns */
+  function shelf(raw, owner) {
+    var out = {};
+    for (var k in raw) out[k] = raw[k];
+    out.courses = raw.courses.filter(function (c) { return !c.owner || c.owner === owner; });
+    out.total = 0;
+    out.courses.forEach(function (c) { out.total += c.count || 0; });
+    return out;
+  }
   function loadIndex() {
     if (index) return Promise.resolve(index);
-    if (global.__DECKS && global.__DECKS.index) { index = global.__DECKS.index; return Promise.resolve(index); }
-    return fetch('data/index.json', { cache: 'no-cache' })
-      .then(function (r) { if (!r.ok) throw new Error('index ' + r.status); return r.json(); })
-      .then(function (j) { index = j; return j; });
+    var src = (global.__DECKS && global.__DECKS.index)
+      ? Promise.resolve(global.__DECKS.index)
+      : fetch('data/index.json', { cache: 'no-cache' })
+          .then(function (r) { if (!r.ok) throw new Error('index ' + r.status); return r.json(); });
+    return src
+      .then(function (j) { rawIndex = j; return computeOwner(token()); })
+      .then(function (o) { ownerHex = o; index = shelf(rawIndex, o); return index; });
+  }
+  /* the token changed: re-shelve, fetch anything newly visible, drop what
+     is no longer ours, then tell the app to redraw */
+  function reshelve() {
+    if (!rawIndex) return Promise.resolve(false);
+    return computeOwner(token()).then(function (o) {
+      if (o === ownerHex) return false;
+      ownerHex = o; index = shelf(rawIndex, o);
+      rawIndex.courses.forEach(function (c) { if (c.owner && c.owner !== o) delete decks[c.id]; });
+      return loadAll().catch(function () {}).then(function () {
+        try { window.dispatchEvent(new CustomEvent('apdecks-sync', { detail: { changed: true, shelf: true } })); } catch (e) {}
+        return true;
+      });
+    });
   }
   function prepare(d, id) {
     d.byId = {}; d.unitById = {};
@@ -436,7 +482,8 @@
     account: {
       connected: function () { return !!token(); },
       setToken: setToken, clearToken: clearToken,
-      pull: pull, lastSyncAt: function () { return lastSyncAt; }
+      pull: pull, lastSyncAt: function () { return lastSyncAt; },
+      ownerId: function () { return ownerHex; }
     }
   };
 })(window);
