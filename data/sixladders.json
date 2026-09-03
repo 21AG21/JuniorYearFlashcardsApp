@@ -5625,12 +5625,10 @@
               "pytorch",
               "split",
               "metric",
-              "cron",
               "launchd",
               "container",
               "mainline",
-              "api-key",
-              "tokenizer"
+              "api-key"
             ]
           },
           {
@@ -6559,7 +6557,6 @@
               "incident",
               "sorted",
               "sigmoid",
-              "sigmoid-2",
               "cross-entropy",
               "entropy",
               "gradient",
@@ -6577,7 +6574,6 @@
               "categorical",
               "probability",
               "loss",
-              "time-zone",
               "timezone",
               "slow-episode",
               "speed",
@@ -7160,7 +7156,6 @@
               "bootstrap",
               "exception",
               "datetime",
-              "time-zone",
               "timezone",
               "script",
               "model",
@@ -7372,7 +7367,6 @@
             ],
             "terms": [
               "split",
-              "time-zone",
               "timezone",
               "pytest",
               "for",
@@ -7860,7 +7854,6 @@
               "fundamental-diagram",
               "pdf",
               "timestamp",
-              "time-zone",
               "timezone",
               "json",
               "free-flow",
@@ -8793,9 +8786,8 @@
               "for",
               "python",
               "datetime",
-              "time-zone",
-              "mean",
               "timezone",
+              "mean",
               "pandas",
               "apply",
               "library",
@@ -8859,9 +8851,8 @@
           "exception",
           "argparse",
           "f-string",
-          "time-zone",
-          "datetime",
           "timezone",
+          "datetime",
           "pytest",
           "pems",
           "511",
@@ -9270,7 +9261,6 @@
               "for",
               "gradient-descent",
               "sigmoid",
-              "sigmoid-2",
               "inputs",
               "vector",
               "cross-entropy",
@@ -9910,7 +9900,6 @@
               "model",
               "sorted",
               "sigmoid",
-              "sigmoid-2",
               "cross-entropy",
               "entropy",
               "gradient",
@@ -10126,8 +10115,7 @@
               "normal-distribution",
               "model",
               "backpropagation",
-              "sigmoid",
-              "sigmoid-2"
+              "sigmoid"
             ]
           },
           {
@@ -11377,7 +11365,6 @@
           "chain-rule",
           "gradient",
           "sigmoid",
-          "sigmoid-2",
           "probability",
           "bernoulli",
           "normal-distribution",
@@ -11867,7 +11854,6 @@
               "sql",
               "pems",
               "station",
-              "time-zone",
               "timezone",
               "speed",
               "for",
@@ -12270,9 +12256,8 @@
               "speed",
               "profile",
               "rolling",
-              "time-zone",
-              "mean",
               "timezone",
+              "mean",
               "model",
               "index",
               "dtype",
@@ -12440,7 +12425,7 @@
               "nn-module",
               "rolling",
               "mean",
-              "time-zone",
+              "timezone",
               "exception",
               "station",
               "sql",
@@ -12453,7 +12438,6 @@
               "datetime",
               "format",
               "speed",
-              "timezone",
               "index",
               "sorted",
               "nan",
@@ -12776,7 +12760,7 @@
               "pivot",
               "rolling",
               "shift",
-              "time-zone",
+              "timezone",
               "parquet",
               "path",
               "min-periods",
@@ -13071,11 +13055,10 @@
               "partition",
               "json",
               "dataframe",
-              "time-zone",
+              "timezone",
               "gzip",
               "pems",
               "format",
-              "timezone",
               "station-id",
               "median",
               "sorted",
@@ -13366,7 +13349,6 @@
               "for",
               "def",
               "merge",
-              "time-zone",
               "timezone",
               "unit",
               "model",
@@ -13520,13 +13502,11 @@
               "shape",
               "polling",
               "api-key",
-              "tokenizer",
               "sorted",
               "format",
               "def",
               "yaml",
               "timestamp",
-              "time-zone",
               "timezone"
             ]
           },
@@ -14202,7 +14182,7 @@
           "categorical",
           "read-csv",
           "parquet",
-          "time-zone",
+          "timezone",
           "observed",
           "window-function",
           "duckdb",
@@ -14210,7 +14190,6 @@
           "511",
           "for",
           "sorted",
-          "timezone",
           "forward-fill",
           "nn-module",
           "grid",
@@ -14715,7 +14694,6 @@
               "metric",
               "upstream",
               "command",
-              "time-zone",
               "timezone",
               "def",
               "groupby",
@@ -16328,7 +16306,6 @@
               "mean",
               "feature-engineering",
               "sigmoid",
-              "sigmoid-2",
               "loss",
               "parameters",
               "unit",
@@ -16658,7 +16635,6 @@
               "hyperparameter",
               "parameters",
               "sigmoid",
-              "sigmoid-2",
               "confusion-matrix",
               "array",
               "inputs",
@@ -16668,7 +16644,6 @@
               "llm",
               "model",
               "api-key",
-              "tokenizer",
               "transformer",
               "batch-size",
               "probability",
@@ -17128,7 +17103,6 @@
               "q-learning",
               "residual",
               "sigmoid",
-              "sigmoid-2",
               "loss",
               "parameters",
               "probability",
@@ -18245,7 +18219,6 @@
               "baseline",
               "reliability-diagram",
               "sigmoid",
-              "sigmoid-2",
               "threshold",
               "def",
               "quantile",
@@ -21162,7 +21135,6 @@
               "graph-neural-network",
               "apply",
               "sigmoid",
-              "sigmoid-2",
               "calibration",
               "init",
               "def",
@@ -21570,7 +21542,6 @@
               "reliability-diagram",
               "probability",
               "sigmoid",
-              "sigmoid-2",
               "metric",
               "target",
               "station",
@@ -23101,7 +23072,6 @@
               "logistic-regression",
               "vector",
               "sigmoid",
-              "sigmoid-2",
               "commit",
               "def",
               "probability",
@@ -23267,7 +23237,6 @@
               "parameters",
               "sgd",
               "sigmoid",
-              "sigmoid-2",
               "relu",
               "feature-importance",
               "shape",
@@ -23414,7 +23383,6 @@
               "normal-distribution",
               "relu",
               "sigmoid",
-              "sigmoid-2",
               "linear",
               "batch-size",
               "split",
@@ -23923,13 +23891,11 @@
               "metric",
               "relu",
               "sigmoid",
-              "sigmoid-2",
               "variance",
               "unit",
               "probability",
               "markov",
               "api-key",
-              "tokenizer",
               "hidden-state",
               "logistic-regression",
               "inputs"
@@ -24717,7 +24683,6 @@
               "for",
               "optimizer",
               "sigmoid",
-              "sigmoid-2",
               "softmax",
               "overfitting",
               "hyperparameter",
@@ -24881,7 +24846,6 @@
               "linear",
               "dropout",
               "api-key",
-              "tokenizer",
               "embedding",
               "neural-network",
               "convolution",
@@ -25198,7 +25162,6 @@
               "baseline",
               "residual",
               "sigmoid",
-              "sigmoid-2",
               "relu",
               "gradient",
               "variance",
@@ -25815,7 +25778,6 @@
               "mean",
               "for",
               "api-key",
-              "tokenizer",
               "embedding",
               "vector",
               "transformer",
@@ -26004,7 +25966,6 @@
               "llm",
               "model",
               "api-key",
-              "tokenizer",
               "split",
               "sql",
               "q-learning",
@@ -26718,13 +26679,11 @@
               "metric",
               "relu",
               "sigmoid",
-              "sigmoid-2",
               "variance",
               "unit",
               "probability",
               "markov",
               "api-key",
-              "tokenizer",
               "hidden-state",
               "logistic-regression",
               "inputs"
@@ -26891,7 +26850,6 @@
               "parameters",
               "nn-module",
               "sigmoid",
-              "sigmoid-2",
               "array",
               "feature-importance",
               "shape",
@@ -27058,8 +27016,7 @@
               "mean",
               "parameters",
               "numpy",
-              "api-key",
-              "tokenizer"
+              "api-key"
             ]
           },
           {
@@ -27349,7 +27306,7 @@
               "library",
               "for",
               "transformer",
-              "tokenizer",
+              "api-key",
               "apply",
               "511",
               "split",
@@ -27357,7 +27314,6 @@
               "q-learning",
               "index",
               "sql",
-              "api-key",
               "llm",
               "merge",
               "incident",
@@ -27508,7 +27464,6 @@
               "incident",
               "sorted",
               "api-key",
-              "tokenizer",
               "bayesian",
               "logistic-regression",
               "apply",
@@ -27663,13 +27618,12 @@
               "repository",
               "llm",
               "pytorch",
-              "tokenizer",
+              "api-key",
               "attention",
               "transformer",
               "for",
               "array",
               "shape",
-              "api-key",
               "embedding",
               "parameters",
               "dropout",
@@ -27824,7 +27778,6 @@
               "repository",
               "dataframe",
               "api-key",
-              "tokenizer",
               "target",
               "q-learning",
               "split",
@@ -28138,7 +28091,6 @@
               "residual",
               "split",
               "api-key",
-              "tokenizer",
               "embedding",
               "gan",
               "station",
@@ -28579,7 +28531,7 @@
               "init",
               "sql",
               "model",
-              "tokenizer",
+              "api-key",
               "for",
               "transformer",
               "attention",
@@ -28591,7 +28543,6 @@
               "gpu",
               "array",
               "merge",
-              "api-key",
               "nn-module",
               "pytorch",
               "gradient",
@@ -28970,7 +28921,6 @@
           "convolution",
           "residual",
           "api-key",
-          "tokenizer",
           "embedding",
           "attention",
           "transformer",
@@ -29444,7 +29394,6 @@
             "terms": [
               "retraining",
               "for",
-              "cron",
               "launchd",
               "511",
               "mean",
@@ -30586,7 +30535,7 @@
               "mainline",
               "drift",
               "dataframe",
-              "cron",
+              "launchd",
               "target",
               "latency",
               "metric",
@@ -30737,7 +30686,6 @@
               "array",
               "pytest",
               "nan",
-              "time-zone",
               "timezone",
               "station-id",
               "transform",
@@ -30881,7 +30829,6 @@
               "mainline",
               "model",
               "drift",
-              "cron",
               "launchd",
               "feature-store",
               "json",
@@ -31773,7 +31720,6 @@
             "terms": [
               "for",
               "command",
-              "cron",
               "launchd",
               "yaml",
               "pytest",
@@ -32382,8 +32328,7 @@
               "dropout",
               "latency",
               "chunking",
-              "api-key",
-              "tokenizer"
+              "api-key"
             ]
           },
           {
@@ -32516,7 +32461,6 @@
               "loss",
               "parameters",
               "api-key",
-              "tokenizer",
               "split",
               "for",
               "metric",
@@ -32663,7 +32607,6 @@
               "model",
               "for",
               "api-key",
-              "tokenizer",
               "parameters",
               "apply",
               "split",
@@ -32727,7 +32670,6 @@
           "mainline",
           "model",
           "registry",
-          "cron",
           "launchd",
           "drift",
           "population-stability-index",
@@ -39190,7 +39132,6 @@
               "inputs",
               "loss",
               "sigmoid",
-              "sigmoid-2",
               "bernoulli",
               "cross-entropy",
               "entropy",
@@ -39354,7 +39295,6 @@
               "adam",
               "dropout",
               "sigmoid",
-              "sigmoid-2",
               "speed",
               "pytorch",
               "station",
@@ -40123,7 +40063,9 @@
         "def": "macOS's built-in scheduler. A plist in `~/Library/LaunchAgents` tells it to run a program every N seconds or at boot, with logs to named files.",
         "group": "Tools and files",
         "names": [
-          "launchd"
+          "launchd",
+          "cron",
+          "StartInterval"
         ],
         "term": "launchd",
         "id": "launchd",
@@ -40158,7 +40100,8 @@
         "group": "Tools and files",
         "names": [
           "API key",
-          "token"
+          "token",
+          "tokenizer"
         ],
         "term": "API key / token",
         "id": "api-key",
@@ -40436,7 +40379,10 @@
         "names": [
           "Timezone",
           "UTC",
-          "DST"
+          "DST",
+          "time zone",
+          "tz_localize",
+          "tz_convert"
         ],
         "term": "Timezone, UTC, DST",
         "id": "timezone",
@@ -42318,23 +42264,6 @@
         ]
       },
       {
-        "def": "The S-shaped function σ(z) = 1/(1+e^(−z)) that squashes any number into a probability between 0 and 1.",
-        "group": "Model words",
-        "names": [
-          "sigmoid"
-        ],
-        "term": "Sigmoid",
-        "id": "sigmoid-2",
-        "levels": [
-          "The sigmoid is a magic squisher: you feed it any number, huge or tiny, and it always hands back a number between 0 and 1, like squeezing a big sponge down to fit in your pocket.",
-          "The sigmoid function takes any number, positive or negative, and squashes it into a range between 0 and 1, shaped like a stretched-out S when you draw it. A big positive number in gives a result close to 1, a big negative number gives a result close to 0, and 0 gives exactly 0.5. This makes it perfect for turning a raw score into something that reads as a probability.",
-          "The formula is σ(z) = 1 / (1 + e^(−z)), and in code, `def sigmoid(z): return 1 / (1 + np.exp(-z))`, applied to a whole array of scores at once. Logistic regression computes a score z = w·x + b for each row, then passes it through σ to get a probability p between 0 and 1; z = 0 gives p = 0.5, the no-information point. The sigmoid's own derivative has a clean form, σ′(z) = σ(z)(1 − σ(z)), which is what makes logistic regression's gradient simple to derive.",
-          "The sigmoid is the inverse of the logit, or log-odds, function log(p/(1−p)), so it exactly translates an unbounded linear score into a valid probability, which is the mathematical justification for using it as logistic regression's output nonlinearity rather than an arbitrary choice. Its derivative, σ′(z) = σ(z)(1 − σ(z)), is what makes the gradient of cross-entropy loss with respect to the model's raw score reduce to simply p − y, the prediction error, since the sigmoid's derivative cancels neatly against the log-loss's own derivative through the chain rule. In deep networks, the sigmoid saturates for large |z|, its derivative approaches 0 at both extremes, so a very confident, very wrong prediction produces a tiny gradient and learns extremely slowly, which is one reason ReLU, not the sigmoid, is the default activation inside modern hidden layers even though sigmoid remains standard as a final binary output layer.",
-          "The saturation problem is more consequential than it first appears: stacking many sigmoid layers compounds vanishing gradients multiplicatively through the chain rule, historically a central obstacle to training deep networks before ReLU and better initialization schemes became standard, so the sigmoid's near-universal 1990s role as a hidden-layer activation has been almost entirely replaced, while its role as a final binary-output squashing function remains unchanged and appropriate. A numerical subtlety practitioners hit in practice: computing the sigmoid directly for very negative z can overflow, so a numerically stable implementation branches on the sign of z or, more commonly, frameworks avoid computing the sigmoid explicitly at all and instead combine it with cross-entropy into a single numerically stable operation, `BCEWithLogitsLoss` in PyTorch, which never computes intermediate probabilities near exactly 0 or 1. The clip used in this course, `np.clip(sigmoid(...), 1e-7, 1 - 1e-7)`, exists for the same reason: log(0) is undefined, and an unclipped, perfectly confident but wrong prediction produces an infinite loss and gradient.",
-          "At production scale, the sigmoid's role has narrowed but not disappeared: it remains the standard way to turn a final logit into a probability for binary classification and multi-label problems, and fused implementations like BCEWithLogitsLoss are the default because they are both faster and more numerically stable than computing the sigmoid and the log-loss separately. Research interest in sigmoid-like functions has shifted from activation function for hidden layers, a largely settled question in favor of ReLU-family functions, to newer uses like smooth gating mechanisms, the sigmoid gates inside an LSTM or GRU, or Swish and SiLU-style activations that multiply a linear unit by a sigmoid of itself, where its bounded, differentiable, monotonic shape is exploited deliberately rather than merely inherited from older architectures."
-        ]
-      },
-      {
         "def": "A setting chosen before training, not learned from data, such as a model's learning rate or tree depth.",
         "group": "Model words",
         "names": [
@@ -42691,24 +42620,6 @@
           "Formally, attention computes a weighted sum where the weight between a query at one position and a key at another is their scaled dot product passed through a softmax, so every position ends up as a data-dependent combination of every other position's value vector; this is the mechanism, and the rest of a transformer layer (feedforward sublayers, layer normalization, residual connections) is comparatively simple plumbing around it. Because attention considers every pair of positions, it has quadratic time and memory cost in sequence length, which is the central scaling bottleneck of transformers and the reason a great deal of transformer research targets making attention cheaper for long sequences. Transformers have no inherent notion of order (unlike a recurrent model that processes a sequence step by step), so positional information has to be injected explicitly, typically through positional encodings added to the input embeddings, and getting this encoding wrong or omitting it degrades the model's ability to use sequence order at all. Training a transformer from scratch typically requires substantially more data than a comparably-sized model with stronger built-in structural assumptions (like a convolutional network for images), because a transformer's flexibility (it makes fewer assumptions about the data's structure) is a double-edged property: powerful when there is enough data to learn the right structure, but prone to underperforming smaller, more structured models on small datasets.",
           "Attention's expressiveness comes precisely from having no fixed structural bias about which positions should interact, which is a strength on large, diverse data and a real weakness on small data, where a more structured inductive bias (convolution's locality assumption, or a recurrent model's inherent sequential ordering) can generalize better from fewer examples, a tradeoff still actively debated depending on the domain and data scale. The quadratic attention cost has motivated an entire research subfield of efficient attention variants (sparse attention, linear attention approximations, sliding-window attention), each trading some modeling flexibility or exactness for better scaling, and none has fully displaced standard full attention for tasks where quality matters most, suggesting the tradeoff is genuinely difficult rather than simply unsolved due to insufficient effort. A common misconception, even among practitioners, is that attention weights are directly interpretable as 'what the model is paying attention to' in a causally meaningful sense; empirically, attention weights often do not align cleanly with feature importance measures like Shapley values computed on the same model, and treating raw attention weights as a full explanation of model behavior is considered unreliable by much of the interpretability research community. Training stability is a genuine engineering challenge specific to transformers at depth: without careful initialization, learning-rate warmup, and normalization placement, deep transformer training can diverge or plateau in ways shallower or more structurally-constrained networks typically do not, which is why transformer training recipes are unusually sensitive to these specific hyperparameters compared to other architectures.",
           "At production and research scale, transformers underlie essentially every state-of-the-art large language and multimodal model, and the practical engineering challenges have shifted from 'does attention work' to how to serve extremely large transformer models efficiently: key-value caching to avoid recomputing attention over the whole sequence at every generation step, quantization to shrink memory footprint, and architectural variants (mixture-of-experts, grouped-query attention) that reduce the effective compute and memory cost per token without proportionally sacrificing quality. Apple's on-device deployment of transformer-based models faces the quadratic attention cost especially acutely given tight memory and power budgets, which is why on-device transformer variants typically use aggressive compression, smaller context windows, and specialized attention approximations relative to their server-side counterparts. Open research questions include finding attention variants that scale sub-quadratically without meaningful quality loss, understanding why transformers exhibit emergent capabilities at scale that smaller versions of the same architecture do not show at all, and building genuinely reliable interpretability tools for a mechanism (attention) whose weights, despite their apparent transparency, do not straightforwardly explain the model's actual decision process."
-        ]
-      },
-      {
-        "def": "The step that splits raw text into tokens (words or word pieces) and maps each to an integer id a model can consume.",
-        "group": "Model words",
-        "names": [
-          "tokenizer",
-          "token"
-        ],
-        "term": "Tokenizer",
-        "id": "tokenizer",
-        "levels": [
-          "A tokenizer is like cutting a sentence into little puzzle pieces, one piece per word or word-chunk, and giving each piece its own numbered sticker so a computer can handle it.",
-          "A tokenizer breaks a sentence into smaller pieces called tokens, often whole words but sometimes word fragments for longer or unusual words, and then converts each token into a number, because models work with numbers, not letters. The sentence 'traffic is bad on I-880' might tokenize into pieces like 'traffic', 'is', 'bad', 'on', 'I', '-', '880', each getting its own id, and an unfamiliar chunk like '880' might get split further into smaller pieces the tokenizer has actually seen before.",
-          "Modern tokenizers use subword algorithms like byte-pair encoding or WordPiece, which start from individual characters and merge the most frequent adjacent pairs repeatedly, building a fixed vocabulary, often 30,000 to 100,000 tokens, that can represent any input text, even words never seen during training, by falling back to smaller pieces. `AutoTokenizer.from_pretrained(name)` loads the exact tokenizer a pretrained model was trained with, which matters because a model's token-to-id mapping is fixed at training time and using a mismatched tokenizer produces garbage. A road name like 'I-880' can split unexpectedly, perhaps into 'I', '-', '8', '80', depending on how common that exact substring was in the tokenizer's training text, which matters if this project ever fine-tunes a small text classifier on 511 event headlines.",
-          "Subword tokenization is a deliberate compromise between word-level tokenization, a huge vocabulary, no way to handle unseen words, and character-level tokenization, a tiny vocabulary but very long sequences that make the model's job harder since it has to learn word structure from scratch; byte-pair encoding sits in between, learned automatically from a training corpus's own statistics rather than hand-designed. The tokenizer determines the model's effective resolution on text: rare domain-specific terms or unusual capitalization can tokenize into surprisingly many pieces, inflating sequence length and hurting the model's ability to represent that content well, a common, underappreciated failure mode when applying a general-purpose pretrained model to a specialized vocabulary, traffic incident text is full of exactly this, road numbers, abbreviations, mile markers. Padding, making all sequences in a batch the same length, and attention masks, telling the model which positions are real content versus padding, are companion mechanics a tokenizer's output must be paired with before it can feed a transformer.",
-          "Tokenizer choice has downstream effects easy to underestimate: the same underlying text can require noticeably more tokens under one tokenizer than another, directly changing training and inference cost, and tokenization boundaries that don't align with meaningful units, splitting a number like '880' inconsistently depending on context, can make numerical and structured reasoning harder for a model to learn, a known weak spot of subword tokenizers on tasks involving numbers or code. Practitioners commonly assume tokenization is a solved, ignorable preprocessing step, but fine-tuning with a tokenizer mismatched to the domain, a general English tokenizer applied to traffic-incident shorthand full of route numbers and abbreviations, silently costs both efficiency and accuracy without raising any visible error. Tokenizer training itself, choosing the vocabulary from a corpus, is a design decision with real tradeoffs, vocabulary size trades sequence length against embedding table size, and the training corpus's domain mix determines which text tokenizes efficiently versus which fragments into many small pieces.",
-          "At the scale of training large language models, tokenizer design is a research problem in itself: byte-level BPE, operating on raw bytes rather than characters, guarantees no out-of-vocabulary failures at the cost of somewhat longer sequences for non-Latin scripts, and multilingual tokenizer fairness, whether some languages get systematically more tokens per sentence than others, directly costing those users more compute and money at inference, is an active concern. On-device and latency-sensitive deployments care about tokenizer speed itself, not just the model, since tokenization runs at the edge of a serving pipeline; open research includes tokenizer-free or byte-level architectures that skip a fixed vocabulary entirely, trading more expensive per-step computation for robustness to any input text without a separate tokenizer artifact to version and keep in sync with the model."
         ]
       },
       {
@@ -43110,27 +43021,6 @@
         ]
       },
       {
-        "def": "The IANA rule set (like America/Los_Angeles) that converts between UTC and local clock time, including daylight saving.",
-        "group": "Data words",
-        "names": [
-          "time zone",
-          "timezone",
-          "UTC",
-          "tz_localize",
-          "tz_convert"
-        ],
-        "term": "Time zone / UTC",
-        "id": "time-zone",
-        "levels": [
-          "A time zone is a rulebook that tells you what a clock should say in one particular part of the world. Los Angeles has its own rulebook, and Tokyo has a different one, even though they are both looking at the very same moment in time. Twice a year the rulebook even changes the rule a little, moving the clock forward or backward by an hour.",
-          "A time zone is a named rule, like `America/Los_Angeles`, that says how to convert a single true moment in time (UTC) into a local clock reading, including when daylight saving starts and ends each year. Python's `zoneinfo` module knows these rules for every place in the world, using a shared database called IANA. `tz_localize` attaches a time zone to a timestamp that has none, saying 'this timestamp means Pacific time', while `tz_convert` takes a timestamp that already has a time zone and re-expresses it in a different one without changing the actual moment. Because PeMS timestamps and this course's own generated timestamps need to line up correctly, getting time zone conversion right, rather than skipped or applied twice, matters a great deal.",
-          "`zoneinfo.ZoneInfo('America/Los_Angeles')` provides an IANA time zone object with the full historical and future rule set for when daylight saving time starts and ends in that region; passing it to a `datetime` object or to `pandas.Timestamp.tz_localize()` attaches that rule set so the timestamp knows how to convert to and from UTC correctly, including through DST transitions. `df['t'].dt.tz_localize('America/Los_Angeles')` assumes a naive (time-zone-less) column of local times and marks it as Pacific; `df['t'].dt.tz_convert('UTC')` then re-expresses those same moments in UTC without shifting what moment they refer to. Calling `tz_localize` on a timestamp that falls in the nonexistent hour during spring's forward jump, or the ambiguous repeated hour during fall's backward jump, raises an error by default unless an `ambiguous` or `nonexistent` argument tells pandas how to resolve it. `pd.to_datetime(raw_col, utc=True)` is the standard way to parse a column straight into UTC-aware timestamps in one step, sidestepping local-time ambiguity entirely by working in UTC from the start.",
-          "IANA time zone identifiers, like `America/Los_Angeles`, are deliberately named after a representative city rather than a fixed offset like `PST`, because the mapping from a place to a UTC offset changes with DST and, occasionally, with legislative changes to DST rules themselves, so an identifier tied to a place, not a fixed offset, remains correct even as the underlying rules change over time. The `tzdata` package that `zoneinfo` reads from is versioned and updated multiple times a year by the IANA Time Zone Database maintainers as governments around the world adjust their DST policies, so the exact conversion for a historical date depends on which version of `tzdata` was installed when the conversion ran, a genuine reproducibility concern this course's pipeline addresses by pinning that version. Time zone abbreviations like `PST` and `PDT` are ambiguous and not safe for machine parsing (`PST` alone does not specify which country or DST convention applies), which is why the IANA naming convention and full `ZoneInfo` objects, not abbreviations, are the correct tool for reliable parsing and conversion. A frequently overlooked detail is that not all UTC offset changes happen on the hour; a small number of time zones historically shifted by non-hour increments, and while this rarely matters for a Fremont-area traffic project, it illustrates that time zone conversion is not simply 'add or subtract a fixed number of hours' in the fully general case.",
-          "The correctness burden of time zone handling is compounded in a data pipeline that mixes sources: PeMS data may be recorded and timestamped by infrastructure operating on a fixed offset or a different convention than a locally-generated feature timestamp, and any code path that compares or joins these without first normalizing both to UTC risks a silent, hard-to-detect off-by-one-hour bug that appears only around the two DST transition days each year and is easy to miss in ordinary testing that does not specifically target those dates. A subtler correctness issue is that recomputing historical features after a `tzdata` update can shift results for past dates whose DST rules were later revised by a government (this has happened multiple times historically for various countries), meaning a supposedly deterministic pipeline can, in principle, produce a different answer for the same historical input depending purely on when it was run, which is a genuine, if rare, reproducibility hazard worth being aware of even if unlikely to bite a Fremont-only project in practice. Testing time zone logic specifically at DST transition boundaries (the day clocks spring forward, the day they fall back) is standard practice precisely because ordinary day-to-day testing, run on an arbitrary date, will not exercise these edge cases at all, giving false confidence that time zone handling is correct when it has simply never been tested against the two days a year it actually matters most.",
-          "At Apple's global scale, time zone handling touches every user-facing timestamp across products used simultaneously in every time zone and DST regime on Earth, so internal infrastructure treats time zone correctness as a first-class engineering concern: storing UTC internally as the canonical representation, attaching explicit time zone metadata rather than inferring it, and rolling out `tzdata` updates through the same staged, monitored deployment process used for any other dependency change, since an unreviewed `tzdata` bump can silently shift millions of historical local-time computations across many services at once. Systems that must reason about recurring local events (a daily rush-hour pattern, a weekly schedule) across DST transitions need genuinely different logic than systems that only ever store and compare UTC instants, because 'every day at 5pm local time' is not simply 'every 24 hours' across a DST boundary, a distinction that trips up even experienced engineers building scheduling or recurring-alert systems. An open, still-imperfect area of practice industry-wide is validating time zone logic through automated testing that specifically targets DST transition dates and historical rule changes, since these edge cases are rare enough in ordinary usage that many systems ship with latent time zone bugs that only surface on the one or two days a year, or the one historical date, when they actually matter."
-        ]
-      },
-      {
         "def": "Splitting data into separate groups, either physically on disk by a key (so queries skip irrelevant files) or logically within a query (like a running calculation restarted for each station).",
         "group": "Data words",
         "names": [
@@ -43343,25 +43233,6 @@
           "A container differs from a full virtual machine in that it does not virtualize hardware or run a separate operating system kernel; it uses the host operating system's own kernel features, namespaces and cgroups on Linux, to isolate a process's filesystem, network, and resource usage, which is why containers start in milliseconds and use far less overhead than a VM, at the cost of somewhat weaker isolation guarantees. This makes containers well suited to packaging and shipping an application's exact dependency set so that works on my machine becomes works in this container on any machine with Docker installed, addressing exactly the reproducibility problem a virtual environment addresses for Python packages but extending it to the operating system layer underneath. In a serving context, this project wraps a FastAPI prediction endpoint in a container specifically so it can run consistently whether on a developer's laptop, a different machine, or eventually a cloud virtual machine, decoupling whether the code runs correctly from what machine it is running on.",
           "A subtlety practitioners often underestimate is that a container guarantees dependency reproducibility for the software layer it explicitly captures, Python, pip packages, system libraries listed in the Dockerfile, but not necessarily for everything that affects numerical results, driver versions, GPU libraries, or CPU instruction sets outside the container's control can still cause a model to behave slightly differently across machines, which is why ML-specific reproducibility often needs more than a plain application container, pinned CUDA and driver versions, or a hermetic build system like Nix or Bazel for the truly demanding cases. Image size and build caching are practical concerns that separate a well-built Dockerfile from a poorly built one: ordering instructions so that rarely-changing steps come before frequently-changing ones lets Docker's layer cache avoid rebuilding the expensive parts on every small code change, a discipline that matters a great deal once containers are rebuilt many times a day in a CI pipeline. Containers versus orchestration is also a distinction worth being precise about: a single `docker run` is fine for one service on one machine, but running many containers reliably, restarting failed ones, load-balancing across replicas, requires an orchestrator like Kubernetes, a substantially larger and more complex system that this project's single-Mac deployment deliberately does not need.",
           "At production scale, containers are the standard unit of deployment precisely because they let infrastructure teams treat what runs as an immutable, versioned artifact independent of the underlying fleet of machines, enabling patterns like canary releases and rollback that this project's single-machine deployment does not need but that any team serving traffic at real scale relies on constantly. The deeper reproducibility problem containers only partially solve, and hermetic build systems like Nix and Bazel try to solve more completely, is that a container's base image and package installs are themselves fetched from mutable, external sources at build time unless pinned with extreme care, so the same Dockerfile built six months apart can silently produce a different image, exactly the kind of reproducibility failure that makes ML research results hard to check a year later without a much stricter build discipline than most application containers bother with."
-        ]
-      },
-      {
-        "def": "Tools that run a program automatically on a schedule; cron is the traditional Unix scheduler, launchd is macOS's.",
-        "group": "Tools and files",
-        "names": [
-          "cron",
-          "launchd",
-          "StartInterval"
-        ],
-        "term": "cron / launchd",
-        "id": "cron",
-        "levels": [
-          "cron and launchd are like an alarm clock for the computer that says 'wake up and do this job' at a certain time, over and over, without a person having to remember to press start.",
-          "cron is a classic Unix tool for running a program on a repeating schedule, controlled by a crontab file with lines like `*/5 * * * * python predict.py`, meaning run this every 5 minutes. On a Mac, launchd is Apple's version of the same idea, configured with a plist file instead of a crontab line, and it's the recommended way to schedule jobs on macOS because it better understands things like the computer sleeping and waking. Both exist so a script, like the traffic collector, can run automatically without a person starting it by hand every time.",
-          "A crontab entry has five time fields (minute, hour, day of month, month, day of week) followed by the command to run, so `*/5 * * * * /path/to/python /path/to/predict.py` runs every 5 minutes regardless of what else is happening. A launchd job is an XML plist with keys like `<key>StartInterval</key><integer>300</integer>` (run every 300 seconds) or specific calendar times, loaded with `launchctl load ~/Library/LaunchAgents/com.user.predictor.plist`. launchd is preferred over cron on macOS specifically because cron does not reliably run a missed job if the Mac was asleep at the scheduled time, while launchd can be configured to catch up, and `caffeinate` can additionally be used to keep the machine awake for the duration of a long job.",
-          "The reliability difference between cron and launchd on macOS comes down to how each handles the machine's power state: cron simply checks the current time against the schedule and does nothing special if the process was asleep during a scheduled run, silently skipping it, while launchd is integrated with macOS's power management and can be configured to run a missed job as soon as the machine wakes, closer to 'run this roughly every 5 minutes' than cron's stricter 'run this at exactly these clock times.' Both tools run with whatever environment they are given at launch time, which is typically a minimal, non-interactive environment lacking the PATH, exported variables, and shell configuration an interactive terminal session has, this is the single most common cause of 'it works when I run it manually but fails when scheduled,' since a script that relies on `python` being on PATH or an environment variable being exported in `.zshrc` will not find either. Scheduled jobs also need explicit logging, redirecting stdout and stderr to a file, since there is no terminal to see output in if something goes wrong, and without it, a silently failing scheduled job can go unnoticed for a long time. macOS's permission system, specifically Full Disk Access, can silently block a launchd job from reading files in certain protected locations even when the same command run manually from Terminal, which already has that permission granted, works fine, a distinction that is genuinely confusing to debug the first time it's encountered.",
-          "launchd's job model, agents run per-user at login, daemons run system-wide regardless of login, has real implications for a project like this one: a LaunchAgent only runs while that user is logged in, so a Mac that's left at the login screen overnight will not run scheduled prediction jobs, while a LaunchDaemon runs independent of any user session but requires elevated installation and is a heavier commitment appropriate for a genuinely persistent service rather than a personal script. Idempotency and overlap handling are subtle scheduling concerns beyond just 'does it run': if a job sometimes takes longer than its interval, a 5-minute prediction job that occasionally takes 6 minutes due to a slow network call, a naive interval-based schedule can launch overlapping instances that corrupt shared state or contend for the same resources, which is why production-grade schedulers add explicit locking or 'skip if already running' logic that plain cron and launchd do not provide out of the box. Time zone and daylight saving transitions interact with cron's calendar-based scheduling in ways that can cause a job to run twice or not at all on the transition day, a genuinely tricky edge case that a naive fixed-interval schedule, like launchd's StartInterval, specified in seconds rather than clock time, sidesteps entirely by being immune to clock changes. Practitioners frequently under-invest in monitoring for scheduled jobs specifically because there's no interactive session to notice failure in, making a dead man's switch, an external check that alerts if the expected output hasn't updated recently, a more reliable failure signal than trusting the scheduler to report problems.",
-          "At production scale, cron and launchd give way to dedicated workflow orchestrators, Airflow, Dagster, Kubernetes CronJobs, that add retries, dependency graphs between jobs, alerting, and centralized logging and observability that a single-machine scheduler was never designed to provide, which matters once a pipeline has more than one or two interdependent scheduled steps. Apple's own internal scheduling infrastructure for services at scale looks much more like these distributed orchestrators than like launchd, though launchd itself remains exactly the right tool for a single-machine, single-developer project like this course's traffic predictor, where the operational simplicity outweighs the missing features. An open reliability engineering question at any scale is how to make scheduled jobs genuinely observable by default, treating 'did the job actually run and produce fresh, correct output' as a first-class monitored property rather than something discovered only when a downstream consumer notices stale data."
         ]
       },
       {
