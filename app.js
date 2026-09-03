@@ -154,7 +154,14 @@
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
   // Shorten the label before the type (skill §3): the course identity, one line.
   var NICE = { lang: 'English', chem: 'Chemistry', french: 'French', calcbc: 'Calc BC', apush: 'US History' };
-  function nice(idOrDeck) { var id = typeof idOrDeck === 'string' ? idOrDeck : idOrDeck.id; return NICE[id] || (typeof idOrDeck === 'string' ? id : idOrDeck.short); }
+  function nice(idOrDeck) {
+    var id = typeof idOrDeck === 'string' ? idOrDeck : idOrDeck.id;
+    if (NICE[id]) return NICE[id];
+    if (typeof idOrDeck !== 'string') return idOrDeck.short || id;
+    // a deck the map does not know (an owner's private one) names itself
+    var ix = S.getIndex(), c = ix && ix.courses.filter(function (x) { return x.id === id; })[0];
+    return (c && c.short) || id;
+  }
   function pct(x) { return Math.round(x * 100) + '%'; }
   // verbs arrive from the data in caps — never render them that way
   function verb(v) { return v ? v.charAt(0) + v.slice(1).toLowerCase() : ''; }
@@ -1154,7 +1161,12 @@
       '<div class="setgroup">' +
       (S.account.connected()
         ? '<div class="setrow"><div class="sname">Sync</div>' +
-          '<button class="cyc" data-acct-off>' + esc(syncWord()) + '</button></div>'
+          '<button class="cyc" data-acct-off>' + esc(syncWord()) + '</button></div>' +
+          // the account id a private deck is addressed to — tap copies it
+          (S.account.ownerId()
+            ? '<div class="setrow"><div class="sname">ID</div>' +
+              '<button class="cyc" data-acct-id>' + esc(S.account.ownerId()) + '</button></div>'
+            : '')
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
           '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
           '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
@@ -1533,6 +1545,13 @@
   document.addEventListener('click', function (e) {
     var off = e.target.closest('[data-acct-off]');
     if (off && armConfirm(off, 'Tap again to turn off')) { S.account.clearToken(); route(); }
+    var idb = e.target.closest('[data-acct-id]');
+    if (idb) {
+      var id = S.account.ownerId();
+      var done = function () { toast('Copied'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(id).then(done, function () { toast(id); });
+      else toast(id);
+    }
   });
   window.addEventListener('apdecks-sync', function (ev) {
     if (ev.detail && ev.detail.changed) route();   // fresher progress just merged in
