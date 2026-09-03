@@ -634,3 +634,28 @@ sub,sup{ font-size:.68em; }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
 }
+
+/* ---- the book: course text a deck may carry, read in full before the cards ---- */
+.prose{ max-width:62ch; }
+.bp{ margin:0 0 14px; font-size:19px; line-height:1.5; color:var(--ink); letter-spacing:-.005em; }
+.bp.cap{ font-size:var(--t-caption); color:var(--muted); margin:-6px 0 var(--s-3); }
+.bp .k{ display:inline-block; margin-right:8px; }
+.bp.lead{ color:var(--ink-soft); }
+.bl{ margin:0 0 14px; padding-left:1.15em; font-size:19px; line-height:1.5; color:var(--ink); }
+.bl li{ margin:0 0 6px; }
+.bl li::marker{ color:var(--muted); }
+.bcode{ margin:0 0 16px; padding:2px 0 2px 12px; border-left:1.5px solid var(--hair); overflow-x:auto;
+  font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--ink-soft); white-space:pre; -webkit-overflow-scrolling:touch; }
+.bcode code{ font:inherit; }
+.bp code,.bl code,.qrow code,.lname code,.textbtn code{ font:inherit; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.92em; }
+.term{ font-weight:500; color:var(--ink); }
+.prose a{ color:inherit; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; }
+.dhero a.dn{ display:block; color:var(--ink-soft); text-decoration:none; }
+.dhero .dv.word{ font-size:17px; font-weight:500; letter-spacing:-.01em; align-self:center; }
+.ulabel.lvl{ margin-top:var(--s-5); }
+.ulabel.part{ margin-top:var(--s-5); padding-top:var(--s-3); border-top:1px solid var(--hair-soft); }
+.qrow.brow{ margin:0 0 12px; }
+.qrow.brow .qq{ font-size:19px; }
+.qrow.brow .qa{ margin-top:8px; }
+.qrow.brow .qa .bp{ font-size:17px; color:var(--ink-soft); }
+#app.is-wide .pane-r .bcode{ max-width:860px; }

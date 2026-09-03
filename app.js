@@ -146,6 +146,9 @@
     if (p[0] === 'game') return '#/games';
     if (p[0] === 'games') return '#/';
     if (p[0] === 'd' && p[2] === 'u') return '#/d/' + p[1];
+    if (p[0] === 'd' && p[2] === 'l') { var bi = bookOf(p[1]), it = bi && bi.items[p[3]]; return '#/d/' + p[1] + (it ? '/u/' + it.u : ''); }
+    if (p[0] === 'd' && p[2] === 'r') { var br = bookOf(p[1]), rp = br && br.resPhase[p[3]]; return '#/d/' + p[1] + (rp ? '/b/' + rp.n : ''); }
+    if (p[0] === 'd' && p[2] === 'b') { var bp = bookOf(p[1]), ph = bp && bp.phases[p[3]]; return '#/d/' + p[1] + (ph ? '/u/' + ph.u : ''); }
     if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1];
     if (p[0] === 'cram' && p[1]) return p[2] ? '#/d/' + p[1] + '/u/' + p[2] : '#/d/' + p[1];
     if (p[0] === 'weak') return '#/stats';
@@ -475,8 +478,134 @@
         '<button class="textbtn" data-go="#/cram/' + deckId + '/' + unitId + '">Cram</button>' +
         gameLinks +
       '</div>' +
+      bookUnitHTML(deckId, unitId) +
       '<ul class="list tight" style="margin-top:var(--s-4)">' + list + '</ul>'
     );
+  }
+
+  /* ==========================================================================
+     VIEW · the book — a deck may carry its course text (Six Ladders). Every
+     lesson is read in full, all six levels in order, before anything asks
+     the reader to do something: the walkthrough, the check, the cards.
+     ========================================================================== */
+  function bookOf(deckId) {
+    var d = S.getDeck(deckId);
+    if (!d || !d.book) return null;
+    if (!d._bk) {
+      var bk = { items: {}, res: {}, resPhase: {}, phases: {}, byUnit: {}, order: [] };
+      d.book.phases.forEach(function (ph) {
+        bk.phases[String(ph.n)] = ph;
+        (bk.byUnit[ph.u] = bk.byUnit[ph.u] || []).push(ph);
+        ph.items.forEach(function (it) { bk.items[it.id] = it; bk.order.push(it.id); });
+        ph.resources.forEach(function (r) { bk.res[r.id] = r; bk.resPhase[r.id] = ph; });
+      });
+      d._bk = bk;
+    }
+    return d._bk;
+  }
+  /* inline markdown, the little the source uses: code, links, a term, an aside */
+  function md(s) {
+    var h = esc(String(s || ''));
+    h = h.replace(/`([^`]+)`/g, function (_, c) { return '<code>' + c + '</code>'; });
+    h = h.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    h = h.replace(/\*\*([^*]+)\*\*/g, '<span class="term">$1</span>');
+    h = h.replace(/(^|[\s(])_([^_<>]+)_(?=[\s.,;:)]|$)/g, '$1<em>$2</em>');
+    return h;
+  }
+  function bookBlocks(bs) {
+    return (bs || []).map(function (b) {
+      if (b.t === 'p') return '<p class="bp' + (b.lead ? ' lead' : '') + '">' + (b.lead ? '<span class="k">' + esc(b.lead) + '</span>' : '') + md(b.s) + '</p>';
+      if (b.t === 'ul' || b.t === 'ol') return '<' + b.t + ' class="bl">' + b.items.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</' + b.t + '>';
+      if (b.t === 'code') return '<pre class="bcode"><code>' + esc(b.s) + '</code></pre>';
+      if (b.t === 'qa') return '<div class="qrow brow" data-peek="q" role="button" tabindex="0"><div class="qq">' + md(b.q) + '</div><div class="qa" hidden>' + bookBlocks(b.a) + '</div></div>';
+      if (b.t === 'h3' || b.t === 'h4') return '<div class="ulabel">' + md(b.s) + '</div>';
+      if (b.t === 'meta') return '<p class="bp cap">' + md(b.s) + '</p>';
+      return '';
+    }).join('');
+  }
+  var SECNAME = { goal: 'Goal', 'guided-walkthrough': 'Guided walkthrough', 'check-yourself': 'Check yourself',
+    misconceptions: 'Misconceptions', 'what-it-covers': 'What it covers', 'key-ideas-in-order': 'Key ideas, in order',
+    'formulas-and-commands-to-remember': 'Formulas and commands', 'three-takeaways': 'Three takeaways', practice: 'Practice',
+    'what-you-need-to-learn': 'What you need to learn', build: 'Build', 'done-when': 'Done when', pitfalls: 'Pitfalls' };
+  function secLabel(s) { return s.k === 'level' ? s.name : s.k === 'step' ? 'Step ' + s.n : s.k === 'h3' ? (s.title || '') : (SECNAME[s.k] || ''); }
+  function bookSections(secs) {
+    return (secs || []).map(function (s) {
+      var lab = secLabel(s);
+      var cls = 'ulabel' + (s.k === 'level' ? ' lvl' : '') +
+        (s.k === 'guided-walkthrough' || s.k === 'check-yourself' || s.k === 'misconceptions' || s.k === 'what-it-covers' ? ' part' : '');
+      return (lab ? '<div class="' + cls + '">' + esc(lab) + '</div>' : '') + bookBlocks(s.b);
+    }).join('');
+  }
+  function lessonRow(deckId, it) {
+    return '<li><button class="ledger mid" data-go="#/d/' + deckId + '/l/' + it.id + '"><span class="lname">' + md(it.title) + '</span>' +
+      '<span class="lval word">' + esc(it.kind === 'lesson' ? 'Lesson ' + it.n : 'Topic') + '</span></button></li>';
+  }
+  function bookUnitHTML(deckId, unitId) {
+    var bk = bookOf(deckId);
+    if (!bk || !bk.byUnit[unitId]) return '';
+    var rows = '';
+    bk.byUnit[unitId].forEach(function (ph) {
+      rows += '<li><button class="ledger mid" data-go="#/d/' + deckId + '/b/' + ph.n + '"><span class="lname">' + esc(ph.title) + '</span><span class="lval word">Phase ' + ph.n + '</span></button></li>';
+      rows += ph.items.map(function (it) { return lessonRow(deckId, it); }).join('');
+    });
+    return '<div class="ulabel part">Read first</div><ul class="list tight">' + rows + '</ul><div class="ulabel part">Cards</div>';
+  }
+  function viewPhase(deckId, n) {
+    var d = S.getDeck(deckId), bk = bookOf(deckId), ph = bk && bk.phases[String(n)];
+    if (!ph) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
+    var u = d.unitById[ph.u];
+    var rows = ph.items.map(function (it) { return lessonRow(deckId, it); }).join('');
+    var res = ph.resources.map(function (r) {
+      return '<li><button class="ledger mid" data-go="#/d/' + deckId + '/r/' + r.id + '"><span class="lname">' + md(r.title) + '</span>' +
+        (r.lives ? '<span class="lsub">' + md(r.lives.split(' · ').slice(0, 3).join(' · ')) + '</span>' : '') + '</button></li>';
+    }).join('');
+    mount(
+      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + (u ? ' · Unit ' + u.n : '') + '</div>' +
+      '<div class="dhero longname"><button class="dn" data-go="#/d/' + deckId + '/u/' + ph.u + '">' + esc(ph.title) + '</button>' +
+        '<span class="dv word">Phase ' + ph.n + '</span></div>' +
+      (ph.meta ? '<p class="bp cap">' + md(ph.meta) + '</p>' : '') +
+      '<div class="prose">' + bookSections(ph.sections) + '</div>' +
+      '<div class="ulabel part">Lessons</div><ul class="list tight">' + rows + '</ul>' +
+      (res ? '<div class="ulabel part">Read and watch</div><ul class="list tight">' + res + '</ul>' : '') +
+      '<div class="prose">' + bookSections(ph.after) + '</div>'
+    );
+  }
+  function viewLesson(deckId, id) {
+    var d = S.getDeck(deckId), bk = bookOf(deckId), it = bk && bk.items[id];
+    if (!it) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
+    var ph = bk.phases[String(it.pn)], u = d.unitById[it.u];
+    var idx = bk.order.indexOf(id), next = bk.items[bk.order[idx + 1]];
+    var n = (it.cards || []).length;
+    mount(
+      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Phase ' + ph.n + (u ? ' · Unit ' + u.n : '') + '</div>' +
+      '<div class="dhero longname"><button class="dn" data-go="#/d/' + deckId + '/u/' + it.u + '">' + md(it.title) + '</button>' +
+        '<span class="dv word">' + esc(it.kind === 'lesson' ? 'Lesson ' + it.n : 'Topic') + '</span></div>' +
+      (it.lives ? '<p class="bp cap">' + md(it.lives) + '</p>' : '') +
+      '<div class="prose">' + bookSections(it.sections) + '</div>' +
+      (n ? '<button class="act" data-go="#/study/' + deckId + '/l:' + id + '/' + it.u + '">Study these ' + n + '</button>' : '') +
+      (next ? '<div class="modes"><button class="textbtn" data-go="#/d/' + deckId + '/l/' + next.id + '">Next · ' + md(next.title) + '</button></div>' : '')
+    );
+  }
+  function viewResource(deckId, id) {
+    var d = S.getDeck(deckId), bk = bookOf(deckId), r = bk && bk.res[id];
+    if (!r) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
+    var ph = bk.resPhase[id];
+    mount(
+      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Phase ' + ph.n + ' · Read and watch</div>' +
+      '<div class="dhero longname">' + (r.url
+        ? '<a class="dn" href="' + esc(r.url) + '" target="_blank" rel="noopener">' + md(r.title) + '</a>'
+        : '<button class="dn" data-go="#/d/' + deckId + '/b/' + ph.n + '">' + md(r.title) + '</button>') + '</div>' +
+      (r.lives ? '<p class="bp cap">' + md(r.lives) + '</p>' : '') +
+      '<div class="prose">' + bookSections(r.sections) + '</div>' +
+      '<div class="modes"><button class="textbtn" data-go="#/d/' + deckId + '/b/' + ph.n + '">Phase ' + ph.n + '</button></div>'
+    );
+  }
+  function lessonQueue(d, id) {
+    var bk = bookOf(d.id), it = bk && bk.items[id];
+    return it ? S.shuffle((it.cards || []).map(function (i) { return d.byId[i]; }).filter(Boolean)) : [];
   }
 
   /* ==========================================================================
@@ -488,12 +617,15 @@
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
     // the daily path deals the chosen queue; fixed modes stay literal
-    var queue = (mode || 'smart') === 'smart'
+    var lesson = (mode || '').indexOf('l:') === 0 ? mode.slice(2) : null;
+    var queue = lesson ? lessonQueue(d, lesson)
+      : (mode || 'smart') === 'smart'
       ? buildDaily({ deck: d, unit: unitId || null })
       : S.buildSession(d, unitId || null, mode);
     if (!queue.length) return renderEmptySession(d, unitId, mode);
     sess = {
       deck: d, unitId: unitId || null, mode: mode, quiz: !!quiz,
+      back: lesson ? '#/d/' + deckId + '/l/' + lesson : null,
       typing: !quiz && S.getSettings().typing,
       queue: queue, done: 0, planned: queue.length,
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0,
@@ -875,7 +1007,7 @@
   /* the exit control's one true path, shared with the Escape key — replace,
      so the platform back gesture cannot fall into a dead session */
   function exitSession() {
-    var back = sess && sess.deck ? '#/d/' + sess.deck.id : '#/';
+    var back = sess && sess.back ? sess.back : sess && sess.deck ? '#/d/' + sess.deck.id : '#/';
     sess = null; goReplace(back);
   }
 
@@ -1478,6 +1610,9 @@
       }
       return viewDecks();
     }
+    if (p[0] === 'd' && p[1] && p[2] === 'b' && p[3]) return viewPhase(p[1], p[3]);
+    if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
+    if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3]) return viewUnit(p[1], p[3]);
     if (p[0] === 'd' && p[1]) return viewCourse(p[1]);
     if (p[0] === 'study') return startSession(p[1], p[2] || 'smart', p[3], false);
