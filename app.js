@@ -35,7 +35,8 @@
     app.classList.toggle('is-wide', isWide());
     app.classList.toggle('is-session', !!(opts && opts.session));
     app.classList.toggle('is-quiz', !!(opts && opts.quiz));
-    tabs.hidden = isWide() || !!(opts && opts.session);
+    app.classList.toggle('is-book', !!(opts && opts.book));
+    tabs.hidden = isWide() || !!(opts && opts.session) || !!(opts && opts.book);
     if (window.LG) window.LG.init(app);
     fitVals();
     if (!(opts && opts.keepScroll)) {
@@ -479,134 +480,348 @@
         gameLinks +
       '</div>' +
       bookUnitHTML(deckId, unitId) +
-      '<ul class="list tight" style="margin-top:var(--s-4)">' + list + '</ul>'
+      '<ul class="list tight" style="margin-top:var(--s-3)">' + list + '</ul>'
     );
   }
 
   /* ==========================================================================
-     VIEW · the book — a deck may carry its course text (Six Ladders). Every
-     lesson is read in full, all six levels in order, before anything asks
-     the reader to do something: the walkthrough, the check, the cards.
+     VIEW · the book — a deck may carry its course text (Six Ladders). The
+     reader picks one level at a time on a ladder; every lesson explains
+     itself at every rung, and every word it uses, before anything asks the
+     reader to do something.
      ========================================================================== */
+  var LVL_KEYS = ['k5', 'ms', 'hs', 'ug', 'gr', 'phd'];
+  var LVL_NAMES = ['Age 5', 'Middle school', 'High school', 'Stanford undergrad', 'Stanford grad', 'PhD at Apple'];
+  var LVL_SHORT = ['Kid', 'Middle', 'High', 'Undergrad', 'Grad', 'PhD'];
+  var ladder = { lvl: 2, all: false };
+  try {
+    var lp = JSON.parse(localStorage.getItem('apdecks.v1.ladder') || 'null');
+    if (lp && typeof lp.lvl === 'number' && lp.lvl >= 0 && lp.lvl < 6) ladder = { lvl: lp.lvl, all: !!lp.all };
+  } catch (e) {}
+  function saveLadder() { try { localStorage.setItem('apdecks.v1.ladder', JSON.stringify(ladder)); } catch (e) {} }
+  function bookDone() { return S.getSettings().ladderDone || {}; }
+  function setBookDone(id, on) {
+    var d = {}; var cur = bookDone();
+    for (var k in cur) d[k] = cur[k];
+    if (on) d[id] = 1; else delete d[id];
+    S.setSetting('ladderDone', d);
+  }
+
   function bookOf(deckId) {
     var d = S.getDeck(deckId);
     if (!d || !d.book) return null;
     if (!d._bk) {
-      var bk = { items: {}, res: {}, resPhase: {}, phases: {}, byUnit: {}, order: [] };
+      var bk = { items: {}, res: {}, resPhase: {}, phases: {}, byUnit: {}, order: [], terms: {}, phaseList: d.book.phases };
       d.book.phases.forEach(function (ph) {
         bk.phases[String(ph.n)] = ph;
         (bk.byUnit[ph.u] = bk.byUnit[ph.u] || []).push(ph);
         ph.items.forEach(function (it) { bk.items[it.id] = it; bk.order.push(it.id); });
         ph.resources.forEach(function (r) { bk.res[r.id] = r; bk.resPhase[r.id] = ph; });
       });
+      (d.book.terms || []).forEach(function (t) { if (t.def || (t.levels && t.levels.length)) bk.terms[t.id] = t; });
       d._bk = bk;
     }
     return d._bk;
   }
-  /* inline markdown, the little the source uses: code, links, a term, an aside */
+
+  /* ---- inline text: the little markdown the source uses, plus term marks --- */
+  var termCtx = null;      // { bk, list:[term], seen:{} } while a page renders
+  function termRx(t) {
+    if (!t._rx) {
+      var alts = t.names.map(function (n) {
+        var e = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return n.length <= 3 ? e : e + '(?:s|es)?';
+      });
+      t._rx = new RegExp('(^|[^\\w.])(' + alts.join('|') + ')(?![\\w])', 'i');
+      t._short = t.names.filter(function (n) { return n.length <= 3; });
+    }
+    return t._rx;
+  }
+  /* Mark the first use of each term. One left-to-right pass per text run: a
+     button already written is never rescanned, or its own markup becomes prey. */
+  function markRun(text) {
+    var out = '', rest = text;
+    while (rest) {
+      var best = null, bestAt = -1, bestWord = '';
+      for (var j = 0; j < termCtx.list.length; j++) {
+        var t = termCtx.list[j];
+        if (termCtx.seen[t.id] || t.nomark) continue;
+        var m = termRx(t).exec(rest);
+        if (!m) continue;
+        var word = m[2], at = m.index + m[1].length;
+        if (word.length <= 3 && t._short.indexOf(word) < 0) continue;   // AP is not "ap"
+        if (bestAt < 0 || at < bestAt) { best = t; bestAt = at; bestWord = word; }
+      }
+      if (!best) return out + rest;
+      out += rest.slice(0, bestAt) + '<button class="tm" data-term="' + best.id + '">' + bestWord + '</button>';
+      termCtx.seen[best.id] = true;
+      rest = rest.slice(bestAt + bestWord.length);
+    }
+    return out;
+  }
+  function markTerms(html) {
+    if (!termCtx || !termCtx.list.length) return html;
+    var parts = html.split(/(<[^>]+>)/), depth = 0, out = '';
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      if (!p) continue;
+      if (p.charAt(0) === '<') {
+        if (/^<(code|a|button)\b/i.test(p)) depth++;
+        else if (/^<\/(code|a|button)/i.test(p)) depth = Math.max(0, depth - 1);
+        out += p; continue;
+      }
+      out += depth ? p : markRun(p);
+    }
+    return out;
+  }
   function md(s) {
     var h = esc(String(s || ''));
     h = h.replace(/`([^`]+)`/g, function (_, c) { return '<code>' + c + '</code>'; });
     h = h.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-    h = h.replace(/\*\*([^*]+)\*\*/g, '<span class="term">$1</span>');
+    h = h.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
     h = h.replace(/(^|[\s(])_([^_<>]+)_(?=[\s.,;:)]|$)/g, '$1<em>$2</em>');
-    return h;
+    return markTerms(h);
   }
+  /* titles and rows: the same inline markup, but no term buttons inside a heading */
+  function mdT(x) { var c = termCtx; termCtx = null; var h = md(x); termCtx = c; return h; }
   function bookBlocks(bs) {
     return (bs || []).map(function (b) {
-      if (b.t === 'p') return '<p class="bp' + (b.lead ? ' lead' : '') + '">' + (b.lead ? '<span class="k">' + esc(b.lead) + '</span>' : '') + md(b.s) + '</p>';
-      if (b.t === 'ul' || b.t === 'ol') return '<' + b.t + ' class="bl">' + b.items.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</' + b.t + '>';
-      if (b.t === 'code') return '<pre class="bcode"><code>' + esc(b.s) + '</code></pre>';
-      if (b.t === 'qa') return '<div class="qrow brow" data-peek="q" role="button" tabindex="0"><div class="qq">' + md(b.q) + '</div><div class="qa" hidden>' + bookBlocks(b.a) + '</div></div>';
-      if (b.t === 'h3' || b.t === 'h4') return '<div class="ulabel">' + md(b.s) + '</div>';
-      if (b.t === 'meta') return '<p class="bp cap">' + md(b.s) + '</p>';
+      if (b.t === 'p') {
+        if (b.lead === 'Try this') return '<p class="try"><b>Try this.</b> ' + md(b.s) + '</p>';
+        if (b.lead) return '<p><b>' + esc(b.lead) + '.</b> ' + md(b.s) + '</p>';
+        return '<p>' + md(b.s) + '</p>';
+      }
+      if (b.t === 'ul' || b.t === 'ol') return '<' + b.t + ' class="learn">' + b.items.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</' + b.t + '>';
+      if (b.t === 'code') return '<pre>' + esc(b.s) + '</pre>';
+      if (b.t === 'qa') return '<details><summary>' + md(b.q) + '</summary><div class="a">' + bookBlocks(b.a) + '</div></details>';
+      if (b.t === 'h3' || b.t === 'h4') return '<div class="gk">' + md(b.s) + '</div>';
+      if (b.t === 'meta') return '<p class="note">' + md(b.s) + '</p>';
       return '';
     }).join('');
   }
   var SECNAME = { goal: 'Goal', 'guided-walkthrough': 'Guided walkthrough', 'check-yourself': 'Check yourself',
     misconceptions: 'Misconceptions', 'what-it-covers': 'What it covers', 'key-ideas-in-order': 'Key ideas, in order',
-    'formulas-and-commands-to-remember': 'Formulas and commands', 'three-takeaways': 'Three takeaways', practice: 'Practice',
+    'formulas-and-commands-to-remember': 'Formulas and commands to remember', 'three-takeaways': 'Three takeaways', practice: 'Practice',
     'what-you-need-to-learn': 'What you need to learn', build: 'Build', 'done-when': 'Done when', pitfalls: 'Pitfalls' };
   function secLabel(s) { return s.k === 'level' ? s.name : s.k === 'step' ? 'Step ' + s.n : s.k === 'h3' ? (s.title || '') : (SECNAME[s.k] || ''); }
-  function bookSections(secs) {
-    return (secs || []).map(function (s) {
-      var lab = secLabel(s);
-      var cls = 'ulabel' + (s.k === 'level' ? ' lvl' : '') +
-        (s.k === 'guided-walkthrough' || s.k === 'check-yourself' || s.k === 'misconceptions' || s.k === 'what-it-covers' ? ' part' : '');
-      return (lab ? '<div class="' + cls + '">' + esc(lab) + '</div>' : '') + bookBlocks(s.b);
+  function secs(obj, k) { return (obj.sections || []).filter(function (s) { return s.k === k; }); }
+  function sec(obj, k) { return secs(obj, k)[0] || null; }
+
+  /* the six rungs of one thing, only the chosen one showing unless "all" */
+  function levelsHTML(obj) {
+    var out = '';
+    secs(obj, 'level').forEach(function (s) {
+      var i = LVL_NAMES.indexOf(s.name); if (i < 0) return;
+      out += '<article class="lvl ' + LVL_KEYS[i] + '" data-level="' + LVL_KEYS[i] + '"' + (ladder.all || i === ladder.lvl ? '' : ' hidden') + '>' +
+        '<div class="sub">' + esc(s.name) + '</div>' + bookBlocks(s.b) + '</article>';
+    });
+    return out;
+  }
+  function segHTML() {
+    return '<div class="segwrap">' +
+      '<div class="lg lg-bar lg-seg" id="lvlseg" role="tablist">' + LVL_SHORT.map(function (n, i) {
+        return '<div class="lg-seg-item' + (i === ladder.lvl ? ' is-active' : '') + '" role="tab">' + n + '</div>';
+      }).join('') + '</div></div>';
+  }
+  function readingWord() { return ladder.all ? 'Reading every level' : 'Reading at: ' + LVL_NAMES[ladder.lvl]; }
+  function toplineHTML(back, pos) {
+    return '<div class="topline"><button class="pos" data-go="' + back + '">' + esc(pos) + '</button>' +
+      '<span class="now"><span data-book-now>' + esc(readingWord()) + '</span>' +
+      '<button class="all" data-book-all>' + (ladder.all ? 'One level' : 'All six levels') + '</button></span></div>';
+  }
+  /* re-apply the chosen level to a rendered page without rebuilding it */
+  function applyLevel() {
+    var root = app.querySelector('.book'); if (!root) return;
+    root.classList.toggle('all', ladder.all);
+    root.querySelectorAll('.lvl').forEach(function (el) {
+      var on = el.getAttribute('data-level') === LVL_KEYS[ladder.lvl];
+      el.hidden = !ladder.all && !on;
+      el.classList.toggle('cur', on);
+    });
+    root.querySelectorAll('[data-book-now]').forEach(function (el) { el.textContent = readingWord(); });
+    root.querySelectorAll('[data-book-all]').forEach(function (el) { el.textContent = ladder.all ? 'One level' : 'All six levels'; });
+    root.querySelectorAll('.tmx .lv').forEach(function (el) { el.classList.toggle('cur', el.getAttribute('data-level') === LVL_KEYS[ladder.lvl]); });
+    var seg = document.getElementById('lvlseg');
+    if (seg && seg.lgSelect) seg.lgSelect(ladder.lvl);
+    saveLadder();
+  }
+
+  /* ---- words: every term a page uses, explained at all six rungs ---------- */
+  function termPanelHTML(t) {
+    var lv = (t.levels || []).map(function (s, i) {
+      return '<div class="lv' + (i === ladder.lvl ? ' cur' : '') + '" data-level="' + LVL_KEYS[i] + '"><span class="lk ' + LVL_KEYS[i] + '">' + esc(LVL_NAMES[i]) + '</span> ' + md(s) + '</div>';
     }).join('');
+    return '<div class="tmx"><div class="tt">' + esc(t.term) + '</div>' + (t.def ? '<p class="d">' + md(t.def) + '</p>' : '') + lv + '</div>';
   }
-  function lessonRow(deckId, it) {
-    return '<li><button class="ledger mid" data-go="#/d/' + deckId + '/l/' + it.id + '"><span class="lname">' + md(it.title) + '</span>' +
-      '<span class="lval word">' + esc(it.kind === 'lesson' ? 'Lesson ' + it.n : 'Topic') + '</span></button></li>';
+  function wordsHTML(bk, ids) {
+    var list = (ids || []).map(function (i) { return bk.terms[i]; }).filter(Boolean);
+    if (!list.length) return '';
+    return '<details class="guide words"><summary>Words used here<span class="cnt">' + list.length + '</span></summary><div class="gb">' +
+      list.map(function (t) {
+        return '<div class="term"><button class="tq" data-term="' + t.id + '"><span class="k">' + esc(t.term) + '</span>' +
+          (t.def ? '<span class="d">' + md(t.def) + '</span>' : '') + '</button></div>';
+      }).join('') + '</div></details>';
   }
+  function beginTerms(bk, ids) {
+    termCtx = { bk: bk, list: (ids || []).map(function (i) { return bk.terms[i]; }).filter(Boolean), seen: {} };
+  }
+  function endTerms() { termCtx = null; }
+
+  /* ---- pieces ------------------------------------------------------------ */
+  function lessonWord(it) { return it.kind === 'lesson' ? 'Lesson ' + it.n : 'Topic'; }
+  function plistHTML(deckId, rows) {
+    return '<ul class="plist">' + rows.map(function (r) {
+      return '<li><button class="pl' + (r.done ? ' done' : '') + '" data-go="' + r.go + '"><span class="n">' + esc(r.n) + '</span><span class="t">' + mdT(r.t) + '</span></button></li>';
+    }).join('') + '</ul>';
+  }
+  function checkRow(deckId, it) {
+    var done = !!bookDone()[it.id];
+    return '<button class="chk' + (done ? ' on' : '') + '" data-book-done="' + it.id + '"><i></i><span>Done</span></button>';
+  }
+  function walkHTML(it) {
+    var intro = sec(it, 'guided-walkthrough'), steps = secs(it, 'step');
+    if (!steps.length) return '';
+    var lis = steps.map(function (st) {
+      var pre = [], doP = null, code = [], lines = null, rest = [];
+      var mode = 'pre';
+      st.b.forEach(function (b) {
+        if (b.t === 'p' && b.lead === 'Do this') { doP = b; mode = 'do'; return; }
+        if (b.t === 'p' && b.lead === 'What each line does') { mode = 'ln'; if (b.s) rest.push(b); return; }
+        if (b.t === 'code') { code.push(b); mode = 'code'; return; }
+        if (b.t === 'ul' && mode === 'ln') { lines = b; return; }
+        if (mode === 'pre') pre.push(b); else rest.push(b);
+      });
+      var ln = lines ? '<div class="ln"><div class="gk">What each line does</div><ul>' + lines.items.map(function (x) {
+        var m = /^(`[^`]+`)\s+[—–-]+\s+(.*)$/.exec(x);
+        return m ? '<li>' + md(m[1]) + '<span>' + md(m[2]) + '</span></li>' : '<li><span>' + md(x) + '</span></li>';
+      }).join('') + '</ul></div>' : '';
+      return '<li class="step' + (code.length ? '' : ' nocode') + '">' +
+        (pre.length ? '<div class="pre"><div class="gk">Before you do this</div>' + bookBlocks(pre.map(function (b) { var c = {}; for (var k in b) c[k] = b[k]; delete c.lead; return c; })) + '</div>' : '') +
+        (doP ? '<p class="do"><b>Do this.</b> ' + md(doP.s) + '</p>' : '') +
+        (code.length || ln ? '<div class="code">' + code.map(function (c) { return '<pre>' + esc(c.s) + '</pre>'; }).join('') + ln + '</div>' : '') +
+        (rest.length ? bookBlocks(rest) : '') +
+        '</li>';
+    }).join('');
+    return '<div class="row walk"><h3>Guided walkthrough</h3>' + (intro ? bookBlocks(intro.b).replace(/^<p>/, '<p class="note">') : '') + '<ol>' + lis + '</ol></div>';
+  }
+  function pagerHTML(deckId, bk, id) {
+    var i = bk.order.indexOf(id), prev = bk.items[bk.order[i - 1]], next = bk.items[bk.order[i + 1]];
+    if (!prev && !next) return '';
+    return '<nav class="pager">' +
+      (prev ? '<button class="prev" data-go="#/d/' + deckId + '/l/' + prev.id + '"><span class="n">Previous · ' + esc(lessonWord(prev)) + '</span><span class="t">' + mdT(prev.title) + '</span></button>' : '') +
+      (next ? '<button class="next" data-go="#/d/' + deckId + '/l/' + next.id + '"><span class="n">Next · ' + esc(lessonWord(next)) + '</span><span class="t">' + mdT(next.title) + '</span></button>' : '') +
+      '</nav>';
+  }
+  function bookMount(html) {
+    mount('<div class="book">' + html + segHTML() + '</div>', { book: true });
+    applyLevel();
+  }
+
+  /* the unit page: what to read, with progress, before the cards */
   function bookUnitHTML(deckId, unitId) {
     var bk = bookOf(deckId);
     if (!bk || !bk.byUnit[unitId]) return '';
-    var rows = '';
-    bk.byUnit[unitId].forEach(function (ph) {
-      rows += '<li><button class="ledger mid" data-go="#/d/' + deckId + '/b/' + ph.n + '"><span class="lname">' + esc(ph.title) + '</span><span class="lval word">Phase ' + ph.n + '</span></button></li>';
-      rows += ph.items.map(function (it) { return lessonRow(deckId, it); }).join('');
-    });
-    return '<div class="ulabel part">Read first</div><ul class="list tight">' + rows + '</ul><div class="ulabel part">Cards</div>';
+    var done = bookDone();
+    var lis = bk.byUnit[unitId].map(function (ph) {
+      var n = ph.items.length, dn = ph.items.filter(function (it) { return done[it.id]; }).length;
+      return '<li><button class="ph" data-go="#/d/' + deckId + '/b/' + ph.n + '"><span class="n"><span>Phase ' + ph.n + '</span><span class="pct">' + dn + ' / ' + n + '</span></span>' +
+        '<span class="t">' + esc(ph.title) + '</span><span class="bar"><i style="width:' + (n ? Math.round(dn / n * 100) : 0) + '%"></i></span></button>' +
+        '<ul>' + ph.items.map(function (it) {
+          return '<li><button class="' + (done[it.id] ? 'done' : '') + '" data-go="#/d/' + deckId + '/l/' + it.id + '"><span class="n">' + esc(lessonWord(it)) + '</span><span class="t">' + mdT(it.title) + '</span></button></li>';
+        }).join('') + '</ul></li>';
+    }).join('');
+    return '<div class="book idx-wrap"><div class="eyebrow">Read first</div><ol class="idx">' + lis + '</ol><div class="eyebrow cards">Cards</div></div>';
   }
+
   function viewPhase(deckId, n) {
     var d = S.getDeck(deckId), bk = bookOf(deckId), ph = bk && bk.phases[String(n)];
     if (!ph) return go('#/d/' + deckId);
     curDeckId = lastDeckId = deckId;
-    var u = d.unitById[ph.u];
-    var rows = ph.items.map(function (it) { return lessonRow(deckId, it); }).join('');
-    var res = ph.resources.map(function (r) {
-      return '<li><button class="ledger mid" data-go="#/d/' + deckId + '/r/' + r.id + '"><span class="lname">' + md(r.title) + '</span>' +
-        (r.lives ? '<span class="lsub">' + md(r.lives.split(' · ').slice(0, 3).join(' · ')) + '</span>' : '') + '</button></li>';
-    }).join('');
-    mount(
-      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + (u ? ' · Unit ' + u.n : '') + '</div>' +
-      '<div class="dhero longname"><button class="dn" data-go="#/d/' + deckId + '/u/' + ph.u + '">' + esc(ph.title) + '</button>' +
-        '<span class="dv word">Phase ' + ph.n + '</span></div>' +
-      (ph.meta ? '<p class="bp cap">' + md(ph.meta) + '</p>' : '') +
-      '<div class="prose">' + bookSections(ph.sections) + '</div>' +
-      '<div class="ulabel part">Lessons</div><ul class="list tight">' + rows + '</ul>' +
-      (res ? '<div class="ulabel part">Read and watch</div><ul class="list tight">' + res + '</ul>' : '') +
-      '<div class="prose">' + bookSections(ph.after) + '</div>'
-    );
+    var u = d.unitById[ph.u], done = bookDone();
+    beginTerms(bk, ph.terms);
+    var goal = sec(ph, 'goal'), learn = sec(ph, 'what-you-need-to-learn');
+    var lessons = plistHTML(deckId, ph.items.map(function (it) { return { n: lessonWord(it), t: it.title, go: '#/d/' + deckId + '/l/' + it.id, done: !!done[it.id] }; }));
+    var res = ph.resources.length ? plistHTML(deckId, ph.resources.map(function (r) {
+      var meta = (r.lives || '').split(' · ');
+      return { n: meta[0] || 'read', t: r.title, go: '#/d/' + deckId + '/r/' + r.id, done: false };
+    })) : '';
+    var after = (ph.after || []).map(function (s) { return '<div class="row"><h3>' + esc(secLabel(s)) + '</h3>' + bookBlocks(s.b) + '</div>'; }).join('');
+    var html = toplineHTML('#/d/' + deckId + '/u/' + ph.u, nice(d) + (u ? ' · Unit ' + u.n : '') + ' · Phase ' + ph.n) +
+      '<section class="page phase stack-l"><div class="stack">' +
+      '<div class="eyebrow">Phase ' + ph.n + (ph.meta ? ' · ' + mdT(ph.meta) : '') + '</div>' +
+      '<h2>' + esc(ph.title) + '</h2>' +
+      (goal ? '<p class="lede">' + bookBlocks(goal.b).replace(/^<p>|<\/p>$/g, '') + '</p>' : '') +
+      wordsHTML(bk, ph.terms) + '</div>' +
+      (learn ? '<div class="row"><h3>What you need to learn</h3>' + bookBlocks(learn.b) + '</div>' : '') +
+      '<div class="row"><h3>Lessons and topics</h3>' + lessons + '</div>' +
+      (res ? '<div class="row"><h3>Read and watch</h3><p class="note">Every one explained at every level, with a study guide.</p>' + res + '</div>' : '') +
+      after + '</section>';
+    endTerms();
+    bookMount(html);
   }
+
   function viewLesson(deckId, id) {
     var d = S.getDeck(deckId), bk = bookOf(deckId), it = bk && bk.items[id];
     if (!it) return go('#/d/' + deckId);
     curDeckId = lastDeckId = deckId;
     var ph = bk.phases[String(it.pn)], u = d.unitById[it.u];
-    var idx = bk.order.indexOf(id), next = bk.items[bk.order[idx + 1]];
-    var n = (it.cards || []).length;
-    mount(
-      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Phase ' + ph.n + (u ? ' · Unit ' + u.n : '') + '</div>' +
-      '<div class="dhero longname"><button class="dn" data-go="#/d/' + deckId + '/u/' + it.u + '">' + md(it.title) + '</button>' +
-        '<span class="dv word">' + esc(it.kind === 'lesson' ? 'Lesson ' + it.n : 'Topic') + '</span></div>' +
-      (it.lives ? '<p class="bp cap">' + md(it.lives) + '</p>' : '') +
-      '<div class="prose">' + bookSections(it.sections) + '</div>' +
-      (n ? '<button class="act" data-go="#/study/' + deckId + '/l:' + id + '/' + it.u + '">Study these ' + n + '</button>' : '') +
-      (next ? '<div class="modes"><button class="textbtn" data-go="#/d/' + deckId + '/l/' + next.id + '">Next · ' + md(next.title) + '</button></div>' : '')
-    );
+    var goal = sec(it, 'goal'), check = sec(it, 'check-yourself'), misc = sec(it, 'misconceptions');
+    var nq = check ? check.b.filter(function (b) { return b.t === 'qa'; }).length : 0;
+    var ncards = (it.cards || []).length;
+    beginTerms(bk, it.terms);
+    var extra = (it.sections || []).filter(function (s) { return ['goal', 'level', 'guided-walkthrough', 'step', 'check-yourself', 'misconceptions'].indexOf(s.k) < 0; });
+    var html = toplineHTML('#/d/' + deckId + '/u/' + it.u, nice(d) + (u ? ' · Unit ' + u.n : '') + ' · Phase ' + ph.n + ' · ' + lessonWord(it)) +
+      '<section class="page"><div class="ladder">' +
+      '<div class="head"><div class="hd"><div class="eyebrow">Six levels' + (nq ? ' · ' + nq + (nq === 1 ? ' question' : ' questions') + ' to check yourself' : '') + '</div>' + checkRow(deckId, it) + '</div>' +
+      '<h3 class="title">' + mdT(it.title) + '</h3>' +
+      (goal ? '<p class="lede">' + bookBlocks(goal.b).replace(/^<p>|<\/p>$/g, '') + '</p>' : '') +
+      (it.lives ? '<p class="note">' + mdT(it.lives) + '</p>' : '') +
+      wordsHTML(bk, it.terms) +
+      (extra.length ? extra.map(function (s) { return bookBlocks(s.b); }).join('') : '') +
+      '</div>' +
+      '<div class="lvls stack">' + levelsHTML(it) + '</div>' +
+      '<div class="side stack">' +
+        (check ? '<div class="row"><h3>Check yourself</h3>' + bookBlocks(check.b) + '</div>' : '') +
+        (misc ? '<div class="row"><h3>Misconceptions</h3>' + bookBlocks(misc.b) + '</div>' : '') +
+        (ncards ? '<div class="row"><button class="mode" data-go="#/study/' + deckId + '/l:' + id + '/' + it.u + '">Study these ' + ncards + ' cards</button></div>' : '') +
+      '</div>' +
+      walkHTML(it) +
+      '</div>' + pagerHTML(deckId, bk, id) + '</section>';
+    endTerms();
+    bookMount(html);
   }
+
   function viewResource(deckId, id) {
     var d = S.getDeck(deckId), bk = bookOf(deckId), r = bk && bk.res[id];
     if (!r) return go('#/d/' + deckId);
     curDeckId = lastDeckId = deckId;
     var ph = bk.resPhase[id];
-    mount(
-      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Phase ' + ph.n + ' · Read and watch</div>' +
-      '<div class="dhero longname">' + (r.url
-        ? '<a class="dn" href="' + esc(r.url) + '" target="_blank" rel="noopener">' + md(r.title) + '</a>'
-        : '<button class="dn" data-go="#/d/' + deckId + '/b/' + ph.n + '">' + md(r.title) + '</button>') + '</div>' +
-      (r.lives ? '<p class="bp cap">' + md(r.lives) + '</p>' : '') +
-      '<div class="prose">' + bookSections(r.sections) + '</div>' +
-      '<div class="modes"><button class="textbtn" data-go="#/d/' + deckId + '/b/' + ph.n + '">Phase ' + ph.n + '</button></div>'
-    );
+    var meta = (r.lives || '').split(' · ');
+    var metaHTML = meta.length ? '<div class="meta">' + meta.map(function (m, i) {
+      return i === 1 ? '<span class="cost' + (/free/i.test(m) ? ' free' : '') + '">' + esc(m) + '</span>' : '<span>' + mdT(m) + '</span>';
+    }).join('') + '</div>' : '';
+    beginTerms(bk, r.terms);
+    var guide = ['what-it-covers', 'key-ideas-in-order', 'formulas-and-commands-to-remember', 'three-takeaways', 'practice'].map(function (k) {
+      var s = sec(r, k); if (!s) return '';
+      if (k === 'practice') return '<div class="prac"><b>Practice.</b> ' + bookBlocks(s.b).replace(/^<p>|<\/p>$/g, '') + '</div>';
+      return '<div class="gk">' + esc(SECNAME[k]) + '</div>' + bookBlocks(s.b);
+    }).join('');
+    var html = toplineHTML('#/d/' + deckId + '/b/' + ph.n, nice(d) + ' · Phase ' + ph.n + ' · Read and watch') +
+      '<section class="page"><div class="res">' +
+      '<div class="head stack"><div class="eyebrow why">Explained at every level</div>' +
+      '<h3 class="title">' + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + mdT(r.title) + '</a>' : mdT(r.title)) + '</h3>' +
+      metaHTML + wordsHTML(bk, r.terms) + '</div>' +
+      '<div class="lvls stack">' + levelsHTML(r) + '</div>' +
+      (guide ? '<details class="guide"' + (isWide() ? ' open' : '') + '><summary>Study guide: learn it here</summary><div class="gb">' + guide + '</div></details>' : '') +
+      '</div></section>';
+    endTerms();
+    bookMount(html);
   }
   function lessonQueue(d, id) {
     var bk = bookOf(d.id), it = bk && bk.items[id];
     return it ? S.shuffle((it.cards || []).map(function (i) { return d.byId[i]; }).filter(Boolean)) : [];
   }
+
 
   /* ==========================================================================
      SESSION · shared engine for flashcards and multiple choice
@@ -1563,6 +1778,11 @@
       if (h !== '/' && par !== '#' + h) goReplace(par);   // a no-op at the root
       return;
     }
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && app.classList.contains('is-book')) {
+      var pg = app.querySelector('.pager .' + (e.key === 'ArrowRight' ? 'next' : 'prev'));
+      if (pg) { e.preventDefault(); go(pg.getAttribute('data-go')); }
+      return;
+    }
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       var idx = tabIdxOf(p[0] || '');
       var next = idx + (e.key === 'ArrowRight' ? 1 : -1);
@@ -1665,6 +1885,32 @@
       else if (window.Games && window.Games.onResize()) {}
       else route();
     }, 120);
+  });
+
+  /* the book: done marks, the all-levels word, term panels, the level switcher */
+  document.addEventListener('click', function (e) {
+    var dn = e.target.closest('[data-book-done]');
+    if (dn) { var on = !dn.classList.contains('on'); setBookDone(dn.getAttribute('data-book-done'), on); dn.classList.toggle('on', on); return; }
+    var al = e.target.closest('[data-book-all]');
+    if (al) { ladder.all = !ladder.all; applyLevel(); return; }
+    var tb = e.target.closest('[data-term]');
+    if (tb) {
+      var host = tb.closest('.term') || tb.closest('p, li, .lede, .note, .try, .d');
+      if (!host) return;
+      var open = host.nextElementSibling && host.nextElementSibling.classList && host.nextElementSibling.classList.contains('tmx') ? host.nextElementSibling : host.querySelector('.tmx');
+      if (open) { open.remove(); tb.classList.remove('on'); return; }
+      var root = app.querySelector('.book'), deckId = curDeckId, bk = deckId && bookOf(deckId);
+      var t = bk && bk.terms[tb.getAttribute('data-term')];
+      if (!t || !root) return;
+      var panel = document.createElement('div'); panel.innerHTML = termPanelHTML(t);
+      var el = panel.firstChild;
+      if (tb.closest('.term')) host.appendChild(el); else host.insertAdjacentElement('afterend', el);
+      tb.classList.add('on');
+    }
+  });
+  document.addEventListener('lg-change', function (e) {
+    if (!e.target || e.target.id !== 'lvlseg') return;
+    ladder.lvl = e.detail; ladder.all = false; applyLevel();
   });
 
   /* account: paste-token commit + disconnect + re-render when a pull merges */

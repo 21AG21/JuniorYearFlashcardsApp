@@ -525,6 +525,7 @@ sub,sup{ font-size:.68em; }
 /* --- short screens (skill §3): a review card must fit without scrolling ---- */
 @media (max-height:620px){
   #app{ padding-top:calc(env(safe-area-inset-top, 0px) + 22px); }
+  .book{ --toppad:calc(env(safe-area-inset-top, 0px) + 22px); }
   .head{ margin-bottom:var(--s-3); }
   .list.tight{ gap:12px; }
   .ledger .lname,.ledger .lval{ font-size:clamp(28px,11vw,40px); }
@@ -635,27 +636,198 @@ sub,sup{ font-size:.68em; }
   *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
 }
 
-/* ---- the book: course text a deck may carry, read in full before the cards ---- */
-.prose{ max-width:62ch; }
-.bp{ margin:0 0 14px; font-size:19px; line-height:1.5; color:var(--ink); letter-spacing:-.005em; }
-.bp.cap{ font-size:var(--t-caption); color:var(--muted); margin:-6px 0 var(--s-3); }
-.bp .k{ display:inline-block; margin-right:8px; }
-.bp.lead{ color:var(--ink-soft); }
-.bl{ margin:0 0 14px; padding-left:1.15em; font-size:19px; line-height:1.5; color:var(--ink); }
-.bl li{ margin:0 0 6px; }
-.bl li::marker{ color:var(--muted); }
-.bcode{ margin:0 0 16px; padding:2px 0 2px 12px; border-left:1.5px solid var(--hair); overflow-x:auto;
-  font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--ink-soft); white-space:pre; -webkit-overflow-scrolling:touch; }
-.bcode code{ font:inherit; }
-.bp code,.bl code,.qrow code,.lname code,.textbtn code{ font:inherit; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.92em; }
-.term{ font-weight:500; color:var(--ink); }
-.prose a{ color:inherit; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; }
-.dhero a.dn{ display:block; color:var(--ink-soft); text-decoration:none; }
-.dhero .dv.word{ font-size:17px; font-weight:500; letter-spacing:-.01em; align-self:center; }
-.ulabel.lvl{ margin-top:var(--s-5); }
-.ulabel.part{ margin-top:var(--s-5); padding-top:var(--s-3); border-top:1px solid var(--hair-soft); }
-.qrow.brow{ margin:0 0 12px; }
-.qrow.brow .qq{ font-size:19px; }
-.qrow.brow .qa{ margin-top:8px; }
-.qrow.brow .qa .bp{ font-size:17px; color:var(--ink-soft); }
-#app.is-wide .pane-r .bcode{ max-width:860px; }
+/* ==========================================================================
+   THE BOOK — the Six Ladders reader, matched to the course's own page: one
+   level at a time on a ladder, each rung its own color, the walkthrough
+   and the check after the explanation.
+   ========================================================================== */
+:root{ --wall:#ffffff; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --wall:#161618; } }
+:root[data-theme="dark"]{ --wall:#161618; }
+
+.book{ font-size:16px; line-height:1.5; letter-spacing:0; }
+.book h1,.book h2,.book h3,.book h4,.book p,.book ul,.book ol{ margin:0; }
+.book ul,.book ol{ padding-left:1.15em; }
+.book li{ margin:0; } .book li+li{ margin-top:4px; }
+.book p{ max-width:68ch; }
+.book b{ font-weight:650; }
+.book code{ font:.86em/1.4 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink); letter-spacing:0; }
+.book pre{ margin:0; padding:12px 0; font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink);
+  border-top:1px solid var(--hair-soft); border-bottom:1px solid var(--hair-soft);
+  white-space:pre-wrap; overflow-wrap:anywhere; max-width:100%; }
+.book a{ color:inherit; text-underline-offset:3px; text-decoration-thickness:1px; text-decoration-color:var(--hair); }
+.book button{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; text-align:left; cursor:pointer; }
+.book .eyebrow{ font-size:13.5px; font-weight:650; color:var(--ink-soft); letter-spacing:.01em; }
+.book .note{ font-size:13.5px; color:var(--ink-soft); line-height:1.45; max-width:62ch; }
+.book .lede{ font-size:clamp(16px,2.2vw,18px); line-height:1.55; color:var(--ink); max-width:62ch; }
+.book .stack{ display:flex; flex-direction:column; gap:var(--s-3); }
+.book .stack-l{ display:flex; flex-direction:column; gap:var(--s-5); }
+.book .page{ display:flex; flex-direction:column; gap:var(--s-4); padding-bottom:var(--s-4); }
+.book .page>h2,.book .phase>h2{ font-size:clamp(26px,5.4vw,38px); font-weight:500; letter-spacing:-.025em; line-height:1.12; text-wrap:balance; }
+.book .row{ display:flex; flex-direction:column; gap:10px; border-top:1px solid var(--hair-soft); padding-top:18px; }
+.book .row h3{ font-size:clamp(19px,3.4vw,22px); font-weight:600; letter-spacing:-.018em; line-height:1.22; }
+.book .gk{ font-size:12.5px; font-weight:680; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+.book .learn li{ font-size:15.5px; line-height:1.5; }
+.book details{ border-top:1px solid var(--hair-soft); padding:10px 0; }
+.book summary{ cursor:pointer; list-style:none; font-size:15.5px; line-height:1.5; font-weight:600; }
+.book summary::-webkit-details-marker{ display:none; }
+.book details .a{ margin-top:8px; font-size:15.5px; color:var(--ink-soft); max-width:68ch; }
+.book details[open] summary{ color:var(--ink); }
+
+/* topline: where you are, and the rung you are reading at */
+/* --toppad is the reading pane's own top padding: the line pins past it and
+   paints over it, so nothing ever shows above the line */
+.book{ --toppad:calc(env(safe-area-inset-top, 0px) + 30px); }
+.book .topline{ position:sticky; top:calc(-1 * var(--toppad)); z-index:4; background:var(--ground);
+  display:flex; justify-content:space-between; align-items:baseline; gap:8px 20px; flex-wrap:wrap;
+  margin:calc(-1 * var(--toppad)) 0 4px;
+  padding:var(--toppad) 0 10px;
+  border-bottom:1px solid var(--hair-soft); font-size:13.5px; font-weight:650; color:var(--ink-soft); line-height:1.3; }
+.book .topline .now{ color:var(--ink); white-space:nowrap; display:flex; gap:14px; align-items:baseline; }
+.book .topline .all{ color:var(--ink-soft); font:inherit; font-weight:650; }
+.book .topline .all:active{ opacity:.5; }
+.book .topline .pos{ min-width:0; color:var(--ink-soft); font-weight:650; }
+.book .topline .pos:active{ opacity:.55; }
+
+/* the ladder: head, six rungs, the side, the walkthrough */
+.book .ladder{ display:flex; flex-direction:column; gap:var(--s-3); }
+.book .ladder>.head{ display:flex; flex-direction:column; gap:var(--s-3); }
+.book .ladder h3.title,.book .res h3.title{ font-size:clamp(24px,4.6vw,34px); font-weight:520; letter-spacing:-.022em; line-height:1.16; text-wrap:balance; }
+.book .hd{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; }
+.book .chk{ display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:650; color:var(--ink-soft); padding:6px 0; white-space:nowrap; user-select:none; }
+.book .chk i{ width:18px; height:18px; border:1.5px solid var(--hair); border-radius:5px; background:var(--wall); display:grid; place-content:center; }
+.book .chk i::before{ content:""; width:10px; height:10px; border-radius:2px; background:var(--ink); transform:scale(0); transition:transform .12s ease; }
+.book .chk.on i::before{ transform:scale(1); }
+.book .chk.on span{ color:var(--ink); }
+.book .lvls{ display:flex; flex-direction:column; gap:var(--s-3); min-width:0; }
+.book [hidden]{ display:none !important; }
+.book .lvl{ display:flex; flex-direction:column; gap:12px; border-left:2px solid var(--lc,var(--hair)); padding:2px 0 2px 16px; }
+.book .lvl{ --lc:var(--ink); }
+.book.all .lvl{ --lc:var(--hair); }
+.book.all .lvl .sub{ color:var(--ink-soft); }
+.book.all .lvl.cur{ --lc:var(--ink); }
+.book.all .lvl.cur .sub{ color:var(--ink); }
+.book .lvl .sub{ font-size:13.5px; font-weight:680; color:var(--lc); }
+.book .lvl p{ font-size:16px; line-height:1.55; max-width:68ch; }
+.book .lvl.k5 p{ font-size:clamp(17px,2.3vw,19px); line-height:1.5; }
+.book .lvl .try{ color:var(--ink); font-size:15.5px; }
+.book .lvl .try b{ font-weight:680; }
+.book .side{ min-width:0; }
+.book .mode{ padding:12px 0; font-size:14px; font-weight:640; color:var(--ink-soft); }
+.book .mode:active{ opacity:.5; }
+.book .walk ol{ display:flex; flex-direction:column; gap:28px; padding-left:0; list-style:none; counter-reset:step; }
+.book .walk li.step{ display:flex; flex-direction:column; gap:12px; border-top:1px solid var(--hair-soft); padding-top:18px; counter-increment:step; }
+.book .walk li.step:first-child{ border-top:0; padding-top:0; }
+.book .walk .pre{ display:flex; flex-direction:column; gap:8px; }
+.book .walk .pre p{ font-size:15.5px; line-height:1.55; max-width:70ch; }
+.book .walk .pre .gk{ color:var(--ink); }
+.book .walk .do{ font-size:16px; line-height:1.5; max-width:70ch; }
+.book .walk .do b{ font-weight:680; }
+.book .walk .do b::before{ content:counter(step) ". "; }
+.book .walk pre{ margin-top:0; white-space:pre-wrap; overflow-wrap:anywhere; }
+.book .walk .code{ display:flex; flex-direction:column; gap:12px; min-width:0; }
+.book .walk .ln ul{ list-style:none; padding:0; display:flex; flex-direction:column; gap:8px; }
+.book .walk .ln li{ display:flex; flex-direction:column; gap:2px; font-size:14.5px; line-height:1.45; }
+.book .walk .ln li code{ font-size:12.5px; color:var(--ink); white-space:pre-wrap; word-break:break-word; }
+.book .walk .ln li span{ color:var(--ink-soft); }
+
+/* resources: title links out, meta, rungs, the study guide */
+.book .res{ display:flex; flex-direction:column; gap:12px; }
+.book .res h3.title a{ text-decoration-color:var(--hair); }
+.book .res .meta{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:13.5px; color:var(--muted); align-items:center; }
+.book .res .meta .cost.free{ color:var(--ink); font-weight:600; }
+.book .res .eyebrow.why{ font-weight:600; }
+.book .res .lvls{ gap:10px; }
+.book details.guide{ border-top:0; border-left:2px solid var(--hair); padding:2px 0 2px 16px; margin-top:2px; }
+.book details.guide>summary{ font-size:14px; font-weight:650; color:var(--ink-soft); display:flex; gap:10px; align-items:baseline; }
+.book details.guide>summary::after{ content:'show'; color:var(--muted); font-weight:500; font-size:13px; }
+.book details.guide[open]>summary::after{ content:'hide'; }
+.book details.guide[open]>summary{ color:var(--ink); }
+.book .guide .gb{ display:flex; flex-direction:column; gap:16px; padding-top:12px; max-width:72ch; }
+.book .guide p{ font-size:15.5px; line-height:1.55; }
+.book .guide ol,.book .guide ul{ display:flex; flex-direction:column; gap:9px; padding-left:1.25em; }
+.book .guide li{ font-size:15.5px; line-height:1.5; }
+.book .guide pre{ font-size:13px; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+.book .guide .prac{ border-left:2px solid var(--ink); padding-left:12px; }
+.book .guide .prac b{ font-weight:680; }
+
+/* words used here: every term, explained at every rung, in place */
+.book details.words>summary .cnt{ color:var(--muted); font-weight:500; font-size:13px; margin-left:8px; }
+.book .words .gb{ gap:0; padding-top:6px; max-width:none; }
+.book .term{ border-top:1px solid var(--hair-soft); }
+.book .term:first-child{ border-top:0; }
+.book .tq{ display:flex; flex-direction:column; gap:2px; width:100%; padding:10px 0; }
+.book .tq .k{ font-size:15.5px; font-weight:600; color:var(--ink); letter-spacing:-.01em; }
+.book .tq .d{ font-size:14.5px; color:var(--ink-soft); line-height:1.45; max-width:68ch; }
+.book .tq:active{ opacity:.55; }
+.book .tm{ font:inherit; color:inherit; text-decoration:underline dotted; text-decoration-color:var(--ink); text-underline-offset:3px; text-decoration-thickness:1.5px; }
+.book .tm.on{ text-decoration-style:solid; }
+.book .tmx{ display:flex; flex-direction:column; gap:10px; margin:8px 0 14px; padding:10px 0 10px 14px; border-left:2px solid var(--ink); }
+.book .tmx .tt{ font-size:13.5px; font-weight:680; color:var(--ink); }
+.book .tmx .d{ font-size:15.5px; color:var(--ink); }
+.book .tmx .lv{ font-size:14.5px; line-height:1.5; color:var(--ink-soft); max-width:68ch; }
+.book .tmx .lv.cur{ color:var(--ink); }
+.book .tmx .lk{ font-weight:680; color:var(--lc,var(--ink-soft)); margin-right:6px; }
+.book .term .tmx{ margin:0 0 10px; }
+
+/* lists: lessons of a phase, the pager */
+.book .plist{ display:flex; flex-direction:column; gap:6px; list-style:none; padding:0; margin:0; }
+.book .plist .pl{ display:flex; gap:10px; align-items:baseline; font-size:16px; line-height:1.4; }
+.book .plist .n{ font-size:12.5px; font-weight:650; color:var(--ink-soft); flex:none; min-width:5.5em; }
+.book .plist .t{ text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; text-decoration-thickness:1px; }
+.book .plist .pl.done .t{ color:var(--muted); }
+.book .plist .pl:active{ opacity:.55; }
+.book .pager{ display:flex; justify-content:space-between; gap:16px 28px; flex-wrap:wrap; padding-top:var(--s-3); border-top:1px solid var(--hair-soft); }
+.book .pager button{ display:flex; flex-direction:column; gap:3px; min-width:0; max-width:48%; }
+.book .pager .next{ text-align:right; margin-left:auto; align-items:flex-end; }
+.book .pager .n{ font-size:12.5px; font-weight:650; color:var(--muted); }
+.book .pager .t{ font-size:16px; font-weight:600; letter-spacing:-.012em; line-height:1.3; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; text-decoration-thickness:1px; }
+.book .pager button:active{ opacity:.55; }
+
+/* the unit page's index: phases with progress, their lessons beneath */
+.book.idx-wrap{ margin-top:var(--s-4); display:flex; flex-direction:column; gap:14px; }
+.book .eyebrow.cards{ margin-top:var(--s-3); }
+.book .idx{ display:flex; flex-direction:column; gap:18px; list-style:none; padding:0; margin:0; }
+.book .idx>li{ display:flex; flex-direction:column; gap:6px; }
+.book .idx .ph{ display:flex; flex-direction:column; gap:2px; width:100%; }
+.book .idx .n{ font-size:13.5px; font-weight:650; color:var(--ink-soft); display:flex; justify-content:space-between; gap:12px; }
+.book .idx .n .pct{ font-variant-numeric:tabular-nums; color:var(--muted); }
+.book .idx .t{ font-size:clamp(17px,2.2vw,19px); font-weight:520; letter-spacing:-.015em; line-height:1.25; }
+.book .idx .bar{ display:block; height:2px; background:var(--hair-soft); border-radius:1px; overflow:hidden; margin-top:4px; }
+.book .idx .bar i{ display:block; height:100%; background:var(--ink); }
+.book .idx ul{ list-style:none; padding:0 0 0 14px; margin:0; display:flex; flex-direction:column; gap:4px; }
+.book .idx ul button{ display:flex; flex-direction:row; gap:8px; font-size:14.5px; color:var(--ink-soft); align-items:baseline; width:100%; }
+.book .idx ul button .n{ font-size:12.5px; flex:none; }
+.book .idx ul button.done{ color:var(--muted); text-decoration:line-through; text-decoration-color:var(--hair); }
+.book .idx button:active{ opacity:.55; }
+
+/* the level switcher: the one glass control on a book page */
+.book .segwrap{ position:sticky; bottom:calc(env(safe-area-inset-bottom,0px) + 14px); display:flex; justify-content:center; gap:10px; align-items:center; flex-wrap:wrap;
+  padding-top:var(--s-4); pointer-events:none; z-index:5; }
+.book .segwrap .lg-seg{ pointer-events:auto; width:min(440px,100%); }
+.book .lg-seg-item{ padding:0 4px; white-space:nowrap; }
+#app.is-book{ padding-bottom:0; }
+
+@media (min-width:900px) and (min-height:500px){
+  .book .ladder{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--s-4) 48px; align-items:start; grid-auto-flow:dense; }
+  .book .ladder>.head{ grid-column:1 / -1; }
+  .book .ladder>.lvls{ grid-column:1; }
+  .book .ladder>.side{ grid-column:2; }
+  .book .ladder>.walk{ grid-column:1 / -1; }
+  .book .ladder>.side>.row:first-child{ border-top:0; padding-top:0; }
+  .book .walk li.step{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px 48px; align-items:start; }
+  .book .walk li.step>.pre{ grid-column:1; grid-row:1; }
+  .book .walk li.step>.do{ grid-column:1; grid-row:2; }
+  .book .walk li.step>.code{ grid-column:2; grid-row:1 / span 2; }
+  .book .walk li.step.nocode>.do{ grid-column:1 / -1; }
+  .book .walk .pre p,.book .walk .do{ max-width:none; }
+  .book .res{ display:grid; grid-template-columns:minmax(0,2fr) minmax(0,3fr); gap:12px 48px; align-items:start; }
+  .book .res>.head{ grid-column:1 / -1; }
+  .book .res>.lvls{ grid-column:1; }
+  .book .res>details.guide{ grid-column:2; margin-top:0; }
+  .book .lvl p{ font-size:17px; max-width:none; }
+  .book .guide .gb{ max-width:none; }
+  .book .guide p,.book .guide li{ font-size:16px; }
+  .book .learn li,.book details .a{ font-size:16px; }
+  .book{ --toppad:46px; }
+}
