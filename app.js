@@ -738,7 +738,10 @@
       var bits = [];
       var wt = weightText(u);
       if (wt) bits.push(wt);
-      if (anySeen && !us.seen) bits.push('not started');
+      // the column flips to mastery once anything is studied, and the count
+      // used to vanish with it — "0%" beside nothing is not progress
+      if (anySeen) bits.push(us.seen ? us.seen.toLocaleString() + ' of ' + us.total.toLocaleString() + ' seen'
+                                     : 'not started · ' + us.total.toLocaleString() + ' cards');
       if (us.due) bits.push(us.due.toLocaleString() + ' due');
       return '<li>' +
         '<div class="ulabel">Unit ' + u.n + '</div>' +
@@ -765,7 +768,8 @@
       // "Review 20" used to name the DUE count and then deal thirty, because
       // the deal is due cards plus the day's new ones. It names the deal.
       '<button class="act" data-go="#/study/' + deckId + '/smart">' +
-        (dealNow ? (st.due ? 'Review ' : 'Study ') + dealNow.toLocaleString() : 'Study') + '</button>' +
+        (dealNow ? (st.due && dealNow === st.due ? 'Review ' : 'Study ') + dealNow.toLocaleString()
+                 : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Quiz</button>' +
@@ -1234,8 +1238,8 @@
         h: location.hash.replace(/^#/, '') || '/',
         day: S.dayNum(),
         ids: sess.queue.map(function (c) { return c.i; }),
-        done: sess.done, planned: sess.planned, redo: sess.redo || 0,
-        again: sess.again, good: sess.good, easy: sess.easy,
+        done: sess.done, planned: sess.planned, lapsed: sess.lapsed || {},
+        again: sess.again, hard: sess.hard || 0, good: sess.good, easy: sess.easy,
         right: sess.right, wrong: sess.wrong,
         quiz: !!sess.quiz, typing: !!sess.typing, cram: !!sess.cram,
         mixed: !!sess.mixed, mode: sess.mode, unitId: sess.unitId || null,
@@ -1245,6 +1249,8 @@
   }
   function clearSess() { try { localStorage.removeItem(SESS_KEY); } catch (e) {} }
   var byId = null;
+  // a deck arriving adds cards the map has never seen
+  window.addEventListener('apdecks-deck', function () { byId = null; });
   function cardById(id) {
     if (!byId) {
       byId = {};
@@ -1255,6 +1261,21 @@
     }
     return byId[id];
   }
+  /* Are any of the decks still on their way? savedSess() runs at the FIRST
+     route, before a single deck file has landed, so every saved card id
+     resolved to nothing and the blob was thrown away as corrupt — the feature
+     deleted itself in exactly the case it was written for. */
+  function decksInFlight() {
+    return (S.getIndex().courses || []).some(function (c) { return !S.getDeck(c.id); });
+  }
+  /* is there a saved deal for this route that we simply cannot read yet? */
+  function savedPending() {
+    if (!decksInFlight()) return false;
+    var raw; try { raw = localStorage.getItem(SESS_KEY); } catch (e) { return false; }
+    if (!raw) return false;
+    var j; try { j = JSON.parse(raw); } catch (e) { return false; }
+    return !!j && j.day === S.dayNum() && j.h === (location.hash.replace(/^#/, '') || '/');
+  }
   /* the saved deal for THIS route, if it is still today's */
   function savedSess() {
     var raw;
@@ -1264,15 +1285,25 @@
     if (!j || j.day !== S.dayNum()) { clearSess(); return null; }
     if (j.h !== (location.hash.replace(/^#/, '') || '/')) return null;
     var q = (j.ids || []).map(cardById).filter(Boolean);
-    if (!q.length || q.length !== (j.ids || []).length) { clearSess(); return null; }
+    if (q.length !== (j.ids || []).length) {
+      // a deck that has not arrived is not a corrupt blob — never delete on it
+      if (!decksInFlight()) clearSess();
+      return null;
+    }
+    if (!q.length) { clearSess(); return null; }
     return {
       deck: j.deck ? S.getDeck(j.deck) : null, unitId: j.unitId, mode: j.mode,
       quiz: j.quiz, cram: j.cram, mixed: j.mixed, typing: j.typing, back: j.back,
-      queue: q, done: j.done || 0, planned: j.planned || q.length, redo: j.redo || 0,
-      again: j.again || 0, good: j.good || 0, easy: j.easy || 0,
+      queue: q, done: j.done || 0, planned: j.planned || q.length, lapsed: j.lapsed || {},
+      again: j.again || 0, hard: j.hard || 0, good: j.good || 0, easy: j.easy || 0,
       right: j.right || 0, wrong: j.wrong || 0,
       revealed: false, answered: false, typed: '', history: [], resumed: true
     };
+  }
+  /* the screen that waits for the decks so the saved deal can be read */
+  function waitingScreen() {
+    mount('<div class="head"><h1>Loading</h1><div class="sub">Finding where you were.</div></div>');
+    return true;
   }
   function resume() {
     var r = savedSess();
@@ -1286,6 +1317,7 @@
   function startSession(deckId, mode, unitId, quiz) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
+    if (savedPending()) return waitingScreen();
     if (resume()) return;
     // the daily path deals the chosen queue; fixed modes stay literal
     var lesson = (mode || '').indexOf('l:') === 0 ? mode.slice(2) : null;
@@ -1304,7 +1336,7 @@
       back: lesson ? '#/d/' + deckId + '/l/' + lesson : null,
       typing: !quiz && S.getSettings().typing,
       queue: queue, done: 0, planned: queue.length, redo: 0,
-      revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0,
+      revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0,
       history: [], answered: false, typed: ''
     };
     renderCard();
@@ -1313,6 +1345,7 @@
   /* review across every deck — the chosen queue: due first by value, new
      cards always seeping in, no deck owning the session */
   function startReview(limit) {
+    if (savedPending()) return waitingScreen();
     if (resume()) return;
     var queue = buildDaily(limit ? { limit: limit } : null);
     if (!queue.length) {
@@ -1346,7 +1379,7 @@
       deck: null, unitId: null, mode: 'due', quiz: false, mixed: true,
       typing: S.getSettings().typing,
       queue: queue, done: 0, planned: queue.length, redo: 0,
-      revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0, history: [], answered: false, typed: ''
+      revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0, history: [], answered: false, typed: ''
     };
     renderCard();
   }
@@ -1356,6 +1389,7 @@
   function startCram(deckId, unitId) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
+    if (savedPending()) return waitingScreen();
     if (resume()) return;
     if (unitId && !d.unitById[unitId]) return go('#/d/' + deckId);
     var cards = d.cards.filter(function (c) { return !unitId || c.u === unitId; });
@@ -1366,7 +1400,7 @@
       deck: d, unitId: unitId || null, mode: 'cram', cram: true, quiz: false,
       typing: S.getSettings().typing,
       queue: cards, done: 0, planned: cards.length, redo: 0,
-      revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0, history: [], answered: false, typed: ''
+      revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0, history: [], answered: false, typed: ''
     };
     renderCard();
   }
@@ -1389,6 +1423,13 @@
   }
 
   function cardDeckOf(c) { return S.getDeck(c.deck); }
+  /* how many distinct cards are still waiting to come round again */
+  function redoLeft() {
+    if (!sess || !sess.lapsed) return 0;
+    var n = 0;
+    sess.queue.forEach(function (c) { if (sess.lapsed[c.i]) n++; });
+    return n;
+  }
 
   function sessTop(c) {
     // One small label line: scope on the left, position on the right (skill §4.3).
@@ -1400,13 +1441,15 @@
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
       '<span class="pos num">' + Math.min(sess.done + 1, sess.planned) + ' of ' + sess.planned +
-        (sess.redo ? '<span class="redo"> · ' + sess.redo + ' to redo</span>' : '') + '</span>' +
+        (redoLeft() ? '<span class="redo"> · ' + redoLeft() + ' to redo</span>' : '') + '</span>' +
       '</div>';
   }
   // Done / Undo / Star as quiet text — the affordances survive, the chrome does not.
   function sessUtil(starred) {
     return '<div class="sess-util">' +
-      '<button class="iconbtn" data-exit aria-label="Close"><svg><use href="#i-close"/></svg></button>' +
+      // an unlabelled X twelve pixels under the grade row ended sessions by
+      // accident and read as decoration; it says the word it means
+      '<button class="sizebtn exit" data-exit>Done</button>' +
       // in quiz mode undo can only take back the just-given answer — the
       // control shows exactly when it can act
       // Undo holds its slot from the first card on. Appearing only from card
@@ -1516,9 +1559,13 @@
     // and after a scored miss the recommendation is Again, not Good
     var footer = sess.revealed
       ? '<div class="rate' + (sess.verdict && sess.verdict.ok === 'miss' && typeable(c) ? ' miss' : '') + '">' +
+          // Four grades, the standard set. There was no honest button for
+          // "I got it, but only just": Again buries a card you did know and
+          // Good sends one you half-knew a fortnight away.
           '<button class="r-again" data-grade="0"><span class="lab">Again</span><span class="when">' + S.preview(c.i, 0) + '</span></button>' +
-          '<button class="r-good" data-grade="1"><span class="lab">Good</span><span class="when">' + esc(passWord(c, 1)) + '</span></button>' +
-          '<button class="r-easy" data-grade="2"><span class="lab">Easy</span><span class="when">' + esc(passWord(c, 2)) + '</span></button>' +
+          '<button class="r-hard" data-grade="1"><span class="lab">Hard</span><span class="when">' + esc(passWord(c, 1)) + '</span></button>' +
+          '<button class="r-good" data-grade="2"><span class="lab">Good</span><span class="when">' + esc(passWord(c, 2)) + '</span></button>' +
+          '<button class="r-easy" data-grade="3"><span class="lab">Easy</span><span class="when">' + esc(passWord(c, 3)) + '</span></button>' +
         '</div>'
       : '<div class="rate"><button class="r-good" data-reveal><span class="lab">Show answer</span><span class="when kbd">space</span></button></div>';
 
@@ -1740,11 +1787,17 @@
     return { ok: 'miss', text: 'you wrote "' + typed.trim().slice(0, 60) + '"' };
   }
 
+  /* was `t` less than `ms` ago? A negative delta means the clock moved
+     backwards under us, which is not a recent gesture — it is a broken one. */
+  function recent(t, ms) { var d = Date.now() - (t || 0); return d >= 0 && d < ms; }
   function reveal() {
     if (!sess || sess.revealed) return;
     // …and the mirror: grading, then the same double tap flipping the next
     // card's answer before its question has been read
-    if (Date.now() - (sess.gradedAt || 0) < 320) return;
+    // a backwards clock — an NTP correction of sixty seconds is enough —
+    // made this delta negative, so the guard held for ever and no card would
+    // turn over or grade again. Only a real, forward, recent gesture blocks.
+    if (recent(sess.gradedAt, 320)) return;
     var c = sess.queue[0];
     if (sess.typing) {
       var input = document.getElementById('typein');
@@ -1777,7 +1830,7 @@
     // "Show answer" and "Again" overlap: a double tap used to reveal and grade
     // in one gesture, with the answer never on screen. The keyboard already
     // guarded this; the finger did not.
-    if (Date.now() - (sess.revealedAt || 0) < 320) return;
+    if (recent(sess.revealedAt, 320)) return;
     var c = sess.queue.shift();
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     // cram is practice: a pass must not shove a well-timed card into the
@@ -1790,11 +1843,16 @@
       // thirty honest Agains walked "1 of 20" to "31 of 50" and the session
       // could not end. Pressing the button that means "I did not know this"
       // must not extend the session, or the app teaches you to press Good.
-      sess.again++; sess.redo++;
-      sess.done--;                    // …and a re-queued card is not done yet
+      // …and the count beside the position is the number of CARDS waiting to
+      // come back, not the number of times Again has been pressed: five cards
+      // missed a dozen times each read "60 to redo" on a twenty-card session
+      sess.again++;
+      sess.lapsed[c.i] = 1;
+      sess.done--;                    // a re-queued card is not done yet
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
     }
-    else if (g === 1) sess.good++;
+    else if (g === 1) sess.hard++;
+    else if (g === 2) sess.good++;
     else sess.easy++;
     sess.done++;
     sess.revealed = false; sess.verdict = null; sess.typed = ''; sess.hinted = false;
@@ -1826,9 +1884,10 @@
     sess.done = Math.max(0, sess.done - 1);
     // planned only shrinks if this grade actually grew it (a quiz miss bumps
     // planned at Next time, not at answer time — h.rq records the truth)
-    if (h.rq) { sess.redo = Math.max(0, sess.redo - 1); sess.done++; }
+    if (h.rq) { delete sess.lapsed[h.card.i]; sess.done++; }
     if (h.g === 0) sess.again = Math.max(0, sess.again - 1);
-    else if (h.g === 1) sess.good = Math.max(0, sess.good - 1);
+    else if (h.g === 1) sess.hard = Math.max(0, sess.hard - 1);
+    else if (h.g === 2) sess.good = Math.max(0, sess.good - 1);
     else sess.easy = Math.max(0, sess.easy - 1);
     sess.revealed = true; sess.verdict = null;
     S.save(true);
@@ -1846,7 +1905,7 @@
     // the same cram guard as doGrade — a switched-to-MCQ cram stays honest
     var wrote = !sess.cram || !correct || S.isNew(c.i) || S.isDue(c.i);
     sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false, wrote: wrote, day: S.dayNum() });
-    if (wrote) S.grade(c.i, correct ? 1 : 0, examCap(c));
+    if (wrote) S.grade(c.i, correct ? 2 : 0, examCap(c));
     renderCard();
     // the result must be seen, not hunted for
     requestAnimationFrame(function () {
@@ -1858,7 +1917,7 @@
     if (!sess || !sess.answered) return;   // a ghost second tap must be inert
     var c = sess.queue.shift();
     if (!sess.choices[sess.picked] || !sess.choices[sess.picked].correct) {
-      sess.redo++; sess.done--;       // the miss comes back — the meter says so
+      sess.lapsed[c.i] = 1; sess.done--;   // the miss comes back — the meter says so
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
       var top = sess.history[sess.history.length - 1];
       if (top && top.card.i === c.i) top.rq = true;
@@ -1909,7 +1968,7 @@
       wrap.style.transform = '';
       if (hintL) hintL.style.opacity = 0;
       if (hintR) hintR.style.opacity = 0;
-      if (Math.abs(dx) > 92 && Math.abs(dx) > Math.abs(dy)) doGrade(dx < 0 ? 0 : 1);
+      if (Math.abs(dx) > 92 && Math.abs(dx) > Math.abs(dy)) doGrade(dx < 0 ? 0 : 2);
       else if (dy < -110 && Math.abs(dy) > Math.abs(dx)) starCurrent();
     }
     wrap.addEventListener('pointerup', end);
@@ -1936,10 +1995,11 @@
     // so the rows always sum to the hero
     var lines = [];
     if (sess.right || sess.wrong) lines.push(['Correct', sess.right], ['Missed', sess.wrong]);
-    if (sess.again || sess.good || sess.easy) lines.push(['Again', sess.again], ['Good', sess.good], ['Easy', sess.easy]);
+    if (sess.again || sess.hard || sess.good || sess.easy)
+      lines.push(['Again', sess.again], ['Hard', sess.hard || 0], ['Good', sess.good], ['Easy', sess.easy]);
     if (!lines.length) lines = sess.quiz
       ? [['Correct', 0], ['Missed', 0]]
-      : [['Again', 0], ['Good', 0], ['Easy', 0]];
+      : [['Again', 0], ['Hard', 0], ['Good', 0], ['Easy', 0]];
     var rows = lines.map(function (l) {
       // a tally is a fact, not a control — it used to be a focusable button
       // with its pointer events switched off, so a keyboard walked three
@@ -1966,7 +2026,9 @@
     var stk = S.streak();
     var moment = !dueLeft ? 'All caught up' :
       [3, 7, 14, 21, 30, 50, 75, 100, 150, 200].indexOf(stk) > -1 ? stk.toLocaleString() + '-day streak' :
-      plural(S.studiedToday(), 'card') + ' today';
+      // the day log counts grades given, not distinct cards: twenty cards
+      // missed and redone read "80 cards today", which is not what happened
+      plural(S.studiedToday(), 'review') + ' today';
     sess = null;
     // the session is over — a reload or a back gesture should land on the
     // deck, not silently deal a brand-new session (no hashchange fires here)
@@ -2203,7 +2265,10 @@
             '<span class="lname">' + esc(dayWord(i)) + '</span>' +
             '<span class="lval num">' + n.toLocaleString() + '</span></div></li>';
         }).join('') + '</ul>' +
-        '<div class="empty cap">What each day holds if you study every day, ' +
+        // the assumption, in full: the walk grades every card Good, because
+        // that is the only assumption available and the one the app's own
+        // interval preview makes
+        '<div class="empty cap">If you study every day and grade everything Good, ' +
         sizeNow + ' cards a session</div>' + missLine('the forecast');
     }
 
@@ -2243,11 +2308,11 @@
     var blank = !totals.seen && !S.studiedToday();
     var hero = blank ? 'Nothing tracked yet'
       : totals.known ? totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString()
-      : S.studiedToday() ? plural(S.studiedToday(), 'card') + ' today'
+      : S.studiedToday() ? plural(S.studiedToday(), 'review') + ' today'
       : totals.total.toLocaleString() + ' cards';
     var caption = [];
     if (blank) caption.push('Study a card and this fills in');
-    if (totals.known && S.studiedToday()) caption.push(plural(S.studiedToday(), 'card') + ' today');
+    if (totals.known && S.studiedToday()) caption.push(plural(S.studiedToday(), 'review') + ' today');
     if (S.streak() > 1) caption.push(S.streak().toLocaleString() + '-day streak');
     mount(
       '<div class="head">' +
@@ -2388,6 +2453,7 @@
   /* the starred session crosses decks, like Review does — a star is a note to
      self about a card, not about the course it happens to sit in */
   function startStarred() {
+    if (savedPending()) return waitingScreen();
     if (resume()) return;
     var list = starredCards();
     if (starFilter) {
@@ -2408,7 +2474,7 @@
       back: '#/starred',
       typing: S.getSettings().typing,
       queue: list, done: 0, planned: list.length, redo: 0,
-      revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0,
+      revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0,
       history: [], answered: false, typed: ''
     };
     renderCard();
@@ -2475,7 +2541,7 @@
       reqHTML('Request a feature') +
       // the keys, said once, where a keyboard exists — CSS hides this line on
       // coarse-pointer screens, where it would only be clutter
-      '<div class="keyline">Keyboard — space reveal · 1 2 3 grade · s star · n note · ' +
+      '<div class="keyline">Keyboard — space reveal · 1 2 3 4 grade · s star · n note · ' +
         '1–4 answer · enter next · / search · ← → tabs · esc back</div>' +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
@@ -2861,9 +2927,9 @@
         else {
           // a breath after the reveal, and the shortcut grades what the verdict
           // says — a scored miss must never default to Good
-          if (Date.now() - (sess.revealedAt || 0) < 300) return;
+          if (recent(sess.revealedAt, 300)) return;
           var miss = sess.verdict && sess.verdict.ok === 'miss' && typeable(sess.queue[0]);
-          doGrade(miss ? 0 : 1);
+          doGrade(miss ? 0 : 2);
         }
         return;
       }
@@ -2874,6 +2940,7 @@
         if (e.key === '1') return doGrade(0);
         if (e.key === '2') return doGrade(1);
         if (e.key === '3') return doGrade(2);
+        if (e.key === '4') return doGrade(3);
       }
       if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
       if (e.key === 's') { starCurrent(); return; }

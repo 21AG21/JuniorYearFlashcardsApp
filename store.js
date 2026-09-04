@@ -73,7 +73,12 @@
     sessionSize: 30,      // cards per session
     newPerSession: 20,    // unseen cards allowed into one session
     coreFirst: false,     // prioritise the high-yield cards
-    glass: true           // liquid glass material on/off
+    glass: true,          // liquid glass material on/off
+    // written by the app rather than by a settings row, and listed here so a
+    // sync merge knows them: an unknown key is no longer copied in
+    ladderDone: {},       // the Six Ladders lessons ticked off
+    gameBest: {},         // best score per game
+    gameMiss: {}          // the cards each game got wrong, for a replay
   };
 
   function newProfile(name) {
@@ -89,10 +94,18 @@
 
   var state = null;
   function stateKey() { return 'state.' + activeId; }
+  /* what a state blob has to be before anything is allowed to touch it */
+  function plain(o) { return !!o && typeof o === 'object' && !Array.isArray(o); }
   function loadState() {
-    state = read(stateKey(), null) || { cards: {}, log: {}, settings: {}, created: dayNum() };
-    if (!state.cards) state.cards = {};
-    if (!state.log) state.log = {};
+    state = read(stateKey(), null);
+    // A JSON scalar in this key — 123, "hello", true — used to pass the `||`
+    // guard and then throw on the very next line, which killed store.js before
+    // window.Store was ever assigned: the app stayed on "Loading" forever, on
+    // every reload, with no way back in because Reset lives inside it.
+    if (!plain(state)) state = { cards: {}, log: {}, settings: {}, created: dayNum() };
+    state.cards = saneAll(state.cards);
+    if (!plain(state.log)) state.log = {};
+    if (!plain(state.settings)) state.settings = {};
     var s = {};
     for (var k in DEFAULT_SETTINGS) s[k] = DEFAULT_SETTINGS[k];
     for (var j in (state.settings || {})) s[j] = state.settings[j];
@@ -143,7 +156,8 @@
     var changed = false;
     var rc = remote.cards || {};
     for (var id in rc) {
-      var mine = state.cards[id], theirs = rc[id];
+      var mine = state.cards[id], theirs = sane(rc[id]);
+      if (!theirs) continue;
       if (!mine || (theirs.t || 0) > (mine.t || 0) ||
           ((theirs.t || 0) === (mine.t || 0) && (theirs.r || 0) > (mine.r || 0))) {
         // the schedule is whichever side is newer, but a star is a wish, not a
@@ -164,16 +178,47 @@
         if ((theirs.na || 0) > (mine.na || 0)) { mine.na = theirs.na; changed = true; }
       }
     }
-    var rl = remote.log || {};
+    var rl = plain(remote.log) ? remote.log : {};
     for (var day in rl) {
-      if ((rl[day] || 0) > (state.log[day] || 0)) { state.log[day] = rl[day]; changed = true; }
+      // a day key is a date and a day value is a count of reviews — nothing
+      // else may enter the chart or the streak
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) continue;
+      var rn = Math.round(num(rl[day], 0, 100000, 0));
+      if (rn > (state.log[day] || 0)) { state.log[day] = rn; changed = true; }
     }
-    if (remote.settings && (remote._at || 0) > lastSyncAt) {
-      for (var k in remote.settings) state.settings[k] = remote.settings[k];
+    // Settings used to be copied in whole. A blob with sessionSize 0 made the
+    // daily review deal nothing and say "Nothing due" over four thousand
+    // untouched cards. Only known keys, only sane values.
+    if (plain(remote.settings) && (remote._at || 0) > lastSyncAt) {
+      for (var k in DEFAULT_SETTINGS) {
+        if (!(k in remote.settings)) continue;
+        var rv = remote.settings[k], dv = DEFAULT_SETTINGS[k];
+        if (typeof dv === 'number') rv = Math.round(num(rv, 1, 1000, dv));
+        else if (typeof dv === 'boolean') rv = !!rv;
+        else if (typeof dv === 'object') { if (!plain(rv)) continue; }
+        else if (typeof rv !== typeof dv) continue;
+        state.settings[k] = rv;
+      }
       changed = true;
     }
     return changed;
   }
+
+  /* ANOTHER TAB IS THE SAME DEVICE. Every save rewrote the whole profile from
+     this tab's own memory, so a PWA icon and a browser tab open at once threw
+     each other's grades away — six of eight, in the measured case. A foreign
+     write is folded in with the same rules a sync uses: last-touched wins per
+     card, the day log takes the larger count, settings stay this tab's own. */
+  global.addEventListener('storage', function (e) {
+    if (!e || e.key !== NS + '.' + stateKey() || !e.newValue) return;
+    var incoming;
+    try { incoming = JSON.parse(e.newValue); } catch (x) { return; }
+    if (!plain(incoming)) return;
+    if (mergeRemote({ cards: incoming.cards, log: incoming.log })) {
+      write(stateKey(), state);
+      try { global.dispatchEvent(new CustomEvent('apdecks-sync', { detail: { changed: true } })); } catch (x) {}
+    }
+  });
 
   function pull() {
     if (!token()) return Promise.resolve(false);
@@ -341,6 +386,36 @@
     return !!s.s;
   }
   function blank() { return { e: 2.5, r: 0, i: 0, d: dayNum(), l: 0, s: 0, sa: 0, n: -1, t: 0 }; }
+  /* A card record can arrive from a backup file or a sync blob, and JSON's
+     1e999 parses to Infinity: one non-finite interval put a card a hundred
+     million days out and left the grade buttons printing nonsense about it.
+     Every number that governs the schedule is pinned to a real range. */
+  function num(v, lo, hi, dflt) {
+    v = typeof v === 'number' ? v : parseFloat(v);
+    if (!isFinite(v)) return dflt;
+    return Math.min(hi, Math.max(lo, v));
+  }
+  function sane(c) {
+    if (!c || typeof c !== 'object' || Array.isArray(c)) return null;
+    var t = dayNum();
+    c.e = num(c.e, 1.3, 3.0, 2.5);
+    c.r = Math.round(num(c.r, 0, 9999, 0));
+    c.i = Math.round(num(c.i, 0, 36500, 0));
+    c.d = Math.round(num(c.d, t - 36500, t + 36500, t));
+    c.l = Math.round(num(c.l, 0, 9999, 0));
+    c.t = Math.round(num(c.t, 0, t + 36500, 0));
+    c.sa = Math.round(num(c.sa, 0, t + 36500, 0));
+    c.na = Math.round(num(c.na, 0, t + 36500, 0));
+    c.s = c.s ? 1 : 0;
+    if (c.nt != null && typeof c.nt !== 'string') delete c.nt;
+    return c;
+  }
+  function saneAll(cards) {
+    if (!cards || typeof cards !== 'object' || Array.isArray(cards)) return {};
+    var out = {};
+    for (var k in cards) { var v = sane(cards[k]); if (v) out[k] = v; }
+    return out;
+  }
 
   /* ---- the reader's own note on a card ----------------------------------
      A flashcard sticks when you say it in your own words: the mnemonic, the
@@ -387,10 +462,21 @@
     return (i / 365).toFixed(1) + ' y';
   }
 
+  /* 0 again · 1 hard · 2 good · 3 easy.
+     Hard is the grade the app was missing: you got it, but only just, and
+     neither of the other two tells the truth about that. It keeps the streak
+     — the card counts as answered — but grows the interval by a fifth instead
+     of by the ease factor, and takes a little ease with it, so a card you keep
+     scraping comes back sooner and sooner rather than drifting away. */
   function nextInterval(s, grade) {
     var e = s.e || 2.5, r = s.r || 0, i = s.i || 0;
     if (grade === 0) { return { e: Math.max(1.3, e - 0.2), r: 0, i: 0 }; }
     if (grade === 1) {
+      r += 1;
+      i = r === 1 ? 1 : Math.max(1, Math.round(Math.max(i, 1) * 1.2));
+      return { e: Math.max(1.3, e - 0.15), r: r, i: i };
+    }
+    if (grade === 2) {
       r += 1;
       i = r === 1 ? 1 : r === 2 ? 3 : Math.round(i * e);
       return { e: e, r: r, i: Math.max(1, i) };
@@ -543,9 +629,14 @@
   }
   function importData(text) {
     var j = JSON.parse(text);
-    if (!j || !j.state || !j.state.cards) throw new Error('Not an AP Decks backup');
+    // "truthy" is not a shape: a backup whose cards were the string "xxxx"
+    // passed this check, overwrote real progress, and then made every later
+    // grade throw — silently, for good
+    if (!j || !plain(j.state) || !plain(j.state.cards)) throw new Error('Not an AP Decks backup');
     state = j.state;
-    if (!state.log) state.log = {};
+    state.cards = saneAll(state.cards);
+    if (!plain(state.log)) state.log = {};
+    if (!plain(state.settings)) state.settings = {};
     loadStateMerge();
     save(true);
     return true;

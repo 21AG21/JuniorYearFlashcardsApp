@@ -479,12 +479,22 @@ button.hero-tap:active{ opacity:.55; }
 .rate button{ flex:1 1 0; min-width:0; background:none; border:0; padding:10px 0; min-height:44px; cursor:pointer; font:inherit;
   display:flex; flex-direction:column; align-items:flex-start; gap:2px; transition:opacity .12s ease; }
 /* each grade keeps the position it always had — only the dead space between
-   them now belongs to the nearest word */
-.rate button:nth-child(2):not(:last-child){ align-items:center; text-align:center; }
+   them now belongs to the nearest word. Four of them: the two in the middle
+   centre on their own share, so no word drifts under its neighbour. */
+.rate button:not(:first-child):not(:last-child){ align-items:center; text-align:center; }
 .rate button:last-child:not(:first-child){ align-items:flex-end; text-align:right; }
+/* four words on a 320px screen: the labels hold, the intervals step down */
+@media (max-width:400px){
+  .rate .lab{ font-size:16px; }
+  .rate .when{ font-size:11px; }
+}
+@media (max-width:340px){
+  .rate .lab{ font-size:15px; letter-spacing:-.02em; }
+  .rate .when{ font-size:10.5px; }
+}
 .rate button:active{ opacity:.5; }
 .rate .lab{ font-size:17px; font-weight:500; letter-spacing:-.01em; color:var(--ink-soft); }
-.rate .r-good .lab{ color:var(--ink); }
+.rate .r-good .lab{ color:var(--ink); }   /* the recommended grade carries the ink */
 /* a scored typing miss recommends Again — the heavier ink moves with it */
 .rate.miss .r-good .lab{ color:var(--ink-soft); }
 .rate.miss .r-again .lab{ color:var(--ink); }
@@ -499,6 +509,9 @@ button.hero-tap:active{ opacity:.55; }
 .sess-util .iconbtn[aria-pressed="true"]{ color:var(--ink); }
 /* an undo with nothing to undo keeps its place and says so by fading */
 .sess-util .iconbtn.ghost{ opacity:0; pointer-events:none; }
+/* the exit is a word now, and it stays where the X was — on the left, at the
+   start of the row, away from the auto-margin that pushes the others right */
+.sess-util .sizebtn.exit{ margin-left:11px; margin-right:auto; color:var(--ink-soft); }
 .sess-util .sizebtn + .sizebtn{ margin-left:16px; }
 .sess-util .sizebtn{ background:none; border:0; margin-left:auto; padding:12px 0; min-height:44px;
   font:inherit; font-size:13px; color:var(--muted); cursor:pointer; font-variant-numeric:tabular-nums; }

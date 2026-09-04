@@ -879,6 +879,9 @@
       '<span class="pos">' + posHtml + '</span></div>';
   }
   var doneAt = 0;   // the ghost half of a double tap must not dismiss the score
+  /* a clock that steps backwards makes a plain delta negative, and a guard
+     written as "less than 400ms ago" then holds for ever */
+  function gRecent(t, ms) { var d = Date.now() - (t || 0); return d >= 0 && d < ms; }
   function gameDone(id, score, total, label) {
     // a filtered round plays a different game than the hub's best describes —
     // bests are earned on the full game only
@@ -2228,11 +2231,11 @@
     var t = e.target;
     var el;
     if ((el = t.closest('[data-gagain]'))) {
-      if (Date.now() - doneAt < 400) return;   // the tap that ended the round
+      if (gRecent(doneAt, 400)) return;   // the tap that ended the round
       play(el.getAttribute('data-gagain')); return;
     }
     if (t.closest('[data-gmiss]')) {
-      if (Date.now() - doneAt < 400) return;
+      if (gRecent(doneAt, 400)) return;
       replayMisses(); return;
     }
     if (t.closest('[data-gfilter]') && st) {
