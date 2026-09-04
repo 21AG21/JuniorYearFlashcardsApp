@@ -20,10 +20,39 @@
   // set by the router when the active tab changes; the next mount slides in
   // from the direction of travel, then the hint is spent
   var pendingDir = '';
+  /* A session re-renders on every reveal, grade, star and mode flip, and
+     mount() replaces the whole screen — so the keyboard landed on <body> and
+     a desktop user tabbed thirteen times to get back to the grades. Remember
+     which control was focused and hand focus back to it, or to the grade row
+     that replaced it. */
+  var KEEPF = ['data-grade', 'data-reveal', 'data-pick', 'data-next', 'data-star',
+               'data-hint', 'data-qmode', 'data-undo', 'data-exit'];
+  function focusKey() {
+    var a = document.activeElement;
+    if (!a || !a.getAttribute || !app.contains(a)) return '';
+    for (var i = 0; i < KEEPF.length; i++) {
+      if (a.hasAttribute(KEEPF[i])) {
+        var v = a.getAttribute(KEEPF[i]);
+        return v ? '[' + KEEPF[i] + '="' + v + '"]' : '[' + KEEPF[i] + ']';
+      }
+    }
+    return '';
+  }
+  function restoreFocus(key) {
+    if (!key) return;
+    var el = app.querySelector(key) || app.querySelector('.rate button');
+    if (el) try { el.focus({ preventScroll: true }); } catch (e) {}
+  }
+
   function mount(html, opts) {
+    var keepFocus = opts && opts.session ? focusKey() : '';
     var dir = opts && opts.session ? '' : pendingDir;
     pendingDir = '';
-    var shell = '<div class="screen' + (dir ? ' ' + dir : '') + '">' + html + '</div>';
+    // a device that cannot write is a device losing every grade you give it —
+    // the store has known this all along and nothing ever said so
+    var warn = S.storageFailed && S.storageFailed()
+      ? '<div class="warnline">Not saving — this browser is refusing to store progress.</div>' : '';
+    var shell = '<div class="screen' + (dir ? ' ' + dir : '') + '">' + warn + html + '</div>';
     if (isWide()) {
       // Two full-height panes: the deck list lives on the left, every view on
       // the right — the same content as the phone, never extra chrome.
@@ -46,6 +75,7 @@
       var pr = app.querySelector('.pane-r');
       if (pr) pr.scrollTop = 0; else app.scrollTop = 0;
     }
+    restoreFocus(keepFocus);
   }
 
   /* When a row's name wraps tall, its number grows to match the text block —
@@ -97,12 +127,23 @@
   var curDeckId = null;          // which deck the right pane is about (marks the left row)
   var lastDeckId = null;         // remembered so "/" can open somewhere sensible on wide
 
+  /* real progress deserves a copy that survives the phone — nudge quietly
+     after a month, on a key Reset progress never clears. It lived inside
+     viewDecks(), which a wide screen never renders, so desktop never saw it. */
+  function backupNudge(seen) {
+    var lastBk = 0; try { lastBk = +localStorage.getItem('apdecks.backup.last') || 0; } catch (e) {}
+    if (!(seen > 50 && Date.now() - lastBk > 30 * 864e5)) return '';
+    return '<div class="foot"><button class="textbtn quiet" data-go="#/settings">' +
+      (lastBk ? 'Last backup ' + Math.round((Date.now() - lastBk) / 864e5) + ' days ago'
+              : 'Progress lives only on this phone — back it up') + '</button></div>';
+  }
+
   function decksListHTML() {
-    var ix = S.getIndex(), due = 0;
+    var ix = S.getIndex(), due = 0, seen = 0;
     var rows = ix.courses.map(function (c) {
       var d = S.getDeck(c.id);
       var st = d ? S.deckStats(d) : { due: 0 };
-      due += st.due;
+      due += st.due; seen += st.seen || 0;
       return '<li><button class="ledger' + (c.id === curDeckId ? ' on' : '') + '" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
@@ -114,6 +155,7 @@
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') + '</div>' +
       '<ul class="list tight">' + rows + '</ul>' +
+      backupNudge(seen) +
       '<div class="lnav">' +
         '<button class="textbtn" data-go="#/review">Review</button>' +
         '<button class="textbtn" data-go="#/search">Search</button>' +
@@ -156,7 +198,7 @@
     if (p[0] === 'weak') return '#/stats';
     return '#/';
   }
-  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+  function plural(n, one, many) { return n.toLocaleString() + ' ' + (n === 1 ? one : (many || one + 's')); }
   /* a US keyboard cannot type é — search folds accents off both sides so
      "societe" finds "société". Older engines without \\p{M} keep their text. */
   var MARKS = null;
@@ -349,7 +391,9 @@
 
   /* ---------------- theme ------------------------------------------------ */
   function applyTheme() {
-    // the theme is always the system's — one fewer thing to set
+    // the theme is always the system's — one fewer thing to set. The store's
+    // `theme` field and the CSS [data-theme] ladders stay for the viewer that
+    // pins a theme around us; nothing in here ever writes one.
     document.documentElement.removeAttribute('data-theme');
     var dark = matchMedia('(prefers-color-scheme: dark)').matches;
     document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
@@ -377,15 +421,7 @@
         '</button></li>';
     }).join('');
 
-    // real progress deserves a copy that survives the phone — nudge quietly
-    // after a month, on a key Reset progress never clears
-    var lastBk = 0; try { lastBk = +localStorage.getItem('apdecks.backup.last') || 0; } catch (e) {}
-    var nudge = '';
-    if (seen > 50 && Date.now() - lastBk > 30 * 864e5) {
-      nudge = '<div class="foot"><button class="textbtn quiet" data-go="#/settings">' +
-        (lastBk ? 'Last backup ' + Math.round((Date.now() - lastBk) / 864e5) + ' days ago'
-                : 'Progress lives only on this phone — back it up') + '</button></div>';
-    }
+    var nudge = backupNudge(seen);
 
     // The hero is the fact, and when there is one obvious action it IS the tap.
     var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
@@ -407,7 +443,16 @@
      ========================================================================== */
   function viewCourse(deckId) {
     var d = S.getDeck(deckId);
-    if (!d) return go('#/');
+    // a deck the index does not list is not ours — bounce. A deck the index
+    // DOES list but that failed to load is a different thing, and bouncing
+    // silently back to the deck list made it look like a dead row.
+    var listed = S.getIndex().courses.some(function (c) { return c.id === deckId; });
+    if (!d && !listed) return go('#/');
+    if (!d) return mount(
+      '<div class="head"><span class="k">' + esc(nice(deckId)) + '</span>' +
+      '<h1>Not downloaded</h1><div class="sub">This course did not load. Open it once with a connection.</div></div>' +
+      '<button class="act" onclick="location.reload()">Try again</button>' +
+      '<button class="textbtn" data-back>Decks</button>');
     curDeckId = lastDeckId = deckId;
     var st = S.deckStats(d);
     // units in course order, each under a small muted label — never a header (skill §4.2)
@@ -1458,8 +1503,11 @@
       searchState.q = input.value;
       clearTimeout(timer); timer = setTimeout(runSearch, 130);
     });
-    if (wantSearchFocus || !searchState.q) {
-      try { input.focus(); if (wantSearchFocus) input.select(); } catch (e) {}
+    // only "/" asks for the caret. Arrowing onto the tab used to park focus in
+    // the field, where the arrows then belonged to the text and the shortcut
+    // was dead; on a phone it also threw the keyboard up unasked.
+    if (wantSearchFocus) {
+      try { input.focus(); input.select(); } catch (e) {}
     }
     wantSearchFocus = false;
     runSearch();
@@ -1667,6 +1715,7 @@
         '<button class="cyc num" data-cycle="sessionSize">' + s.sessionSize + '</button></div>' +
       '<div class="setrow"><div class="sname">New cards</div>' +
         '<button class="cyc num" data-cycle="newPerSession">' + s.newPerSession + '</button></div>' +
+
       '</div>' +
 
       '<div class="data-list">' +
@@ -1678,7 +1727,7 @@
       // the keys, said once, where a keyboard exists — CSS hides this line on
       // coarse-pointer screens, where it would only be clutter
       '<div class="keyline">Keyboard — space reveal · 1 2 3 grade · s star · ' +
-        '1–9 answer · enter next · / search · ← → tabs · esc back</div>' +
+        '1–4 answer · enter next · / search · ← → tabs · esc back</div>' +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
   }
@@ -1761,6 +1810,7 @@
       S.setSetting('typing', !S.getSettings().typing);
       refocus(viewSettings, '[data-typing-cycle]'); return;
     }
+
     if (t.closest('[data-qmode]') && sess) {
       // an answered-but-not-advanced question would be re-served and graded a
       // second time — take the pending answer back before switching modes
@@ -1903,7 +1953,12 @@
     w.value = data;
     w.style.cssText = 'position:fixed;inset:auto 12px 12px 12px;height:36vh;z-index:99;font-size:12px';
     document.body.appendChild(w); w.select();
-    toast('Select and copy, then tap outside');
+    toast('Select and copy, then tap outside — or press Escape');
+    // Escape closes it: the box autofocuses, and the global handler ignores
+    // keys typed in a field, so without this there was no keyboard way out
+    w.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') { ev.stopPropagation(); w.remove(); }
+    });
     setTimeout(function () {
       document.addEventListener('click', function rm(ev) {
         if (ev.target === w) return;             // selecting inside must not dismiss
@@ -1922,7 +1977,16 @@
   document.addEventListener('keydown', function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;   // never a shortcut's shortcut
     var el = e.target;
-    if (el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable)) return;
+    var inField = el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable);
+    if (inField) {
+      // Escape is the one key a field may not swallow: typing mode autofocuses
+      // its input on every card, which left no way out of the session at all.
+      // Everywhere else it just gives the keyboard back.
+      if (e.key !== 'Escape') return;
+      try { el.blur(); } catch (e0) {}
+      if (sess) { e.preventDefault(); exitSession(); }
+      return;
+    }
     if (e.repeat) return;                        // holding a key never burns cards
     if (sess) {
       if (e.code === 'Space' || e.key === 'Enter') {
@@ -1946,7 +2010,17 @@
         if (e.key === '3') return doGrade(2);
       }
       if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
-      if (e.key === 's') starCurrent();
+      if (e.key === 's') { starCurrent(); return; }
+      // the bar is hidden in a session, but the arrows still mean "switch
+      // tabs" — one ArrowRight into Review used to be a one-way trip, with
+      // every further arrow swallowed by this branch
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        var si = lastTabIdx + (e.key === 'ArrowRight' ? 1 : -1);
+        if (si < 0 || si >= TAB_ROUTES.length) return;
+        e.preventDefault();
+        sess = null;
+        goTab(TAB_ROUTES[si]);
+      }
       return;
     }
     var h = location.hash.replace(/^#/, '') || '/';
@@ -2030,6 +2104,9 @@
     if (p[0] === 'settings') return viewSettings();
     if (p[0] === 'games' && window.Games) return window.Games.hub();
     if (p[0] === 'game' && p[1] && window.Games) return window.Games.play(p[1], p[2]);
+    // an unknown hash is the root, and on two panes the root is a course —
+    // falling through to viewDecks() painted the deck list in both panes
+    if (h !== '/') return goReplace('#/');
     return viewDecks();
   }
 
@@ -2057,6 +2134,10 @@
   // Enter, Space and the arrows come from the pill group itself (liquid-glass),
   // which fires the same lg-change a tap does — one path, not two.
 
+  // the store just found out it cannot write — repaint so the line shows
+  window.addEventListener('apdecks-storage', function () {
+    if (sess) renderCard(); else if (!window.Games || !window.Games.onResize()) route();
+  });
   window.addEventListener('hashchange', route);
   WIDE_MQ.addEventListener('change', function () {
     // never restart a session — or a live game round — over a resize
@@ -2136,7 +2217,10 @@
      boot
      ========================================================================== */
   if (window.Games) window.Games.init({
-    mount: mount, esc: esc, go: go, toast: toast, nice: nice, backbar: backbar
+    mount: mount, esc: esc, go: go, toast: toast, nice: nice, backbar: backbar,
+    // a game belongs to a course, and on two panes the rail's lit row has to
+    // say which — it used to stay on whatever course you came from
+    markDeck: function (id) { curDeckId = id || null; }
   });
   applyTheme();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);

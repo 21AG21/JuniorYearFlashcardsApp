@@ -381,18 +381,48 @@
   var GFILT = { timeline: 'apush', yearquiz: 'apush', langmatch: 'lang', langboard: 'lang',
                 apterms: 'apushunit' };
   var FILT = {};
-  function filtOpts(id) {
-    if (GFILT[id] === 'apush') return PERIODS.map(function (p) { return p[0]; });
+  /* A unit too thin to deal a round used to be offered anyway: choosing it
+     dealt nothing, the start fell back to All, and the word snapped back — so
+     the last unit of a deck looked unreachable. Thin units are simply not
+     offered. The fallbacks in startMatch/startBoard stay as the safety net. */
+  var playCache = {};
+  function playable(id, unitId) {
+    var k = id + '|' + unitId;
+    if (playCache[k] === undefined) {
+      playCache[k] =
+        id === 'langmatch' ? langPairs(unitId).length >= 4 :
+        id === 'langboard' ? termRound(9, unitId).length >= 4 :
+        id === 'apterms' ? namedRound(9, unitId).length >= 4 : true;
+    }
+    return playCache[k];
+  }
+  function filtList(id) {
+    var kind = GFILT[id];
+    if (kind === 'apush') return PERIODS.map(function (p) { return { label: p[0], v: p }; });
     // the US History deck's units ARE the nine periods — filter by unit id
-    var d = S.getDeck(GFILT[id] === 'apushunit' ? 'apush' : 'lang');
-    return d ? d.units.map(function (u) { return (GFILT[id] === 'apushunit' ? 'Period ' : 'Unit ') + u.n; }) : [];
+    var d = S.getDeck(kind === 'apushunit' ? 'apush' : 'lang');
+    if (!d) return [];
+    var pre = kind === 'apushunit' ? 'Period ' : 'Unit ';
+    var out = [];
+    d.units.forEach(function (u) {
+      if (playable(id, u.id)) out.push({ label: pre + u.n, v: u.id });
+    });
+    return out;
+  }
+  function filtOpts(id) {
+    return filtList(id).map(function (o) { return o.label; });
+  }
+  // a deep link carries the 1-based index into the OFFERED list, not the deck's
+  function filtIndexOf(id, val) {
+    var list = filtList(id);
+    for (var i = 0; i < list.length; i++) if (list[i].v === val) return i + 1;
+    return 0;
   }
   function filtVal(id) {          // apush → [label, from, to]; unit modes → unit id; null = all
     var fi = FILT[id] || 0;
     if (!fi) return null;
-    if (GFILT[id] === 'apush') return PERIODS[fi - 1];
-    var d = S.getDeck(GFILT[id] === 'apushunit' ? 'apush' : 'lang');
-    return d && d.units[fi - 1] ? d.units[fi - 1].id : null;
+    var list = filtList(id);
+    return list[fi - 1] ? list[fi - 1].v : null;
   }
   function filtCtl(id, tight) {
     if (!GFILT[id]) return '';
@@ -504,6 +534,7 @@
   function play(id, filt) {
     var g = GAMES[id];
     if (!g) return ctx.go('#/games');
+    if (ctx.markDeck) ctx.markDeck(g.deck);   // the rail lights this game's course
     clearTimeout(timer);
     clearInterval(sclock);
     // an optional 1-based filter index (a string off the hash) pre-scopes the
@@ -2179,7 +2210,10 @@
     if (location.hash.indexOf('#/game/') !== 0) return;   // app.js owns the rest
     if (e.repeat) return;                        // a held key is one press
     if (e.key === 'Escape') { ctx.go('#/games'); return; }
-    if (st && st.kind === 'quiz' && /^[1-9]$/.test(e.key)) {
+    // the circle and graph rounds that ask by choices render the very same
+    // numbered list a quiz does — there is no reason the keys stop working
+    if (st && (st.kind === 'quiz' || st.kind === 'graph' || st.kind === 'circle') &&
+        /^[1-9]$/.test(e.key)) {
       var els = document.querySelectorAll('.choices .choice[data-gc]');
       var ch = els[+e.key - 1];
       if (ch && !ch.disabled) { e.preventDefault(); ch.click(); }
@@ -2243,15 +2277,18 @@
       if (idx < 0) return out;
       var n = idx + 1;
       if (deckId === 'apush') {
-        if (namedRound(9, unitId).length >= 4) out.push([GAMES.apterms.name, '#/game/apterms/' + n]);
+        var an = filtIndexOf('apterms', unitId);
+        if (an) out.push([GAMES.apterms.name, '#/game/apterms/' + an]);
         if (n <= PERIODS.length) {
           out.push([GAMES.timeline.name, '#/game/timeline/' + n]);
           out.push([GAMES.yearquiz.name, '#/game/yearquiz/' + n]);
         }
       } else if (deckId === 'lang') {
-        // a thin unit would just bounce back to All — never offer it
-        if (langPairs(unitId).length >= 4) out.push([GAMES.langmatch.name, '#/game/langmatch/' + n]);
-        if (termRound(9, unitId).length >= 4) out.push([GAMES.langboard.name, '#/game/langboard/' + n]);
+        // a thin unit is not offered at all — it would only bounce back to All
+        var mn = filtIndexOf('langmatch', unitId);
+        if (mn) out.push([GAMES.langmatch.name, '#/game/langmatch/' + mn]);
+        var bn = filtIndexOf('langboard', unitId);
+        if (bn) out.push([GAMES.langboard.name, '#/game/langboard/' + bn]);
       }
       return out;
     }

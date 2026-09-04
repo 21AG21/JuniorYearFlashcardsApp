@@ -99,10 +99,19 @@
   loadState();
 
   var saveTimer = null, saveFailed = false;
+  /* a device that has stopped storing is losing every grade — say so the
+     moment it happens rather than on whatever screen renders next */
+  function flagSave(ok) {
+    var was = saveFailed;
+    saveFailed = !ok;
+    if (saveFailed !== was) {
+      try { global.dispatchEvent(new CustomEvent('apdecks-storage', { detail: saveFailed })); } catch (e) {}
+    }
+  }
   function save(now) {
     if (saveTimer) clearTimeout(saveTimer);
-    if (now) { saveFailed = !write(stateKey(), state); schedulePush(); return; }
-    saveTimer = setTimeout(function () { saveFailed = !write(stateKey(), state); schedulePush(); }, 120);
+    if (now) { flagSave(write(stateKey(), state)); schedulePush(); return; }
+    saveTimer = setTimeout(function () { flagSave(write(stateKey(), state)); schedulePush(); }, 120);
   }
 
   /* ---- account: sync ----------------------------------------------------
@@ -259,9 +268,19 @@
       });
     return loading[id];
   }
+  /* One unreachable deck must not blank the library. Promise.all rejected the
+     whole boot on the first failure, so a Ladders user whose private deck was
+     not in the offline cache lost all five public decks with it. Every deck is
+     tried; whatever arrives is what the app opens with. */
   function loadAll() {
     return loadIndex().then(function (ix) {
-      return Promise.all(ix.courses.map(function (c) { return loadDeck(c.id); }));
+      var got = 0;
+      return Promise.all(ix.courses.map(function (c) {
+        return loadDeck(c.id).then(function (d) { got++; return d; }, function () { return null; });
+      })).then(function (all) {
+        if (!got) throw new Error('no decks');    // nothing at all IS an error
+        return all.filter(Boolean);
+      });
     });
   }
 
