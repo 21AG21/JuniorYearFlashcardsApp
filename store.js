@@ -523,8 +523,10 @@
     s.d = d;
     return true;
   }
-  /* a whole spread is one write, not one per card */
-  function commit() { save(); }
+  /* A whole spread is one write, not one per card — and an immediate one:
+     the debounce is 120ms, and a deliberate one-shot action must not be
+     lost by a tab closed in the same breath. */
+  function commit() { save(true); }
 
   /* ---- session building -------------------------------------------------- */
   function shuffle(a) {

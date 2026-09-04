@@ -532,19 +532,31 @@
      waited longest is what returns first. Before this the only relief in the
      whole app was Reset progress, which throws the work away. */
   function spreadBacklog() {
-    var today = S.dayNum(), per = reviewSlots(), ids = [];
+    var today = S.dayNum(), per = reviewSlots(), ids = [], load = {};
     S.getIndex().courses.forEach(function (c) {
       var d = S.getDeck(c.id); if (!d) return;
-      d.cards.forEach(function (card) { if (S.isDue(card.i, today)) ids.push(card.i); });
+      d.cards.forEach(function (card) {
+        if (S.isDue(card.i, today)) { ids.push(card.i); return; }
+        // …and what the days ahead ALREADY hold. Filling each day to the cap
+        // while ignoring its existing load would have handed a day its
+        // session twice over, which is the promise this control makes.
+        var st = S.cs(card.i);
+        if (st && S.isSeen(card.i)) load[st.d] = (load[st.d] || 0) + 1;
+      });
     });
     if (ids.length <= per) return 0;
     ids.sort(function (a, b) { return ((S.cs(a) || {}).d || 0) - ((S.cs(b) || {}).d || 0); });
-    var moved = 0;
+    // A card due today that stays on today has still been placed. Counting
+    // writes instead of placements told a student who spread eleven cards
+    // that two had moved, which reads as a control that half-worked.
+    var wrote = 0, day = today;
     for (var k = 0; k < ids.length; k++) {
-      if (S.reschedule(ids[k], today + Math.floor(k / per))) moved++;
+      while ((load[day] || 0) >= per) day++;
+      load[day] = (load[day] || 0) + 1;
+      if (S.reschedule(ids[k], day)) wrote++;
     }
-    if (moved) S.commit();
-    return moved;
+    if (wrote) S.commit();
+    return ids.length;
   }
 
   function overdueCount() {
@@ -1995,6 +2007,9 @@
       else sess.wrong = Math.max(0, sess.wrong - 1);
       sess.answered = false; sess.picked = -1;
       S.save(true);
+      // the region was left holding the sentence for the answer just taken
+      // back — the only spoken statement on screen, and now false
+      announce('Undone \u2014 answer taken back');
       renderCard(); return;
     }
     var h = sess.history.pop();
@@ -2012,6 +2027,8 @@
     else if (h.g === 1) sess.hard = Math.max(0, sess.hard - 1);
     else if (h.g === 2) sess.good = Math.max(0, sess.good - 1);
     else sess.easy = Math.max(0, sess.easy - 1);
+    // the region was left holding the sentence for the grade just taken back
+    announce('Undone \u2014 ' + ['Again', 'Hard', 'Good', 'Easy'][h.g] + ' taken back');
     sess.revealed = true; sess.verdict = null;
     S.save(true);
     saveSess();
@@ -2450,7 +2467,7 @@
         }).join('') + '</ul>' +
         '<button class="textbtn quiet" data-go="#/stuck">' +
         (stuck.length > 3 ? 'All ' + stuck.length.toLocaleString() + ' sticking points' : 'Open') +
-        '</button>';
+        '</button>' + missLine('this list');
     }
 
     // a chart only earns its place with 7+ real data points (skill §7.13)
@@ -2594,7 +2611,10 @@
       backbar('Progress') +
       '<div class="head"><h1 class="uhead">Sticking points</h1>' +
       '<div class="sub">Nothing has been missed ' + STUCK_MIN + ' times. ' +
-      'When a card starts beating you, it lands here.</div></div>');
+      'When a card starts beating you, it lands here.</div></div>' +
+      // …and a course that did not load has no lapses to report, which at the
+      // limit is this very screen claiming nothing is stuck when things are
+      missLine('this list'));
     var today = S.dayNum();
     var deal = Math.min(all.length, S.getSettings().sessionSize || 30);
     mount(
@@ -2602,6 +2622,7 @@
       '<div class="head"><h1 class="uhead">Sticking points</h1>' +
       '<div class="sub">' + esc(plural(all.length, 'card')) + ' missed ' +
       STUCK_MIN + ' times or more</div></div>' +
+      missLine('this list') +
       '<button class="act" data-go="#/stuck/go">Study ' +
         (deal < all.length ? deal + ' of ' + all.length.toLocaleString() : 'these') + '</button>' +
       // the remedy, said once — and where it lives: the note control is on
