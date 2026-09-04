@@ -110,7 +110,9 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
     padding:42px 36px 40px calc(env(safe-area-inset-left, 0px) + 40px); }
   .pane-r{ flex:1 1 auto; height:100%; overflow-y:auto; overscroll-behavior-y:none;
     padding:46px calc(env(safe-area-inset-right, 0px) + 72px) 80px 72px; }
-  .pane-r .inner{ max-width:1280px; }
+  /* the wide layout capped its content and never centred it, so every pixel
+     of ink ended at x=1712 whatever the monitor — 848px of dead right at 2560 */
+  .pane-r .inner{ max-width:1280px; margin-inline:auto; }
   .pane-l .head h1{ font-size:clamp(30px, 2.3vw, 38px); }
   .pane-l .ledger .lname,.pane-l .ledger .lval{ font-size:clamp(22px, 1.8vw, 28px); }
 
@@ -127,10 +129,23 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   @media (max-height:720px){
     .pane-l .lnav .textbtn{ font-size:15px; padding:5px 0; min-height:34px; }
   }
+  /* …and on a REALLY short one it must stop sticking altogether. At 900x500 —
+     this breakpoint's own corner — the opaque nav sat over Calc BC, US History
+     and Ladders, slicing "Calc BC 891" through the middle in the pane's own
+     colour, so three of six courses were simply gone. */
+  @media (max-height:660px){
+    .pane-l .lnav{ position:static; margin-top:var(--s-4); }
+  }
+  /* on a tall monitor half the rail was empty ground between six 45px rows and
+     five 40px links — the rows take the air instead */
+  @media (min-height:1000px){ .pane-l .list.tight{ gap:22px; } }
   /* the rail is furniture — it never re-animates */
   .pane-l .head, .pane-l .list > li, .pane-l .lnav .textbtn{ animation:none; }
   /* the right pane scales up — same content, bigger type */
   .pane-r .head h1{ font-size:clamp(64px, 5vw, 92px); }
+  /* .uhead is the phone-sized utility heading and simply comes later in the
+     file, so Settings and Weak spots stayed at 40px beside a 92px Games */
+  .pane-r .head h1.uhead{ font-size:clamp(48px, 3.6vw, 64px); }
   .pane-r .dhero .dn,.pane-r .dhero .dv{ font-size:clamp(48px, 3.8vw, 72px); }
   .pane-r .dhero.longname .dn{ font-size:clamp(30px, 2.4vw, 42px); }
   .pane-r .card .q{ font-size:clamp(30px, 2.4vw, 40px); }
@@ -144,7 +159,11 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
      no grade word a metre from its neighbours */
   .pane-r .sess-top, .pane-r .card, .pane-r .rate, .pane-r .sess-util,
   .pane-r .qrow, .pane-r .searchbar, .pane-r .done-rows, .pane-r .backbar,
-  .pane-r .scoperow, .pane-r .qacts{ max-width:860px; }
+  .pane-r .scoperow, .pane-r .qacts,
+  /* …and the rows themselves, which the rule above never covered: a course
+     name and its percentage were 1,111px apart on a 1920 screen */
+  .pane-r .list, .pane-r .ledger, .pane-r .spark{ max-width:860px; }
+  .pane-r .spark{ max-width:520px; }
   .pane-r .setrow{ max-width:560px; }   /* a toggle never sits a metre from its name */
   .pane-r .data-list, .pane-r .reqwrap{ max-width:560px; }  /* the data rows keep the settings measure */
   .pane-r .lg-seg{ max-width:340px; }
@@ -156,7 +175,9 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
    clamped, because Safari can report a huge bottom inset that would float it
    half an inch up the screen. */
 .tabs{ position:fixed; z-index:40; left:0; right:0; margin-inline:auto;
-  bottom:clamp(10px, calc(env(safe-area-inset-bottom, 0px) - 22px), 28px);
+  /* the labels were landing INSIDE the home-indicator band: at a 34px inset
+     the clearance under them measured 0.7px, which is not a margin */
+  bottom:clamp(10px, calc(env(safe-area-inset-bottom, 0px) - 8px), 34px);
   width:calc(100vw - 24px); max-width:500px; }
 /* icon + label tabs, Phone-app style: content-sized items spread across the
    capsule, the pill hugging the active pair (kit default geometry) */
@@ -171,7 +192,13 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 .lg-tab span{ font-size:11.5px; letter-spacing:-.005em; }
 @media (max-width:360px){
   .lg-tabbar{ padding:4px 16px; }
-  .lg-tab span{ font-size:10.5px; }
+  .lg-tab span{ font-size:11px; }
+}
+/* at 280 the rhythm inverted: 22px of end padding against 4px between
+   "Progress" and "Settings" — the bar's own edges had more air than its words */
+@media (max-width:320px){
+  .lg-tabbar{ padding:4px 8px; }
+  .lg-tab{ min-width:40px; padding:0; }
 }
 .lg, .lg-btn, .lg-tab, .lg-seg-item, .lg-title, .lg-sub,
 .lg-search-input, .lg-header-title{ font-family:var(--font-sf); }
@@ -196,7 +223,10 @@ button.hero-tap:active{ opacity:.55; }
   font-size:var(--t-title); font-weight:430; letter-spacing:-.035em; line-height:1.16; text-align:left;
   transition:opacity .12s ease; }
 .dhero .dn:active,.dhero .dv:active{ opacity:.5; }
-.dhero .dn{ color:var(--ink-soft); min-width:0; }   /* the title always shows in full */
+.dhero .dn{ position:relative; color:var(--ink-soft); min-width:0; }   /* the title always shows in full */
+/* the name IS the back control here, so it gets the expander the other quiet
+   control words have: 33px of live region at 280px becomes 49px */
+.dhero .dn::after{ content:""; position:absolute; inset:-8px -12px; }
 .dhero .dv{ color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; }
 /* a wrapped name doesn't shrink — the number grows to the height of the text */
 .dhero.tallval{ align-items:center; }
@@ -229,6 +259,61 @@ button.hero-tap:active{ opacity:.55; }
    type steps down as well, so a one-word name like "Chemistry" still fits on
    one line instead of breaking across two. */
 @media (max-width:380px){ :root{ --t-row:clamp(23px,9.9vw,38px); } }
+/* A PHONE ON ITS SIDE. Every size in the scale is driven by vw, so a 64px hero
+   and 40px rows landed in a 320px-tall window: one of six deck rows was above
+   the tab bar at 568x320. On a short screen the scale has to answer the SHORT
+   dimension, and the fixed chrome has to give some of its 116px back. */
+@media (orientation:landscape) and (max-height:500px){
+  /* A GAME ON ITS SIDE. The prompt is sized against width, so a 9vw headline
+     took 230px of a 320px window and the board began below the fold. The
+     prompt answers the short side too, and the figure games put the figure and
+     their options side by side — the same block the wide layout uses. */
+  .gcur{ margin:var(--s-2) 0; }
+  .gcur .gname{ font-size:clamp(21px,min(9vw,10vh),34px); }
+  .gcur .gname.gsm{ font-size:clamp(17px,min(6.4vw,7vh),24px); }
+  .gcur .gname.gxs{ font-size:clamp(15px,min(5.2vw,5.8vh),20px); }
+  /* the prompt goes BESIDE the board, not above it: the headline column takes
+     a third and the play surface takes the rest, so both are on one screen */
+  /* …only where there IS a headline to move aside: a match game has no .gcur,
+     and squeezing its two columns into 66% of the width wrapped every pair */
+  #app.is-session.is-game:not(.is-wide):not(.is-book) .screen:has(.gcur){
+    display:grid; grid-template-columns:minmax(0,34%) minmax(0,1fr);
+    column-gap:22px; align-items:start; }
+  /* .figrow is display:contents, so its children are the grid items here —
+     they are matched as descendants, not as children of .screen */
+  #app.is-session.is-game:not(.is-wide) .screen .backbar,
+  #app.is-session.is-game:not(.is-wide) .screen .sess-top,
+  #app.is-session.is-game:not(.is-wide) .screen .gdone,
+  #app.is-session.is-game:not(.is-wide) .screen .warnline{ grid-column:1 / -1; }
+  #app.is-session.is-game:not(.is-wide) .screen .gcur{ grid-column:1; }
+  #app.is-session.is-game:not(.is-wide) .screen .ucwrap,
+  #app.is-session.is-game:not(.is-wide) .screen .tgwrap,
+  #app.is-session.is-game:not(.is-wide) .screen .choices,
+  #app.is-session.is-game:not(.is-wide) .screen .board,
+  #app.is-session.is-game:not(.is-wide) .screen .mcols,
+  #app.is-session.is-game:not(.is-wide) .screen .gline{ grid-column:2; }
+  .figrow .choices{ margin-top:var(--s-2); }
+  .ucwrap, .tgwrap{ justify-content:center; margin:0; }
+  .uc{ width:min(58vw, 400px, 56vh); }
+  .tg{ width:min(60vw, 480px, 92vh); }
+  .sess-top{ margin-bottom:var(--s-2); }
+  .backbar{ margin-bottom:2px; }
+  /* the boards get the height back that the headline was taking */
+  .board{ gap:8px 12px; margin-top:0; }
+  .mcols{ column-gap:28px; }
+  .choices{ margin-top:0; }
+  :root{
+    --t-hero:clamp(30px,7.2vh,38px);
+    --t-row:clamp(22px,6.2vh,28px);
+    --t-title:clamp(26px,7.4vh,34px);
+    --t-prompt:clamp(21px,5.6vh,26px);
+    --t-answer:clamp(17px,4.4vh,20px);
+    --tabh:calc(env(safe-area-inset-bottom, 0px) + 52px + 14px);
+  }
+  #app{ padding-top:calc(env(safe-area-inset-top, 0px) + 14px); }
+  /* the name and its count read as two unrelated things a screen apart */
+  .dhero{ max-width:460px; }
+}
 .ledger .lname{ font-size:var(--t-row); font-weight:430; color:var(--ink-soft); letter-spacing:-.03em; line-height:1.2;
   min-width:0; overflow-wrap:anywhere; overflow:hidden;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
@@ -268,7 +353,10 @@ button.hero-tap:active{ opacity:.55; }
   color:var(--ink-soft); cursor:pointer; letter-spacing:-.005em; }
 .textbtn:active{ opacity:.5; }
 .textbtn.quiet{ font-size:15px; color:var(--muted); font-weight:500; }
-.modes{ display:flex; flex-direction:column; align-items:flex-start; margin-top:var(--s-2); }
+/* stretch, not flex-start: a mode word's tap target is its row. At 280 the
+   "Quiz" button was 43px wide because the word is 43px wide. */
+.modes{ display:flex; flex-direction:column; align-items:stretch; margin-top:var(--s-2); }
+.modes .textbtn{ text-align:left; }
 .modes .textbtn{ padding:12px 0; min-height:52px; font-size:clamp(20px,5.8vw,26px); letter-spacing:-.02em; }
 
 /* --- study session: the card is text on the ground (skill §4.3) ----------- */
@@ -284,6 +372,27 @@ button.hero-tap:active{ opacity:.55; }
    twelve-tile board and its option list fall off the bottom unreachable */
 #app.is-session.is-game:not(.is-wide){ display:block; overflow-y:auto; -webkit-overflow-scrolling:touch; }
 #app.is-session.is-game:not(.is-wide) .screen{ display:block; flex:none; }
+/* A SHORT WINDOW gets the same escape hatch. Pinning the grades to the bottom
+   spends a fixed 150px on chrome, and what is left over is the stage: at
+   568x320, and at 250% browser zoom on a laptop, that left 69px — the answer
+   was sealed below the fold while Again/Good/Easy stayed reachable, so the
+   card could be graded by someone who never saw it. Below 560px tall the whole
+   screen scrolls instead, and the answer scrolls into view above the grades. */
+@media (max-height:560px){
+  #app.is-session:not(.is-wide){ display:block; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  #app.is-session:not(.is-wide) .screen,
+  #app.is-session:not(.is-wide) .session{ display:block; flex:none; min-height:0; }
+  #app.is-session:not(.is-wide) .cardstage{ flex:none; overflow:visible; }
+}
+/* THE TABLET TIER. Between 680px and the two-pane breakpoint the app was the
+   phone screen with wider margins: on a 768x1024 window the answer sat at the
+   top and Again/Good/Easy 578px below it, with nothing in between — 56% of the
+   viewport. The card and its grades belong together in the optical centre. */
+@media (min-width:700px) and (max-width:899px){
+  #app{ max-width:760px; }
+  #app.is-session:not(.is-wide) .cardstage{ flex:0 1 auto; }
+  #app.is-session:not(.is-wide) .session{ justify-content:center; }
+}
 #app.is-session:not(.is-wide) .rate{ margin-top:var(--s-3); }
 #app.is-session:not(.is-wide) .sess-util{ margin-top:12px; }
 .sess-top{ display:flex; align-items:baseline; gap:12px; margin-bottom:var(--s-4); }
@@ -299,7 +408,9 @@ button.hero-tap:active{ opacity:.55; }
 .sess-top .tick.dir{ font-size:1.08em; }
 .sess-top .tick.seg{ font-size:.82em; letter-spacing:.08em; }
 /* a filled dot is a question behind you, a hollow one is still ahead */
-.sess-top .dots{ font-size:9px; letter-spacing:.22em; color:var(--muted); line-height:1; }
+/* 9px was under the app's own floor — a twelve-dot run read as a grey smear,
+   and it is the only "how far through am I" signal a game has */
+.sess-top .dots{ font-size:11px; letter-spacing:.18em; color:var(--muted); line-height:1; }
 .done-hero .v{ font-variant-numeric:tabular-nums; }
 
 .cardstage{ position:relative; display:flex; align-items:flex-start; padding:0 0 var(--s-3); }
@@ -392,7 +503,9 @@ button.hero-tap:active{ opacity:.55; }
 /* the actions under an opened row — the unit it came from, and the star.
    Hidden until the row opens, so a hundred-row unit page stays a list. */
 .list li .qacts{ display:none; }
-.list li.open .qacts{ display:flex; flex-wrap:wrap; column-gap:24px; margin:-2px 0 10px; }
+/* the two words' hit areas each reach 14px past their glyphs — the gap has to
+   clear both, or a tap between them lands on whichever painted last */
+.list li.open .qacts{ display:flex; flex-wrap:wrap; column-gap:34px; margin:-2px 0 10px; }
 .list li.open .qacts .textbtn{ padding:8px 0; min-height:40px; }
 .choices{ display:flex; flex-direction:column; margin-top:20px; }
 .choice{ position:relative; width:100%; text-align:left; padding:19px 26px 19px 0; border:0; border-top:1px solid var(--hair-soft);
@@ -480,7 +593,11 @@ button.hero-tap:active{ opacity:.55; }
 .munder > span:last-child{ position:absolute; left:50%; top:100%; transform:translateX(-50%);
   font-size:.6em; line-height:1; white-space:nowrap; }
 .mrel{ margin:0 .2em; }                 /* relations supply their own air */
-sub,sup{ font-size:.68em; }
+/* A script inside a script compounded to 6.94px: in a Calc BC MCQ the only
+   difference between two options was the sign in lim(x→a⁻) vs lim(x→a⁺),
+   under a millimetre on a phone. The ratio still reads; the floor stops the
+   second level collapsing. */
+sub,sup{ font-size:max(.68em, 11px); }
 .math{ white-space:normal; overflow-wrap:anywhere; }
 .mfn{ font-style:normal; padding-right:.12em; }
 .mathy{ line-height:1.95 !important; }  /* leading for what hangs below */
@@ -528,8 +645,15 @@ sub,sup{ font-size:.68em; }
 }
 /* small control words carry an invisible, finger-sized hit area */
 .sizebtn, .backbar .bk, .backbar .gfilt, .cyc, .textbtn.quiet{ position:relative; }
+/* a 12.5px glyph plus a 2px inset is a 16px target — the inset has to carry
+   the difference, not the glyph */
 .sizebtn::after, .backbar .bk::after, .backbar .gfilt::after, .cyc::after, .textbtn.quiet::after{
   content:""; position:absolute; inset:-2px -14px; }
+/* two that sit alone in their row and were still short: the game filter glyph
+   is 12.5px tall, and "Done" on a lesson missed 44 by a pixel */
+.backbar .gfilt::after{ inset:-15px -14px; }
+.book .chk{ position:relative; }
+.book .chk::after{ content:""; position:absolute; inset:-12px -14px; }
 
 /* --- settings ----------------------------------------------------------------
    The 5Star settings language: the screen's name in the standard head, then a
@@ -623,15 +747,20 @@ sub,sup{ font-size:.68em; }
 .mrow.done{ color:var(--muted); font-weight:480; text-decoration:line-through; text-decoration-thickness:1px; }
 
 .tgwrap{ display:flex; margin:var(--s-2) 0; }
-.tg{ width:min(92vw, 480px); height:auto; }
+.tg{ width:min(92vw, 480px, 148vh); height:auto; }
 .tg-axis{ stroke:var(--hair); stroke-width:1; }
 .tg-curve{ stroke:var(--ink); stroke-width:2; fill:none; stroke-linecap:round; }
 /* tick labels sit on top of the curve near the origin — a ground-coloured
    stroke painted under the glyph knocks the curve out behind them */
-.tg-lab{ font:10.5px var(--font-sf); fill:var(--muted);
+.tg-lab{ font:11.5px var(--font-sf); fill:var(--muted);
   stroke:var(--ground); stroke-width:3; paint-order:stroke fill; }
+/* on a phone the wrapper is not there at all — the figure and its options
+   stack exactly as they did */
+.figrow{ display:contents; }
 .ucwrap{ display:flex; margin:var(--s-2) 0; }
-.uc{ width:min(88vw, 400px); height:auto; }
+/* also bounded by the SHORT side: a 400px circle in a 320px-tall landscape
+   window put 92px of it on screen, with the prompt scrolled away above */
+.uc{ width:min(88vw, 400px, 74vh); height:auto; }
 .uc-axis{ stroke:var(--hair-soft); stroke-width:1; }
 .uc-ring{ stroke:var(--hair); stroke-width:1.5; }
 .uc-dot{ fill:var(--muted); }
@@ -651,9 +780,20 @@ sub,sup{ font-size:.68em; }
 .uc-turn{ stroke:var(--ink-soft); stroke-width:1.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
 /* desktop: a game owns the whole right side */
 @media (min-width:900px) and (min-height:500px){
-  /* the circle and its answers share the screen — no fold between them */
-  .pane-r .uc{ width:min(46vh, 470px); }
-  .pane-r .tg{ width:min(52vh, 660px); }
+  /* THE FIGURE AND ITS ANSWERS SHARE THE SCREEN — the comment used to say so
+     and the stack made it false: at 1024x768, 1280x800 and 1440x900 the last
+     option ran past the fold, on a screen with 550px of empty pane beside the
+     circle. Side by side, the figure gets the height and the options get the
+     width, and nothing is below the fold at any of them. */
+  .pane-r .figrow{ display:grid; grid-template-columns:auto minmax(300px, 1fr);
+    gap:16px 56px; align-items:center; max-width:1180px; }
+  .pane-r .figrow .choices{ margin-top:0; }
+  .pane-r .uc{ width:clamp(220px, calc(100vh - 300px), 560px); }
+  .pane-r .tg{ width:clamp(280px, calc(100vh - 300px), 720px); }
+  .pane-r .ucwrap, .pane-r .tgwrap{ justify-content:center; margin:0; }
+  /* the boards were the only game surfaces with no measure at all, so they ran
+     to 1,280px beside a 860px option list */
+  .pane-r .board, .pane-r .mcols, .pane-r .gline{ max-width:860px; }
   .pane-r .gcur .gname{ font-size:clamp(38px, 3.2vw, 52px); }
   .pane-r .gcur .gname.gsm{ font-size:clamp(24px, 2vw, 30px); }
   .pane-r .gcur .gname.gxs{ font-size:clamp(20px, 1.7vw, 25px); }
@@ -679,10 +819,13 @@ sub,sup{ font-size:.68em; }
   .book{ --toppad:calc(env(safe-area-inset-top, 0px) + 22px); }
   .head{ margin-bottom:var(--s-3); }
   .list.tight{ gap:12px; }
-  .ledger .lname,.ledger .lval{ font-size:clamp(28px,11vw,40px); }
-  .card .q{ font-size:clamp(22px,7.4vw,28px); line-height:1.22; }
+  /* min(vw, vh): on a phone held sideways the WIDTH is the long side, so a
+     width-driven size put 40px rows in a 320px-tall window — one of six deck
+     rows above the tab bar. The short side has to be able to win. */
+  .ledger .lname,.ledger .lval{ font-size:clamp(22px,min(11vw,8vh),40px); }
+  .card .q{ font-size:clamp(20px,min(7.4vw,7.6vh),28px); line-height:1.22; }
   .card .rule{ margin:18px 0 16px; }
-  .card .a{ font-size:clamp(17px,5.6vw,20px); }
+  .card .a{ font-size:clamp(16px,min(5.6vw,5.4vh),20px); }
   .rate{ margin-top:var(--s-3); }
   .sess-top{ margin-bottom:var(--s-3); }
 }
@@ -846,8 +989,11 @@ sub,sup{ font-size:.68em; }
   margin:calc(-1 * var(--toppad)) 0 4px;
   padding:var(--toppad) 0 10px;
   border-bottom:1px solid var(--hair-soft); font-size:13.5px; font-weight:650; color:var(--ink-soft); line-height:1.3; }
-.book .topline .now{ color:var(--ink); white-space:nowrap; display:flex; gap:14px; align-items:baseline; }
-.book .topline .all{ color:var(--ink-soft); font:inherit; font-weight:650; }
+/* "Reading at: High school · All six levels" needs 290px; at 280 the second
+   half ran off the edge, because the only wrap point was before .now */
+.book .topline .now{ color:var(--ink); display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; }
+.book .topline .all{ position:relative; color:var(--ink-soft); font:inherit; font-weight:650; }
+.book .topline .all::after{ content:""; position:absolute; inset:-13px -10px; }
 .book .topline .all:active{ opacity:.5; }
 .book .topline .pos{ position:relative; min-width:0; color:var(--ink-soft); font-weight:650;
   display:flex; align-items:baseline; gap:6px; }
@@ -941,8 +1087,11 @@ sub,sup{ font-size:.68em; }
 .book .term .tmx{ margin:0 0 10px; }
 
 /* lists: lessons of a phase, the pager */
-.book .plist{ display:flex; flex-direction:column; gap:6px; list-style:none; padding:0; margin:0; }
-.book .plist .pl{ display:flex; gap:10px; align-items:baseline; font-size:16px; line-height:1.4; }
+/* the only route into a lesson: the gap becomes padding, so every row is the
+   same height and none of them is a 22px target 10px from its neighbour */
+.book .plist{ display:flex; flex-direction:column; gap:0; list-style:none; padding:0; margin:0; }
+.book .plist .pl{ display:flex; gap:10px; align-items:baseline; font-size:16px; line-height:1.4;
+  padding:11px 0; min-height:44px; }
 .book .plist .n{ font-size:12.5px; font-weight:650; color:var(--ink-soft); flex:none; min-width:5.5em; }
 .book .plist .t{ text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; text-decoration-thickness:1px; }
 .book .plist .pl.done .t{ color:var(--muted); }
@@ -965,8 +1114,9 @@ sub,sup{ font-size:.68em; }
 .book .idx .t{ font-size:clamp(17px,2.2vw,19px); font-weight:520; letter-spacing:-.015em; line-height:1.25; }
 .book .idx .bar{ display:block; height:2px; background:var(--hair-soft); border-radius:1px; overflow:hidden; margin-top:4px; }
 .book .idx .bar i{ display:block; height:100%; background:var(--ink); }
-.book .idx ul{ list-style:none; padding:0 0 0 14px; margin:0; display:flex; flex-direction:column; gap:10px; }
-.book .idx ul button{ display:flex; flex-direction:row; gap:8px; font-size:14.5px; color:var(--ink-soft); align-items:baseline; width:100%; padding:5px 0; }
+.book .idx ul{ list-style:none; padding:0 0 0 14px; margin:0; display:flex; flex-direction:column; gap:0; }
+.book .idx ul button{ display:flex; flex-direction:row; gap:8px; font-size:14.5px; color:var(--ink-soft);
+  align-items:baseline; width:100%; padding:12px 0; min-height:44px; }
 .book .idx ul button .n{ font-size:12.5px; flex:none; }
 .book .idx ul button.done{ color:var(--muted); text-decoration:line-through; text-decoration-color:var(--hair); }
 .book .idx button:active{ opacity:.55; }
@@ -979,33 +1129,53 @@ sub,sup{ font-size:.68em; }
 .book .segwrap .lg-seg{ pointer-events:auto; width:min(440px,100%); --lg-blur:30px; --lg-tint-a:0.66; }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .book .segwrap .lg-seg{ --lg-tint-a:0.80; } }
 :root[data-theme="dark"] .book .segwrap .lg-seg{ --lg-tint-a:0.80; }
-.book .lg-seg-item{ padding:0 4px; white-space:nowrap; min-height:40px; }
+.book .segwrap .lg-seg{ height:46px; }
+.book .lg-seg-item{ padding:0 4px; white-space:nowrap; min-width:0; min-height:46px; }
+/* two labels ship, one shows: the long words below 380px need 318px of pill
+   inside 232px, so the six rungs lost their last two entirely */
+.book .lg-seg-item .ls{ display:none; }
+@media (max-width:380px){
+  .book .lg-seg-item .ln{ display:none; }
+  .book .lg-seg-item .ls{ display:inline; }
+}
 #app.is-book{ padding-bottom:0; }
 
 @media (min-width:900px) and (min-height:500px){
-  .book .ladder{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--s-4) 48px; align-items:start; grid-auto-flow:dense; }
-  .book .ladder>.head{ grid-column:1 / -1; }
-  .book .ladder>.lvls{ grid-column:1; }
-  .book .ladder>.side{ grid-column:2; }
-  .book .ladder>.walk{ grid-column:1 / -1; }
-  .book .ladder>.side>.row:first-child{ border-top:0; padding-top:0; }
-  .book .walk li.step{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px 48px; align-items:start; }
-  .book .walk li.step>.pre{ grid-column:1; grid-row:1; }
-  .book .walk li.step>.do{ grid-column:1; grid-row:2; }
-  .book .walk li.step>.code{ grid-column:2; grid-row:1 / span 2; }
-  .book .walk li.step.nocode>.do{ grid-column:1 / -1; }
+  /* THE SPLIT NEEDS A USABLE COLUMN, not a wide window. At 900px each column
+     was 214px: the Python samples wrapped mid-identifier — print(events[1].get
+     ("severi / ty")) — and the prose beside them ran at thirty characters a
+     line. One column until there is room for two real ones. */
+  @media (min-width:1240px){
+    .book .ladder{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--s-4) 48px; align-items:start; grid-auto-flow:dense; }
+    .book .ladder>.head{ grid-column:1 / -1; }
+    .book .ladder>.lvls{ grid-column:1; }
+    .book .ladder>.side{ grid-column:2; }
+    .book .ladder>.walk{ grid-column:1 / -1; }
+    .book .ladder>.side>.row:first-child{ border-top:0; padding-top:0; }
+    .book .walk li.step{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px 48px; align-items:start; }
+    .book .walk li.step>.pre{ grid-column:1; grid-row:1; }
+    .book .walk li.step>.do{ grid-column:1; grid-row:2; }
+    .book .walk li.step>.code{ grid-column:2; grid-row:1 / span 2; }
+    .book .walk li.step.nocode>.do{ grid-column:1 / -1; }
+    .book .res{ display:grid; grid-template-columns:minmax(0,2fr) minmax(0,3fr); gap:12px 48px; align-items:start; }
+    .book .res>.head{ grid-column:1 / -1; }
+    .book .res>.lvls{ grid-column:1; }
+    .book .res>details.guide{ grid-column:2; margin-top:0; }
+  }
   .book .walk .pre p,.book .walk .do{ max-width:none; }
-  .book .res{ display:grid; grid-template-columns:minmax(0,2fr) minmax(0,3fr); gap:12px 48px; align-items:start; }
-  .book .res>.head{ grid-column:1 / -1; }
-  .book .res>.lvls{ grid-column:1; }
-  .book .res>details.guide{ grid-column:2; margin-top:0; }
   .book .lvl p{ font-size:17px; max-width:none; }
   .book .guide .gb{ max-width:none; }
   .book .guide p,.book .guide li{ font-size:16px; }
   .book .learn li,.book details .a{ font-size:16px; }
   .book{ --toppad:46px; }
-  /* on two columns the pill was dead centre of the reading pane, over three
-     things at once — it docks to the left column instead */
-  .book .segwrap{ justify-content:flex-start; }
+  /* A floating pill is a phone answer: on a laptop it sat over live prose at
+     every width — a code span, a "Try this" instruction, a whole paragraph —
+     and the 0.66 tint let the sentence read straight through it. On wide it
+     joins the flow under the topline, where "Reading at" already lives. The
+     markup keeps it last; `order` puts it first without moving it on a phone. */
+  .book{ display:flex; flex-direction:column; }
+  .book .segwrap{ order:-1; position:static; justify-content:flex-start;
+    padding-top:0; margin:0 0 var(--s-4); pointer-events:auto; }
+  .book .topline{ order:-2; }
   .book .segwrap .lg-seg{ width:min(380px,100%); }
 }

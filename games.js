@@ -1451,8 +1451,11 @@
       ctx.backbar(GAMES[st.id].name) +
       gameTop(st.id, right(st.score), dots(st.i, st.total)) +
       '<div class="gcur"><div class="gname" data-plain="' + esc(flat(prompt)) + '">' + fx(prompt) + '</div></div>' +
-      '<div class="ucwrap">' + circleSVG(q) + '</div>' +
-      circleChoices(q),
+      // the figure and its options are one block: display:contents on a phone,
+      // so nothing moves there, and two columns on a wide screen, where a
+      // stacked circle pushed half the answers past the fold
+      '<div class="figrow"><div class="ucwrap">' + circleSVG(q) + '</div>' +
+      circleChoices(q) + '</div>',
       { session: true, keepScroll: st.i > 0 }
     );
   }
@@ -2176,7 +2179,7 @@
       // option is not pushed past the fold by a headline that says nothing new
       gameTop(st.id, '<span class="num">y = ?</span>&nbsp;&nbsp; ' + right(st.score),
         dots(st.i, st.total)) +
-      '<div class="tgwrap">' + graphSVG(g) + '</div>' + ch,
+      '<div class="figrow"><div class="tgwrap">' + graphSVG(g) + '</div>' + ch + '</div>',
       { session: true, keepScroll: st.i > 0 }
     );
   }
@@ -2196,6 +2199,28 @@
     if (right) { st.score++; } else { st.wrongChoice = i; }
     renderGraph();
     timer = setTimeout(nextGraph, right ? 550 : 1400);
+  }
+
+  /* Which angle did that tap mean? The SVG is a 300-unit square whatever its
+     drawn size, so the point is converted once and compared against the
+     sixteen ring positions. A tap more than 34 units from every one of them —
+     the middle of the circle, the corner of the box — is not an answer. */
+  function nearestDot(e, svg) {
+    if (!svg || !st || !st.qs || !st.qs[st.i]) return -1;
+    var q = st.qs[st.i];
+    if (q.type === 2 || q.type === 3) return -1;      // those rounds answer by choice
+    var r = svg.getBoundingClientRect();
+    if (!r.width || !r.height) return -1;
+    var cx = e.clientX, cy = e.clientY;
+    if (cx == null || (cx === 0 && cy === 0)) return -1;   // a synthesised click
+    var ux = (cx - r.left) / r.width * 300, uy = (cy - r.top) / r.height * 300;
+    var best = -1, bd = 34 * 34;
+    ANGLES.forEach(function (a, i) {
+      var dx = ux - (150 + 110 * a[4]), dy = uy - (150 - 110 * a[5]);
+      var d = dx * dx + dy * dy;
+      if (d < bd) { bd = d; best = i; }
+    });
+    return best;
   }
 
   /* ---------------- delegation ------------------------------------------- */
@@ -2223,7 +2248,17 @@
     if ((el = t.closest('[data-ml]'))) { pickMatch('l', parseInt(el.getAttribute('data-ml'), 10)); return; }
     if ((el = t.closest('[data-mr]'))) { pickMatch('r', parseInt(el.getAttribute('data-mr'), 10)); return; }
     if ((el = t.closest('[data-tile]'))) { tapTile(parseInt(el.getAttribute('data-tile'), 10)); return; }
-    if ((el = t.closest('[data-dot]'))) { tapDot(parseInt(el.getAttribute('data-dot'), 10)); return; }
+    // THE CIRCLE RESOLVES TO THE NEAREST ANGLE, not to whichever hit circle
+    // painted last. The sixteen standard angles are 22px apart at 280px and
+    // 33px at 393px, so the r=21 targets overlap and a later sibling was
+    // stealing part of an earlier one's area: aiming at π/6 and landing 17px
+    // away scored as not knowing the angle. Nearest is unambiguous everywhere.
+    if ((el = t.closest('[data-dot]')) || (st.kind === 'circle' && t.closest('svg.uc'))) {
+      var near = nearestDot(e, t.closest('svg.uc'));
+      if (near >= 0) { tapDot(near); return; }
+      if (el) { tapDot(parseInt(el.getAttribute('data-dot'), 10)); return; }
+      return;
+    }
     if ((el = t.closest('[data-gc]'))) {
       var ci = parseInt(el.getAttribute('data-gc'), 10);
       if (st.kind === 'graph') tapGraphChoice(ci);

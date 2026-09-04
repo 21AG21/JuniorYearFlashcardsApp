@@ -761,6 +761,9 @@
   var LVL_KEYS = ['k5', 'ms', 'hs', 'ug', 'gr', 'phd'];
   var LVL_NAMES = ['Age 5', 'Middle school', 'High school', 'Stanford undergrad', 'Stanford grad', 'PhD at Apple'];
   var LVL_SHORT = ['Kid', 'Middle', 'High', 'Undergrad', 'Grad', 'PhD'];
+  // the six words need 318px of segmented control; a 280px phone has 232px, so
+  // "Grad" and "PhD" were simply off the screen. Both sets ship and CSS picks.
+  var LVL_TINY = ['Kid', 'MS', 'HS', 'UG', 'Grad', 'PhD'];
   var ladder = { lvl: 2, all: false };
   try {
     var lp = JSON.parse(localStorage.getItem('apdecks.v1.ladder') || 'null');
@@ -891,7 +894,12 @@
   function segHTML() {
     return '<div class="segwrap">' +
       '<div class="lg lg-bar lg-seg" id="lvlseg" role="tablist">' + LVL_SHORT.map(function (n, i) {
-        return '<div class="lg-seg-item' + (i === ladder.lvl ? ' is-active' : '') + '" role="tab">' + n + '</div>';
+        // both labels ship and CSS picks one; the reader on a screen reader gets
+        // the full rung name once, not "UndergradUG"
+        return '<div class="lg-seg-item' + (i === ladder.lvl ? ' is-active' : '') + '" role="tab"' +
+          ' aria-label="' + esc(LVL_NAMES[i]) + '">' +
+          '<span class="ln" aria-hidden="true">' + n + '</span>' +
+          '<span class="ls" aria-hidden="true">' + LVL_TINY[i] + '</span></div>';
       }).join('') + '</div></div>';
   }
   function readingWord() { return ladder.all ? 'Reading every level' : 'Reading at: ' + LVL_NAMES[ladder.lvl]; }
@@ -1431,6 +1439,22 @@
     // a card taller than the stage was simply cut — the fourth option of an
     // MCQ could be off-screen with nothing saying to scroll
     var stage = card.closest('.cardstage');
+    // …and on a short screen the answer could be cut off ENTIRELY while the
+    // three grade words stayed pinned and tappable. Revealing now brings the
+    // answer to the top of whatever room there is, in the stage or in the page.
+    if (sess.revealed && !sess.quiz) {
+      var rule = card.querySelector('.rule.reveal');
+      if (rule) requestAnimationFrame(function () {
+        var sc = stage && stage.scrollHeight - stage.clientHeight > 4 ? stage : null;
+        if (sc) { sc.scrollTop = Math.max(0, rule.offsetTop - 8); return; }
+        // the page is the scroller (short window, or a game-style block layout)
+        var page = document.getElementById('app');
+        if (page && page.scrollHeight - page.clientHeight > 4) {
+          var top = rule.getBoundingClientRect().top - page.getBoundingClientRect().top + page.scrollTop;
+          page.scrollTop = Math.max(0, top - 12);
+        }
+      });
+    }
     if (stage) {
       var host = stage.closest('.session') || stage;
       var flag = function () {
