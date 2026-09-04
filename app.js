@@ -40,7 +40,12 @@
   }
   function restoreFocus(key) {
     if (!key) return;
-    var el = app.querySelector(key) || app.querySelector('.rate button');
+    // …and when the remembered control is gone, fall back to the RECOMMENDED
+    // grade. It used to fall back to the first button in the row, which is
+    // Again: revealing with the mouse and then pressing space — the key the
+    // card itself prints — buried the card for the day.
+    var el = app.querySelector(key) || app.querySelector('.rate .r-good') ||
+             app.querySelector('.rate button');
     if (el) try { el.focus({ preventScroll: true }); } catch (e) {}
   }
 
@@ -362,7 +367,9 @@
   function paceLine(d) {
     var p = corePace(d);
     if (!p) return '';
-    var out = examName(d.id) + ' · ' + p.days + ' days';
+    // "May 3 · 241 days" in grey above the title read as a date with no
+    // subject — it could have been a goal, or when the deck was written
+    var out = 'Exam ' + examName(d.id) + ' · ' + p.days + ' days';
     if (!p.left) return out + ' · core done';
     if (!p.sure) return out;                       // the countdown, no verdict yet
     if (p.drift <= -20) return out + ' · ' + (-p.drift) + ' days behind · ' + p.rate + ' a day';
@@ -390,9 +397,10 @@
      session takes, and every card it studies comes back on the day its own
      interval says. Everything is graded Good, which is the only assumption
      available and the one the app's own preview makes. */
-  function forecast(days) {
+  function forecast(days, opts) {
     var today = S.dayNum(), set = S.getSettings();
-    var size = set.sessionSize || 30, fresh = set.newPerSession || 0;
+    var size = (opts && opts.size) || set.sessionSize || 30;
+    var fresh = (opts && opts.fresh != null) ? opts.fresh : (set.newPerSession || 0);
     // one light record per scheduled card: the day it lands and the interval
     // a Good would earn it next
     var sched = [], newLeft = 0;
@@ -426,11 +434,45 @@
     return out;
   }
   /* how many days of sessions the overdue pile alone is worth */
+  /* The two session settings interact, and nothing said so. A 30-card session
+     that deals 20 new cards has ten places for reviews; introduce twenty a day
+     and you owe more than ten a day back, so the pile grows for as long as
+     there are new cards left. This runs the same forward walk the week ahead
+     uses, out to thirty days, and says which way the line is going. */
+  var SIZES = [15, 20, 30, 50, 100];      // the values the Session word cycles
+  function driftAt(size) {
+    var f = forecast(30, { size: size });
+    return f.length ? (f[29] - f[0]) / 29 : 0;
+  }
+  var STEADY = 2;      // a couple of cards a day either way is level enough
+  function paceVerdict() {
+    var set = S.getSettings(), size = set.sessionSize || 30, fresh = set.newPerSession || 0;
+    var slots = rawSlots(size, fresh);
+    if (!slots) return fresh + ' new cards fill a session of ' + size +
+      ', so there is no room for a review at all. Fewer new cards, or a longer session.';
+    var head = plural(slots, 'review') + ' a session after ' + fresh + ' new';
+    var drift = driftAt(size);
+    if (Math.abs(drift) <= STEADY) return head + '. At this pace the pile holds steady.';
+    if (drift < 0) return head + '. At this pace the pile falls by about ' +
+      Math.round(-drift) + ' a day.';
+    // it grows — say by how much, and name the smallest session that would not
+    var fix = null;
+    for (var i = 0; i < SIZES.length; i++) {
+      if (SIZES[i] <= size) continue;
+      if (driftAt(SIZES[i]) <= STEADY) { fix = SIZES[i]; break; }
+    }
+    return head + '. At this pace the review pile grows by about ' + Math.round(drift) + ' a day' +
+      (fix ? ' — a session of ' + fix + ' would hold it.'
+           : ', and no session length here holds it: fewer new cards a day would.');
+  }
+
   function reviewSlots() {
     var set = S.getSettings(), size = set.sessionSize || 30;
     // a session deals new cards first, so the review slots are what is left
     return Math.max(1, size - Math.min(set.newPerSession || 0, size));
   }
+  /* the same number without the floor: it can genuinely be zero */
+  function rawSlots(size, fresh) { return Math.max(0, size - Math.min(fresh, size)); }
   function backlogDays(overdue) { return Math.ceil(overdue / reviewSlots()); }
   function overdueCount() {
     var today = S.dayNum(), n = 0;
@@ -519,13 +561,18 @@
     }
     return score;
   }
-  /* deck by deck in rotation — the same rotation the coverage forecast runs,
-     so what the forecast promises is what the deal does */
+  /* Deck by deck in rotation — the same rotation the coverage forecast runs,
+     so what the forecast promises is what the deal does. Within a deck the
+     rotation goes UNIT by unit as well: new cards are ranked by unit weight,
+     and Chemistry's Unit 3 is 18–22% of the exam, so twenty new cards were
+     twenty solubility cards and eight of nine units were never dealt. The
+     lane key is deck+unit, and the units stay in weight order. */
   function roundRobin(list, n) {
     var lanes = {}, order = [];
     list.forEach(function (c) {
-      if (!lanes[c.deck]) { lanes[c.deck] = []; order.push(c.deck); }
-      lanes[c.deck].push(c);
+      var k = c.deck + '\u0000' + (c.u || '');
+      if (!lanes[k]) { lanes[k] = []; order.push(k); }
+      lanes[k].push(c);
     });
     var out = [];
     while (out.length < n) {
@@ -634,13 +681,21 @@
 
     // The hero is the fact, and when there is one obvious action it IS the tap.
     var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
+    // Nothing is due on the first day, so the screen was five grey rows and no
+    // way in — a student who had never seen the app had to guess. The deal
+    // exists from the first minute; the screen offers it.
+    var deal0 = due ? 0 : buildDaily().length;
     mount(
       '<div class="head">' +
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
       '</div>' +
+      (deal0 ? '<button class="act" data-go="#/review">Start · ' + deal0 + ' cards</button>' : '') +
       '<ul class="list tight">' + rows + '</ul>' +
-      '<div class="modes" style="margin-top:var(--s-5)">' +
+      // these three are navigation, not modes: as a stack of 26px words they
+      // pushed themselves 92px below the fold, under the tab bar, where the
+      // first tap on "Starred" landed on the Search tab instead
+      '<div class="modes nav" style="margin-top:var(--s-5)">' +
         '<button class="textbtn" data-go="#/ten">Quick ten</button>' +
         '<button class="textbtn" data-go="#/games">Games</button>' +
         // starring a card in a session used to be a one-way trip: the star was
@@ -697,6 +752,7 @@
     // the app knows when the exam is — the countdown sits over the course name
     var pl = paceLine(d);
     var cl = coverLine(deckId);
+    var dealNow = buildDaily({ deck: d }).length;
 
     // the name is the way back; the number is a fact, not a hidden link
     mount(
@@ -706,7 +762,10 @@
         '<button class="dn" data-back>' + esc(nice(d)) + '</button>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
       '</div>' +
-      '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due.toLocaleString() : 'Study') + '</button>' +
+      // "Review 20" used to name the DUE count and then deal thirty, because
+      // the deal is due cards plus the day's new ones. It names the deal.
+      '<button class="act" data-go="#/study/' + deckId + '/smart">' +
+        (dealNow ? (st.due ? 'Review ' : 'Study ') + dealNow.toLocaleString() : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Quiz</button>' +
@@ -1160,9 +1219,74 @@
      ========================================================================== */
   var sess = null;
 
+  /* THE QUEUE OUTLIVES THE SCREEN. Grades were saved from the first card, but
+     the deal was not: a reload, a back gesture, a mis-aimed X twelve pixels
+     under the Again button — or iOS discarding a backgrounded tab while you
+     answer a text — dropped you back at "1 of 20" on a different card, with
+     no way to say "I was in the middle of that". The remaining cards, the
+     tallies and the route are written on every grade and read back when the
+     same route is opened again on the same day. */
+  var SESS_KEY = 'apdecks.v1.sess';
+  function saveSess() {
+    try {
+      if (!sess || !sess.queue.length) { localStorage.removeItem(SESS_KEY); return; }
+      localStorage.setItem(SESS_KEY, JSON.stringify({
+        h: location.hash.replace(/^#/, '') || '/',
+        day: S.dayNum(),
+        ids: sess.queue.map(function (c) { return c.i; }),
+        done: sess.done, planned: sess.planned, redo: sess.redo || 0,
+        again: sess.again, good: sess.good, easy: sess.easy,
+        right: sess.right, wrong: sess.wrong,
+        quiz: !!sess.quiz, typing: !!sess.typing, cram: !!sess.cram,
+        mixed: !!sess.mixed, mode: sess.mode, unitId: sess.unitId || null,
+        deck: sess.deck ? sess.deck.id : null, back: sess.back || null
+      }));
+    } catch (e) {}
+  }
+  function clearSess() { try { localStorage.removeItem(SESS_KEY); } catch (e) {} }
+  var byId = null;
+  function cardById(id) {
+    if (!byId) {
+      byId = {};
+      (S.getIndex().courses || []).forEach(function (c) {
+        var d = S.getDeck(c.id); if (!d) return;
+        d.cards.forEach(function (card) { byId[card.i] = card; });
+      });
+    }
+    return byId[id];
+  }
+  /* the saved deal for THIS route, if it is still today's */
+  function savedSess() {
+    var raw;
+    try { raw = localStorage.getItem(SESS_KEY); } catch (e) { return null; }
+    if (!raw) return null;
+    var j; try { j = JSON.parse(raw); } catch (e) { return null; }
+    if (!j || j.day !== S.dayNum()) { clearSess(); return null; }
+    if (j.h !== (location.hash.replace(/^#/, '') || '/')) return null;
+    var q = (j.ids || []).map(cardById).filter(Boolean);
+    if (!q.length || q.length !== (j.ids || []).length) { clearSess(); return null; }
+    return {
+      deck: j.deck ? S.getDeck(j.deck) : null, unitId: j.unitId, mode: j.mode,
+      quiz: j.quiz, cram: j.cram, mixed: j.mixed, typing: j.typing, back: j.back,
+      queue: q, done: j.done || 0, planned: j.planned || q.length, redo: j.redo || 0,
+      again: j.again || 0, good: j.good || 0, easy: j.easy || 0,
+      right: j.right || 0, wrong: j.wrong || 0,
+      revealed: false, answered: false, typed: '', history: [], resumed: true
+    };
+  }
+  function resume() {
+    var r = savedSess();
+    if (!r) return false;
+    sess = r;
+    renderCard();
+    toast(plural(r.queue.length, 'card') + ' left — picked up where you were');
+    return true;
+  }
+
   function startSession(deckId, mode, unitId, quiz) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
+    if (resume()) return;
     // the daily path deals the chosen queue; fixed modes stay literal
     var lesson = (mode || '').indexOf('l:') === 0 ? mode.slice(2) : null;
     var queue = lesson ? lessonQueue(d, lesson)
@@ -1179,7 +1303,7 @@
       deck: d, unitId: unitId || null, mode: mode, quiz: !!quiz,
       back: lesson ? '#/d/' + deckId + '/l/' + lesson : null,
       typing: !quiz && S.getSettings().typing,
-      queue: queue, done: 0, planned: queue.length,
+      queue: queue, done: 0, planned: queue.length, redo: 0,
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0,
       history: [], answered: false, typed: ''
     };
@@ -1189,6 +1313,7 @@
   /* review across every deck — the chosen queue: due first by value, new
      cards always seeping in, no deck owning the session */
   function startReview(limit) {
+    if (resume()) return;
     var queue = buildDaily(limit ? { limit: limit } : null);
     if (!queue.length) {
       // say when the next card comes back, and where — not just that none are due
@@ -1220,7 +1345,7 @@
     sess = {
       deck: null, unitId: null, mode: 'due', quiz: false, mixed: true,
       typing: S.getSettings().typing,
-      queue: queue, done: 0, planned: queue.length,
+      queue: queue, done: 0, planned: queue.length, redo: 0,
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0, history: [], answered: false, typed: ''
     };
     renderCard();
@@ -1231,6 +1356,7 @@
   function startCram(deckId, unitId) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
+    if (resume()) return;
     if (unitId && !d.unitById[unitId]) return go('#/d/' + deckId);
     var cards = d.cards.filter(function (c) { return !unitId || c.u === unitId; });
     if (!cards.length) return go('#/d/' + deckId);
@@ -1239,7 +1365,7 @@
     sess = {
       deck: d, unitId: unitId || null, mode: 'cram', cram: true, quiz: false,
       typing: S.getSettings().typing,
-      queue: cards, done: 0, planned: cards.length,
+      queue: cards, done: 0, planned: cards.length, redo: 0,
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0, history: [], answered: false, typed: ''
     };
     renderCard();
@@ -1273,7 +1399,8 @@
     var scope = d ? nice(d) + (unit ? ' · ' + unit.title : '') + ced : 'Review';
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
-      '<span class="pos num">' + Math.min(sess.done + 1, sess.planned) + ' of ' + sess.planned + '</span>' +
+      '<span class="pos num">' + Math.min(sess.done + 1, sess.planned) + ' of ' + sess.planned +
+        (sess.redo ? '<span class="redo"> · ' + sess.redo + ' to redo</span>' : '') + '</span>' +
       '</div>';
   }
   // Done / Undo / Star as quiet text — the affordances survive, the chrome does not.
@@ -1351,7 +1478,7 @@
   function longish(s) { return T.plain(s).length > 90; }
 
   function renderCard() {
-    if (!sess || !sess.queue.length) return renderDone();
+    if (!sess || !sess.queue.length) { clearSess(); return renderDone(); }
     var c = sess.queue[0];
     curDeckId = sess.deck ? sess.deck.id : null;
     var d = cardDeckOf(c);
@@ -1659,7 +1786,12 @@
     if (wrote) S.grade(c.i, g, examCap(c));
     sess.history.push({ card: c, before: before, g: g, rq: g === 0, wrote: wrote, day: S.dayNum() });
     if (g === 0) {
-      sess.again++; sess.planned++;   // a re-queued card is one more to do
+      // THE DENOMINATOR DOES NOT MOVE. It used to: every Again added one, so
+      // thirty honest Agains walked "1 of 20" to "31 of 50" and the session
+      // could not end. Pressing the button that means "I did not know this"
+      // must not extend the session, or the app teaches you to press Good.
+      sess.again++; sess.redo++;
+      sess.done--;                    // …and a re-queued card is not done yet
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
     }
     else if (g === 1) sess.good++;
@@ -1667,6 +1799,7 @@
     sess.done++;
     sess.revealed = false; sess.verdict = null; sess.typed = ''; sess.hinted = false;
     sess.gradedAt = Date.now();
+    saveSess();
     renderCard();
   }
 
@@ -1693,12 +1826,13 @@
     sess.done = Math.max(0, sess.done - 1);
     // planned only shrinks if this grade actually grew it (a quiz miss bumps
     // planned at Next time, not at answer time — h.rq records the truth)
-    if (h.rq) sess.planned = Math.max(1, sess.planned - 1);
+    if (h.rq) { sess.redo = Math.max(0, sess.redo - 1); sess.done++; }
     if (h.g === 0) sess.again = Math.max(0, sess.again - 1);
     else if (h.g === 1) sess.good = Math.max(0, sess.good - 1);
     else sess.easy = Math.max(0, sess.easy - 1);
     sess.revealed = true; sess.verdict = null;
     S.save(true);
+    saveSess();
     renderCard();
   }
 
@@ -1724,12 +1858,13 @@
     if (!sess || !sess.answered) return;   // a ghost second tap must be inert
     var c = sess.queue.shift();
     if (!sess.choices[sess.picked] || !sess.choices[sess.picked].correct) {
-      sess.planned++;                 // the miss comes back — the meter says so
+      sess.redo++; sess.done--;       // the miss comes back — the meter says so
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
       var top = sess.history[sess.history.length - 1];
       if (top && top.card.i === c.i) top.rq = true;
     }
     sess.done++; sess.answered = false; sess.picked = -1; sess.choices = null; sess.hinted = false;
+    saveSess();
     renderCard();
   }
 
@@ -1743,6 +1878,10 @@
     var back = sess && sess.back ? sess.back
       : sess && !sess.mixed && sess.deck ? '#/d/' + sess.deck.id + (sess.unitId ? '/u/' + sess.unitId : '')
       : '#/';
+    // the deal is NOT thrown away here: an X twelve pixels under Again, or a
+    // back gesture, used to lose your place for good. Opening the same route
+    // again today picks it up.
+    saveSess();
     sess = null; goReplace(back);
   }
 
@@ -1977,7 +2116,9 @@
       var aq = fold(T.plain(a.q).toLowerCase()).indexOf(q), bq = fold(T.plain(b.q).toLowerCase()).indexOf(q);
       return (aq === -1 ? 999 : aq) - (bq === -1 ? 999 : bq);
     });
-    out.innerHTML = '<div class="k" style="margin-bottom:var(--s-3)">' + plural(total, 'card') + '</div>' +
+    // the sheet belongs here too: the print stylesheet already knows .list.tight
+    out.innerHTML = '<div class="scoperow"><span class="k">' + plural(total, 'card') + '</span>' +
+      '<button class="textbtn quiet end" data-print>Print</button></div>' +
       '<ul class="list tight still">' + hits.slice(0, 120).map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u];
         return '<li><button class="qrow" data-peek="' + c.i + '">' +
@@ -2005,9 +2146,16 @@
       var st = S.deckStats(d);
       totals.total += st.total; totals.known += st.known; totals.seen += st.seen; totals.due += st.due;
       if (!st.seen) return '';   // a percent column exists only where some rows are non-zero
+      // Mastery needs two correct answers and a week's interval, so an honest
+      // first session reads "0%" — which tells a student who just did the work
+      // that they did none. The row says what they have actually seen too.
       return '<li><button class="ledger mid" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
-        '<span class="lval num">' + pct(st.pct) + '</span></button></li>';
+        '<span class="lval num">' + pct(st.pct) + '</span>' +
+        '<span class="lsub">' + st.seen.toLocaleString() + ' of ' +
+          st.total.toLocaleString() + ' seen' +
+          (st.known ? ' · ' + st.known.toLocaleString() + ' known' : '') + '</span>' +
+        '</button></li>';
     }).join('');
 
     // the verdict per course, once two weeks of study have earned one
@@ -2240,6 +2388,7 @@
   /* the starred session crosses decks, like Review does — a star is a note to
      self about a card, not about the course it happens to sit in */
   function startStarred() {
+    if (resume()) return;
     var list = starredCards();
     if (starFilter) {
       var ids2 = starDecks(), pick2 = ids2[starFilter - 1];
@@ -2258,7 +2407,7 @@
       deck: null, unitId: null, mode: 'starred', quiz: false, mixed: true,
       back: '#/starred',
       typing: S.getSettings().typing,
-      queue: list, done: 0, planned: list.length,
+      queue: list, done: 0, planned: list.length, redo: 0,
       revealed: false, again: 0, good: 0, easy: 0, right: 0, wrong: 0,
       history: [], answered: false, typed: ''
     };
@@ -2312,6 +2461,9 @@
         '<button class="cyc num" data-cycle="sessionSize">' + s.sessionSize + '</button></div>' +
       '<div class="setrow"><div class="sname">New cards</div>' +
         '<button class="cyc num" data-cycle="newPerSession">' + s.newPerSession + '</button></div>' +
+      // the two numbers above are a trade, and the trade was invisible
+      (S.getIndex().courses.some(function (c) { return S.getDeck(c.id); })
+        ? '<div class="setnote">' + esc(paceVerdict()) + '</div>' : '') +
 
       '</div>' +
 
@@ -2726,16 +2878,18 @@
       if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
       if (e.key === 's') { starCurrent(); return; }
       if (e.key === 'n') { openNote(); return; }
-      // the bar is hidden in a session, but the arrows still mean "switch
-      // tabs" — one ArrowRight into Review used to be a one-way trip, with
-      // every further arrow swallowed by this branch
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        var si = lastTabIdx + (e.key === 'ArrowRight' ? 1 : -1);
-        if (si < 0 || si >= TAB_ROUTES.length) return;
+      // A BARE ARROW NEVER LEAVES A SESSION. It used to switch tabs, which on
+      // a laptop meant the most obvious "next card" key silently destroyed the
+      // session in progress and dealt a different one. Right is the same as
+      // Space — turn the card over, or advance a quiz — and Left takes back
+      // the last grade. Leaving is the tab bar's job, or Escape's.
+      if (e.key === 'ArrowRight') {
         e.preventDefault();
-        sess = null;
-        goTab(TAB_ROUTES[si]);
+        if (sess.quiz) { if (sess.answered) nextQuiz(); }
+        else if (!sess.revealed) reveal();
+        return;
       }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); undo(); return; }
       return;
     }
     var h = location.hash.replace(/^#/, '') || '/';
