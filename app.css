@@ -12,7 +12,7 @@
   --wall:#ffffff;
   --ink:#0a0a0b;
   --ink-soft:#6a6a70;
-  --muted:#7e7e86;
+  --muted:#6e6e76;   /* 4.60:1 on the light ground — #7e7e86 measured 3.66 and failed AA */
   --hair:rgba(10,10,12,.13);
   --hair-soft:rgba(10,10,12,.07);
 
@@ -97,6 +97,9 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
           var(--tabh)
           calc(env(safe-area-inset-left, 0px) + var(--gutter));
   max-width:680px; margin:0 auto;
+  /* a keyboard focus in the last row used to land under the tab bar, 79%
+     covered — the scroller has to reserve the bar's height */
+  scroll-padding-bottom:calc(var(--tabh) + 16px); scroll-padding-top:24px;
   outline:none;
 }
 #app.is-session{ padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 24px); }
@@ -109,6 +112,7 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
     border-right:1px solid var(--hair-soft);
     padding:42px 36px 40px calc(env(safe-area-inset-left, 0px) + 40px); }
   .pane-r{ flex:1 1 auto; height:100%; overflow-y:auto; overscroll-behavior-y:none;
+    scroll-padding-bottom:32px; scroll-padding-top:24px;
     padding:46px calc(env(safe-area-inset-right, 0px) + 72px) 80px 72px; }
   /* the wide layout capped its content and never centred it, so every pixel
      of ink ended at x=1712 whatever the monitor — 848px of dead right at 2560 */
@@ -219,6 +223,10 @@ button.hero-tap:active{ opacity:.55; }
 
 /* name · number on one baseline — the detail hero (skill §4.2) */
 .dhero{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin:0 0 var(--s-3); }
+/* the course and unit names ARE the screen's heading — a screen with no h1
+   left a reader with nothing to jump to. The wrapper carries the semantics
+   and nothing else: the button keeps every pixel it had. */
+.dhero .dnh{ display:contents; font:inherit; margin:0; }
 .dhero .dn,.dhero .dv{ background:none; border:0; padding:0; margin:0; font:inherit; cursor:pointer;
   font-size:var(--t-title); font-weight:430; letter-spacing:-.035em; line-height:1.16; text-align:left;
   transition:opacity .12s ease; }
@@ -453,7 +461,10 @@ button.hero-tap:active{ opacity:.55; }
 .card .mynote.editing{ border-left-color:var(--ink-soft); padding-left:12px; }
 .card .mynote textarea{ display:block; width:100%; background:transparent; border:0; padding:0;
   font:inherit; font-size:var(--t-answer); line-height:1.42; color:var(--ink); resize:none;
-  outline:none; caret-color:var(--ink); }
+  caret-color:var(--ink); }
+/* this one could not be fixed by ordering — the global :focus-visible rule is
+   0,1,0 against this selector's 0,3,1 */
+.card .mynote textarea:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
 .card .mynote textarea::placeholder{ color:var(--muted); }
 .card .mynote .noteacts{ display:flex; gap:26px; margin-top:8px; }
 .card .mynote .noteacts .textbtn{ padding:6px 0; min-height:40px; }
@@ -595,7 +606,7 @@ button.hero-tap:active{ opacity:.55; }
 #app .searchbar:first-child{ padding-top:0; }
 .searchbar input{ flex:1; min-width:0; background:transparent; border:0; border-bottom:1px solid var(--hair); padding:10px 0;
   font:inherit; font-size:24px; font-weight:430; color:var(--ink); letter-spacing:-.015em; }
-.searchbar input:focus{ outline:none; border-bottom-color:var(--ink-soft); }
+.searchbar input:focus{ border-bottom-color:var(--ink-soft); }   /* the ring is restored by :focus-visible above */
 .searchbar input::placeholder{ color:var(--muted); }
 /* the scope word under the field — one tap narrows the search to one course */
 .scoperow{ display:flex; align-items:baseline; gap:14px; margin:-6px 0 var(--s-3); }
@@ -923,7 +934,14 @@ sub,sup{ font-size:max(.68em, 11px); }
 .reqbox textarea{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--hair);
   padding:10px 0; font:inherit; font-size:19px; color:var(--ink); resize:none; line-height:1.4; }
 .reqbox textarea::placeholder{ color:var(--muted); }
-.reqbox textarea:focus{ outline:none; border-bottom-color:var(--ink-soft); }
+.reqbox textarea:focus{ border-bottom-color:var(--ink-soft); }   /* same: :focus-visible owns the ring */
+
+.sr-only{ position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0; }
+/* visible only once a keyboard reaches it */
+.skip{ position:absolute; left:-9999px; top:0; z-index:60; padding:10px 14px;
+  background:var(--wall); color:var(--ink); font:inherit; font-size:15px; }
+.skip:focus{ left:12px; top:12px; outline:2px solid var(--ink); outline-offset:2px; }
 
 /* --- motion: things arrive, they never pop ------------------------------- */
 /* switching tabs, the whole screen slides in from the direction of travel —

@@ -176,12 +176,30 @@
       '</div>';
   }
 
+  /* Spoken, not shown. The toast is a visual object with visual timing; this
+     is the parallel channel for anything a reader has to be told. */
+  var liveEl = null;
+  function announce(msg) {
+    if (!liveEl) {
+      liveEl = document.createElement('div');
+      liveEl.className = 'sr-only';
+      liveEl.setAttribute('aria-live', 'polite');
+      liveEl.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(liveEl);
+    }
+    // the same text twice is not re-announced unless the node changes
+    liveEl.textContent = '';
+    setTimeout(function () { liveEl.textContent = msg; }, 30);
+  }
+
   var toastTimer = null;
   function toast(msg) {
     toastEl.textContent = msg;
     toastEl.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1700);
+    // 1.7s was under a reading speed for anything longer than a word
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); },
+      Math.min(7000, Math.max(1900, String(msg).length * 85)));
   }
   var pushDepth = 0;   // in-app pushes behind us — back falls back to a parent at zero
   function go(hash) {
@@ -488,6 +506,39 @@
   /* the same number without the floor: it can genuinely be zero */
   function rawSlots(size, fresh) { return Math.max(0, size - Math.min(fresh, size)); }
   function backlogDays(overdue) { return Math.ceil(overdue / reviewSlots()); }
+  /* The pile's real horizon. Dividing it by the session's review slots assumes
+     a reviewed card never comes back — the one thing every reviewed card does.
+     It printed "27 days" for a pile that at those settings never clears at
+     all. This runs the same forward walk the week ahead uses and reports the
+     first day it finds nothing due, or nothing when there isn't one. */
+  var CLEAR_HORIZON = 180;
+  function clearDays() {
+    var f = forecast(CLEAR_HORIZON);
+    for (var i = 0; i < f.length; i++) if (!f[i]) return i;
+    return null;
+  }
+  /* THE WAY OUT. Every overdue card is restamped across the days ahead so no
+     day carries more than a session's review slots. Nothing is forgotten and
+     nothing is reset: the interval, the ease and the count a card earned all
+     stand, and only the date it comes back moves. Oldest first, so what has
+     waited longest is what returns first. Before this the only relief in the
+     whole app was Reset progress, which throws the work away. */
+  function spreadBacklog() {
+    var today = S.dayNum(), per = reviewSlots(), ids = [];
+    S.getIndex().courses.forEach(function (c) {
+      var d = S.getDeck(c.id); if (!d) return;
+      d.cards.forEach(function (card) { if (S.isDue(card.i, today)) ids.push(card.i); });
+    });
+    if (ids.length <= per) return 0;
+    ids.sort(function (a, b) { return ((S.cs(a) || {}).d || 0) - ((S.cs(b) || {}).d || 0); });
+    var moved = 0;
+    for (var k = 0; k < ids.length; k++) {
+      if (S.reschedule(ids[k], today + Math.floor(k / per))) moved++;
+    }
+    if (moved) S.commit();
+    return moved;
+  }
+
   function overdueCount() {
     var today = S.dayNum(), n = 0;
     S.getIndex().courses.forEach(function (c) {
@@ -571,7 +622,10 @@
     if (S.isStarred(c.i)) score += 1.5;
     if (s) {
       if ((s.l || 0) >= 5) score += 1;                        // stuck
-      if (s.d <= today && (s.r || s.t || s.l)) score += Math.min(2, (today - s.d) / 7);
+      // lateness used to saturate at a fortnight, so with a median 26 days
+      // late the order fell back to syllabus weight and 34-day-old cards sat
+      // while 21-day-old ones were dealt
+      if (s.d <= today && (s.r || s.t || s.l)) score += Math.min(3, (today - s.d) / 10);
     }
     return score;
   }
@@ -632,10 +686,21 @@
        fill what is left. Computing it as "whatever the reviews did not want"
        capped the rate at two a day once the due pile passed the session size,
        which showed a daily student 849 of 4,441 cards by May and never dealt
-       one card from seven Chemistry units. An explicitly sized deal ("Quick
-       ten") is a request for that many cards, so it sets its own cap. */
-    var newCap = (opts && opts.noNew) ? 0
-      : (opts && opts.limit) ? limit : set.newPerSession;
+       one card from seven Chemistry units. */
+    /* …but a budget nobody can pay is not a plan. Two brakes on that reserve:
+       an explicitly sized deal keeps the SESSION'S proportion rather than
+       spending itself entirely on new cards — "Quick ten" with 261 overdue
+       dealt ten cards nobody had ever seen and moved the due count by zero —
+       and once the pile is three sessions deep the reserve yields so reviews
+       take at least half of every deal. Neither brake touches a student who
+       is keeping up. */
+    var want = (opts && opts.noNew) ? 0
+      : (opts && opts.limit)
+        ? Math.round(limit * (set.newPerSession || 0) / Math.max(1, set.sessionSize || 30))
+        : set.newPerSession;
+    var newCap = due.length > (set.sessionSize || 30) * 3
+      ? Math.min(want, Math.floor(limit / 2))
+      : want;
     var byScore = function (a, b) { return b._sc - a._sc; };
     S.shuffle(due); S.shuffle(fresh);          // ties break fresh every day
     due.sort(byScore); fresh.sort(byScore);
@@ -644,7 +709,14 @@
     // reviews came up short — the room they left goes back to new cards, and
     // the new cards are taken deck by deck in rotation, so a first session
     // touches every course instead of twenty cards of the heaviest unit
-    var picked = takeDue.concat(roundRobin(fresh, Math.min(newCap, limit - takeDue.length)));
+    // …and when the reviews come up short the room goes back to new cards. A
+    // full session stops at the reserve, so with nothing due it deals exactly
+    // the new-card number and Settings' "with nothing due, a session is 20"
+    // stays true; an explicitly sized deal is a request for that many cards,
+    // so "Quick ten" is ten whether or not anything is owed.
+    var topCap = (opts && opts.limit) ? limit : newCap;
+    var picked = takeDue.concat(roundRobin(fresh,
+      Math.max(0, Math.min(topCap, limit - takeDue.length))));
     if (decks.length > 1 && picked.length) {
       var cap = Math.ceil(limit * 0.4), per = {}, kept = [], spill = [];
       picked.forEach(function (c) {
@@ -776,7 +848,7 @@
       (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '') +
       cl +
       '<div class="dhero">' +
-        '<button class="dn" data-back>' + esc(nice(d)) + '</button>' +
+        '<h1 class="dnh"><button class="dn" data-back>' + esc(nice(d)) + '</button></h1>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
       '</div>' +
       // "Review 20" used to name the DUE count and then deal thirty, because
@@ -840,7 +912,7 @@
       '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n +
         (weightText(u) ? ' · ' + esc(weightText(u)) : '') + '</div>' +
       '<div class="dhero">' +
-        '<button class="dn" data-back>' + esc(u.title) + '</button>' +
+        '<h1 class="dnh"><button class="dn" data-back>' + esc(u.title) + '</button></h1>' +
         '<span class="dv num">' + us.total.toLocaleString() + '</span>' +
       '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due.toLocaleString() : 'Study') + '</button>' +
@@ -1490,7 +1562,7 @@
      repaint per keystroke would lose the caret every time. */
   function noteHTML(c) {
     if (sess && sess.noting) {
-      return '<div class="mynote editing reveal"><textarea id="mynote" rows="2" maxlength="' +
+      return '<div class="mynote editing reveal"><textarea id="mynote" aria-label="Your note on this card" rows="2" maxlength="' +
         (S.NOTE_MAX || 400) + '" placeholder="your own words — a mnemonic, the trap you keep hitting">' +
         esc(S.noteOf(c.i)) + '</textarea>' +
         '<div class="noteacts"><button class="textbtn quiet" data-note-save>Save</button>' +
@@ -1555,7 +1627,7 @@
 
     if (!sess.revealed) {
       // the prompt itself is the tap; no "Tap to reveal" caption (skill §8)
-      if (sess.typing) body += '<div class="typewrap"><input class="typein" id="typein" autocomplete="off" autocorrect="off" ' +
+      if (sess.typing) body += '<div class="typewrap"><input class="typein" id="typein" aria-label="Type the answer" autocomplete="off" autocorrect="off" ' +
           'autocapitalize="none" spellcheck="false" placeholder="' +
           (typeable(c) ? 'Type your answer' : 'Type what you can') + '"></div>';
     } else {
@@ -1593,7 +1665,9 @@
         '<span class="swipehint r" aria-hidden="true">Good</span>' +
         // only a NEW card enters; revealing used to re-run the animation, so
         // the question you were reading blinked out and jumped 10px
-        '<div class="cardwrap"><div class="card' + (sess.revealed ? '' : ' enter') + '" id="card" role="group">' + body + '</div></div>' +
+        '<div class="cardwrap"><div class="card' + (sess.revealed ? '' : ' enter') + '" id="card"' +
+          ' role="group" aria-live="polite" aria-atomic="false"' +
+          ' aria-label="' + esc('Card ' + (sess.done + 1) + ' of ' + sess.planned) + '">' + body + '</div></div>' +
       '</div><div class="morecue" aria-hidden="true">\u2304</div>' + footer + sessUtil(starred) + '</div>',
       { session: true }
     );
@@ -1625,7 +1699,9 @@
 
     mount(
       '<div class="session">' + sessTop(c) +
-      '<div class="cardstage"><div class="cardwrap"><div class="card' + (sess.answered ? '' : ' enter') + '" id="card">' + body + '</div></div></div>' +
+      '<div class="cardstage"><div class="cardwrap"><div class="card' + (sess.answered ? '' : ' enter') + '" id="card"' +
+        ' role="group" aria-live="polite" aria-atomic="false"' +
+        ' aria-label="' + esc('Card ' + (sess.done + 1) + ' of ' + sess.planned) + '">' + body + '</div></div></div>' +
       '<div class="morecue" aria-hidden="true">\u2304</div>' +
       footer + sessUtil(starred) + '</div>', { session: true, quiz: true });
     wireCard();
@@ -1721,6 +1797,11 @@
     if (input) {
       setTimeout(function () { try { input.focus(); } catch (e) {} }, 60);
       input.addEventListener('keydown', function (e) {
+        // the field is autofocused, so Escape here used to end the session —
+        // the first press clears what you typed, as it does in the note
+        if (e.key === 'Escape' && input.value) {
+          e.stopPropagation(); e.preventDefault(); input.value = ''; return;
+        }
         if (e.key === 'Enter') { e.preventDefault(); sess.typed = input.value; reveal(); }
       });
     }
@@ -1853,6 +1934,14 @@
     var wrote = !sess.cram || g === 0 || S.isNew(c.i) || S.isDue(c.i);
     if (wrote) S.grade(c.i, g, examCap(c));
     sess.history.push({ card: c, before: before, g: g, rq: g === 0, wrote: wrote, day: S.dayNum() });
+    // the grade landed and the card has a next date — say both, once, and
+    // read the date off what the schedule ACTUALLY did rather than previewing
+    // it again from a state the grade above has already moved
+    var now2 = S.cs(c.i), inDays = now2 ? now2.d - S.dayNum() : 0;
+    announce(['Again', 'Hard', 'Good', 'Easy'][g] + ' \u2014 ' +
+      (g === 0 ? 'back in this session'
+        : !wrote ? 'staying where it was'
+        : inDays <= 0 ? 'back today' : 'back in ' + plural(inDays, 'day')));
     if (g === 0) {
       // THE DENOMINATOR DOES NOT MOVE. It used to: every Again added one, so
       // thirty honest Agains walked "1 of 20" to "31 of 50" and the session
@@ -2092,7 +2181,7 @@
     // the field and the results — no hero, no scope chips, no instructions (skill §4.4)
     var many = (S.getIndex().courses || []).length > 1;
     mount(
-      '<div class="searchbar"><input id="q" type="search" placeholder="a term, a formula, a year" ' +
+      '<div class="searchbar"><input id="q" type="search" aria-label="Search every card" placeholder="a term, a formula, a year" ' +
         'autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" value="' + esc(searchState.q) + '"></div>' +
       (many ? '<div class="scoperow"><button class="textbtn quiet" data-search-scope>' +
         esc(scopeWord()) + '</button></div>' : '') +
@@ -2259,16 +2348,26 @@
     var fc = totals.seen ? forecast(7) : [];
     var fcTotal = fc.reduce(function (a, b) { return a + b; }, 0);
     if (totals.seen && over > sizeNow * 2) {
-      var bd = backlogDays(over);
+      // the honest horizon, from the same forward walk the week ahead uses —
+      // a flat overdue ÷ slots assumed a reviewed card never comes back, and
+      // printed a month for a pile these settings never clear
+      var cd = clearDays();
+      var when = cd === null
+        ? 'not clearing at this pace'
+        : cd === 0 ? 'clear today' : plural(cd, 'day') + ' to clear';
       fcBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">The backlog</div>' +
         '<ul class="list tight"><li><div class="ledger mid">' +
         '<span class="lname">Overdue</span>' +
         '<span class="lval num">' + over.toLocaleString() + '</span>' +
-        // the honest denominator is the REVIEW slots, not the session size: a
-        // 30-card session that deals 20 new cards has ten places for old ones
-        '<span class="lsub">' + esc(plural(bd, 'day') + ' at ' + reviewSlots() +
+        '<span class="lsub">' + esc(when + ' · ' + reviewSlots() +
           ' reviews a session · ' + sizeNow + ' cards, ' + (S.getSettings().newPerSession || 0) + ' new') +
-        '</span></div></li></ul>' + missLine('this count');
+        '</span></div></li></ul>' +
+        // the way out, next to the number that needs one
+        '<button class="textbtn quiet" data-spread>Spread · ' + reviewSlots() + ' a day</button>' +
+        '<div class="empty cap">Spreading keeps every card and every interval ' +
+        'it has earned — it only moves the day each one comes back, oldest ' +
+        'first, so no day carries more than a session.</div>' +
+        missLine('this count');
     } else if (fcTotal > 0) {
       // the bar reads against a day's session, not against the week's own
       // maximum: a full rule always means the same amount of work
@@ -2632,7 +2731,7 @@
               '<button class="cyc" data-acct-id>' + esc(S.account.ownerId()) + '</button></div>'
             : '')
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
-          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
+          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" aria-label="Account sync token" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
           '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
       '<div class="setrow"><div class="sname">Typing</div>' +
         '<button class="cyc" data-typing-cycle>' + (s.typing ? 'On' : 'Off') + '</button></div>' +
@@ -2664,7 +2763,7 @@
      owner's own login — the site itself holds no token at all */
   function reqHTML(label) {
     return '<div class="reqwrap"><button class="textbtn" data-req>' + esc(label) + '</button>' +
-      '<div class="reqbox" hidden><textarea rows="3" placeholder="a feature, a game, a fix"></textarea>' +
+      '<div class="reqbox" hidden><textarea rows="3" aria-label="Describe what you want" placeholder="a feature, a game, a fix"></textarea>' +
       '<button class="textbtn" data-req-send>Send</button></div></div>';
   }
   window.__reqHTML = reqHTML;   // the games hub renders the same line
@@ -2776,6 +2875,13 @@
     }
     if (t.closest('[data-unit-all]')) { unitFilter = 0; route(); return; }
     if (t.closest('[data-print]')) { printSheet(); return; }
+    if (t.closest('[data-spread]')) {
+      var n = spreadBacklog();
+      toast(n ? n.toLocaleString() + ' cards spread over the days ahead — nothing lost'
+              : 'Nothing to spread');
+      if (n) route();
+      return;
+    }
     if (t.closest('[data-search-scope]')) {
       var q0 = document.getElementById('q');
       var sel = q0 ? [q0.selectionStart, q0.selectionEnd] : null;
@@ -3025,6 +3131,21 @@
       return;
     }
     if (e.repeat) return;                        // holding a key never burns cards
+    /* #app is the only scroller and the document has no overflow at all, so
+       PageDown, End and the arrows did nothing anywhere: 25,000 px of reader
+       with Tab as the only way down, and every word of prose between two
+       controls unreachable. When nothing else owns the key, they drive the
+       scroller — a session keeps its own arrow keys, which are read below. */
+    if (!sess && (el === document.body || el === app || !el)) {
+      var page = app.clientHeight - 60, dy = 0;
+      if (e.key === 'PageDown') dy = page;
+      else if (e.key === 'PageUp') dy = -page;
+      else if (e.key === 'ArrowDown') dy = 64;
+      else if (e.key === 'ArrowUp') dy = -64;
+      else if (e.key === 'End') dy = app.scrollHeight;
+      else if (e.key === 'Home') dy = -app.scrollHeight;
+      if (dy) { e.preventDefault(); app.scrollTop += dy; return; }
+    }
     if (sess) {
       if (e.code === 'Space' || e.key === 'Enter') {
         // A focused control activates itself. The session's own Space/Enter
@@ -3056,8 +3177,9 @@
         if (e.key === '4') return doGrade(3);
       }
       if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
-      if (e.key === 's') { starCurrent(); return; }
-      if (e.key === 'n') { openNote(); return; }
+      // without this the shortcut's own letter lands in the note it just opened
+      if (e.key === 's') { e.preventDefault(); starCurrent(); return; }
+      if (e.key === 'n') { e.preventDefault(); openNote(); return; }
       // A BARE ARROW NEVER LEAVES A SESSION. It used to switch tabs, which on
       // a laptop meant the most obvious "next card" key silently destroyed the
       // session in progress and dealt a different one. Right is the same as

@@ -669,14 +669,37 @@
   /* NAMED — the langboard mechanic pointed at the US History deck: the clue
      is the card's first sentence with every alias redacted; the tile is the
      canonical short term the deck already carries in c.x[0]. */
+  var ABBR = /\b(?:Mr|Mrs|Ms|Dr|St|Jr|Sr|vs|etc|No|Fig|Gen|Col|Sen|Rep|Gov|Pres|Sec|Adm|Capt|Lt|Rev)$/;
   function firstSentence(s) {
-    var m = /^.*?[.!?](?=\s|$)/.exec(s);
-    return m ? m[0] : s;
+    // "roughly 13 billion dollars in U.S." is not the end of a sentence, and
+    // neither is "J. Edgar" — a period after a lone capital or a known
+    // abbreviation is part of the word, not the stop
+    var re = /[.!?](?=\s|$)/g, m;
+    while ((m = re.exec(s)) !== null) {
+      var head = s.slice(0, m.index);
+      if (/\b[A-Z]$/.test(head) || ABBR.test(head)) continue;
+      return s.slice(0, m.index + 1);
+    }
+    return s;
   }
   function redact(s, xs) {
     xs.forEach(function (t) { if (!/^\d{3,4}$/.test(t)) s = s.split(t).join('—'); });
     return s;
   }
+  /* …and every meaningful word of the answer, not only its first. "Frances
+     Perkins" left "Perkins" standing in its own clue on one card in six. */
+  var CLUE_STOP = { the:1, and:1, of:1, for:1, from:1, with:1, that:1, this:1,
+                    into:1, over:1, under:1, act:1, plan:1, war:1, case:1, new:1 };
+  function redactWords(s, term) {
+    term.split(/[\s\u2019'’-]+/).forEach(function (w) {
+      var k = w.replace(/[^A-Za-z\u00C0-\u024F]/g, '');
+      if (k.length < 4 || CLUE_STOP[k.toLowerCase()]) return;
+      s = s.replace(new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "(?:'s|\u2019s|s|es)?\\b", 'gi'), '—');
+    });
+    return s;
+  }
+  /* two — in a row read as a dash, and "— —" as a typo */
+  function tidyRedaction(s) { return s.replace(/—(?:[\s,]+—)+/g, '—').replace(/\s{2,}/g, ' ').trim(); }
   /* a clue is a hint, not the whole card: cut a long first sentence at a
      clause break so it ends on a noun rather than dangling on "of" */
   var CLUE_TAIL = { of:1, the:1, a:1, an:1, to:1, in:1, on:1, at:1, by:1, for:1, with:1,
@@ -714,7 +737,7 @@
       if (out.length >= n) return;
       if (!c.x || !c.x[0] || c.x[0].length > 28) return;
       var term = c.x[0];
-      var s = redact(firstSentence(clean(c.a)), c.x);
+      var s = tidyRedaction(redactWords(redact(firstSentence(clean(c.a)), c.x), term));
       if (s.length < 40) return;                       // a stub is not a clue
       // the term must not survive its own clue — a leading proper noun that
       // outlived redaction gives the answer away
@@ -749,7 +772,8 @@
       if (!term) return;
       // a definition that runs six lines beside a one-word term is not a
       // column any more — trim at a clause so both sides keep their rhythm
-      var def = clueTrim(clean(c.a), 76);
+      var def = clueTrim(tidyRedaction(redactWords(clean(c.a), term)), 76);
+      if (def.length < 24) return;               // redacted down to nothing
       var kt = term.toLowerCase();
       if (seenT[kt] || seenD[def]) return;
       seenT[kt] = seenD[def] = 1;
@@ -2049,6 +2073,7 @@
 
   function tapQuizGame(i) {
     if (!st || st.kind !== 'quiz' || st.lock) return;
+    if (st.tapUntil && Date.now() < st.tapUntil) return;   // the same gesture, twice
     var q = st.qs[st.i];
     var right = q.c[i] === q.r;
     if (right) { st.score++; st.streak++; missHeal(st.id, q.tag); }
@@ -2057,8 +2082,14 @@
       if (st.missed.indexOf(q) < 0) st.missed.push(q);
     }
     if (st.mode === 'sprint' && right) {
-      // the clock is the pressure — a right answer deals the next one now
+      // The clock is the pressure — a right answer deals the next one now,
+      // with no pause to reveal. That left no tap lock at all, so the second
+      // half of a double tap answered a question that had been on screen for
+      // four milliseconds, and sprint's score is nothing but right answers.
+      // The guard is a deadline rather than st.lock, because st.lock also
+      // means "reveal the answer" and would print the next one.
       st.i++; st.wrongChoice = -1;
+      st.tapUntil = Date.now() + 140;   // long enough to eat a double tap, short enough not to slow a fast player
       renderQuiz();
       return;
     }

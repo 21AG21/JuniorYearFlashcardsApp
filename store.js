@@ -510,6 +510,22 @@
     return s;
   }
 
+  /* Move a card's next appearance without touching what it has earned. The
+     interval, the ease and the repetition count all stand; only the day
+     changes. This is what lets a buried pile be spread over the days ahead
+     instead of being forgotten or reset. A remote copy that was actually
+     studied later still wins the merge, because `t` is untouched here. */
+  function reschedule(id, day) {
+    var s = state.cards[id];
+    if (!s) return false;
+    var d = Math.round(num(day, dayNum() - 36500, dayNum() + 36500, s.d));
+    if (d === s.d) return false;
+    s.d = d;
+    return true;
+  }
+  /* a whole spread is one write, not one per card */
+  function commit() { save(); }
+
   /* ---- session building -------------------------------------------------- */
   function shuffle(a) {
     for (var i = a.length - 1; i > 0; i--) {
@@ -679,7 +695,7 @@
     deckPending: function (id) { return !!loading[id]; },
     cs: cs, isNew: isNew, isDue: isDue, isSeen: isSeen, isKnown: isKnown, isStarred: isStarred,
     ivl: ivl,
-    toggleStar: toggleStar, grade: grade, preview: preview,
+    toggleStar: toggleStar, grade: grade, preview: preview, reschedule: reschedule, commit: commit,
     noteOf: noteOf, setNote: setNote, NOTE_MAX: NOTE_MAX,
     pool: pool, buildSession: buildSession, deckStats: deckStats, unitStats: unitStats,
     streak: streak, studiedToday: studiedToday, history: history,
