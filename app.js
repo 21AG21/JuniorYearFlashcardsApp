@@ -1081,13 +1081,53 @@
     wireCard();
   }
 
+  /* A distractor drawn at random from the unit is usually the answer to a
+     visibly different question — one formula among three paragraphs, or a
+     chemistry answer under a series question — so the right option can be
+     picked off by shape without doing the work. Candidates are ranked by how
+     much they LOOK like an answer to this question: same kind of object,
+     comparable weight on the page, and vocabulary in common. */
+  function ansKind(t) {
+    if (t.indexOf('$') > -1) return 'math';
+    if (/^[\u2212+-]?[\d.,/\s\u00d7^%]+$/.test(t.trim())) return 'num';
+    return 'prose';
+  }
+  function toks(s) {
+    return T.plain(s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(' ')
+      .filter(function (w) { return w.length > 3; });
+  }
+  function overlap(a, b) {
+    if (!a.length || !b.length) return 0;
+    var set = {}, n = 0;
+    b.forEach(function (w) { set[w] = 1; });
+    a.forEach(function (w) { if (set[w]) n++; });
+    return n / Math.sqrt(a.length * b.length);
+  }
   function makeChoices(c, d) {
-    var sameUnit = d.cards.filter(function (x) { return x.u === c.u && x.i !== c.i && x.v === c.v; });
-    if (sameUnit.length < 3) sameUnit = d.cards.filter(function (x) { return x.u === c.u && x.i !== c.i; });
-    if (sameUnit.length < 3) sameUnit = d.cards.filter(function (x) { return x.i !== c.i; });
-    var picks = S.shuffle(sameUnit.slice()).slice(0, 3);
-    var out = picks.map(function (x) { return { text: trim(x.a), correct: false }; });
-    out.push({ text: trim(c.a), correct: true });
+    var pool = d.cards.filter(function (x) { return x.u === c.u && x.i !== c.i && x.v === c.v; });
+    if (pool.length < 3) pool = d.cards.filter(function (x) { return x.u === c.u && x.i !== c.i; });
+    if (pool.length < 3) pool = d.cards.filter(function (x) { return x.i !== c.i; });
+    var right = trim(c.a), rk = ansKind(right), rl = right.length || 1;
+    var qt = toks(c.q), at = toks(c.a);
+    var seen = {}; seen[right] = 1;
+    var scored = [];
+    pool.forEach(function (x) {
+      var t = trim(x.a);
+      if (seen[t]) return;                     // never two identical options
+      seen[t] = 1;
+      var sc = 0;
+      if (ansKind(t) === rk) sc += 3;          // no lone paragraph among formulas
+      sc += 2 * Math.min(t.length, rl) / Math.max(t.length, rl);
+      sc += 2.5 * overlap(toks(x.a), at);      // about the same objects
+      sc += 2 * overlap(toks(x.q), qt);        // about the same question
+      scored.push({ t: t, s: sc + Math.random() * 0.5 });   // ties deal differently
+    });
+    scored.sort(function (a, b) { return b.s - a.s; });
+    // shuffle within the plausible band so a deck does not always show the
+    // same three wrong answers under the same card
+    var picks = S.shuffle(scored.slice(0, Math.max(3, Math.min(10, scored.length)))).slice(0, 3);
+    var out = picks.map(function (x) { return { text: x.t, correct: false }; });
+    out.push({ text: right, correct: true });
     return S.shuffle(out);
   }
   function trim(a) {
