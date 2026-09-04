@@ -150,11 +150,18 @@
         // measurement — losing the card wholesale silently dropped it
         theirs.s = pickStar(mine, theirs);
         theirs.sa = Math.max((mine && mine.sa) || 0, theirs.sa || 0);
+        // a note is written, not measured — same rule as the star
+        var nn = pickNote(mine, theirs);
+        if (nn) theirs.nt = nn; else delete theirs.nt;
+        theirs.na = Math.max((mine && mine.na) || 0, theirs.na || 0);
         state.cards[id] = theirs; changed = true;
       } else {
         var ns = pickStar(mine, theirs);
         if (ns !== (mine.s || 0)) { mine.s = ns; changed = true; }
         if ((theirs.sa || 0) > (mine.sa || 0)) { mine.sa = theirs.sa; changed = true; }
+        var mn = pickNote(mine, theirs);
+        if (mn !== (mine.nt || '')) { if (mn) mine.nt = mn; else delete mine.nt; changed = true; }
+        if ((theirs.na || 0) > (mine.na || 0)) { mine.na = theirs.na; changed = true; }
       }
     }
     var rl = remote.log || {};
@@ -309,9 +316,13 @@
   /* ---- card state ------------------------------------------------------- */
   function cs(id) { return state.cards[id] || null; }
   function isNew(id) { return !state.cards[id]; }
+  /* A starred-but-unstudied card has a record — toggleStar makes one — and
+     that record carries today's date. Due has to mean "you have seen this and
+     it is time again", or a star reads as a schedule everywhere it is asked. */
+  function isSeen(id) { var s = state.cards[id]; return !!s && !!(s.r || s.t || s.l); }
   function isDue(id, today) {
     var s = state.cards[id];
-    return !!s && s.d <= (today === undefined ? dayNum() : today);
+    return !!s && isSeen(id) && s.d <= (today === undefined ? dayNum() : today);
   }
   function isKnown(id) {
     var s = state.cards[id];
@@ -330,6 +341,35 @@
     return !!s.s;
   }
   function blank() { return { e: 2.5, r: 0, i: 0, d: dayNum(), l: 0, s: 0, sa: 0, n: -1, t: 0 }; }
+
+  /* ---- the reader's own note on a card ----------------------------------
+     A flashcard sticks when you say it in your own words: the mnemonic, the
+     trap you keep falling into, the way your teacher put it. `nt` holds that
+     text and `na` the day it was written, so a note survives a merge with a
+     device that only graded the card. */
+  var NOTE_MAX = 400;
+  function noteOf(id) { var s = state.cards[id]; return (s && s.nt) || ''; }
+  function setNote(id, text) {
+    var t = String(text == null ? '' : text).replace(/\s+$/, '').slice(0, NOTE_MAX);
+    var s = state.cards[id] || blank();
+    if ((s.nt || '') === t) return t;
+    if (t) s.nt = t; else delete s.nt;
+    s.na = dayNum();
+    state.cards[id] = s; save();
+    return t;
+  }
+  /* Whoever wrote last wins; with no evidence either way the text that exists
+     survives, because losing what you wrote is the mistake you would notice. */
+  function pickNote(mine, theirs) {
+    var ma = mine ? (mine.na || 0) : -1, ta = theirs ? (theirs.na || 0) : -1;
+    if (ta > ma) return theirs.nt || '';
+    if (ma > ta) return mine.nt || '';
+    return (mine && mine.nt) || (theirs && theirs.nt) || '';
+  }
+
+  /* The interval a rating would produce, in days — what the card-list preview
+     prints as a word, the week-ahead forecast needs as a number. */
+  function ivl(id, g) { return nextInterval(state.cards[id] || blank(), g).i; }
 
   /* Intervals a rating would produce, for the button captions. */
   function preview(id, grade, capDay) {
@@ -541,8 +581,10 @@
     loadIndex: loadIndex, loadDeck: loadDeck, loadAll: loadAll,
     getIndex: function () { return index; }, getDeck: function (id) { return decks[id]; },
     deckPending: function (id) { return !!loading[id]; },
-    cs: cs, isNew: isNew, isDue: isDue, isKnown: isKnown, isStarred: isStarred,
+    cs: cs, isNew: isNew, isDue: isDue, isSeen: isSeen, isKnown: isKnown, isStarred: isStarred,
+    ivl: ivl,
     toggleStar: toggleStar, grade: grade, preview: preview,
+    noteOf: noteOf, setNote: setNote, NOTE_MAX: NOTE_MAX,
     pool: pool, buildSession: buildSession, deckStats: deckStats, unitStats: unitStats,
     streak: streak, studiedToday: studiedToday, history: history,
     setSetting: setSetting, getSettings: getSettings, save: save,

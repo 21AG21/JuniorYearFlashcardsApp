@@ -25,7 +25,7 @@
      a desktop user tabbed thirteen times to get back to the grades. Remember
      which control was focused and hand focus back to it, or to the grade row
      that replaced it. */
-  var KEEPF = ['data-grade', 'data-reveal', 'data-pick', 'data-next', 'data-star',
+  var KEEPF = ['data-grade', 'data-reveal', 'data-pick', 'data-next', 'data-star', 'data-note',
                'data-hint', 'data-qmode', 'data-undo', 'data-exit'];
   function focusKey() {
     var a = document.activeElement;
@@ -165,7 +165,7 @@
         '<button class="textbtn" data-go="#/stats">Progress</button>' +
         // the two panes never show viewDecks(), so the deck list's own links
         // have to exist here too or Starred is unreachable on a laptop
-        (starredCards().length ? '<button class="textbtn" data-go="#/starred">Starred</button>' : '') +
+        '<button class="textbtn" data-go="#/starred">Starred</button>' +
         '<button class="textbtn" data-go="#/games">Games</button>' +
         '<button class="textbtn" data-go="#/settings">Settings</button>' +
       '</div>';
@@ -383,20 +383,62 @@
      and never said it out loud: a reader who took Saturday off had no way to
      see the 180 cards landing on Monday until Monday. Day 0 carries every
      overdue card, because that is where they are. */
+  /* The first version of this counted the cards already stamped with each
+     date. That reads low every day but today, because most of tomorrow's work
+     is created by today's session — grade thirty cards Good and thirty new
+     dates appear. It walks the days forward instead: each day takes what a
+     session takes, and every card it studies comes back on the day its own
+     interval says. Everything is graded Good, which is the only assumption
+     available and the one the app's own preview makes. */
   function forecast(days) {
-    var today = S.dayNum(), out = [];
-    for (var i = 0; i < days; i++) out.push(0);
+    var today = S.dayNum(), set = S.getSettings();
+    var size = set.sessionSize || 30, fresh = set.newPerSession || 0;
+    // one light record per scheduled card: the day it lands and the interval
+    // a Good would earn it next
+    var sched = [], newLeft = 0;
     S.getIndex().courses.forEach(function (c) {
       var d = S.getDeck(c.id); if (!d) return;
       d.cards.forEach(function (card) {
+        if (!S.isSeen(card.i)) { newLeft++; return; }
         var st = S.cs(card.i);
-        if (!st || !(st.r || st.t || st.l)) return;   // never studied is not scheduled
-        var k = st.d - today;
-        if (k < 0) k = 0;                             // overdue is due today
-        if (k < days) out[k]++;
+        sched.push({ d: Math.max(today, st.d), i: st.i || 1, e: st.e || 2.5, r: st.r || 0 });
       });
     });
+    var due = [], out = [];
+    for (var k = 0; k < days; k++) out.push(0);
+    for (var day = today; day < today + days; day++) {
+      due.length = 0;
+      for (var j = 0; j < sched.length; j++) if (sched[j].d <= day) due.push(sched[j]);
+      out[day - today] = due.length;
+      // what the day's session actually takes: reviews first, then new cards
+      var take = Math.min(due.length, Math.max(0, size - Math.min(fresh, newLeft)));
+      for (var q = 0; q < take; q++) {
+        var cd = due[q];
+        cd.r += 1;
+        cd.i = cd.r === 1 ? 1 : cd.r === 2 ? 3 : Math.max(1, Math.round(cd.i * cd.e));
+        cd.d = day + cd.i;
+      }
+      // and the new cards it introduces, which come back tomorrow
+      var got = Math.min(fresh, newLeft, Math.max(0, size - take));
+      newLeft -= got;
+      for (var g = 0; g < got; g++) sched.push({ d: day + 1, i: 1, e: 2.5, r: 1 });
+    }
     return out;
+  }
+  /* how many days of sessions the overdue pile alone is worth */
+  function reviewSlots() {
+    var set = S.getSettings(), size = set.sessionSize || 30;
+    // a session deals new cards first, so the review slots are what is left
+    return Math.max(1, size - Math.min(set.newPerSession || 0, size));
+  }
+  function backlogDays(overdue) { return Math.ceil(overdue / reviewSlots()); }
+  function overdueCount() {
+    var today = S.dayNum(), n = 0;
+    S.getIndex().courses.forEach(function (c) {
+      var d = S.getDeck(c.id); if (!d) return;
+      d.cards.forEach(function (card) { if (S.isDue(card.i, today)) n++; });
+    });
+    return n;
   }
   var WDAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   function dayWord(n) {
@@ -602,9 +644,11 @@
         '<button class="textbtn" data-go="#/ten">Quick ten</button>' +
         '<button class="textbtn" data-go="#/games">Games</button>' +
         // starring a card in a session used to be a one-way trip: the star was
-        // only reachable from the deck it belonged to, and never as a list
-        (nStarred ? '<button class="textbtn" data-go="#/starred">Starred · ' +
-          nStarred.toLocaleString() + '</button>' : '') +
+        // only reachable from the deck it belonged to, and never as a list.
+        // The word is here before the first star, or there is nowhere for one
+        // to go and no way to find out what the star is for.
+        '<button class="textbtn" data-go="#/starred">Starred' +
+          (nStarred ? ' · ' + nStarred.toLocaleString() : '') + '</button>' +
       '</div>' + nudge
     );
   }
@@ -666,7 +710,7 @@
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Quiz</button>' +
-        (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Starred</button>' : '') +
+        (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Study starred</button>' : '') +
         (st.due > S.getSettings().sessionSize
           ? '<button class="textbtn" data-go="#/study/' + deckId + '/due">Catch up · ' +
             st.due.toLocaleString() + '</button>' : '') +
@@ -710,6 +754,7 @@
       return '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
         '<span class="qq' + (known ? ' dim' : '') + '">' + T.html(c.q) + '</span>' +
         '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
+        (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
         '<span class="qmeta">' + esc(verb(c.v)) + (topicLabel(c) ? ' · ' + esc(topicLabel(c)) : '') + '</span>' +
         '</button>' + rowActs(c) + '</li>';
     }).join('');
@@ -736,7 +781,9 @@
         esc(UNIT_FILTERS[unitFilter][0]) + '</button>' +
         '<span class="scount num">' + shown.length.toLocaleString() + '</span></div>' +
       '<ul class="list tight" id="unitlist">' + list + '</ul>' +
-      (shown.length ? '' : '<div class="empty">Nothing here yet</div>')
+      (shown.length ? '' :
+        '<div class="empty">' + esc(UNIT_EMPTY[unitFilter]) + '</div>' +
+        '<button class="textbtn" data-unit-all>Show all ' + cards.length.toLocaleString() + '</button>')
     );
   }
 
@@ -749,6 +796,10 @@
     ['Missed', function (c) { var st = S.cs(c.i); return !!(st && st.l); }],
     ['Starred', function (c) { return S.isStarred(c.i); }]
   ];
+  // an empty list has to say WHICH filter emptied it, on a page whose own
+  // header says 86 — "Nothing here yet" reads as a unit nobody wrote
+  var UNIT_EMPTY = ['No cards in this unit', 'Every card here has been seen',
+    'Nothing due in this unit', 'Nothing missed here yet', 'No starred cards in this unit'];
   var unitFilter = 0, unitFilterFor = '';
   function unitFilterKeep(c) { return UNIT_FILTERS[unitFilter][1](c); }
 
@@ -1240,9 +1291,47 @@
         '><svg><use href="#i-undo"/></svg></button>' +
       (starred != null ? '<button class="iconbtn" data-star aria-label="Star" aria-pressed="' + starred + '">' +
         '<svg><use href="#i-star' + (starred ? '-fill' : '') + '"/></svg></button>' : '') +
+      // your own words on this card — the word says whether there are any yet
+      (sess.queue.length ? '<button class="sizebtn" data-note>' +
+        (S.noteOf(sess.queue[0].i) ? 'Note ·' : 'Note') + '</button>' : '') +
       // the mode word changes THIS session only — Settings owns the default
       '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'MCQ' : (sess.typing ? 'Typing' : 'Flip')) + '</button>' +
       '</div>';
+  }
+
+  /* Your own words on a card. It shows on the back, under whatever the deck
+     had to say, and the same "Note" control opens it for editing. The field is
+     written into the rendered card and never re-rendered while you type — a
+     repaint per keystroke would lose the caret every time. */
+  function noteHTML(c) {
+    if (sess && sess.noting) {
+      return '<div class="mynote editing reveal"><textarea id="mynote" rows="2" maxlength="' +
+        (S.NOTE_MAX || 400) + '" placeholder="your own words — a mnemonic, the trap you keep hitting">' +
+        esc(S.noteOf(c.i)) + '</textarea>' +
+        '<div class="noteacts"><button class="textbtn quiet" data-note-save>Save</button>' +
+        '<button class="textbtn quiet" data-note-cancel>Cancel</button></div></div>';
+    }
+    var n = S.noteOf(c.i);
+    return n ? '<div class="mynote reveal">' + esc(n) + '</div>' : '';
+  }
+
+  function openNote() {
+    if (!sess || !sess.queue.length) return;
+    if (sess.quiz && !sess.answered) return;
+    if (!sess.revealed && !sess.quiz) reveal();     // there is nothing to annotate face-down
+    sess.noting = true;
+    renderCard();
+    var ta = document.getElementById('mynote');
+    if (ta) try { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {}
+  }
+  function closeNote(save) {
+    if (!sess) return;
+    var ta = document.getElementById('mynote');
+    var txt = ta ? ta.value : '';
+    if (save && ta && sess.queue.length) S.setNote(sess.queue[0].i, txt);
+    sess.noting = false;
+    renderCard();
+    if (save) toast(txt.trim() ? 'Noted' : 'Note cleared');
   }
 
   function topicLabel(c) {
@@ -1292,6 +1381,7 @@
           esc(sess.verdict.ok === 'miss' && !typeable(c) ? 'too long to type — grade yourself'
               : sess.verdict.text) + '</div>' : '') +
         (c.n ? '<div class="note reveal' + (stacked(c.n) ? ' mathy' : '') + '">' + T.html(c.n) + '</div>' : '') +
+        noteHTML(c) +
         (topicLabel(c) ? '<div class="meta reveal">' + esc(topicLabel(c)) + '</div>' : '');
     }
 
@@ -1426,6 +1516,17 @@
         if (e.target.closest('[data-star]') || e.target.closest('input') || e.target.closest('[data-hint]')) return;
         reveal();
       });
+    }
+    var note = document.getElementById('mynote');
+    if (note) {
+      note.addEventListener('keydown', function (e) {
+        // Escape here means "never mind this note", not "leave the session";
+        // Enter saves, shift+Enter is a second line
+        if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); closeNote(false); return; }
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); closeNote(true); }
+      });
+      // the whole stage flips the card — a tap in the field must not do that
+      note.addEventListener('click', function (e) { e.stopPropagation(); });
     }
     var input = document.getElementById('typein');
     if (input) {
@@ -1825,7 +1926,7 @@
   function rowActs(c, goHref) {
     var on = S.isStarred(c.i);
     return '<div class="qacts">' +
-      (goHref ? '<button class="textbtn quiet" data-go="' + esc(goHref) + '">Study this unit</button>' : '') +
+      (goHref ? '<button class="textbtn quiet" data-go="' + esc(goHref) + '">Open this unit</button>' : '') +
       '<button class="textbtn quiet" data-star-card="' + esc(c.i) + '">' +
       (on ? 'Starred' : 'Star') + '</button></div>';
   }
@@ -1864,8 +1965,12 @@
       if (!any) break;
     }
     if (!hits.length) {
-      out.innerHTML = '<div class="empty">No matches' +
-        (searchState.deck ? ' in ' + esc(nice(searchState.deck)) : '') + '</div>';
+      // "No matches in French" is a lie when French never arrived
+      var gone = searchState.deck && !S.getDeck(searchState.deck);
+      out.innerHTML = '<div class="empty">' +
+        (gone ? esc(nice(searchState.deck)) + ' did not load'
+              : 'No matches' + (searchState.deck ? ' in ' + esc(nice(searchState.deck)) : '')) +
+        '</div>';
       return;
     }
     hits.sort(function (a, b) {
@@ -1878,6 +1983,7 @@
         return '<li><button class="qrow" data-peek="' + c.i + '">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
+          (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
           '<span class="qmeta">' + esc(nice(d)) + ' · ' + esc(u ? u.title : '') + '</span></button>' +
           // a search result was a dead end: reading the answer was all you
           // could do with it. An open row offers the unit it came from — and
@@ -1919,20 +2025,38 @@
       ? '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">At this pace</div><ul class="list tight">' + paceRows + '</ul>'
       : '';
 
-    // the week ahead, once there is a schedule to forecast at all
-    var fc = forecast(7), fcTotal = fc.reduce(function (a, b) { return a + b; }, 0), fcBlock = '';
-    if (fcTotal > 0) {
-      var fmax = Math.max.apply(null, fc);
+    // The week ahead — but only when a week is the truth. With a pile of
+    // overdue cards deeper than a session can reach, seven rows of "0" say the
+    // week is free when it is a hundred days of work; that gets one sentence.
+    var over = overdueCount(), sizeNow = S.getSettings().sessionSize || 30, fcBlock = '';
+    // a forecast before the first card is studied is a projection of a habit
+    // that does not exist yet — the screen already says "Nothing tracked yet"
+    var fc = totals.seen ? forecast(7) : [];
+    var fcTotal = fc.reduce(function (a, b) { return a + b; }, 0);
+    if (totals.seen && over > sizeNow * 2) {
+      var bd = backlogDays(over);
+      fcBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">The backlog</div>' +
+        '<ul class="list tight"><li><div class="ledger mid">' +
+        '<span class="lname">Overdue</span>' +
+        '<span class="lval num">' + over.toLocaleString() + '</span>' +
+        // the honest denominator is the REVIEW slots, not the session size: a
+        // 30-card session that deals 20 new cards has ten places for old ones
+        '<span class="lsub">' + esc(plural(bd, 'day') + ' at ' + reviewSlots() +
+          ' reviews a session · ' + sizeNow + ' cards, ' + (S.getSettings().newPerSession || 0) + ' new') +
+        '</span></div></li></ul>' + missLine('this count');
+    } else if (fcTotal > 0) {
+      // the bar reads against a day's session, not against the week's own
+      // maximum: a full rule always means the same amount of work
+      var ref = Math.max(sizeNow, Math.max.apply(null, fc));
       fcBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">The week ahead</div>' +
         '<ul class="list tight">' + fc.map(function (n, i) {
-          // the bar is the row's own value against the busiest day — it reads
-          // at a glance and never needs an axis
           return '<li><div class="ledger mid fc"' +
-            ' style="--fc:' + Math.round((n / Math.max(1, fmax)) * 100) + '%">' +
+            ' style="--fc:' + Math.round((n / ref) * 100) + '%">' +
             '<span class="lname">' + esc(dayWord(i)) + '</span>' +
             '<span class="lval num">' + n.toLocaleString() + '</span></div></li>';
         }).join('') + '</ul>' +
-        '<div class="empty cap">If you study every day</div>';
+        '<div class="empty cap">What each day holds if you study every day, ' +
+        sizeNow + ' cards a session</div>' + missLine('the forecast');
     }
 
     // the three units that bite back hardest — each tap is the fix, not a report
@@ -2017,32 +2141,83 @@
      These are the cards the reader themselves said were worth another look,
      so they get a screen: every one of them, across every deck, readable
      without starting a session, and unstarrable from the row. */
-  function starredCards() {
+  /* A course in the index with no deck behind it is a hole in every count the
+     app prints. Naming it is the difference between "6 cards" and "6 cards,
+     and French did not load". */
+  function missingDecks() {
+    return (S.getIndex().courses || []).filter(function (c) { return !S.getDeck(c.id); })
+      .map(function (c) { return nice(c.id); });
+  }
+  function missLine(what) {
+    var m = missingDecks();
+    if (!m.length) return '';
+    return '<div class="warnline soft">' + esc(m.join(' and ')) +
+      (m.length > 1 ? ' did not load' : ' did not load') + ' — ' + esc(what) + ' leaves ' +
+      (m.length > 1 ? 'them' : 'it') + ' out.</div>';
+  }
+
+  function starredCards(deckOrder) {
     var out = [];
     (S.getIndex().courses || []).forEach(function (c) {
       var d = S.getDeck(c.id); if (!d) return;
       d.cards.forEach(function (card) { if (S.isStarred(card.i)) out.push(card); });
     });
+    // newest star first — the one you flagged this morning is the one you came
+    // here for, not the one from October sitting four thousand pixels down
+    if (!deckOrder) out.sort(function (a, b) {
+      return ((S.cs(b.i) || {}).sa || 0) - ((S.cs(a.i) || {}).sa || 0);
+    });
     return out;
+  }
+
+  /* the same cycling word the unit list and search use: All, then each deck
+     that has stars in it. In memory, and it goes when the screen does. */
+  var starFilter = 0;
+  function starDecks() {
+    var seen = [], out = [];
+    starredCards(true).forEach(function (c) {
+      if (seen.indexOf(c.deck) === -1) { seen.push(c.deck); out.push(c.deck); }
+    });
+    return out;
+  }
+  function starWord() {
+    var ids = starDecks();
+    return starFilter && ids[starFilter - 1] ? nice(ids[starFilter - 1]) : 'All decks';
   }
 
   function viewStarred() {
     curDeckId = null;
-    var list = starredCards();
+    var all = starredCards();
     // nothing starred is not an error — it is the state before the feature is
     // used, and it says what the star is for rather than showing an empty list
-    if (!list.length) return mount(
+    if (!all.length) return mount(
       backbar('Decks') +
       '<div class="head"><h1 class="uhead">Starred</h1>' +
-      '<div class="sub">Nothing yet. In a session, tap the star — or swipe the card up — ' +
-      'to keep a card here.</div></div>');
+      '<div class="sub">Nothing yet. In a session, tap the star or swipe the card up; ' +
+      'anywhere a card row opens, tap Star. They all land here.</div></div>' +
+      missLine('this screen'));
+    var ids = starDecks();
+    if (starFilter > ids.length) starFilter = 0;
+    var pick = starFilter ? ids[starFilter - 1] : null;
+    var list = pick ? all.filter(function (c) { return c.deck === pick; }) : all;
 
     var today = S.dayNum();
+    // a session is a session here too: the deal is capped like every other one
+    var deal = Math.min(list.length, S.getSettings().sessionSize || 30);
     mount(
       backbar('Decks') +
       '<div class="head"><h1 class="uhead">Starred</h1>' +
-      '<div class="sub">' + esc(plural(list.length, 'card')) + '</div></div>' +
-      '<button class="act" data-go="#/starred/go">Study these</button>' +
+      '<div class="sub">' + esc(plural(all.length, 'card')) + '</div></div>' +
+      missLine('this screen') +
+      '<button class="act" data-go="#/starred/go">Study ' +
+        (deal < list.length ? deal + ' of ' + list.length.toLocaleString() : 'these') + '</button>' +
+      // the filter word, its count, and the sheet — one quiet line, not three
+      '<div class="scoperow unit">' +
+        (ids.length > 1
+          ? '<button class="textbtn quiet" data-star-filter>' + esc(starWord()) + '</button>' +
+            '<span class="scount num">' + list.length.toLocaleString() + '</span>'
+          : '') +
+        '<button class="textbtn quiet end" data-print>Print</button></div>' +
       '<ul class="list tight still" style="margin-top:var(--s-4)">' + list.map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u], st = S.cs(c.i);
         var when = !st || !(st.r || st.t || st.l) ? 'new'
@@ -2051,11 +2226,12 @@
         return '<li><button class="qrow" data-peek="' + c.i + '">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
+          (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
           // the schedule word leads: a wrapped meta line must not orphan "due"
           '<span class="qmeta">' + esc(when) + ' · ' + esc(nice(d)) +
           (u ? ' · ' + esc(u.title) : '') + '</span></button>' +
           '<div class="qacts">' +
-          '<button class="textbtn quiet" data-go="#/d/' + c.deck + (u ? '/u/' + u.id : '') + '">Study this unit</button>' +
+          '<button class="textbtn quiet" data-go="#/d/' + c.deck + (u ? '/u/' + u.id : '') + '">Open this unit</button>' +
           '<button class="textbtn quiet" data-unstar="' + esc(c.i) + '">Unstar</button></div></li>';
       }).join('') + '</ul>'
     );
@@ -2065,8 +2241,19 @@
      self about a card, not about the course it happens to sit in */
   function startStarred() {
     var list = starredCards();
+    if (starFilter) {
+      var ids2 = starDecks(), pick2 = ids2[starFilter - 1];
+      if (pick2) list = list.filter(function (c) { return c.deck === pick2; });
+    }
     if (!list.length) return goReplace('#/starred');
     S.shuffle(list);
+    // due and overdue stars first, so a capped session is the useful part of
+    // the pile rather than a random slice of it
+    var todayN = S.dayNum();
+    list.sort(function (a, b) {
+      return (S.isDue(b.i, todayN) ? 1 : 0) - (S.isDue(a.i, todayN) ? 1 : 0);
+    });
+    list = list.slice(0, S.getSettings().sessionSize || 30);
     sess = {
       deck: null, unitId: null, mode: 'starred', quiz: false, mixed: true,
       back: '#/starred',
@@ -2136,7 +2323,7 @@
       reqHTML('Request a feature') +
       // the keys, said once, where a keyboard exists — CSS hides this line on
       // coarse-pointer screens, where it would only be clutter
-      '<div class="keyline">Keyboard — space reveal · 1 2 3 grade · s star · ' +
+      '<div class="keyline">Keyboard — space reveal · 1 2 3 grade · s star · n note · ' +
         '1–4 answer · enter next · / search · ← → tabs · esc back</div>' +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
@@ -2156,6 +2343,46 @@
   /* A settings row rebuilds the screen under the button you just pressed, so
      the keyboard was left on <body> and a second Enter did nothing. Re-render,
      then hand focus back to the row's own control. */
+  /* is the list under a filter this row may have just fallen out of? */
+  function starFiltered() {
+    var w = document.querySelector('[data-unit-filter]');
+    if (w && UNIT_FILTERS[unitFilter][0] === 'Starred') return true;
+    return !!document.querySelector('[data-star-filter]') ||
+           (location.hash.replace(/^#/, '') || '/').indexOf('/starred') === 0;
+  }
+  function bumpCount(by) {
+    var el = document.querySelector('.scoperow .scount');
+    if (!el) return;
+    var n = parseInt(el.textContent.replace(/[^0-9]/g, ''), 10);
+    if (isNaN(n)) return;
+    el.textContent = Math.max(0, n + by).toLocaleString();
+  }
+
+  /* The print stylesheet drops every control, including the word that says
+     the list is filtered — so a four-card starred sheet printed as if it were
+     the unit. The header is stamped before the dialog opens and cleared after,
+     and an installed PWA that has no print dialog at all says so. */
+  function printSheet() {
+    var stamp = document.createElement('div');
+    stamp.className = 'printonly';
+    var word = document.querySelector('[data-unit-filter], [data-star-filter]');
+    var cnt = document.querySelector('.scoperow .scount');
+    var bits = [];
+    if (word && word.textContent.trim() !== 'All cards' && word.textContent.trim() !== 'All decks')
+      bits.push(word.textContent.trim().toLowerCase() + (cnt ? ' · ' + cnt.textContent.trim() + ' cards' : ''));
+    bits.push(new Date().toISOString().slice(0, 10));
+    stamp.textContent = bits.join(' · ');
+    var host = app.querySelector('.pane-r .inner') || app.querySelector('.screen') || app;
+    host.insertBefore(stamp, host.firstChild);
+    var ok = true;
+    try { window.print(); } catch (e) { ok = false; }
+    // an installed home-screen app has no print dialog to fall back on
+    var standalone = window.navigator.standalone === true ||
+      (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    setTimeout(function () { if (stamp.parentNode) stamp.parentNode.removeChild(stamp); }, 1200);
+    if (!ok || standalone) toast('Open apdecks in Safari or Chrome to print');
+  }
+
   function refocus(render, sel) {
     var had = document.activeElement && document.activeElement.matches &&
               document.activeElement.matches(sel);
@@ -2202,6 +2429,9 @@
     }
     if (t.closest('[data-reveal]')) { reveal(); return; }
     if (t.closest('[data-star]')) { starCurrent(); return; }
+    if (t.closest('[data-note]')) { openNote(); return; }
+    if (t.closest('[data-note-save]')) { closeNote(true); return; }
+    if (t.closest('[data-note-cancel]')) { closeNote(false); return; }
     var g = t.closest('[data-grade]');
     if (g) { doGrade(parseInt(g.getAttribute('data-grade'), 10)); return; }
     var pk = t.closest('[data-pick]');
@@ -2213,14 +2443,25 @@
       route();
       return;
     }
-    if (t.closest('[data-print]')) { try { window.print(); } catch (e) {} return; }
+    if (t.closest('[data-unit-all]')) { unitFilter = 0; route(); return; }
+    if (t.closest('[data-print]')) { printSheet(); return; }
     if (t.closest('[data-search-scope]')) {
+      var q0 = document.getElementById('q');
+      var sel = q0 ? [q0.selectionStart, q0.selectionEnd] : null;
       cycleScope();
       // the word is a control that changes the list under it — repaint the
       // word in place and re-run, never remount the screen and lose the caret
       var sw = document.querySelector('[data-search-scope]');
       if (sw) sw.textContent = scopeWord();
       runSearch();
+      // …and the tap itself must not take the caret either: on a phone that
+      // drops the keyboard in the middle of a query
+      if (q0) try { q0.focus({ preventScroll: true }); if (sel) q0.setSelectionRange(sel[0], sel[1]); } catch (e) {}
+      return;
+    }
+    if (t.closest('[data-star-filter]')) {
+      starFilter = (starFilter + 1) % (starDecks().length + 1);
+      viewStarred();
       return;
     }
     var sc = t.closest('[data-star-card]');
@@ -2229,20 +2470,33 @@
       // the row stays where it is and its own word changes — repainting the
       // screen would close the card the reader is in the middle of reading
       sc.textContent = onNow ? 'Starred' : 'Star';
+      var li2 = sc.closest('li');
+      if (li2) li2.classList.toggle('dropped', !onNow && starFiltered());
       toast(onNow ? 'Starred' : 'Unstarred');
+      // …but a count beside a filter that this row no longer matches has to
+      // move, or the number and the list tell two different stories
+      if (starFiltered()) bumpCount(onNow ? 1 : -1);
       return;
     }
     var un = t.closest('[data-unstar]');
     if (un) {
-      S.toggleStar(un.getAttribute('data-unstar'));
-      toast('Unstarred');
-      viewStarred();
+      var onNow2 = S.toggleStar(un.getAttribute('data-unstar'));
+      toast(onNow2 ? 'Starred' : 'Unstarred');
+      // the list can be 22,000px tall — repainting it threw the reader back to
+      // the top and closed the row they were reading. The row stays, struck
+      // through, and the same word puts the star back.
+      var li = un.closest('li');
+      if (li) li.classList.toggle('dropped', !onNow2);
+      un.textContent = onNow2 ? 'Unstar' : 'Star again';
+      bumpCount(onNow2 ? 1 : -1);
       return;
     }
     var peek = t.closest('[data-peek]');
     if (peek) {
       var a = peek.querySelector('.qa');
       a.hidden = !a.hidden;
+      var qn = peek.querySelector('.qn');
+      if (qn) qn.hidden = a.hidden;
       peek.classList.toggle('open', !a.hidden);
       if (peek.parentNode) peek.parentNode.classList.toggle('open', !a.hidden);
       return;
@@ -2471,6 +2725,7 @@
       }
       if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
       if (e.key === 's') { starCurrent(); return; }
+      if (e.key === 'n') { openNote(); return; }
       // the bar is hidden in a session, but the arrows still mean "switch
       // tabs" — one ArrowRight into Review used to be a one-way trip, with
       // every further arrow swallowed by this branch
@@ -2542,6 +2797,9 @@
     // whole unit — the word lives in memory, and that memory ends with the
     // screen. This sits above every early return, or "#/" would slip past it.
     if (!(p[0] === 'd' && p[2] === 'u' && p[1] + '/' + p[3] === unitFilterFor)) unitFilterFor = '';
+    // the same rule for the search scope: leaving the screen widens it again,
+    // or you come back an hour later to "No matches in English"
+    if (p[0] !== 'search') searchState.deck = null;
     if (window.Games) window.Games.onRoute(p[0] || '');
 
     if (!p.length) {

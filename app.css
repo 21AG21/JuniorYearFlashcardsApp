@@ -437,6 +437,20 @@ button.hero-tap:active{ opacity:.55; }
   color:var(--muted); background:none; border:0; padding:0; position:relative; cursor:pointer; }
 .card .hint-btn::after{ content:""; position:absolute; inset:-14px -18px; }
 .card .rule{ height:1px; background:var(--hair-soft); margin:24px 0 20px; }
+/* the reader's own words on a card: set apart from the deck's note by a rule
+   down its left, the same mark the book uses for a term it is explaining */
+.card .mynote{ margin-top:14px; padding:2px 0 2px 14px; border-left:2px solid var(--ink);
+  font-size:var(--t-answer); line-height:1.42; color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere; }
+.card .mynote.editing{ border-left-color:var(--ink-soft); padding-left:12px; }
+.card .mynote textarea{ display:block; width:100%; background:transparent; border:0; padding:0;
+  font:inherit; font-size:var(--t-answer); line-height:1.42; color:var(--ink); resize:none;
+  outline:none; caret-color:var(--ink); }
+.card .mynote textarea::placeholder{ color:var(--muted); }
+.card .mynote .noteacts{ display:flex; gap:26px; margin-top:8px; }
+.card .mynote .noteacts .textbtn{ padding:6px 0; min-height:40px; }
+/* on a browse row the note rides under the answer, in the same quiet ink */
+.qrow .qn{ display:block; margin-top:6px; padding-left:12px; border-left:2px solid var(--hair);
+  font-size:16px; line-height:1.4; color:var(--ink-soft); white-space:pre-wrap; overflow-wrap:anywhere; }
 .card .a{ font-size:var(--t-answer); font-weight:440; letter-spacing:-.015em; line-height:1.32; color:var(--ink); }
 .card .a.small{ font-size:clamp(17px,4.6vw,20px); font-weight:440; line-height:1.42; }
 .card .a.tiny{ font-size:15.5px; font-weight:450; line-height:1.55; letter-spacing:0; }
@@ -506,7 +520,13 @@ button.hero-tap:active{ opacity:.55; }
 /* the two words' hit areas each reach 14px past their glyphs — the gap has to
    clear both, or a tap between them lands on whichever painted last */
 .list li.open .qacts{ display:flex; flex-wrap:wrap; column-gap:34px; margin:-2px 0 10px; }
-.list li.open .qacts .textbtn{ padding:8px 0; min-height:40px; }
+/* a four-letter word is a 30px target: the padding carries it to 44 */
+.list li.open .qacts .textbtn{ padding:11px 0; min-height:44px; }
+/* a row whose star has just come off keeps its place in the list rather than
+   vanishing under the reader's thumb */
+.list li.dropped .qq, .list li.dropped .qa{ color:var(--muted); text-decoration:line-through;
+  text-decoration-thickness:1px; }
+.list li.dropped .qmeta{ opacity:.6; }
 .choices{ display:flex; flex-direction:column; margin-top:20px; }
 .choice{ position:relative; width:100%; text-align:left; padding:19px 26px 19px 0; border:0; border-top:1px solid var(--hair-soft);
   background:none; color:var(--ink-soft); font:inherit; font-size:clamp(19px,5.4vw,24px); font-weight:480; line-height:1.4; cursor:pointer;
@@ -560,6 +580,8 @@ button.hero-tap:active{ opacity:.55; }
 .scoperow .textbtn{ padding:6px 0; min-height:40px; }
 /* the count that belongs to the word beside it — a fact, never a control */
 .scoperow .scount{ color:var(--muted); font-size:var(--t-label); }
+/* a second word in the row belongs at the far end, away from the first */
+.scoperow .end{ margin-left:auto; }
 /* on a unit page it opens the card list rather than following a text field */
 .scoperow.unit{ margin:var(--s-4) 0 var(--s-3); }
 @media print{ .scoperow{ display:none !important; } }
@@ -607,6 +629,9 @@ sub,sup{ font-size:max(.68em, 11px); }
 .warnline{ display:block; width:100%; text-align:left; background:none; border:0;
   border-bottom:1px solid var(--hair); font:inherit; font-size:14px; font-weight:500;
   color:var(--ink); padding:10px 0 11px; margin:0 0 var(--s-3); letter-spacing:-.005em; }
+/* the same line at a quieter weight: a count that is missing a course says so
+   without shouting, because the rest of the screen is still true */
+.warnline.soft{ color:var(--muted); border-bottom-color:var(--hair-soft); font-weight:400; }
 /* the coverage forecast sits under the countdown, one shade quieter — and the
    rate that would fix it is a control, not a suggestion */
 .ulabel.cover{ margin-top:2px; color:var(--muted); }
@@ -908,8 +933,11 @@ sub,sup{ font-size:max(.68em, 11px); }
    The unit view already holds every question AND answer in the DOM — print
    unlocks the app scroller, reveals the answers, drops the chrome, and sets
    dense black-ink columns. Cmd+P on any unit page is the whole feature. */
+/* a line that exists only on paper: what the sheet actually holds */
+.printonly{ display:none; }
 @media print{
   @page{ margin:14mm; }
+  .printonly{ display:block; font-size:9pt; color:#000; margin-bottom:4mm; letter-spacing:.02em; }
   html, body{ height:auto; overflow:visible; background:#fff; }
   #app{ height:auto; max-width:none; overflow:visible; padding:0; display:block; }
   .pane-l{ display:none; }

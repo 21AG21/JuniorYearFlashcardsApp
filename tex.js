@@ -153,7 +153,14 @@
       }
       if (ch === '^' || ch === '_') {
         p.i++;
-        var body = p.group();
+        // LaTeX takes exactly one character after ^ unless it is braced, so a
+        // card written 10^23 rendered as ten-squared followed by a 3 —
+        // Avogadro's number, wrong, on screen and on paper. No one writing a
+        // deck means "x² then a literal 3", so a run of digits is taken whole.
+        var run = /^\d\d+/.exec(p.s.slice(p.i));
+        var body;
+        if (run) { body = esc(run[0]); p.i += run[0].length; }
+        else body = p.group();
         if (ch === '^' && (body === '\u00b0' || body === '&deg;')) {
           if (out.length) out[out.length - 1] = last() + '\u00b0'; else out.push('\u00b0');
           continue;
