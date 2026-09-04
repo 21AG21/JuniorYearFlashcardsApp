@@ -34,6 +34,9 @@
     }
     app.classList.toggle('is-wide', isWide());
     app.classList.toggle('is-session', !!(opts && opts.session));
+    // a game round has no card stage to scroll inside, so the screen itself
+    // has to be the scroller — a tall board used to clip with no way down
+    app.classList.toggle('is-game', !!(opts && opts.session) && html.indexOf('cardstage') < 0);
     app.classList.toggle('is-quiz', !!(opts && opts.quiz));
     app.classList.toggle('is-book', !!(opts && opts.book));
     tabs.hidden = isWide() || !!(opts && opts.session) || !!(opts && opts.book);

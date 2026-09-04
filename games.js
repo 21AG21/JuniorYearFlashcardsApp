@@ -633,6 +633,32 @@
     xs.forEach(function (t) { if (!/^\d{3,4}$/.test(t)) s = s.split(t).join('—'); });
     return s;
   }
+  /* a clue is a hint, not the whole card: cut a long first sentence at a
+     clause break so it ends on a noun rather than dangling on "of" */
+  var CLUE_TAIL = { of:1, the:1, a:1, an:1, to:1, in:1, on:1, at:1, by:1, for:1, with:1,
+                    and:1, or:1, that:1, which:1, from:1, as:1, into:1, its:1, his:1,
+                    her:1, their:1, was:1, were:1, is:1, are:1, but:1, than:1, over:1 };
+  function clueTrim(s, max) {
+    max = max || 110;
+    var floor = Math.min(45, Math.round(max * 0.55));
+    if (s.length <= max) return s;
+    var cut = -1;
+    [', ', '; ', ' — ', ' – ', ' (', '. '].forEach(function (mk) {
+      var p = s.lastIndexOf(mk, max);
+      if (p > floor && p > cut) cut = p;
+    });
+    if (cut < 0) {
+      cut = s.lastIndexOf(' ', max);
+      var guard = 0;
+      while (cut > floor && guard++ < 12 &&
+             CLUE_TAIL[s.slice(0, cut).split(/\s+/).pop().toLowerCase().replace(/[^a-z]/g, '')]) {
+        cut = s.lastIndexOf(' ', cut - 1);
+      }
+    }
+    if (cut < floor) cut = max - 3;
+    return s.slice(0, cut).replace(/[\s,;.—–(]+$/, '') + '…';
+  }
+
   function namedRound(n, unitId) {
     var d = S.getDeck('apush');
     if (!d) return [];
@@ -650,7 +676,7 @@
       // outlived redaction gives the answer away
       var w0 = term.split(/\s+/)[0].replace(/[’'‘]s$/, '');
       if (w0.length > 3 && s.indexOf(w0) > -1) return;
-      if (s.length > 150) s = s.slice(0, 147).replace(/\s+\S*$/, '') + '…';
+      s = clueTrim(s);
       // …nor another round-mate's clue: a "pre-Columbian" clue beside the
       // Columbian Exchange tile whispers across the board
       for (var oi = 0; oi < out.length; oi++) {
@@ -677,8 +703,9 @@
       if (out.length >= 6 || c.v !== 'DEFINE') return;
       var term = termOf(clean(c.q));
       if (!term) return;
-      var def = clean(c.a);
-      if (def.length > 90) def = def.slice(0, 87).replace(/\s+\S*$/, '') + '…';
+      // a definition that runs six lines beside a one-word term is not a
+      // column any more — trim at a clause so both sides keep their rhythm
+      var def = clueTrim(clean(c.a), 76);
       var kt = term.toLowerCase();
       if (seenT[kt] || seenD[def]) return;
       seenT[kt] = seenD[def] = 1;
@@ -736,14 +763,21 @@
       }
     }
     var f = st.facts[st.i];
-    var scope = (st.stage != null ? esc(STAGES[st.stage][0]) + ' ' : '') + right(st.score);
+    // four bars say which stage you are in without naming it — the running
+    // score already answers "how far through", this answers "through what"
+    var segs = '';
+    if (st.stage != null) {
+      for (var sg = 0; sg < STAGES.length; sg++) segs += sg <= st.stage ? '▮' : '▯';
+      segs = '<span class="tick seg">' + segs + '</span> ';
+    }
+    var scope = segs + (st.stage != null ? esc(STAGES[st.stage][0]) + ' ' : '') + right(st.score);
     // long expressions get two wide columns instead of three broken ones
     var wide = st.tiles.some(function (tl) { return estLen(tl.t) > 14; });
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(st.id, scope, dots(st.played + st.i, st.stage != null ? st.grand : st.total)) +
       '<div class="gcur bcur' + (still ? '' : ' swap') + '">' +
-        '<div class="gname num' + (flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
+        '<div class="gname num' + (flat(f[0]).length > 88 ? ' gsm gxs' : flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
       '<div class="board' + (wide ? ' b2' : '') + (st.anim ? ' deal' : '') + '">' + st.tiles.map(function (tl, i) {
         var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
         return '<button class="' + cls + '" data-tile="' + i + '"' + (tl.done ? ' disabled' : '') + '>' + fx(tl.t) + '</button>';
@@ -836,6 +870,8 @@
     pool.forEach(function (e) {
       if (picked.length >= n) return;
       if (used[e.y]) return;                       // one event per year
+      // "War of 1812" answers itself — those names come last, only to fill out
+      if (String(e.t).indexOf(String(e.y)) > -1) return;
       if (picked.some(function (p) { return Math.abs(p.v - e.y) < 6; })) return;
       used[e.y] = 1;
       picked.push({ n: e.t, v: e.y, vl: String(e.y), d: e.d });
@@ -864,7 +900,9 @@
       var fair = picked.every(function (p) { return Math.abs(ax.get(p) - v) >= (ax.gap || 0.001); });
       if (fair) picked.push(e);
     });
-    return { title: ax.title,
+    // the printed value shrinks as you go down here, the opposite of the
+    // timeline — grow says which way it climbs so the arrow can be constant
+    return { title: ax.title, grow: '↑',
       items: picked.map(function (e) { return { n: e[0], v: -ax.get(e), vl: ax.vl(e) }; }) };
   }
 
@@ -882,14 +920,14 @@
   function startOrder(id) {
     var axis, pool;
     if (id === 'timeline') {
-      axis = { title: 'Earliest at the top' };
+      axis = { title: 'Earliest at the top', grow: '↓' };
       pool = timelineRound(8);
     } else if (id === 'presorder') {
-      axis = { title: 'Earliest at the top' };
+      axis = { title: 'Earliest at the top', grow: '↓' };
       pool = presRound(8);
     } else {
       var ax = chemRound();
-      axis = { title: ax.title };
+      axis = { title: ax.title, grow: ax.grow };
       pool = ax.items;   // values negated so the engine always sorts ascending
     }
     var anchor = pool.shift();
@@ -911,7 +949,8 @@
     });
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
-      gameTop(st.id, esc(st.axis.title), dots(st.done, st.total)) +
+      gameTop(st.id, '<span class="tick grow">' + (st.axis.grow || '↓') + '</span> ' + esc(st.axis.title),
+        dots(st.done, st.total)) +
       '<div class="gcur"><div class="gname">' + esc(st.cur.n) + '</div></div>' +
       '<div class="gline">' + rows + '</div>',
       { session: true, keepScroll: st.done > 0 }
@@ -1188,6 +1227,7 @@
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });
     shuffle(left); shuffle(right);
     st = { id: id, kind: 'match', left: left, right: right, selL: -1, selR: -1,
+           missL: -1, missR: -1,
            tries: 0, hits: 0, total: pairs.length, anim: true };
     renderMatch();
   }
@@ -1207,9 +1247,9 @@
       chemformula: ['Compound', 'Formula'],
       frmatch: ['French', 'English']
     }[st.id] || ['Device', 'What it is'];
-    function col(items, side, sel) {
+    function col(items, side, sel, miss) {
       return items.map(function (it, i) {
-        var cls = 'mrow' + (it.done ? ' done' : i === sel ? ' sel' : '');
+        var cls = 'mrow' + (it.done ? ' done' : i === miss ? ' miss' : i === sel ? ' sel' : '');
         return '<button class="' + cls + '" data-m' + side + '="' + i + '"' + (it.done ? ' disabled' : '') + '>' +
           fx(it.t) + '</button>';
       }).join('');
@@ -1218,8 +1258,8 @@
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(st.id, tries(st.tries), dots(st.hits, st.total)) +
       '<div class="mcols' + (st.anim ? ' deal' : '') + '">' +
-        '<div><div class="k mhead">' + esc(head[0]) + '</div>' + col(st.left, 'l', st.selL) + '</div>' +
-        '<div><div class="k mhead">' + esc(head[1]) + '</div>' + col(st.right, 'r', st.selR) + '</div>' +
+        '<div><div class="k mhead">' + esc(head[0]) + '</div>' + col(st.left, 'l', st.selL, st.missL) + '</div>' +
+        '<div><div class="k mhead">' + esc(head[1]) + '</div>' + col(st.right, 'r', st.selR, st.missR) + '</div>' +
       '</div>',
       { session: true, keepScroll: true }
     );
@@ -1228,12 +1268,31 @@
 
   function pickMatch(side, i) {
     if (!st || st.kind !== 'match') return;
+    // a fresh tap cuts the previous miss short rather than being swallowed —
+    // the flash is feedback, never a gate on the next guess
+    if (st.missL > -1 || st.missR > -1) { clearTimeout(timer); st.missL = st.missR = -1; }
     if (side === 'l') st.selL = (st.selL === i ? -1 : i); else st.selR = (st.selR === i ? -1 : i);
     if (st.selL > -1 && st.selR > -1) {
       st.tries++;
       var L = st.left[st.selL], R = st.right[st.selR];
-      if (L.k === R.k) { L.done = R.done = true; st.hits++; }
-      st.selL = st.selR = -1;
+      if (L.k === R.k) {
+        L.done = R.done = true; st.hits++;
+        st.selL = st.selR = -1;
+      } else {
+        // a wrong pair used to be silent — the two tiles simply went back to
+        // plain. Now they recede for a beat, the same grammar a missed tile
+        // already uses on the board, so a miss reads without reading a counter
+        st.missL = st.selL; st.missR = st.selR;
+        st.selL = st.selR = -1;
+        renderMatch();
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          if (!st || st.kind !== 'match' || (st.missL < 0 && st.missR < 0)) return;
+          st.missL = st.missR = -1;
+          renderMatch();
+        }, 460);
+        return;
+      }
     }
     renderMatch();
   }
@@ -1262,6 +1321,11 @@
     s += '<line class="uc-axis" x1="20" y1="150" x2="280" y2="150"/>';
     s += '<line class="uc-axis" x1="150" y1="20" x2="150" y2="280"/>';
     s += '<circle class="uc-ring" cx="150" cy="150" r="110" fill="none"/>';
+    // angles start at the right and turn this way: a tick and a small arrow say
+    // the convention without naming a value, so no cardinal answer is given away
+    s += '<path class="uc-start" d="M 260.0 150.0 L 278.0 150.0"/>' +
+         '<path class="uc-turn" d="M 278.0 150.0 A 128 128 0 0 0 256.1 78.4"/>' +
+         '<path class="uc-turn" d="M 257.7 90.6 L 256.1 78.4 L 266.8 84.4"/>';
     var marked = q.type === 2 || q.type === 3;   // a highlighted point, answered via choices
     ANGLES.forEach(function (a, i) {
       var x = 150 + 110 * a[4], y = 150 - 110 * a[5];
@@ -1288,7 +1352,7 @@
       // half coordinate-pair phrasing (the classic unit-circle test), half cos/sin
       if (q.coord == null) q.coord = Math.random() < 0.5;
       return q.coord ? '(' + a[1] + ', ' + a[2] + ')'
-                     : 'cos θ = ' + a[1] + ' · sin θ = ' + a[2];
+                     : 'cos θ = ' + a[1] + ',  sin θ = ' + a[2];
     }
     if (q.type === 3) return 'θ = ?';
     var fn = ['cos', 'sin', 'tan'][q.a % 3];
@@ -2040,8 +2104,10 @@
     }).join('') + '</div>';
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
-      gameTop(st.id, right(st.score), dots(st.i, st.total)) +
-      '<div class="gcur"><div class="gname num">y = ?</div></div>' +
+      // the graph is the prompt; "y = ?" rides in the scope slot so the fourth
+      // option is not pushed past the fold by a headline that says nothing new
+      gameTop(st.id, '<span class="num">y = ?</span>&nbsp;&nbsp; ' + right(st.score),
+        dots(st.i, st.total)) +
       '<div class="tgwrap">' + graphSVG(g) + '</div>' + ch,
       { session: true, keepScroll: st.i > 0 }
     );

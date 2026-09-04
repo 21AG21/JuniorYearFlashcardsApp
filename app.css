@@ -252,6 +252,10 @@ button.hero-tap:active{ opacity:.55; }
 #app.is-session:not(.is-wide) .session{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
 #app.is-session:not(.is-wide) .cardstage{ flex:1 1 auto; min-height:0;
   overflow-y:auto; overscroll-behavior-y:contain; }
+/* …but a game round has no card stage: there the screen is the scroller, or a
+   twelve-tile board and its option list fall off the bottom unreachable */
+#app.is-session.is-game:not(.is-wide){ display:block; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+#app.is-session.is-game:not(.is-wide) .screen{ display:block; flex:none; }
 #app.is-session:not(.is-wide) .rate{ margin-top:var(--s-3); }
 #app.is-session:not(.is-wide) .sess-util{ margin-top:12px; }
 .sess-top{ display:flex; align-items:baseline; gap:12px; margin-bottom:var(--s-4); }
@@ -261,6 +265,8 @@ button.hero-tap:active{ opacity:.55; }
 .ledger .gkind{ font-size:14px; color:var(--muted); letter-spacing:.14em; font-weight:400; }
 .sess-top .cue{ font-size:14px; color:var(--muted); letter-spacing:.14em; white-space:nowrap; flex:none; }
 .sess-top .tick{ color:var(--ink-soft); }
+.sess-top .tick.grow{ font-size:1.08em; }
+.sess-top .tick.seg{ font-size:.82em; letter-spacing:.08em; }
 /* a filled dot is a question behind you, a hollow one is still ahead */
 .sess-top .dots{ font-size:9px; letter-spacing:.22em; color:var(--muted); line-height:1; }
 .done-hero .v{ font-variant-numeric:tabular-nums; }
@@ -329,7 +335,7 @@ button.hero-tap:active{ opacity:.55; }
 
 /* --- quiz: choices are text rows separated by hairlines -------------------- */
 .choices{ display:flex; flex-direction:column; margin-top:20px; }
-.choice{ width:100%; text-align:left; padding:19px 0; border:0; border-top:1px solid var(--hair-soft);
+.choice{ position:relative; width:100%; text-align:left; padding:19px 26px 19px 0; border:0; border-top:1px solid var(--hair-soft);
   background:none; color:var(--ink-soft); font:inherit; font-size:clamp(19px,5.4vw,24px); font-weight:480; line-height:1.4; cursor:pointer;
   transition:opacity .12s ease; min-height:44px; }
 .choice:first-child{ border-top:0; }
@@ -341,6 +347,12 @@ button.hero-tap:active{ opacity:.55; }
 .choice[data-state="right"]{ color:var(--ink); }
 .choice[data-state="wrong"]{ color:var(--ink-soft); }
 .choice[data-state="mute"]{ color:var(--muted); }
+/* …and a mark, because three shades of grey is not a signal you can name.
+   The glyph rides in the reserved right gutter, so answering never reflows. */
+.choice[data-state="right"]::after,.choice[data-state="wrong"]::after{
+  position:absolute; right:0; top:19px; font-size:.78em; line-height:1.5; color:inherit; }
+.choice[data-state="right"]::after{ content:"✓"; }
+.choice[data-state="wrong"]::after{ content:"✗"; }
 /* fraction leading stays closer to prose here — options are lists, not cards */
 .choice.mathy{ line-height:1.8 !important; }
 /* the justification rides as the second line of the right answer */
@@ -414,6 +426,14 @@ sub,sup{ font-size:.68em; }
   opacity:0; pointer-events:none; transform:translateY(6px);
   transition:opacity .2s ease, transform .24s cubic-bezier(.32,.72,0,1); }
 #toast.show{ opacity:1; transform:none; }
+/* in a game the board fills the screen, so a floating line 108px up lands in
+   the middle of the tiles — there the message becomes a strip on the bottom
+   edge instead, over nothing but its own ground */
+#app.is-game:not(.is-wide) ~ #toast{ left:0; right:0; bottom:0;
+  border-top:1px solid var(--hair-soft);
+  padding:14px calc(env(safe-area-inset-right,0px) + var(--gutter))
+          calc(env(safe-area-inset-bottom,0px) + 14px)
+          calc(env(safe-area-inset-left,0px) + var(--gutter)); }
 /* two-pane layouts: the toast lives in the right pane, never over the rail */
 @media (min-width:900px) and (min-height:500px){
   #toast{ left:calc(clamp(280px, 26vw, 360px) + 72px); right:96px; bottom:56px; }
@@ -461,14 +481,16 @@ sub,sup{ font-size:.68em; }
 .gcur .k{ display:block; margin-bottom:4px; }
 .gcur .gname{ font-size:clamp(30px,9vw,40px); font-weight:430; letter-spacing:-.02em; line-height:1.22; color:var(--ink); }
 .gcur .gname.gsm{ font-size:clamp(21px,6.4vw,28px); line-height:1.32; letter-spacing:-.012em; }
+.gcur .gname.gxs{ font-size:clamp(18px,5.2vw,23px); line-height:1.38; letter-spacing:-.006em; }
 .gline{ display:flex; flex-direction:column; }
-.gline .gap{ position:relative; display:block; width:100%; height:36px; background:none; border:0; padding:0; cursor:pointer; }
-.gline .gap::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:var(--hair-soft); }
-/* a slot must look like a slot: a small + names every insertion point */
+.gline .gap{ position:relative; display:block; width:100%; height:46px; background:none; border:0; padding:0; cursor:pointer; }
+.gline .gap::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:var(--hair); }
+/* a slot must look like a slot: a small + names every insertion point, and it
+   has to survive a bright phone outdoors — the hairline alone did not */
 .gline .gap::after{ content:"+"; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  font-size:14px; font-weight:500; color:var(--muted); background:var(--ground); padding:0 8px; line-height:1; }
+  font-size:17px; font-weight:500; color:var(--ink-soft); background:var(--ground); padding:0 9px; line-height:1; }
 .gline .gap:active::before{ height:2px; background:var(--ink); }
-@media (hover:hover){ .gline .gap:hover::before{ background:var(--hair); } }
+@media (hover:hover){ .gline .gap:hover::before{ background:var(--ink-soft); } .gline .gap:hover::after{ color:var(--ink); } }
 .grow{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
 .grow .gname{ font-size:clamp(19px,5.4vw,23px); font-weight:430; color:var(--ink); min-width:0; }
 .grow .gval{ font-size:17px; font-weight:500; color:var(--muted); white-space:nowrap; }
@@ -498,21 +520,31 @@ sub,sup{ font-size:.68em; }
 .mrow:first-of-type{ border-top:0; }
 .mrow:active{ opacity:.55; }
 .mrow.sel{ color:var(--ink); }
+/* a wrong pair recedes for a beat — the miss has to be visible without a counter */
+.mrow.miss{ opacity:.26; }
 .mrow.done{ color:var(--muted); font-weight:480; text-decoration:line-through; text-decoration-thickness:1px; }
 
 .tgwrap{ display:flex; margin:var(--s-2) 0; }
 .tg{ width:min(92vw, 480px); height:auto; }
 .tg-axis{ stroke:var(--hair); stroke-width:1; }
 .tg-curve{ stroke:var(--ink); stroke-width:2; fill:none; stroke-linecap:round; }
-.tg-lab{ font:10.5px var(--font-sf); fill:var(--muted); }
+/* tick labels sit on top of the curve near the origin — a ground-coloured
+   stroke painted under the glyph knocks the curve out behind them */
+.tg-lab{ font:10.5px var(--font-sf); fill:var(--muted);
+  stroke:var(--ground); stroke-width:3; paint-order:stroke fill; }
 .ucwrap{ display:flex; margin:var(--s-2) 0; }
 .uc{ width:min(88vw, 400px); height:auto; }
 .uc-axis{ stroke:var(--hair-soft); stroke-width:1; }
 .uc-ring{ stroke:var(--hair); stroke-width:1.5; }
 .uc-dot{ fill:var(--muted); }
 .uc-dot.on{ fill:var(--ink); r:7; }
-.uc-dot.off{ fill:var(--hair); }
+/* your wrong tap has to stay legible next to the right answer — a near-white
+   fill vanished into the ground, so it reads as a hollow ring instead */
+.uc-dot.off{ fill:none; stroke:var(--ink-soft); stroke-width:2; }
 .uc-hit{ fill:transparent; cursor:pointer; }
+/* the convention, drawn: angles begin at the right and turn counterclockwise */
+.uc-start{ stroke:var(--ink-soft); stroke-width:2; stroke-linecap:round; }
+.uc-turn{ stroke:var(--ink-soft); stroke-width:1.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
 /* desktop: a game owns the whole right side */
 @media (min-width:900px) and (min-height:500px){
   /* the circle and its answers share the screen — no fold between them */
@@ -520,6 +552,7 @@ sub,sup{ font-size:.68em; }
   .pane-r .tg{ width:min(52vh, 660px); }
   .pane-r .gcur .gname{ font-size:clamp(38px, 3.2vw, 52px); }
   .pane-r .gcur .gname.gsm{ font-size:clamp(24px, 2vw, 30px); }
+  .pane-r .gcur .gname.gxs{ font-size:clamp(20px, 1.7vw, 25px); }
   .pane-r .board{ column-gap:48px; row-gap:18px; }
   .pane-r .board .tile{ font-size:clamp(22px, 1.9vw, 28px); }
   .pane-r .mcols{ column-gap:64px; }
@@ -618,6 +651,11 @@ sub,sup{ font-size:.68em; }
 .uc-dot.on{ animation:dotPop .32s ease-out both; }
 .done-hero .v{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
 .grow.reveal{ animation:riseIn .26s cubic-bezier(.32,.72,0,1); }
+/* a misplaced card slides to its real slot — the move needs to read as a
+   correction, not as the card simply appearing where you meant it to */
+.grow.miss.reveal{ animation:nudge .34s cubic-bezier(.36,.07,.19,.97); }
+@keyframes nudge{ 0%,100%{ transform:none; } 18%{ transform:translateX(-7px); }
+  46%{ transform:translateX(6px); } 74%{ transform:translateX(-3px); } }
 
 /* --- print: a unit page becomes a two-column paper cheat sheet -------------
    The unit view already holds every question AND answer in the DOM — print
