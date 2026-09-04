@@ -67,7 +67,11 @@
     ['Cu', 29, 63.5, 1.90], ['Zn', 30, 65.4, 1.65], ['Ga', 31, 69.7, 1.81], ['Ge', 32, 72.6, 2.01],
     ['As', 33, 74.9, 2.18], ['Se', 34, 79.0, 2.55], ['Br', 35, 79.9, 2.96],
     ['Ag', 47, 107.9, 1.93], ['Sn', 50, 118.7, 1.96], ['I', 53, 126.9, 2.66], ['Cs', 55, 132.9, 0.79],
-    ['Ba', 56, 137.3, 0.89], ['Au', 79, 197.0, 2.54], ['Hg', 80, 200.6, 2.00], ['Pb', 82, 207.2, 1.87]
+    ['Ba', 56, 137.3, 0.89], ['Au', 79, 197.0, 2.54], ['Hg', 80, 200.6, 2.00], ['Pb', 82, 207.2, 2.33]
+    /* every other value here is the modern Pauling set (H 2.20, F 3.98,
+       Cs 0.79); lead alone carried 1.87, Pauling's older Pb(II) figure,
+       against the 2.33 in the table a student cross-checking will find,
+       so a round marked them wrong for using the right number */
   ];
 
   /* equivalence facts for the identities board: prompt → the tile it equals.
