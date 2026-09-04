@@ -433,8 +433,10 @@
     var fi = FILT[id] || 0;
     // tight sits beside the mode word — only the first right-hand word may
     // carry the auto margin, or the pair spreads across the bar
+    // and the gap has to clear BOTH ±14px hit pads, or a tap in the visible
+    // space between the two words lands on one of them
     return '<button class="textbtn quiet gfilt" data-gfilter' +
-      (tight ? ' style="margin-left:18px"' : '') + '>' +
+      (tight ? ' style="margin-left:34px"' : '') + '>' +
       esc(fi ? filtOpts(id)[fi - 1] : 'All') + '</button>';
   }
 
@@ -524,12 +526,16 @@
       // round the app cannot deal
       if (!S.getDeck(deckId)) return;
       var rows = '';
+      // a game only ever played against the clock still has a best — the hub
+      // read the classic key alone and listed it as if it had never been played
+      function shown(id) { return b[id] || b[id + '!sprint'] || b[id + '!streak']; }
       Object.keys(GAMES).forEach(function (id) {
         if (GAMES[id].deck !== deckId) return;
+        var bs = shown(id);
         rows += '<li><button class="ledger mid" data-go="#/game/' + id + '">' +
           '<span class="lname">' + esc(GAMES[id].name) + '</span>' +
           '<span class="lval word gkind">' + (CUE[GAMES[id].kind] || '') + '</span>' +
-          (b[id] ? '<span class="lsub">★ ' + esc(b[id].label) + '</span>' : '') +
+          (bs ? '<span class="lsub">★ ' + esc(bs.label) + '</span>' : '') +
           '</button></li>';
       });
       if (rows) html += '<div class="ulabel">' + esc(ctx.nice(deckId)) + '</div><ul class="list" style="gap:0">' + rows + '</ul>';
@@ -1302,19 +1308,37 @@
       chemformula: ['Compound', 'Formula'],
       frmatch: ['French', 'English']
     }[st.id] || ['Device', 'What it is'];
-    function col(items, side, sel, miss) {
-      return items.map(function (it, i) {
-        var cls = 'mrow' + (it.done ? ' done' : i === miss ? ' miss' : i === sel ? ' sel' : '');
-        return '<button class="' + cls + '" data-m' + side + '="' + i + '"' + (it.done ? ' disabled' : '') + '>' +
-          fx(it.t) + '</button>';
-      }).join('');
+    function cell(items, side, sel, miss, i) {
+      var it = items[i];
+      if (!it) return '<span></span>';
+      var cls = 'mrow' + (i === 0 ? ' mrow0' : '') +
+        (it.done ? ' done' : i === miss ? ' miss' : i === sel ? ' sel' : '');
+      // the columns interleave in the DOM now, so a reader arriving at a row
+      // out of context is told which side it is on
+      return '<button class="' + cls + '" data-m' + side + '="' + i + '"' +
+        ' aria-label="' + esc(head[side === 'l' ? 0 : 1] + ': ' + it.t) + '"' +
+        ' style="animation-delay:' + (Math.min(i, 6) * 0.03).toFixed(2) + 's"' +
+        (it.done ? ' disabled' : '') + '>' + fx(it.t) + '</button>';
+    }
+    // when one side is prose and the other a term, an even split starves the
+    // prose — measured, not hardcoded, so a new match game tunes itself
+    function proseRight() {
+      function mean(a) { return a.reduce(function (n, x) { return n + x.t.length; }, 0) / (a.length || 1); }
+      // the ratio alone would fire on "H" beside "Hydrogen"; the floor asks
+      // that the long side really be a sentence
+      return mean(st.right) > 40 && mean(st.right) > mean(st.left) * 2.2;
+    }
+    var rows = '';
+    for (var mi = 0; mi < Math.max(st.left.length, st.right.length); mi++) {
+      rows += cell(st.left, 'l', st.selL, st.missL, mi) +
+              cell(st.right, 'r', st.selR, st.missR, mi);
     }
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
       gameTop(st.id, tries(st.tries), dots(st.hits, st.total)) +
-      '<div class="mcols' + (st.anim ? ' deal' : '') + '">' +
-        '<div><div class="k mhead">' + esc(head[0]) + '</div>' + col(st.left, 'l', st.selL, st.missL) + '</div>' +
-        '<div><div class="k mhead">' + esc(head[1]) + '</div>' + col(st.right, 'r', st.selR, st.missR) + '</div>' +
+      '<div class="mcols' + (st.anim ? ' deal' : '') + (proseRight() ? ' prose' : '') + '">' +
+        '<div class="k mhead">' + esc(head[0]) + '</div>' +
+        '<div class="k mhead">' + esc(head[1]) + '</div>' + rows +
       '</div>',
       { session: true, keepScroll: true }
     );
@@ -1818,7 +1842,7 @@
         used[y] = 1; opts.push(String(y));
       }
       if (opts.length < 4) return;
-      opts.sort();
+      shuffle(opts);   /* a sorted row puts a one-sided window's answer at an end */
       qs.push({ p: e.t, c: opts, r: String(e.y), tag: e.t });
     });
     // a thin period may be all self-dated events — a small round beats none
@@ -2067,8 +2091,10 @@
     doneAt = Date.now();
     ctx.mount(
       ctx.backbar(GAMES[id].name) +
-      '<div class="done-hero"><span class="k">' +
-        esc(GAMES[id].name + (mode === 'classic' ? '' : ' · ' + (mode === 'sprint' ? '◷' : '↑'))) + '</span>' +
+      // the name is already in the back bar directly above — the eyebrow says
+      // what gameDone's says, plus the mode mark when there is one
+      '<div class="done-hero"><span class="k">Done' +
+        (mode === 'classic' ? '' : ' ' + (mode === 'sprint' ? '◷' : '↑')) + '</span>' +
       '<div class="v num">' + esc(label) + '</div>' +
       (bb ? '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">★ ' + esc(bb.label) + '</div>' : '') +
       '</div>' +

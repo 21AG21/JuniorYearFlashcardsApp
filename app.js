@@ -206,7 +206,7 @@
     if (p[0] === 'd' && p[2] === 'b') { var bp = bookOf(p[1]), ph = bp && bp.phases[p[3]]; return '#/d/' + p[1] + (ph ? '/u/' + ph.u : ''); }
     if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1] + (p[3] ? '/u/' + p[3] : '');
     if (p[0] === 'cram' && p[1]) return p[2] ? '#/d/' + p[1] + '/u/' + p[2] : '#/d/' + p[1];
-    if (p[0] === 'weak') return '#/stats';
+    if (p[0] === 'weak' || p[0] === 'stuck') return '#/stats';
     return '#/';
   }
   function plural(n, one, many) { return n.toLocaleString() + ' ' + (n === 1 ? one : (many || one + 's')); }
@@ -238,6 +238,17 @@
   }
   // verbs arrive from the data in caps — never render them that way
   function verb(v) { return v ? v.charAt(0) + v.slice(1).toLowerCase() : ''; }
+
+  /* Python's indentation is semantic, so a wrapped line that resumed at column
+     zero misinformed: a trailing comment read as a top-level one. Each source
+     line becomes its own block, which lets a hanging indent inset only the
+     continuations. text-indent alone cannot do this — it applies once per
+     block, not once per newline, and `each-line` is in no shipping engine. */
+  function codeHTML(src) {
+    return '<pre>' + String(src).split('\n').map(function (ln) {
+      return '<span class="cl">' + (esc(ln) || '&#8203;') + '</span>';
+    }).join('') + '</pre>';
+  }
 
   function backbar(title, rightHtml) {
     // no arrows anywhere: the screen's name is the way back, like the heroes
@@ -983,7 +994,7 @@
         return '<p>' + md(b.s) + '</p>';
       }
       if (b.t === 'ul' || b.t === 'ol') return '<' + b.t + ' class="learn">' + b.items.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</' + b.t + '>';
-      if (b.t === 'code') return '<pre>' + esc(b.s) + '</pre>';
+      if (b.t === 'code') return codeHTML(b.s);
       if (b.t === 'qa') return '<details><summary>' + md(b.q) + '</summary><div class="a">' + bookBlocks(b.a) + '</div></details>';
       if (b.t === 'h3' || b.t === 'h4') return '<div class="gk">' + md(b.s) + '</div>';
       if (b.t === 'meta') return '<p class="note">' + md(b.s) + '</p>';
@@ -1096,7 +1107,7 @@
       return '<li class="step' + (code.length ? '' : ' nocode') + '">' +
         (pre.length ? '<div class="pre"><div class="gk">Before you do this</div>' + bookBlocks(pre.map(function (b) { var c = {}; for (var k in b) c[k] = b[k]; delete c.lead; return c; })) + '</div>' : '') +
         (doP ? '<p class="do"><b>Do this.</b> ' + md(doP.s) + '</p>' : '') +
-        (code.length || ln ? '<div class="code">' + code.map(function (c) { return '<pre>' + esc(c.s) + '</pre>'; }).join('') + ln + '</div>' : '') +
+        (code.length || ln ? '<div class="code">' + code.map(function (c) { return codeHTML(c.s); }).join('') + ln + '</div>' : '') +
         (rest.length ? bookBlocks(rest) : '') +
         '</li>';
     }).join('');
@@ -1415,6 +1426,7 @@
 
   function renderEmptySession(d, unitId, mode) {
     var label = mode === 'starred' ? 'No starred cards yet.' :
+                mode === 'stuck' ? 'Nothing is sticking — no card has been missed three times.' :
                 mode === 'hard' ? 'No trouble spots — nothing has been missed twice.' :
                 'Nothing due here right now.';
     mount(
@@ -2291,6 +2303,25 @@
         (weak.length > 3 ? '<button class="textbtn quiet" data-go="#/weak">All weak spots</button>' : '');
     }
 
+    // the cards themselves, under the units they sit in: a unit you keep
+    // missing is a topic to reread, but one card missed six times is a card
+    // to rewrite, and only this list can tell you which you have
+    var stuck = stuckCards(), stuckBlock = '';
+    if (stuck.length) {
+      stuckBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">Sticking points</div>' +
+        '<ul class="list tight">' + stuck.slice(0, 3).map(function (c) {
+          var d3 = S.getDeck(c.deck), u3 = d3.unitById[c.u], st3 = S.cs(c.i) || {};
+          return '<li><button class="ledger mid" data-go="#/stuck">' +
+            '<span class="lname">' + esc(T.plain(c.q)) + '</span>' +
+            '<span class="lval num">' + (st3.l || 0) + '</span>' +
+            '<span class="lsub">' + esc(nice(d3) + (u3 ? ' · ' + u3.title : '')) + '</span>' +
+            '</button></li>';
+        }).join('') + '</ul>' +
+        '<button class="textbtn quiet" data-go="#/stuck">' +
+        (stuck.length > 3 ? 'All ' + stuck.length.toLocaleString() + ' sticking points' : 'Open') +
+        '</button>';
+    }
+
     // a chart only earns its place with 7+ real data points (skill §7.13)
     var hist = S.history(28);
     var real = hist.filter(function (h) { return h.count > 0; }).length;
@@ -2325,6 +2356,7 @@
       paceBlock +
       fcBlock +
       weakBlock +
+      stuckBlock +
       spark +
       (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due.toLocaleString() + '</button></div>'
         : !totals.seen ? '<button class="textbtn" data-go="#/">Decks</button>' : '')
@@ -2386,6 +2418,29 @@
     return out;
   }
 
+  /* A card missed three times or more is rarely a card you have not learnt —
+     it is usually a card that is badly asked, or one that needs a hook. The
+     weak-spot list ranks UNITS; this ranks the individual cards, because the
+     fix for one bad card is not another pass over its unit. */
+  var STUCK_MIN = 3;
+  function stuckCards() {
+    var out = [];
+    (S.getIndex().courses || []).forEach(function (c) {
+      var d = S.getDeck(c.id); if (!d) return;
+      d.cards.forEach(function (card) {
+        var st = S.cs(card.i);
+        if (st && (st.l || 0) >= STUCK_MIN) out.push(card);
+      });
+    });
+    // most-missed first, and the more recent miss breaks a tie: the card that
+    // beat you this week outranks the one you have since fixed
+    out.sort(function (a, b) {
+      var A = S.cs(a.i) || {}, B = S.cs(b.i) || {};
+      return (B.l || 0) - (A.l || 0) || (B.t || 0) - (A.t || 0);
+    });
+    return out;
+  }
+
   /* the same cycling word the unit list and search use: All, then each deck
      that has stars in it. In memory, and it goes when the screen does. */
   var starFilter = 0;
@@ -2399,6 +2454,61 @@
   function starWord() {
     var ids = starDecks();
     return starFilter && ids[starFilter - 1] ? nice(ids[starFilter - 1]) : 'All decks';
+  }
+
+  function viewStuck() {
+    curDeckId = null;
+    var all = stuckCards();
+    if (!all.length) return mount(
+      backbar('Progress') +
+      '<div class="head"><h1 class="uhead">Sticking points</h1>' +
+      '<div class="sub">Nothing has been missed ' + STUCK_MIN + ' times. ' +
+      'When a card starts beating you, it lands here.</div></div>');
+    var today = S.dayNum();
+    var deal = Math.min(all.length, S.getSettings().sessionSize || 30);
+    mount(
+      backbar('Progress') +
+      '<div class="head"><h1 class="uhead">Sticking points</h1>' +
+      '<div class="sub">' + esc(plural(all.length, 'card')) + ' missed ' +
+      STUCK_MIN + ' times or more</div></div>' +
+      '<button class="act" data-go="#/stuck/go">Study ' +
+        (deal < all.length ? deal + ' of ' + all.length.toLocaleString() : 'these') + '</button>' +
+      // the remedy, said once — and where it lives: the note control is on
+      // the card in a session, not on this screen
+      '<div class="empty cap">A card at this count usually needs saying in your ' +
+      'own words, not another pass. In the session the note control is on the ' +
+      'card — write the version that would have worked.</div>' +
+      '<ul class="list tight still" style="margin-top:var(--s-4)">' + all.map(function (c) {
+        var d = S.getDeck(c.deck), u = d.unitById[c.u], st = S.cs(c.i) || {};
+        var when = st.d <= today ? 'due' : 'in ' + (st.d - today) + ' d';
+        return '<li><button class="qrow" data-peek="' + c.i + '">' +
+          '<span class="qq">' + T.html(c.q) + '</span>' +
+          '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
+          (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
+          '<span class="qmeta">' + esc(plural(st.l || 0, 'miss', 'misses')) + ' · ' +
+            esc(when) + ' · ' + esc(nice(d)) + (u ? ' · ' + esc(u.title) : '') + '</span></button>' +
+          rowActs(c, '#/d/' + c.deck + (u ? '/u/' + u.id : '')) + '</li>';
+      }).join('') + '</ul>'
+    );
+  }
+
+  /* the sticking points cross decks the way the stars do */
+  function startStuck() {
+    if (savedPending()) return waitingScreen();
+    if (resume()) return;
+    var list = stuckCards();
+    if (!list.length) return goReplace('#/stuck');
+    list = list.slice(0, S.getSettings().sessionSize || 30);
+    S.shuffle(list);
+    sess = {
+      deck: null, unitId: null, mode: 'stuck', quiz: false, mixed: true,
+      back: '#/stuck',
+      typing: S.getSettings().typing,
+      queue: list, done: 0, planned: list.length, redo: 0,
+      revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0,
+      history: [], answered: false, typed: ''
+    };
+    renderCard();
   }
 
   function viewStarred() {
@@ -2899,7 +3009,7 @@
      intercepted; a live game's route belongs to games.js. */
   function tabIdxOf(p0) {
     var i = ['review', 'search', 'stats', 'settings'].indexOf(p0);
-    return i > -1 ? i + 1 : p0 === 'weak' ? 3 : 0;
+    return i > -1 ? i + 1 : (p0 === 'weak' || p0 === 'stuck') ? 3 : 0;
   }
   document.addEventListener('keydown', function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;   // never a shortcut's shortcut
@@ -3014,9 +3124,9 @@
     var p = h.split('/').filter(Boolean);
     var root = '/' + (p[0] || '');
     syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root
-      : p[0] === 'weak' ? '/stats' : '/');   // starred hangs off the deck list
+      : (p[0] === 'weak' || p[0] === 'stuck') ? '/stats' : '/');   // starred hangs off the deck list
     sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' ||
-            p[0] === 'ten' || (p[0] === 'starred' && p[1] === 'go')) ? sess : null;
+            p[0] === 'ten' || ((p[0] === 'starred' || p[0] === 'stuck') && p[1] === 'go')) ? sess : null;
     // leaving the unit page drops its filter, so coming back is always the
     // whole unit — the word lives in memory, and that memory ends with the
     // screen. This sits above every early return, or "#/" would slip past it.
@@ -3054,6 +3164,7 @@
     if (p[0] === 'ten') return startReview(10);
     if (p[0] === 'cram') return startCram(p[1], p[2]);
     if (p[0] === 'weak') return viewWeak();
+    if (p[0] === 'stuck') return p[1] === 'go' ? startStuck() : viewStuck();
     if (p[0] === 'starred') return p[1] === 'go' ? startStarred() : viewStarred();
     if (p[0] === 'search') return viewSearch();
     if (p[0] === 'stats') return viewStats();

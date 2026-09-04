@@ -784,12 +784,18 @@ sub,sup{ font-size:max(.68em, 11px); }
 /* minmax(0,…) or one long term sets the column width and shoves its
    partner off the screen, on a board that cannot scroll sideways */
 .mcols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0 24px; align-items:start; }
-.mcols .mrow{ overflow-wrap:anywhere; }
-.mhead{ margin:0 0 12px; }
+/* break a word only when the word itself will not fit — `anywhere` also
+   shrinks the column's min-content, which split "parentheses" in two */
+.mcols .mrow{ overflow-wrap:break-word; }
+/* a term beside a sentence: the sentence gets the room */
+.mcols.prose{ grid-template-columns:minmax(0,.74fr) minmax(0,1.26fr); }
+.mhead{ margin:0 0 12px; align-self:end; }
 .mrow{ display:block; width:100%; text-align:left; background:none; border:0; padding:17px 0; min-height:52px;
   border-top:1px solid var(--hair-soft); font:inherit; font-size:clamp(18px,5vw,22px); font-weight:430; line-height:1.32;
   color:var(--ink-soft); cursor:pointer; transition:opacity .12s ease; }
-.mrow:first-of-type{ border-top:0; }
+/* the two columns are one grid now, so a pair shares a row band and the
+   sixth definition sits beside the sixth term instead of 519px below it */
+.mrow0{ border-top:0; }
 .mrow:active{ opacity:.55; }
 .mrow.sel{ color:var(--ink); }
 /* a wrong pair recedes for a beat — the miss has to be visible without a counter */
@@ -934,11 +940,11 @@ sub,sup{ font-size:max(.68em, 11px); }
 .board.deal .tile{ animation:riseIn .34s cubic-bezier(.32,.72,0,1) both; }
 .choices.deal .choice{ animation:riseIn .28s cubic-bezier(.32,.72,0,1) both; }
 .mcols.deal .mrow{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
-.board.deal .tile:nth-child(2), .choices.deal .choice:nth-child(2), .mcols.deal .mrow:nth-child(3){ animation-delay:.03s; }
-.board.deal .tile:nth-child(3), .choices.deal .choice:nth-child(3), .mcols.deal .mrow:nth-child(4){ animation-delay:.06s; }
-.board.deal .tile:nth-child(4), .choices.deal .choice:nth-child(4), .mcols.deal .mrow:nth-child(5){ animation-delay:.09s; }
-.board.deal .tile:nth-child(5), .mcols.deal .mrow:nth-child(6){ animation-delay:.12s; }
-.board.deal .tile:nth-child(6), .mcols.deal .mrow:nth-child(7){ animation-delay:.15s; }
+.board.deal .tile:nth-child(2), .choices.deal .choice:nth-child(2){ animation-delay:.03s; }
+.board.deal .tile:nth-child(3), .choices.deal .choice:nth-child(3){ animation-delay:.06s; }
+.board.deal .tile:nth-child(4), .choices.deal .choice:nth-child(4){ animation-delay:.09s; }
+.board.deal .tile:nth-child(5){ animation-delay:.12s; }
+.board.deal .tile:nth-child(6){ animation-delay:.15s; }
 .board.deal .tile:nth-child(7){ animation-delay:.18s; }
 .board.deal .tile:nth-child(8){ animation-delay:.21s; }
 .board.deal .tile:nth-child(9){ animation-delay:.24s; }
@@ -1011,9 +1017,13 @@ sub,sup{ font-size:max(.68em, 11px); }
 /* the same for the reader's prose: a bare 300-character URL in a lede is
    not a link, it is a word */
 .book p,.book li,.book .title,.book .lede,.book .note{ overflow-wrap:anywhere; }
-.book pre{ margin:0; padding:12px 0; font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink);
+.book pre{ margin:0; padding:12px 0;
+  font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink);
   border-top:1px solid var(--hair-soft); border-bottom:1px solid var(--hair-soft);
   white-space:pre-wrap; overflow-wrap:anywhere; max-width:100%; }
+/* one block per source line, so a wrapped continuation is inset rather than
+   restarting at column 0 — in Python that column is the meaning */
+.book pre .cl{ display:block; padding-left:2.5ch; text-indent:-2.5ch; }
 .book a{ color:inherit; text-underline-offset:3px; text-decoration-thickness:1px; text-decoration-color:var(--hair); }
 .book button{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; text-align:left; cursor:pointer; }
 .book .eyebrow{ font-size:13.5px; font-weight:650; color:var(--ink-soft); letter-spacing:.01em; }
