@@ -19,7 +19,7 @@
   /* --- type scale (skill §3) --------------------------------------------- */
   --font-sf:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","SF Pro",system-ui,"Helvetica Neue",Arial,sans-serif;
   --t-hero:clamp(48px,16.4vw,64px);
-  --t-row:clamp(30px,12.3vw,48px);
+  --t-row:clamp(26px,12.3vw,48px);
   --t-title:clamp(40px,14vw,55px);
   --t-prompt:clamp(26px,8.7vw,34px);
   --t-answer:clamp(20px,6.2vw,24px);
@@ -223,8 +223,11 @@ button.hero-tap:active{ opacity:.55; }
   background:none; border:0; padding:0; margin:0; color:inherit; font:inherit; text-align:left; cursor:pointer;
   transition:opacity .12s ease; }
 .ledger:active{ opacity:.5; }
+/* a course name may take a second line rather than lose its last syllable:
+   at 320px the deck list printed "Chemis…" and "US Hist…" */
 .ledger .lname{ font-size:var(--t-row); font-weight:430; color:var(--ink-soft); letter-spacing:-.03em; line-height:1.2;
-  min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  min-width:0; overflow-wrap:anywhere; overflow:hidden;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
 .ledger .lname small{ display:none; }   /* taglines are gone; the row is name + number */
 .ledger .lval{ font-size:var(--t-row); font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-.03em;
   color:var(--ink); white-space:nowrap; }
@@ -234,7 +237,7 @@ button.hero-tap:active{ opacity:.55; }
 /* smaller ledger for unit lists and summary rows */
 .ledger.mid{ padding:7px 0; }
 .ledger.mid .lname,.ledger.mid .lval{ font-size:clamp(24px,7.7vw,30px); letter-spacing:-.02em; line-height:1.3; }
-.ledger.mid .lname{ white-space:normal; overflow:visible; text-overflow:clip; }  /* unit names wrap — nothing clipped, ever */
+.ledger.mid .lname{ display:block; overflow:visible; text-overflow:clip; }  /* unit names wrap — nothing clipped, ever */
 /* wrapped name → the number scales up to the height of the text block */
 /* a value that is a word, not a number (the pace verdict): a quiet ink word
    beside the big name — never a phrase shouting at ledger size */
@@ -279,7 +282,10 @@ button.hero-tap:active{ opacity:.55; }
 .ledger .gkind{ font-size:14px; color:var(--muted); letter-spacing:.14em; font-weight:400; }
 .sess-top .cue{ font-size:14px; color:var(--muted); letter-spacing:.14em; white-space:nowrap; flex:none; }
 .sess-top .tick{ color:var(--ink-soft); }
-.sess-top .tick.grow{ font-size:1.08em; }
+/* .grow is the order games' placed ROW — a display:flex block. The scope's
+   direction arrow borrowed the name and rendered full-width on its own
+   line, orphaning the axis title beneath it. */
+.sess-top .tick.dir{ font-size:1.08em; }
 .sess-top .tick.seg{ font-size:.82em; letter-spacing:.08em; }
 /* a filled dot is a question behind you, a hollow one is still ahead */
 .sess-top .dots{ font-size:9px; letter-spacing:.22em; color:var(--muted); line-height:1; }
@@ -296,6 +302,10 @@ button.hero-tap:active{ opacity:.55; }
 .cardwrap.swiping{ transition:none; }
 .cardwrap.settle{ transition:transform .34s cubic-bezier(.32,.72,0,1); }
 .card{ width:100%; display:flex; flex-direction:column; }
+/* a run with no space in it — a 300-character URL, a formula with forty
+   subscripts — has to break at the measure. It used to leave the card
+   sideways, on a phone with no gesture that could bring it back. */
+.card .q,.card .a,.card .note,.card .hint{ overflow-wrap:anywhere; }
 .card .q{ font-size:var(--t-prompt); font-weight:480; letter-spacing:-.02em; line-height:1.25; color:var(--ink); }
 .card .q.small{ font-size:clamp(20px,6vw,26px); line-height:1.32; }
 .card .q.tiny{ font-size:18px; font-weight:500; line-height:1.4; letter-spacing:-.012em; }
@@ -405,6 +415,7 @@ button.hero-tap:active{ opacity:.55; }
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
 .qrow.open .qq{ display:block; -webkit-line-clamp:none; overflow:visible; }
 .qrow .qa{ font-size:17px; color:var(--ink-soft); line-height:1.4; margin-top:5px; }
+.qrow .qq,.qrow .qa{ overflow-wrap:anywhere; }
 .qrow .qmeta{ font-size:var(--t-label); color:var(--muted); margin-top:5px; }
 .qrow.done .qq{ color:var(--muted); }
 .qrow.open .qa{ color:var(--ink); }
@@ -447,7 +458,7 @@ button.hero-tap:active{ opacity:.55; }
   font-size:.6em; line-height:1; white-space:nowrap; }
 .mrel{ margin:0 .2em; }                 /* relations supply their own air */
 sub,sup{ font-size:.68em; }
-.math{ white-space:normal; }
+.math{ white-space:normal; overflow-wrap:anywhere; }
 .mfn{ font-style:normal; padding-right:.12em; }
 .mathy{ line-height:1.95 !important; }  /* leading for what hangs below */
 .card .a.mathy, .card .q.mathy{ letter-spacing:-.008em; }
@@ -565,7 +576,10 @@ sub,sup{ font-size:.68em; }
 .board .tile.done{ color:var(--muted); text-decoration:line-through; text-decoration-thickness:1px; }
 .board .tile.flash{ opacity:.3; }
 
-.mcols{ display:grid; grid-template-columns:1fr 1fr; gap:0 24px; align-items:start; }
+/* minmax(0,…) or one long term sets the column width and shoves its
+   partner off the screen, on a board that cannot scroll sideways */
+.mcols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0 24px; align-items:start; }
+.mcols .mrow{ overflow-wrap:anywhere; }
 .mhead{ margin:0 0 12px; }
 .mrow{ display:block; width:100%; text-align:left; background:none; border:0; padding:17px 0; min-height:52px;
   border-top:1px solid var(--hair-soft); font:inherit; font-size:clamp(18px,5vw,22px); font-weight:430; line-height:1.32;
@@ -595,6 +609,12 @@ sub,sup{ font-size:.68em; }
    fill vanished into the ground, so it reads as a hollow ring instead */
 .uc-dot.off{ fill:none; stroke:var(--ink-soft); stroke-width:2; }
 .uc-hit{ fill:transparent; cursor:pointer; }
+[data-dot]{ outline-offset:-2px; }
+/* a single-glyph control is a 17px-wide target: the mark stays small,
+   the tap does not */
+.act[data-gagain],.act[data-gagain] ~ div > .textbtn{ position:relative; }
+.act[data-gagain]::after,.act[data-gagain] ~ div > .textbtn::after{
+  content:""; position:absolute; inset:-6px -26px; }
 /* the convention, drawn: angles begin at the right and turn counterclockwise */
 .uc-start{ stroke:var(--ink-soft); stroke-width:2; stroke-linecap:round; }
 .uc-turn{ stroke:var(--ink-soft); stroke-width:1.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
@@ -761,6 +781,9 @@ sub,sup{ font-size:.68em; }
    inline code breaks like the block already does */
 .book code{ font:.86em/1.4 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink); letter-spacing:0;
   overflow-wrap:anywhere; word-break:break-word; }
+/* the same for the reader's prose: a bare 300-character URL in a lede is
+   not a link, it is a word */
+.book p,.book li,.book .title,.book .lede,.book .note{ overflow-wrap:anywhere; }
 .book pre{ margin:0; padding:12px 0; font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink);
   border-top:1px solid var(--hair-soft); border-bottom:1px solid var(--hair-soft);
   white-space:pre-wrap; overflow-wrap:anywhere; max-width:100%; }

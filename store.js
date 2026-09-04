@@ -47,8 +47,11 @@
     return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / DAY);
   }
   function dayKey(n) {
-    var d = new Date((n * DAY) + new Date().getTimezoneOffset() * 60000);
-    return d.toISOString().slice(0, 10);
+    // A day number already IS the local day, so naming it must not depend on
+    // when we ask. Stamping it with TODAY's offset filed every summer day one
+    // calendar day early in any zone that shifts — a hole in the chart on a
+    // day you studied, a bar on a day you did not, and a broken streak.
+    return new Date(n * DAY).toISOString().slice(0, 10);
   }
 
   /* ---- raw storage ------------------------------------------------------ */
@@ -134,7 +137,12 @@
       var mine = state.cards[id], theirs = rc[id];
       if (!mine || (theirs.t || 0) > (mine.t || 0) ||
           ((theirs.t || 0) === (mine.t || 0) && (theirs.r || 0) > (mine.r || 0))) {
+        // the schedule is whichever side is newer, but a star is a wish, not a
+        // measurement — losing the card wholesale silently dropped it
+        if (mine && mine.s && !theirs.s) theirs.s = mine.s;
         state.cards[id] = theirs; changed = true;
+      } else if (theirs.s && mine && !mine.s) {
+        mine.s = 1; changed = true;
       }
     }
     var rl = remote.log || {};
@@ -299,6 +307,8 @@
   function toggleStar(id) {
     var s = state.cards[id] || blank();
     s.s = s.s ? 0 : 1;
+    // stamp it, or a star sits at t:0 and loses every merge it is in
+    s.t = Math.max(s.t || 0, dayNum());
     state.cards[id] = s; save();
     return !!s.s;
   }
@@ -311,8 +321,11 @@
     if (grade === 0) return 'now';
     if (i < 1) return 'today';
     if (i === 1) return '1 d';
-    if (i < 30) return i + ' d';
-    if (i < 365) return Math.round(i / 30) + ' mo';
+    // a week band, because 52 d and 68 d both printed "2 mo" — two different
+    // outcomes reading as the same promise — and months stop before a year
+    if (i < 14) return i + ' d';
+    if (i < 60) return Math.round(i / 7) + ' w';
+    if (i < 330) return Math.round(i / 30) + ' mo';
     return (i / 365).toFixed(1) + ' y';
   }
 
@@ -482,8 +495,14 @@
     state.settings = s;
   }
 
-  function restore(id, before) {
+  function restore(id, before, day) {
     if (before) state.cards[id] = before; else delete state.cards[id];
+    // grade() wrote two things; undo used to put back only one, so undoing
+    // every card of a session still left the day counted and the streak lit
+    if (day != null) {
+      var k = dayKey(day), n = (state.log[k] || 0) - 1;
+      if (n > 0) state.log[k] = n; else delete state.log[k];
+    }
     save(true);
   }
 

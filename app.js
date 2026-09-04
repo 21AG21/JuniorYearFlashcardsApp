@@ -147,7 +147,7 @@
       return '<li><button class="ledger' + (c.id === curDeckId ? ' on' : '') + '" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
-        (st.due ? '<span class="lsub">' + st.due + ' due</span>' : '') +
+        (st.due ? '<span class="lsub">' + st.due.toLocaleString() + ' due</span>' : '') +
         '</button></li>';
     }).join('');
     var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
@@ -218,7 +218,13 @@
     var ix = S.getIndex(), c = ix && ix.courses.filter(function (x) { return x.id === id; })[0];
     return (c && c.short) || id;
   }
-  function pct(x) { return Math.round(x * 100) + '%'; }
+  // "100%" only ever means all of them, "0%" only ever means none: rounding
+  // printed 100% over a hero reading 4,440 of 4,441
+  function pct(x) {
+    if (x >= 1) return '100%';
+    if (x <= 0) return '0%';
+    return Math.min(99, Math.max(1, Math.floor(x * 100))) + '%';
+  }
   // verbs arrive from the data in caps — never render them that way
   function verb(v) { return v ? v.charAt(0) + v.slice(1).toLowerCase() : ''; }
 
@@ -254,7 +260,11 @@
     core.forEach(function (c) { if (S.isKnown(c.i)) known++; });
     var out = { days: exam - today, left: core.length - known, drift: 0, rate: 0, sure: false };
     var start = firstStudyDay();
+    // …and no verdict at all for a course with nothing in it: with known = 0
+    // the drift collapses to -(today - start), which is the SAME confident,
+    // course-specific-looking number for every deck you have never opened
     if (start === null || today - start < 14 || !core.length) return out;   // no verdict before two weeks
+    if (!S.deckStats(d).seen) return out;
     var span = Math.max(1, exam - start);
     var expected = Math.min(1, (today - start) / span);
     out.drift = Math.round((known / core.length - expected) * span);
@@ -297,25 +307,39 @@
       });
       Object.keys(per).forEach(function (uid) {
         var b = per[uid];
-        if (b.studied >= 6 && b.bad >= 3 && d.unitById[uid])
+        // eight attempts before a unit may be called weak — the ranking is the
+        // plain miss rate now, so the column the reader sees IS the ordering
+        if (b.studied >= 8 && b.bad >= 3 && d.unitById[uid])
           out.push({ deck: d, unit: d.unitById[uid], studied: b.studied, bad: b.bad,
-                     score: b.bad / (b.studied + 4) });
+                     score: b.bad / b.studied });
       });
     });
-    out.sort(function (a, b) { return b.score - a.score; });
+    out.sort(function (a, b) { return (b.score - a.score) || (b.bad - a.bad); });
     return out;
   }
   /* "18–22%" → 20; anything unparseable is neutral */
   var W_CACHE = {};
+  /* A unit's weight is its share of the exam — "7–9%", "18–22%". The LAST unit
+     of every deck carries something else entirely: a format breakdown, "MC 50%
+     · FRQ 50%". A loose /(\d+)%/ pulled 50 out of that, so Exam Craft scored
+     higher than any real unit and every card a new user was dealt came from
+     it. Only a bare share counts; anything with a label is not a weight. */
+  var SHARE_RE = /^\s*(\d+)\s*(?:[–-]\s*(\d+)\s*)?%\s*$/;
+  function shareOf(u) {
+    var m = u && u.weight ? SHARE_RE.exec(String(u.weight)) : null;
+    return m ? (m[2] ? (+m[1] + +m[2]) / 2 : +m[1]) : null;
+  }
   function unitWeight(d, unitId) {
     var k = d.id + unitId;
     if (W_CACHE[k] !== undefined) return W_CACHE[k];
-    var u = d.unitById[unitId];
-    var m = u && u.weight ? /(\d+)\s*[–-]\s*(\d+)\s*%/.exec(String(u.weight)) || /(\d+)\s*%/.exec(String(u.weight)) : null;
-    return (W_CACHE[k] = m ? (m[2] ? (+m[1] + +m[2]) / 2 : +m[1]) : 10);
+    var w = shareOf(d.unitById[unitId]);
+    return (W_CACHE[k] = w === null ? 10 : w);
   }
   function weightText(u) {
-    return u && u.weight && /\d\s*%/.test(String(u.weight)) ? String(u.weight) + ' of the exam' : '';
+    if (!u || !u.weight) return '';
+    // a format breakdown is printed as itself — "MC 50% · FRQ 50% of the exam"
+    // read as a claim about that unit's share, and there was no way to tell
+    return shareOf(u) === null ? String(u.weight) : String(u.weight) + ' of the exam';
   }
 
   /* ==========================================================================
@@ -371,10 +395,15 @@
     var byScore = function (a, b) { return b._sc - a._sc; };
     S.shuffle(due); S.shuffle(fresh);          // ties break fresh every day
     due.sort(byScore); fresh.sort(byScore);
-    var takeDue = due.slice(0, Math.max(0, limit - newSlots));
+    // The quarter reserved for new cards is a floor, not a toll. Spending it
+    // whole meant "Review 25" dealt 22 of them and still read "Review 3" when
+    // you finished — so it shrinks (never below two) to let the due cards fit.
+    var hardFloor = Math.min(2, fresh.length, newCap);
+    var keepNew = Math.max(hardFloor, Math.min(newSlots, Math.max(0, limit - due.length)));
+    var takeDue = due.slice(0, Math.max(0, limit - keepNew));
     // due came up short — the slots it left go to new cards rather than
     // silently shrinking the deal to four
-    var room = Math.max(newSlots, limit - takeDue.length);
+    var room = Math.max(keepNew, limit - takeDue.length);
     var picked = takeDue.concat(fresh.slice(0, Math.min(newCap, room)));
     if (decks.length > 1 && picked.length) {
       var cap = Math.ceil(limit * 0.4), per = {}, kept = [], spill = [];
@@ -417,7 +446,7 @@
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
-        (st.due ? '<span class="lsub">' + st.due + ' due</span>' : '') +
+        (st.due ? '<span class="lsub">' + st.due.toLocaleString() + ' due</span>' : '') +
         '</button></li>';
     }).join('');
 
@@ -466,12 +495,12 @@
       var wt = weightText(u);
       if (wt) bits.push(wt);
       if (anySeen && !us.seen) bits.push('not started');
-      if (us.due) bits.push(us.due + ' due');
+      if (us.due) bits.push(us.due.toLocaleString() + ' due');
       return '<li>' +
         '<div class="ulabel">Unit ' + u.n + '</div>' +
         '<button class="ledger mid' + (us.pct >= 0.9 ? ' done' : '') + '" data-go="#/d/' + deckId + '/u/' + u.id + '">' +
         '<span class="lname">' + esc(u.title) + '</span>' +
-        '<span class="lval num">' + (anySeen ? pct(us.pct) : us.total) + '</span>' +
+        '<span class="lval num">' + (anySeen ? pct(us.pct) : us.total.toLocaleString()) + '</span>' +
         (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
         '</button></li>';
     }).join('');
@@ -484,9 +513,9 @@
       (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '') +
       '<div class="dhero">' +
         '<button class="dn" data-back>' + esc(nice(d)) + '</button>' +
-        '<span class="dv num">' + st.total + '</span>' +
+        '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
       '</div>' +
-      '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due : 'Study') + '</button>' +
+      '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due.toLocaleString() : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Quiz</button>' +
@@ -532,9 +561,9 @@
         (weightText(u) ? ' · ' + esc(weightText(u)) : '') + '</div>' +
       '<div class="dhero">' +
         '<button class="dn" data-back>' + esc(u.title) + '</button>' +
-        '<span class="dv num">' + us.total + '</span>' +
+        '<span class="dv num">' + us.total.toLocaleString() + '</span>' +
       '</div>' +
-      '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due : 'Study') + '</button>' +
+      '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due.toLocaleString() : 'Study') + '</button>' +
       '<div class="modes">' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Quiz</button>' +
@@ -933,8 +962,11 @@
       var when = '';
       if (next !== null) {
         var days = next - today;
+        // name the weekday from the DAY NUMBER, not from a millisecond sum:
+        // across a DST change 23:30 + 72 h is not three days later, and the
+        // card due on the spring-forward Sunday was announced for Monday
         var wd = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-          [new Date(Date.now() + days * 864e5).getDay()];
+          [new Date(S.dayKey(next) + 'T12:00:00Z').getUTCDay()];
         when = (days === 1 ? 'Tomorrow' : days < 7 ? wd : 'In ' + days + ' days') +
           (nextDeck ? ', ' + nice(nextDeck) + ' comes back' : '');
       }
@@ -1074,8 +1106,8 @@
     var footer = sess.revealed
       ? '<div class="rate' + (sess.verdict && sess.verdict.ok === 'miss' ? ' miss' : '') + '">' +
           '<button class="r-again" data-grade="0"><span class="lab">Again</span><span class="when">' + S.preview(c.i, 0) + '</span></button>' +
-          '<button class="r-good" data-grade="1"><span class="lab">Good</span><span class="when">' + S.preview(c.i, 1) + '</span></button>' +
-          '<button class="r-easy" data-grade="2"><span class="lab">Easy</span><span class="when">' + S.preview(c.i, 2) + '</span></button>' +
+          '<button class="r-good" data-grade="1"><span class="lab">Good</span><span class="when">' + esc(passWord(c, 1)) + '</span></button>' +
+          '<button class="r-easy" data-grade="2"><span class="lab">Easy</span><span class="when">' + esc(passWord(c, 2)) + '</span></button>' +
         '</div>'
       : '<div class="rate"><button class="r-good" data-reveal><span class="lab">Show answer</span><span class="when kbd">space</span></button></div>';
 
@@ -1274,6 +1306,14 @@
     renderCard();
   }
 
+  /* Cram is practice: a pass on an already-scheduled card writes nothing (see
+     doGrade). The caption knew nothing about that guard, so Good and Easy
+     advertised "2 mo" on a card whose due date would not move a single day. */
+  function passWord(c, g) {
+    if (sess && sess.cram && !S.isNew(c.i) && !S.isDue(c.i)) return 'stays';
+    return S.preview(c.i, g);
+  }
+
   function doGrade(g) {
     if (!sess || !sess.revealed) return;
     // "Show answer" and "Again" overlap: a double tap used to reveal and grade
@@ -1286,7 +1326,7 @@
     // future, but a miss is real information and new or due cards earn grades
     var wrote = !sess.cram || g === 0 || S.isNew(c.i) || S.isDue(c.i);
     if (wrote) S.grade(c.i, g);
-    sess.history.push({ card: c, before: before, g: g, rq: g === 0, wrote: wrote });
+    sess.history.push({ card: c, before: before, g: g, rq: g === 0, wrote: wrote, day: S.dayNum() });
     if (g === 0) {
       sess.again++; sess.planned++;   // a re-queued card is one more to do
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
@@ -1305,7 +1345,7 @@
       // in quiz mode, undo takes back the answer you just gave
       if (!sess.answered) return;
       var hq = sess.history.pop();
-      if (hq.wrote !== false) S.restore(hq.card.i, hq.before);
+      if (hq.wrote !== false) S.restore(hq.card.i, hq.before, hq.day);
       if (hq.g === 1) sess.right = Math.max(0, sess.right - 1);
       else sess.wrong = Math.max(0, sess.wrong - 1);
       sess.answered = false; sess.picked = -1;
@@ -1317,7 +1357,7 @@
     for (var i = 0; i < sess.queue.length; i++) {
       if (sess.queue[i].i === h.card.i) { sess.queue.splice(i, 1); break; }
     }
-    if (h.wrote !== false) S.restore(h.card.i, h.before);   // a cram pass never wrote
+    if (h.wrote !== false) S.restore(h.card.i, h.before, h.day);   // a cram pass never wrote
     sess.queue.unshift(h.card);
     sess.done = Math.max(0, sess.done - 1);
     // planned only shrinks if this grade actually grew it (a quiz miss bumps
@@ -1340,7 +1380,7 @@
     if (correct) sess.right++; else sess.wrong++;
     // the same cram guard as doGrade — a switched-to-MCQ cram stays honest
     var wrote = !sess.cram || !correct || S.isNew(c.i) || S.isDue(c.i);
-    sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false, wrote: wrote });
+    sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false, wrote: wrote, day: S.dayNum() });
     if (wrote) S.grade(c.i, correct ? 1 : 0);
     renderCard();
     // the result must be seen, not hunted for
@@ -1454,7 +1494,7 @@
     // milestone streak beats the day's count — never the same rote line
     var stk = S.streak();
     var moment = !dueLeft ? 'All caught up' :
-      [3, 7, 14, 21, 30, 50, 75, 100, 150, 200].indexOf(stk) > -1 ? stk + '-day streak' :
+      [3, 7, 14, 21, 30, 50, 75, 100, 150, 200].indexOf(stk) > -1 ? stk.toLocaleString() + '-day streak' :
       plural(S.studiedToday(), 'card') + ' today';
     sess = null;
     // the session is over — a reload or a back gesture should land on the
@@ -1604,7 +1644,9 @@
         weak.slice(0, 3).map(function (w) {
           return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/hard/' + w.unit.id + '">' +
             '<span class="lname">' + esc(w.unit.title) + '</span>' +
-            '<span class="lval num">' + w.bad + '</span>' +
+            // the column has to be the number the list is RANKED on, or it
+            // climbs as you read down: 4, then 9, then 26
+            '<span class="lval num">' + pct(w.bad / w.studied) + '</span>' +
             '<span class="lsub">' + esc(nice(w.deck)) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
             '</button></li>';
         }).join('') + '</ul>' +
@@ -1636,7 +1678,7 @@
     var caption = [];
     if (blank) caption.push('Study a card and this fills in');
     if (totals.known && S.studiedToday()) caption.push(plural(S.studiedToday(), 'card') + ' today');
-    if (S.streak() > 1) caption.push(S.streak() + '-day streak');
+    if (S.streak() > 1) caption.push(S.streak().toLocaleString() + '-day streak');
     mount(
       '<div class="head">' +
       '<h1>' + hero + '</h1>' +
@@ -1645,7 +1687,7 @@
       paceBlock +
       weakBlock +
       spark +
-      (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due + '</button></div>'
+      (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due.toLocaleString() + '</button></div>'
         : !totals.seen ? '<button class="textbtn" data-go="#/">Decks</button>' : '')
     );
   }
@@ -1661,7 +1703,7 @@
       '<ul class="list tight">' + list.map(function (w) {
         return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/hard/' + w.unit.id + '">' +
           '<span class="lname">' + esc(w.unit.title) + '</span>' +
-          '<span class="lval num">' + w.bad + '</span>' +
+          '<span class="lval num">' + pct(w.bad / w.studied) + '</span>' +
           '<span class="lsub">' + esc(nice(w.deck)) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
           '</button></li>';
       }).join('') + '</ul>'

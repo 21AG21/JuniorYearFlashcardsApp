@@ -352,7 +352,11 @@
   /* '⁄' stacks a real fraction: A⁄B or {multi word}⁄{multi word}.
      fx() renders a display string to HTML; plain() flattens it for tests,
      labels, and length checks. */
-  var FRAC_RE = /(\{[^}]*\}|[^\s{}⁄]+)⁄(\{[^}]*\}|[^\s{}⁄]+)/g;
+  /* A half is the atom beside the bar, not everything up to the next space:
+     the old [^\s{}⁄]+ swallowed the brackets and commas around it, so a
+     coordinate pair rendered as "(−√3 over 2," / "1 over 2)" and
+     lim (1 + 1⁄x)ˣ put the exponent under the bar with the bracket open. */
+  var FRAC_RE = /(\{[^}]*\}|[−+-]?[0-9A-Za-zπθ√.]+)⁄(\{[^}]*\}|[−+-]?[0-9A-Za-zπθ√.]+)/g;
   function unbrace(t) { return t.charAt(0) === '{' ? t.slice(1, -1) : t; }
   function fx(s) {
     var out = '', last = 0, m;
@@ -516,6 +520,9 @@
     if (dirty) S.setSetting('gameBest', b);
     var html = '<div class="head"><h1>Games</h1></div>';
     ORDER_BY_DECK.forEach(function (deckId) {
+      // a course that did not load has no games — offering them promises a
+      // round the app cannot deal
+      if (!S.getDeck(deckId)) return;
       var rows = '';
       Object.keys(GAMES).forEach(function (id) {
         if (GAMES[id].deck !== deckId) return;
@@ -766,6 +773,8 @@
         facts = termRound(9, null);
         ctx.toast('That unit is thin — showing all');
       }
+      // an empty round used to open straight onto a score screen reading 0 / 0
+      if (!facts.length) return renderNoData(id);
       dealBoard(facts);
     } else if (id === 'apterms') {
       var af = namedRound(9, filtVal('apterms'));
@@ -777,7 +786,9 @@
       if (!af.length) return renderNoData(id);
       dealBoard(af);
     } else {
-      dealBoard(conjRound(10));
+      var cj = conjRound(10);
+      if (!cj.length) return renderNoData(id);
+      dealBoard(cj);
     }
     renderBoard();
   }
@@ -876,8 +887,10 @@
     st = null;
     doneAt = Date.now();
     ctx.mount(
+      // the name is already in the back bar directly above — printing it again
+      // as the hero's eyebrow said the same word twice
       ctx.backbar(GAMES[id].name) +
-      '<div class="done-hero"><span class="k">' + esc(g.name) + '</span>' +
+      '<div class="done-hero"><span class="k">Done</span>' +
       '<div class="v num">' + esc(label) + '</div></div>' +
       '<button class="act" data-gagain="' + id + '" aria-label="Play again">↻</button>' +
       '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games" aria-label="All games">☰</button></div>',
@@ -980,7 +993,7 @@
     });
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
-      gameTop(st.id, '<span class="tick grow">' + (st.axis.grow || '↓') + '</span> ' + esc(st.axis.title),
+      gameTop(st.id, '<span class="tick dir">' + (st.axis.grow || '↓') + '</span> ' + esc(st.axis.title),
         dots(st.done, st.total)) +
       '<div class="gcur"><div class="gname">' + esc(st.cur.n) + '</div></div>' +
       '<div class="gline">' + rows + '</div>',
@@ -1253,7 +1266,15 @@
     }
     if (id === 'langmatch' && pairs.length < 4) pairs = langPairs(null);
     if (!pairs.length) pairs = deckPairs(GAMES[id].deck) ;
-    if (!pairs.length) pairs = genValuePairs(6, {});   // never render an empty board
+    // A deck-backed game with no deck used to fall back to generated trig
+    // values — a board of sin 7π/6 under the headings "Device" and "What it
+    // is". A game may only ever be about its own subject; with nothing to
+    // deal it says so instead of lying.
+    if (!pairs.length) {
+      if (GAMES[id].deck && !S.getDeck(GAMES[id].deck)) return renderNoData(id);
+      pairs = genValuePairs(6, {});
+    }
+    if (!pairs.length) return renderNoData(id);
     var left = [], right = [];
     pairs.forEach(function (p, i) { left.push({ t: p[0], k: i }); right.push({ t: p[1], k: i }); });
     shuffle(left); shuffle(right);
@@ -1364,7 +1385,10 @@
       if (st.lock && i === st.qs[st.i].a) cls += ' on';        // the right answer, revealed
       if (st.lock && i === st.wrong) cls += ' off';            // the tap that missed
       if (!st.lock && marked && i === q.a) cls += ' on';       // the highlighted point
-      s += '<g' + (!marked ? ' data-dot="' + i + '"' : '') + '>' +
+      // the sixteen angles are the answer list of a tap-the-angle round, so
+      // they have to be reachable and pressable without a pointer
+      var lab = st.deg ? DEG[i] : ANGLES[i][0];
+      s += '<g' + (!marked ? ' data-dot="' + i + '" tabindex="0" role="button" aria-label="' + esc(lab) + '"' : '') + '>' +
         '<circle class="uc-hit" cx="' + x + '" cy="' + y + '" r="21"/>' +
         '<circle class="' + cls + '" cx="' + x + '" cy="' + y + '" r="5"/></g>';
     });
@@ -1499,6 +1523,7 @@
                 String(rv + 1), String(rv - 1), '∞'];
       } else if (t === 5) {                       // tan takes sine's place, still generated
         var ta = 2 + Math.floor(Math.random() * 6), tb = 2 + Math.floor(Math.random() * 6);
+        if (ta === tb) tb = tb === 7 ? 2 : tb + 1;
         if (Math.random() < 0.5) {
           p = 'lim x→0  {tan ' + ta + 'x}⁄x';
           r = String(ta);
@@ -1516,6 +1541,8 @@
         pool = ['0', '∞', '−∞', fracLabel(a, b), fracLabel(b, a), '1'];
       } else if (t === 1) {                       // sin over x families
         var c1 = 2 + Math.floor(Math.random() * 6), c2 = 2 + Math.floor(Math.random() * 6);
+        // sin 3x over sin 3x is not a limit question, it is a tautology
+        if (c1 === c2) c2 = c2 === 7 ? 2 : c2 + 1;
         if (Math.random() < 0.5) {
           p = 'lim x→0  {sin ' + c1 + 'x}⁄x';
           r = String(c1);
@@ -1584,6 +1611,10 @@
         var b = 2 + Math.floor(Math.random() * 7);
         var a = 1 + Math.floor(Math.random() * (b + 2));
         if (a === b) a++;
+        // 4⁄8 is a ratio nobody writes — reduce it, or the question looks
+        // like a typo before it looks like a question
+        var g = gcd(a, b); a /= g; b /= g;
+        if (a === b) { a = 1; b = 2; }
         var neg = Math.random() < 0.35;
         return { show: 'Σ ({' + (neg ? '−' : '') + a + '}⁄{' + b + '})ⁿ', v: a < b ? 'A' : 'D' };
       } },
@@ -1623,9 +1654,15 @@
   ];
   function convergeRound(n) {
     var qs = [], seen = {}, guard = 0;
-    var tier = st && st.streak >= 12 ? 3 : st && st.streak >= 5 ? 2 : 1;
-    var fams = FAMS.filter(function (f) { return f.tier <= tier; });
+    // Sprint and streak raise the tier off the live streak as you play, but
+    // classic deals its whole batch up front with the streak still at 0 — so
+    // it stayed on tier 1 forever: three of the seven families, and never one
+    // "which test" question. A classic batch ramps through the tiers itself.
+    var classic = !st || st.mode === 'classic';
     while (qs.length < n && guard++ < 200) {
+      var tier = classic ? (qs.length < 3 ? 1 : qs.length < 7 ? 2 : 3)
+        : (st.streak >= 12 ? 3 : st.streak >= 5 ? 2 : 1);
+      var fams = FAMS.filter(function (f) { return f.tier <= tier; });
       var fam = weightedPick(fams, function (f) { return f.id; }, 'converge');
       var k = fam.gen();
       if (seen[k.show]) continue;
@@ -2210,6 +2247,13 @@
     if (location.hash.indexOf('#/game/') !== 0) return;   // app.js owns the rest
     if (e.repeat) return;                        // a held key is one press
     if (e.key === 'Escape') { ctx.go('#/games'); return; }
+    // Enter or Space on a focused spatial target — a circle angle, a board
+    // tile, an insertion slot — presses it, the way a button would
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      var af = document.activeElement;
+      var hit = af && af.closest && af.closest('[data-dot],[data-tile],[data-gap],[data-ml],[data-mr]');
+      if (hit) { e.preventDefault(); hit.dispatchEvent(new MouseEvent('click', { bubbles: true })); return; }
+    }
     // the circle and graph rounds that ask by choices render the very same
     // numbered list a quiz does — there is no reason the keys stop working
     if (st && (st.kind === 'quiz' || st.kind === 'graph' || st.kind === 'circle') &&
@@ -2256,6 +2300,7 @@
     },
     linksFor: function (deckId) {
       var out = [];
+      if (!S.getDeck(deckId)) return out;
       Object.keys(GAMES).forEach(function (id) {
         if (GAMES[id].deck === deckId) out.push([GAMES[id].name, id]);
       });
