@@ -1,5 +1,5 @@
 /* AP Decks service worker — precache the shell and every deck, serve offline. */
-var VERSION = 'apdecks-v56';
+var VERSION = 'apdecks-v57';
 var ASSETS = [
   './', './index.html', './app.css', './app.js', './store.js', './tex.js', './games.js',
   './liquid-glass.css', './liquid-glass.js',

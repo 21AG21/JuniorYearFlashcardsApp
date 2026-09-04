@@ -5703,7 +5703,7 @@
                       "`bash Miniforge3-MacOSX-arm64.sh -b -p ~/miniforge3` — runs it without prompts, installing into a folder called miniforge3 in your home folder",
                       "`~/miniforge3/bin/conda init zsh` — adds a few lines to ~/.zshrc so future terminals find this Python first",
                       "`python -c \"...print(platform.machine(), sys.version)\"` — runs one line of Python; it must print arm64 followed by a version of 3.11 or newer",
-                      "`which python` — shows which file the word python actually runs; it should be inside your miniforge3 folder, not /usr/bin"
+                      "`which python` — shows which file the word python actually runs; it should be inside your miniforge3 folder, not /usr/bin. `which python3` prints the identical path: from here on the two names are the same interpreter, so instructions that say `python3` and instructions that say `python` mean exactly the same thing"
                     ]
                   }
                 ],
@@ -5792,7 +5792,7 @@
                     "items": [
                       "`python -m venv .venv` — creates the private environment in a hidden folder called .venv",
                       "`source .venv/bin/activate` — switches this terminal into it; your prompt gains a (.venv) prefix",
-                      "`which python` — must now print .../Traffic1/.venv/bin/python — inside the project, not miniforge3",
+                      "`which python` — must now print .../Traffic1/.venv/bin/python — inside the project, not miniforge3. `which python3` prints that same path; inside a venv both names run the one interpreter, so either spelling works",
                       "`python -V` — prints the version, which should match the Python you installed"
                     ]
                   }
