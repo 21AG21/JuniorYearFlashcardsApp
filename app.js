@@ -159,9 +159,17 @@
         '</button></li>';
     }).join('');
     var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
+    /* An evening's work used to leave no trace on the screen you land on: the
+       headline went from 261 to 229 and said nothing about the hundred cards
+       that moved it. The line under it is the day's own count. */
+    var didToday = S.studiedToday();
+    var note = [];
+    if (didToday) note.push(plural(didToday, 'review') + ' today');
+    if (S.streak() > 1) note.push(S.streak().toLocaleString() + '-day streak');
     return '<div class="head">' +
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
-             : '<h1>' + esc(hero) + '</h1>') + '</div>' +
+             : '<h1>' + esc(hero) + '</h1>') +
+        (note.length ? '<div class="sub">' + esc(note.join(' · ')) + '</div>' : '') + '</div>' +
       '<ul class="list tight">' + rows + '</ul>' +
       backupNudge(seen) +
       '<div class="lnav">' +
@@ -771,10 +779,17 @@
     // way in — a student who had never seen the app had to guess. The deal
     // exists from the first minute; the screen offers it.
     var deal0 = due ? 0 : buildDaily().length;
+    /* An evening's work left no trace on the screen you land on: the headline
+       went from 261 to 229 and said nothing about the hundred cards that moved
+       it. The line under it is the day's own count. */
+    var todayN = S.studiedToday(), note0 = [];
+    if (todayN) note0.push(plural(todayN, 'review') + ' today');
+    if (S.streak() > 1) note0.push(S.streak().toLocaleString() + '-day streak');
     mount(
       '<div class="head">' +
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
+        (note0.length ? '<div class="sub">' + esc(note0.join(' · ')) + '</div>' : '') +
       '</div>' +
       (deal0 ? '<button class="act" data-go="#/review">Start · ' + deal0 + ' cards</button>' : '') +
       '<ul class="list tight">' + rows + '</ul>' +
