@@ -478,7 +478,12 @@
     }
     if (grade === 2) {
       r += 1;
-      i = r === 1 ? 1 : r === 2 ? 3 : Math.round(i * e);
+      // A first pass on a new card gave Hard and Good the same single day, so
+      // the two buttons printed the same interval on every card of a first
+      // session — a fourth grade that carried no information at the moment it
+      // was most needed. Good's first step is two days; the ladder now reads
+      // now · 1 d · 2 d · 3 d.
+      i = r === 1 ? 2 : r === 2 ? 3 : Math.round(i * e);
       return { e: e, r: r, i: Math.max(1, i) };
     }
     r += 1;

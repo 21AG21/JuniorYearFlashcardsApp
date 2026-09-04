@@ -450,7 +450,10 @@
     var slots = rawSlots(size, fresh);
     if (!slots) return fresh + ' new cards fill a session of ' + size +
       ', so there is no room for a review at all. Fewer new cards, or a longer session.';
-    var head = plural(slots, 'review') + ' a session after ' + fresh + ' new';
+    // …and what a session actually deals when there is nothing due yet, which
+    // is where "Session 30" and a screen reading "1 of 20" part company
+    var head = plural(slots, 'review') + ' a session after ' + fresh + ' new' +
+      (fresh < size ? ' — with nothing due, a session is ' + fresh : '');
     var drift = driftAt(size);
     if (Math.abs(drift) <= STEADY) return head + '. At this pace the pile holds steady.';
     if (drift < 0) return head + '. At this pace the pile falls by about ' +
