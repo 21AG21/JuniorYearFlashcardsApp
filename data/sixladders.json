@@ -12796,7 +12796,7 @@
                   },
                   {
                     "t": "p",
-                    "s": "Neighbors: PeMS gives every station a postmile, `Abs_PM`, its distance along the freeway. Sort by freeway, direction and postmile and the stations line up in driving order. `groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` then gives, within each freeway-direction, the station one position earlier in the list: the upstream neighbor, the one traffic comes from. `shift(-1)` gives the downstream neighbor, the one traffic goes to. `to_parquet` saves the registry."
+                    "s": "Neighbors: PeMS gives every station a postmile, `Abs_PM`, its distance along the freeway. Caltrans measures it from the south end and from the west end, so postmile grows as you drive north or east and shrinks as you drive south or west. Sorting on `Abs_PM` therefore lines the stations up in driving order on the N and E sides only; on the S and W sides it lines them up backwards, and upstream and downstream come out swapped for half the corridor. Multiplying by +1 for N and E and by −1 for S and W gives `drive_pm`, a number that always grows in the direction traffic moves, and sorting on that fixes both sides at once. `groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` then gives, within each freeway-direction, the station one position earlier in driving order: the upstream neighbor, the one traffic comes from. `shift(-1)` gives the downstream neighbor, the one traffic goes to. `to_parquet` saves the registry."
                   },
                   {
                     "t": "p",
@@ -12806,7 +12806,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "meta = pd.read_csv(\"data/pems_meta/d04_text_meta_2026_03_01.txt\", sep=\"\\t\")\nfre = meta[(meta.Fwy.isin([880, 680, 84])) & meta.Latitude.between(37.447, 37.612)\n           & meta.Longitude.between(-122.075, -121.888) & (meta.Type == \"ML\")].copy()\nfre = fre.sort_values([\"Fwy\", \"Dir\", \"Abs_PM\"])\nfre[\"upstream_id\"]   = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)\nfre[\"downstream_id\"] = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(-1)\nfre.to_parquet(\"data/pems_meta/fremont_stations.parquet\")"
+                    "s": "meta = pd.read_csv(\"data/pems_meta/d04_text_meta_2026_03_01.txt\", sep=\"\\t\")\nfre = meta[(meta.Fwy.isin([880, 680, 84])) & meta.Latitude.between(37.447, 37.612)\n           & meta.Longitude.between(-122.075, -121.888) & (meta.Type == \"ML\")].copy()\nfre[\"drive_pm\"] = fre.Abs_PM * fre.Dir.map({\"N\": 1, \"E\": 1, \"S\": -1, \"W\": -1})\nfre = fre.sort_values([\"Fwy\", \"Dir\", \"drive_pm\"])\nfre[\"upstream_id\"]   = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)\nfre[\"downstream_id\"] = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(-1)\nfre.to_parquet(\"data/pems_meta/fremont_stations.parquet\")"
                   },
                   {
                     "t": "p",
@@ -12818,8 +12818,9 @@
                     "items": [
                       "`meta = pd.read_csv(..., sep=\"\\t\")` — load the station list, tab-separated",
                       "`fre = meta[(...isin...) & (...between...) & (...between...) & (...== \"ML\")].copy()` — keep mainline stations on 880, 680 and 84 inside the Fremont bounding box",
-                      "`fre.sort_values([\"Fwy\", \"Dir\", \"Abs_PM\"])` — order stations along each freeway in each direction",
-                      "`fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` — the previous station along the road: upstream",
+                      "`fre[\"drive_pm\"] = fre.Abs_PM * fre.Dir.map({\"N\": 1, \"E\": 1, \"S\": -1, \"W\": -1})` — a postmile that grows in the direction of travel, not just northward",
+                      "`fre.sort_values([\"Fwy\", \"Dir\", \"drive_pm\"])` — order stations along each freeway in the direction cars actually drive it",
+                      "`fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` — the previous station in driving order: upstream, on every direction",
                       "`...shift(-1)` — the next station along the road: downstream",
                       "`fre.to_parquet(\"data/pems_meta/fremont_stations.parquet\")` — save the registry for every later stage"
                     ]
@@ -12910,11 +12911,11 @@
                   {
                     "t": "p",
                     "lead": "Before you do this",
-                    "s": "Every later stage assumes that each station has exactly one row per five-minute slot, in order, with no gaps: the full grid. Missing rows must be added as NaN, not skipped. An index in pandas is the row labels; a MultiIndex is a two-level index, here (station, timestamp). `pd.MultiIndex.from_product` builds every combination of the station list and the timestamp list: N stations × 288 slots."
+                    "s": "Every later stage assumes that each station has exactly one row per five-minute slot, in order, with no gaps: the full grid. Missing rows must be added as NaN, not skipped. An index in pandas is the row labels; a MultiIndex is a two-level index, here (station, timestamp). `pd.MultiIndex.from_product` builds every combination of the station list and the timestamp list: N stations × the slots in the day, 288 of them on an ordinary day."
                   },
                   {
                     "t": "p",
-                    "s": "`pd.date_range(start, periods=288, freq=\"5min\", tz=\"UTC\")` makes the 288 slot timestamps; `day.timestamp.min().floor(\"D\")` is midnight UTC of the day in the file. `set_index([...])` makes station and timestamp the row labels; `rename_axis` gives the levels the names the rest of the course uses; `reindex(grid)` reorders onto the full grid, inserting NaN rows for any missing slot."
+                    "s": "The day in a PeMS file is a Pacific day, but the timestamps were converted to UTC in the last step, and `floor(\"D\")` on a UTC timestamp floors to midnight UTC — five in the afternoon of the day before, in California. A grid anchored there starts the previous evening and stops around five in the afternoon, throwing away the evening rush hour: the part of the day this whole course exists to predict. So convert back to `America/Los_Angeles` first, floor there to get local midnight, and walk the day out from that point. `start + pd.DateOffset(days=1)` is the same wall-clock time the next morning, 24 hours on an ordinary day and 23 or 25 on the two days the clocks change, so the slot count comes out right without being hardcoded; `.tz_convert(\"UTC\")` puts the finished slots back on the UTC axis the tidy table stores. `set_index([...])` makes station and timestamp the row labels; `rename_axis` gives the levels the names the rest of the course uses; `reindex(grid)` reorders onto the full grid, inserting NaN rows for any missing slot."
                   },
                   {
                     "t": "p",
@@ -12923,12 +12924,12 @@
                   {
                     "t": "p",
                     "lead": "Do this",
-                    "s": "Reindex onto the full grid per station, then forward-fill within station."
+                    "s": "Anchor the grid on the local day, reindex onto it per station, then forward-fill within station."
                   },
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "grid = pd.MultiIndex.from_product([sorted(keep), pd.date_range(day.timestamp.min().floor(\"D\"), periods=288, freq=\"5min\", tz=\"UTC\")],\n                                  names=[\"station_id\", \"timestamp\"])\ntidy = day.set_index([\"station\", \"timestamp\"]).rename_axis([\"station_id\", \"timestamp\"]).reindex(grid)\ntidy[[\"speed\", \"occ\", \"flow\"]] = tidy.groupby(level=\"station_id\")[[\"speed\", \"occ\", \"flow\"]].ffill(limit=3)\ntidy = tidy.astype({\"speed\": \"float32\", \"occ\": \"float32\", \"flow\": \"float32\"})"
+                    "s": "start = day.timestamp.min().tz_convert(\"America/Los_Angeles\").floor(\"D\")\nslots = pd.date_range(start, start + pd.DateOffset(days=1), freq=\"5min\", inclusive=\"left\").tz_convert(\"UTC\")\ngrid = pd.MultiIndex.from_product([sorted(keep), slots], names=[\"station_id\", \"timestamp\"])\ntidy = day.set_index([\"station\", \"timestamp\"]).rename_axis([\"station_id\", \"timestamp\"]).reindex(grid)\ntidy[[\"speed\", \"occ\", \"flow\"]] = tidy.groupby(level=\"station_id\")[[\"speed\", \"occ\", \"flow\"]].ffill(limit=3)\ntidy = tidy.astype({\"speed\": \"float32\", \"occ\": \"float32\", \"flow\": \"float32\"})"
                   },
                   {
                     "t": "p",
@@ -12938,7 +12939,9 @@
                   {
                     "t": "ul",
                     "items": [
-                      "`grid = pd.MultiIndex.from_product([stations, slots], names=[\"station_id\", \"timestamp\"])` — every station × every five-minute slot of the day",
+                      "`start = day.timestamp.min().tz_convert(\"America/Los_Angeles\").floor(\"D\")` — local midnight, not midnight UTC, so the evening peak stays in the day",
+                      "`slots = pd.date_range(start, start + pd.DateOffset(days=1), freq=\"5min\", inclusive=\"left\").tz_convert(\"UTC\")` — the day’s five-minute slots, 288 of them on an ordinary day",
+                      "`grid = pd.MultiIndex.from_product([stations, slots], names=[\"station_id\", \"timestamp\"])` — every station × every slot",
                       "`tidy = day.set_index([\"station\", \"timestamp\"]).rename_axis([...]).reindex(grid)` — put the rows on that grid, with NaN where a slot is missing",
                       "`tidy[...] = tidy.groupby(level=\"station_id\")[...].ffill(limit=3)` — carry each station's last reading forward for up to three slots",
                       "`tidy = tidy.astype({... \"float32\"})` — halve the memory of the measurement columns"
@@ -12953,7 +12956,7 @@
                   {
                     "t": "p",
                     "lead": "Before you do this",
-                    "s": "`assert` is Python's way of saying 'this must be true, stop with an error if not'. It is the cheapest safety net there is: an assertion that fails at the end of a stage is far better than a silent wrong file used by every later stage. Here it checks that every station really has 288 rows after reindexing; the `.all()` says the test must hold for every station."
+                    "s": "`assert` is Python's way of saying 'this must be true, stop with an error if not'. It is the cheapest safety net there is: an assertion that fails at the end of a stage is far better than a silent wrong file used by every later stage. Here it checks that every station really has one row per slot after reindexing — `len(slots)`, not a hardcoded 288, so the check still holds on the two days a year the clocks change; the `.all()` says the test must hold for every station."
                   },
                   {
                     "t": "p",
@@ -12962,12 +12965,12 @@
                   {
                     "t": "p",
                     "lead": "Do this",
-                    "s": "Validate before writing: 288 rows per station, values in range, and log memory and seconds."
+                    "s": "Validate before writing: one row per slot per station, values in range, and log memory and seconds."
                   },
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "assert (tidy.groupby(level=\"station_id\").size() == 288).all()\ntidy.reset_index().to_parquet(\"data/pems_processed/2026-03.parquet\")"
+                    "s": "assert (tidy.groupby(level=\"station_id\").size() == len(slots)).all()\ntidy.reset_index().to_parquet(\"data/pems_processed/2026-03.parquet\")"
                   },
                   {
                     "t": "p",
@@ -12977,7 +12980,7 @@
                   {
                     "t": "ul",
                     "items": [
-                      "`assert (tidy.groupby(level=\"station_id\").size() == 288).all()` — stop if any station is not on the full daily grid",
+                      "`assert (tidy.groupby(level=\"station_id\").size() == len(slots)).all()` — stop if any station is not on the full daily grid",
                       "`tidy.reset_index().to_parquet(\"data/pems_processed/2026-03.parquet\")` — write the tidy table with station and timestamp as columns"
                     ]
                   }
@@ -17279,17 +17282,17 @@
                   },
                   {
                     "t": "p",
-                    "s": "The feature list is everything in the table except the columns that are not inputs: the timestamp, the two present-time labels, the three targets and any helper column. The list comprehension `[c for c in ... if c not in (...)]` builds that list. A categorical feature is one whose values are names rather than quantities (station id, freeway, direction); declaring them lets LightGBM split on 'is the station one of these' instead of treating the id as a number. `lgb.Dataset` wraps a table and its targets in LightGBM's own binned format; `reference=dtr` makes the validation set use the same bins as training; `free_raw_data=False` keeps the original table available for later predictions."
+                    "s": "The feature list is everything in the table except the columns that are not inputs: the timestamp, the two present-time labels, the three targets and any helper column. Building it by exclusion is convenient and dangerous — anything you forget to name is silently used as a feature, and the table still carries `ts`, the original timestamp text, along with `district` and `lane_type`, which hold the same value in every row here. LightGBM will not train on text at all: a column of Python strings stops it with `DataFrame.dtypes for data must be int, float or bool` before the first tree is built, so those three have to be named in `drop`. A categorical feature is one whose values are names rather than quantities (station id, freeway, direction, day type); declaring them lets LightGBM split on 'is the station one of these' instead of treating the id as a number. Declaring is not enough on its own: the column has to be pandas `category` dtype first, and the categories have to be the same list in every split, or the same code means a different station in training and in validation. `pd.CategoricalDtype(sorted(train_table[c].dropna().unique()))` builds one shared dtype per column from the whole table and `astype` applies it to all three splits. `lgb.Dataset` wraps a table and its targets in LightGBM's own binned format; `reference=dtr` makes the validation set use the same bins as training; `free_raw_data=False` keeps the original table available for later predictions. The `assert` is there because this is the mistake that costs an evening: it fails loudly, and here, if a text column is still in the list."
                   },
                   {
                     "t": "p",
                     "lead": "Do this",
-                    "s": "Prepare LightGBM datasets with categoricals declared."
+                    "s": "Drop the text columns, give the categoricals one shared dtype, then build the LightGBM datasets."
                   },
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "import lightgbm as lgb\nfeats = [c for c in train_table.columns if c not in (\"timestamp\", \"label\", \"label_abs\", \"y_15\", \"y_30\", \"y_60\", \"speed_t30\")]\ncats = [\"station_id\", \"fwy\", \"dir\"]\ndtr = lgb.Dataset(tr[feats], tr.y_30, categorical_feature=cats, free_raw_data=False)\ndva = lgb.Dataset(va[feats], va.y_30, categorical_feature=cats, reference=dtr)"
+                    "s": "import lightgbm as lgb\ndrop = {\"timestamp\", \"ts\", \"district\", \"lane_type\", \"label\", \"label_abs\", \"y_15\", \"y_30\", \"y_60\", \"speed_t30\"}\ncats = [\"station_id\", \"fwy\", \"dir\", \"daytype\"]\nctype = {c: pd.CategoricalDtype(sorted(train_table[c].dropna().unique())) for c in cats}\ntr = tr.astype(ctype); va = va.astype(ctype); te = te.astype(ctype)\nfeats = [c for c in train_table.columns if c not in drop]\nassert not [c for c in feats if tr[c].dtype == object], \"a text column is still in feats\"\ndtr = lgb.Dataset(tr[feats], tr.y_30, categorical_feature=cats, free_raw_data=False)\ndva = lgb.Dataset(va[feats], va.y_30, categorical_feature=cats, reference=dtr)"
                   },
                   {
                     "t": "p",
@@ -17299,7 +17302,11 @@
                   {
                     "t": "ul",
                     "items": [
-                      "`feats = [c for c in train_table.columns if c not in (...)]` — every column that is a legitimate input",
+                      "`drop = {\"timestamp\", \"ts\", \"district\", \"lane_type\", ...}` — the timestamp, the text columns and the label columns, none of which are inputs",
+                      "`ctype = {c: pd.CategoricalDtype(sorted(train_table[c].dropna().unique())) for c in cats}` — one shared category list per column, so the codes mean the same thing in every split",
+                      "`tr = tr.astype(ctype); va = va.astype(ctype); te = te.astype(ctype)` — apply it to all three splits",
+                      "`feats = [c for c in train_table.columns if c not in drop]` — every column that is a legitimate input",
+                      "`assert not [c for c in feats if tr[c].dtype == object]` — fail here if a text column slipped through, not deep inside LightGBM",
                       "`cats = [\"station_id\", \"fwy\", \"dir\"]` — the columns that are names, not amounts",
                       "`dtr = lgb.Dataset(tr[feats], tr.y_30, categorical_feature=cats, free_raw_data=False)` — training data in LightGBM's format",
                       "`dva = lgb.Dataset(va[feats], va.y_30, categorical_feature=cats, reference=dtr)` — validation data, binned the same way"
@@ -41854,8 +41861,8 @@
         "id": "postmile",
         "levels": [
           "Every station on the freeway has a number that says how far along the road it is, like mile markers on a long hiking trail. If you line the stations up by that number, you know which one comes right before or after another as you drive.",
-          "Postmile is the distance, in miles, from the start of a freeway to a given detector station. PeMS stores this as a column called `Abs_PM` in its station metadata. Because postmile increases along the direction of travel, sorting stations by postmile within the same freeway and direction puts them in the order a car would actually pass them, which is how you figure out which station is upstream or downstream of another.",
-          "To build a station's neighbors, you filter the station table to the same freeway and direction, sort by `Abs_PM`, and take the row immediately before, upstream, and after, downstream, in that sorted order. Two stations can share a freeway number but be on opposite directions, `N` versus `S`, so direction has to match before postmile comparisons mean anything. A gap in postmile between neighbors, say five miles instead of half a mile, is a sign that a station is missing or was decommissioned, not that the freeway physically jumped.",
+          "Postmile is the distance, in miles, from the start of a freeway to a given detector station. PeMS stores this as a column called `Abs_PM` in its station metadata. Caltrans measures it from the south end of a north-south route and the west end of an east-west one, so postmile grows in the direction of travel on the N and E sides of a freeway and shrinks on the S and W sides. Sorting by postmile puts the northbound and eastbound stations in the order a car passes them and the southbound and westbound ones in exactly the reverse order, so upstream and downstream have to be read against the direction, not off the raw sort.",
+          "To build a station's neighbors, you filter the station table to the same freeway and direction, put the rows in driving order, and take the row immediately before, upstream, and after, downstream. Driving order is a sort on `Abs_PM` for `N` and `E` and a sort on `-Abs_PM` for `S` and `W`; the usual way to get both at once is a signed column, `Abs_PM` times +1 or −1 by direction, sorted ascending. Skip the sign and the southbound and westbound halves of the corridor come out with upstream and downstream swapped, which is a silent error: the join still succeeds and the model still trains, it has just learned from the wrong neighbor. Two stations can share a freeway number but be on opposite directions, `N` versus `S`, so direction has to match before postmile comparisons mean anything. A gap in postmile between neighbors, say five miles instead of half a mile, is a sign that a station is missing or was decommissioned, not that the freeway physically jumped.",
           "Postmile is a 1-D coordinate along a specific freeway-and-direction, computed from Caltrans's official mile markers, and it is what makes upstream and downstream well-defined without needing real latitude and longitude geometry. Building the neighbor graph reduces to a groupby-sort-shift: group by freeway and direction, sort by postmile, and the row above and below each station in that ordering are its neighbors. It fails at freeway interchanges, where a driver can physically move between two different postmile sequences, transitioning from one freeway to another, so a purely postmile-based neighbor graph misses those connections. It also assumes postmile is monotonic along physical distance, which mostly holds but has known discontinuities where Caltrans re-surveyed a route.",
           "Postmile order is a reasonable proxy for the next station a car reaches, but it silently drops the graph structure at freeway junctions, on-ramps, and off-ramps, which is exactly where traffic often actually originates, so lag and neighbor features built purely from postmile can miss the true causal upstream stations near an interchange. A subtler issue is that postmile resets or has small overlaps at some county or route boundaries in the raw Caltrans data, so blindly sorting the full statewide table by postmile without first grouping by freeway and direction produces nonsense neighbors. Distance in postmile also is not travel time: a mile of stop-and-go surface street feels different from a mile of open freeway, so treating postmile gaps as exchangeable across corridors is an approximation practitioners should sanity check against typical speeds on that stretch.",
           "Real traffic systems eventually replace a 1-D postmile ordering with an actual road network graph, nodes and edges with real connectivity, including ramps and merges, because that is what graph neural network approaches to traffic forecasting need and what interchange effects require. The open modeling question this course's later graph-model lessons approach is how much predictive value that fuller graph adds over the cheap postmile-neighbor approximation, and for the Fremont corridor specifically, whether the added complexity earns its keep given how sparse true interchange effects are in the data."

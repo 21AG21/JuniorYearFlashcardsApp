@@ -143,7 +143,8 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
      browse/search rows stop at the same measure — no 100-char prose lines,
      no grade word a metre from its neighbours */
   .pane-r .sess-top, .pane-r .card, .pane-r .rate, .pane-r .sess-util,
-  .pane-r .qrow, .pane-r .searchbar, .pane-r .done-rows, .pane-r .backbar{ max-width:860px; }
+  .pane-r .qrow, .pane-r .searchbar, .pane-r .done-rows, .pane-r .backbar,
+  .pane-r .scoperow, .pane-r .qacts{ max-width:860px; }
   .pane-r .setrow{ max-width:560px; }   /* a toggle never sits a metre from its name */
   .pane-r .data-list, .pane-r .reqwrap{ max-width:560px; }  /* the data rows keep the settings measure */
   .pane-r .lg-seg{ max-width:340px; }
@@ -236,6 +237,13 @@ button.hero-tap:active{ opacity:.55; }
   color:var(--ink); white-space:nowrap; }
 .ledger .lsub{ grid-column:1 / -1; font-size:var(--t-label); font-weight:500; color:var(--muted); margin-top:-2px; }
 .ledger.done .lname,.ledger.done .lval{ color:var(--muted); }
+/* the week ahead: each row carries its share of the busiest day as a rule at
+   its foot — a chart with no axis, no colour and nothing to tap. The full-width
+   track keeps it reading as a proportion rather than as an underlined word. */
+.ledger.fc{ position:relative; cursor:default; padding:7px 0 15px; }
+.ledger.fc::before, .ledger.fc::after{ content:""; position:absolute; left:0; bottom:5px; height:2px; }
+.ledger.fc::before{ right:0; background:var(--hair-soft); }
+.ledger.fc::after{ width:var(--fc); background:var(--ink-soft); }
 
 /* smaller ledger for unit lists and summary rows */
 .ledger.mid{ padding:7px 0; }
@@ -381,9 +389,11 @@ button.hero-tap:active{ opacity:.55; }
 .verdict.long{ color:var(--muted); }
 
 /* --- quiz: choices are text rows separated by hairlines -------------------- */
-/* a search result opens to its answer and to the unit it came from */
-.list li .qgo{ display:none; }
-.list li.open .qgo{ display:block; margin:-2px 0 10px; padding:8px 0; min-height:40px; }
+/* the actions under an opened row — the unit it came from, and the star.
+   Hidden until the row opens, so a hundred-row unit page stays a list. */
+.list li .qacts{ display:none; }
+.list li.open .qacts{ display:flex; flex-wrap:wrap; column-gap:24px; margin:-2px 0 10px; }
+.list li.open .qacts .textbtn{ padding:8px 0; min-height:40px; }
 .choices{ display:flex; flex-direction:column; margin-top:20px; }
 .choice{ position:relative; width:100%; text-align:left; padding:19px 26px 19px 0; border:0; border-top:1px solid var(--hair-soft);
   background:none; color:var(--ink-soft); font:inherit; font-size:clamp(19px,5.4vw,24px); font-weight:480; line-height:1.4; cursor:pointer;
@@ -432,6 +442,14 @@ button.hero-tap:active{ opacity:.55; }
   font:inherit; font-size:24px; font-weight:430; color:var(--ink); letter-spacing:-.015em; }
 .searchbar input:focus{ outline:none; border-bottom-color:var(--ink-soft); }
 .searchbar input::placeholder{ color:var(--muted); }
+/* the scope word under the field — one tap narrows the search to one course */
+.scoperow{ display:flex; align-items:baseline; gap:14px; margin:-6px 0 var(--s-3); }
+.scoperow .textbtn{ padding:6px 0; min-height:40px; }
+/* the count that belongs to the word beside it — a fact, never a control */
+.scoperow .scount{ color:var(--muted); font-size:var(--t-label); }
+/* on a unit page it opens the card list rather than following a text field */
+.scoperow.unit{ margin:var(--s-4) 0 var(--s-3); }
+@media print{ .scoperow{ display:none !important; } }
 /* the native clear button is accent-blue — nothing on a mono page may be */
 .searchbar input::-webkit-search-cancel-button{ -webkit-appearance:none; appearance:none; display:none; }
 
