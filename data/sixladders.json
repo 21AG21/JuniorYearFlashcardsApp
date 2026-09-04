@@ -5564,6 +5564,701 @@
                 "name": "PhD at Apple"
               },
               {
+                "k": "guided-walkthrough",
+                "b": [
+                  {
+                    "t": "p",
+                    "s": "This is the one walkthrough where nothing is assumed: no Python, no git, no editor. Every command is typed into the Terminal app, one line at a time, pressing return after each. If a step fails, read the error out loud before doing anything else; the fix is nearly always in the last line of it."
+                  }
+                ]
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "The Terminal is an app that comes with macOS: press Command and the space bar, type `terminal`, press return. A window opens showing a prompt, a line ending in `%` (or `$`) that means the computer is waiting. You type one command, press return, it runs, and the prompt comes back. That is the entire loop."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Three commands cover ninety percent of moving around. `pwd` means print working directory: it answers 'which folder am I in right now?'. `ls` lists what is in that folder. `cd` means change directory: `cd Documents` goes into a folder named Documents, `cd ..` goes up one level, and `cd ~` goes to your home folder. The `~` character is shorthand for your home folder, `/Users/yourname`."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Two habits that save hours. Press the tab key halfway through a name and the shell completes it for you, which also proves the name exists. And if a command ever hangs or runs away, press Control and C together to stop it."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`mkdir` makes a directory. The `-p` flag means 'make parent folders as needed and do not complain if it already exists', which makes the command safe to run twice."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Open Terminal and make a folder to keep projects in, then go into it."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "pwd\nls\nmkdir -p ~/code\ncd ~/code\npwd"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`pwd` — prints the folder you are in; it will say /Users/yourname",
+                      "`ls` — lists that folder's contents, so you can see Desktop, Documents and the rest",
+                      "`mkdir -p ~/code` — creates a folder called code in your home folder, quietly succeeding if it is already there",
+                      "`cd ~/code` — moves into it; the prompt now shows code",
+                      "`pwd` — confirms the move: /Users/yourname/code"
+                    ]
+                  }
+                ],
+                "n": 1
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Git is the tool that records versions of your work, and on a Mac it arrives inside Apple's Command Line Tools, a free download that also includes the compiler some Python packages need. You do not need the full Xcode app, which is many gigabytes; the command line tools are a few hundred megabytes."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Running the install command opens a small dialog box asking you to agree and install. It takes a few minutes. If the tools are already present, the command says so and does nothing, which is fine."
+                  },
+                  {
+                    "t": "p",
+                    "s": "After it finishes, `git --version` should print something like `git version 2.39.5`. Any version above 2.30 is fine for this course."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Install Apple's command line tools, then check that git is there."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "xcode-select --install\ngit --version"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`xcode-select --install` — opens the installer dialog; click Install and wait, or read the note that they are already installed",
+                      "`git --version` — proves git now exists and is on your PATH, the list of folders the shell searches for commands"
+                    ]
+                  }
+                ],
+                "n": 2
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "macOS ships with a Python, and you must not use it. It belongs to the system, it is often an old version, and installing packages into it can break parts of macOS. Every serious project installs its own Python."
+                  },
+                  {
+                    "t": "p",
+                    "s": "There are two good ways to get one on Apple silicon. Miniforge is a small installer from the conda-forge community that gives you a native Python plus the conda tool; it is the smoothest path on an M-series Mac and is what this walkthrough uses. The other is the official installer from python.org, which is equally fine; if you take that route, download the macOS 64-bit universal2 installer, double-click it, and skip to the next step."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Native matters. Apple silicon runs two kinds of program: native arm64 code, and older Intel code translated on the fly by Rosetta, which runs at roughly half speed and cannot use the Mac's GPU from PyTorch. The check at the end of this step must print `arm64`. If it prints `x86_64`, you have an Intel Python and should uninstall it and start this step again."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The commands below download an installer script, run it, and then tell your shell about the new Python. `curl` fetches a file from the internet; `-L` follows redirects; `-O` saves it under its own name. `bash Miniforge3-MacOSX-arm64.sh -b -p ~/miniforge3` runs the installer in batch mode (`-b`, meaning do not ask questions) into the folder `~/miniforge3` (`-p` for prefix). `conda init zsh` edits your shell's startup file, `~/.zshrc`, so that new terminal windows can find this Python. Because that file is only read when a shell starts, you must close the Terminal window and open a new one before the last line will work."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Install a native arm64 Python, then open a new Terminal window and prove it is native."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "cd ~/Downloads\ncurl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh\nbash Miniforge3-MacOSX-arm64.sh -b -p ~/miniforge3\n~/miniforge3/bin/conda init zsh\n\n# now quit Terminal (Command-Q), open it again, and run:\npython -c \"import platform, sys; print(platform.machine(), sys.version)\"\nwhich python"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`curl -L -O https://...Miniforge3-MacOSX-arm64.sh` — downloads the installer script for Apple silicon into your Downloads folder",
+                      "`bash Miniforge3-MacOSX-arm64.sh -b -p ~/miniforge3` — runs it without prompts, installing into a folder called miniforge3 in your home folder",
+                      "`~/miniforge3/bin/conda init zsh` — adds a few lines to ~/.zshrc so future terminals find this Python first",
+                      "`python -c \"...print(platform.machine(), sys.version)\"` — runs one line of Python; it must print arm64 followed by a version of 3.11 or newer",
+                      "`which python` — shows which file the word python actually runs; it should be inside your miniforge3 folder, not /usr/bin"
+                    ]
+                  }
+                ],
+                "n": 3
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "A repository, or repo, is a folder whose history git tracks. The course's repo is Traffic1 on GitHub. Cloning it copies the whole folder and its history to your machine."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`git clone URL` creates a folder named after the repo and downloads it. If you have your own copy of Traffic1 on GitHub, use its URL instead. If you have no repo at all yet, take the second block: `git init -b main` turns an ordinary folder into a repo with a first branch called main, which is what GitHub expects."
+                  },
+                  {
+                    "t": "p",
+                    "s": "After cloning, `ls` shows the files. Right now the repo holds the planning documents; the numbered scripts are what you will write during the course, starting with the collector in step 11 of this walkthrough."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Get the project folder onto your machine and go into it."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "cd ~/code\ngit clone https://github.com/21AG21/Traffic1.git\ncd Traffic1\nls\n\n# no repo of your own yet? do this instead:\n# mkdir -p ~/code/Traffic1 && cd ~/code/Traffic1 && git init -b main"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`git clone https://github.com/21AG21/Traffic1.git` — downloads the repository and its history into a new folder called Traffic1",
+                      "`cd Traffic1` — moves into the project; every command from here on assumes you are in this folder",
+                      "`ls` — lists what came down: the plan and lesson documents",
+                      "`git init -b main` — the alternative: start a fresh repository in the current folder with main as the first branch"
+                    ]
+                  }
+                ],
+                "n": 4
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "A virtual environment, or venv, is a private copy of Python and its packages that belongs to one project. Without one, every project shares a single set of packages and they eventually conflict: one project needs an old pandas, another needs a new one, and installing for one breaks the other. With one, each project gets its own, and deleting the folder undoes everything cleanly."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`python -m venv .venv` runs Python's built-in venv tool and creates a folder called `.venv` inside your project. The leading dot means the Finder and `ls` hide it by default; `ls -a` shows hidden files. The name `.venv` is a convention that VS Code recognizes automatically."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Creating it is not enough; you must activate it. `source .venv/bin/activate` changes the current terminal so the word `python` means the one inside `.venv`. You will see `(.venv)` appear at the start of your prompt, which is how you know it is on. Activation lasts only for that terminal window: every new window, and every restart, needs the `source` line again. `deactivate` turns it off."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The `.venv` folder is large and is rebuilt from requirements.txt in one command, so it never goes into git. Step 9 adds it to `.gitignore`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Create the project's virtual environment, turn it on, and confirm which Python is now in charge."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "python -m venv .venv\nsource .venv/bin/activate\nwhich python\npython -V"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`python -m venv .venv` — creates the private environment in a hidden folder called .venv",
+                      "`source .venv/bin/activate` — switches this terminal into it; your prompt gains a (.venv) prefix",
+                      "`which python` — must now print .../Traffic1/.venv/bin/python — inside the project, not miniforge3",
+                      "`python -V` — prints the version, which should match the Python you installed"
+                    ]
+                  }
+                ],
+                "n": 5
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "`requirements.txt` is a plain text file listing the packages the project needs, one per line, so anyone (including you on a new machine) can install all of them with one command. This is the file you asked about, and here is exactly what to put in it."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Each line is a package name and a version rule. `pandas>=2.2` means 'at least 2.2, newer is fine'. Loose rules like that are right while you are setting up, because they always resolve. Once everything works, you freeze the exact versions with `pip freeze > requirements.lock.txt`, and that lock file is what makes a run reproducible months later. Text after `#` is a comment that pip ignores."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Why these packages: pandas and numpy are the table and array libraries; pyarrow lets pandas read and write Parquet; requests fetches the 511 feed; python-dotenv reads your `.env` file; scikit-learn provides the baselines, metrics and calibration; lightgbm is the production model; torch is PyTorch for the neural networks and is the only large download; matplotlib draws the plots; jupyterlab runs notebooks; pytest runs the tests; holidays marks public holidays; psutil measures memory; duckdb runs SQL over Parquet; tqdm draws progress bars; shap explains model predictions."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The command below writes the file using a here-document: `cat > requirements.txt << 'EOF'` means 'take everything up to a line containing EOF and write it into requirements.txt'. The quotes around 'EOF' stop the shell from interpreting anything inside. You can equally create the file in VS Code once step 8 is done, or in TextEdit as plain text; the content is what matters."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Create requirements.txt with exactly these lines."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "cat > requirements.txt << 'EOF'\n# data\npandas>=2.2            # tables: read, clean, group, join\nnumpy>=1.26            # arrays and the maths under pandas\npyarrow>=15.0          # lets pandas read and write Parquet files\n\n# getting the data\nrequests>=2.31         # HTTP calls to the 511 traffic feed\npython-dotenv>=1.0     # loads secrets from the .env file\n\n# models\nscikit-learn>=1.4      # baselines, metrics, calibration, splits\nlightgbm>=4.3          # gradient boosted trees: the production model\ntorch>=2.2             # PyTorch, the neural networks (large download)\nshap>=0.45             # explains which features drove a prediction\n\n# looking at things\nmatplotlib>=3.8        # plots\njupyterlab>=4.1        # notebooks for exploring\n\n# the rest\npytest>=8.0            # tests\nholidays>=0.45         # public holiday calendar for the feature set\npsutil>=5.9            # memory and timing for every pipeline stage\nduckdb>=0.10           # SQL over Parquet without a database server\ntqdm>=4.66             # progress bars for long loops\nEOF\n\ncat requirements.txt"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`cat > requirements.txt << 'EOF'` — starts writing the file; everything until the EOF line goes into it",
+                      "`pandas>=2.2` — one requirement: the package name, then the lowest version that will do",
+                      "`# tables: read, clean, group, join` — a comment; pip ignores everything after the hash",
+                      "`EOF` — ends the here-document and closes the file",
+                      "`cat requirements.txt` — prints the file back so you can see it saved correctly"
+                    ]
+                  }
+                ],
+                "n": 6
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "`pip` is Python's package installer. It reads requirements.txt and downloads each package from PyPI, the public package index. Because your venv is active, everything lands inside `.venv` and nothing touches the rest of your machine."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Upgrade pip itself first; old versions sometimes fail to find the right wheel. A wheel is a pre-built package: if one exists for your Mac, installation is a fast download, and if not, pip compiles from source, which is slow and is where the command line tools from step 2 earn their place. Expect the whole install to take a few minutes, most of it PyTorch."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Then verify by importing everything and asking PyTorch whether it can see the Mac's GPU. MPS stands for Metal Performance Shaders, Apple's GPU interface; `torch.backends.mps.is_available()` printing True means later lessons can train on the GPU. False is not fatal, it just means training runs on the processor."
+                  },
+                  {
+                    "t": "p",
+                    "s": "One known failure on macOS: `import lightgbm` raising an error about `libomp` or OpenMP. LightGBM needs Apple's OpenMP runtime, which is not bundled. The fix is Homebrew, the package manager for macOS: install it from brew.sh with the one line on that page, then run `brew install libomp`, then open a new terminal and try again."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Install everything from the file, then prove each import works."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "python -m pip install --upgrade pip\npip install -r requirements.txt\n\npython - << 'EOF'\nimport platform, pandas as pd, numpy as np, sklearn, lightgbm as lgb, torch\nprint(\"machine      \", platform.machine())\nprint(\"pandas       \", pd.__version__)\nprint(\"numpy        \", np.__version__)\nprint(\"scikit-learn \", sklearn.__version__)\nprint(\"lightgbm     \", lgb.__version__)\nprint(\"torch        \", torch.__version__)\nprint(\"GPU (mps)    \", torch.backends.mps.is_available())\nEOF"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`python -m pip install --upgrade pip` — updates the installer itself before it does any real work",
+                      "`pip install -r requirements.txt` — reads the file and installs every package into the active venv",
+                      "`python - << 'EOF' ... EOF` — runs the block of Python between the markers without saving it to a file",
+                      "`print(\"machine\", platform.machine())` — arm64 again: this time it proves the venv's Python is native too",
+                      "`torch.backends.mps.is_available()` — True means PyTorch can use the Mac's GPU in the neural network lessons"
+                    ]
+                  }
+                ],
+                "n": 7
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "VS Code is a free editor from Microsoft and the one this course assumes. Download it from code.visualstudio.com, open the downloaded file, and drag the app into your Applications folder. Open it once from Applications so macOS allows it to run."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Connecting it to your project is two connections, not one. First the folder: File, then Open Folder, and choose `~/code/Traffic1`. Everything you do in VS Code from then on is relative to that folder. Second the interpreter: VS Code must be told to use the `.venv` Python rather than some other one, or your imports will be underlined in red and running a file will fail with 'no module named pandas'."
+                  },
+                  {
+                    "t": "p",
+                    "s": "To do that, install the Python extension: click the Extensions icon in the left bar (four squares), search for `Python`, and install the one published by Microsoft. Then press Command, Shift and P together to open the command palette, type `Python: Select Interpreter`, press return, and choose the entry whose path ends in `Traffic1/.venv/bin/python`, usually labelled Recommended. The chosen interpreter then shows in the bottom status bar, and that is your proof it worked."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Two more things worth doing once. The command palette entry `Shell Command: Install 'code' command in PATH` lets you type `code .` in a terminal to open the current folder in VS Code. And a settings file inside the project makes the choice stick for every future window and makes VS Code's own terminal activate the venv automatically, so you do not have to `source` it there."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Running code: open a `.py` file and press the triangular Run button at the top right, or use VS Code's terminal, which is the panel you get with Control and the backtick key. The terminal is the honest way, because it is the same command you would type anywhere."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Open the project in VS Code, install the Python extension, select the .venv interpreter, and save the project settings."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "mkdir -p .vscode\ncat > .vscode/settings.json << 'EOF'\n{\n  \"python.defaultInterpreterPath\": \"${workspaceFolder}/.venv/bin/python\",\n  \"python.terminal.activateEnvironment\": true,\n  \"files.trimTrailingWhitespace\": true,\n  \"editor.rulers\": [100]\n}\nEOF\n\ncode .   # opens this folder in VS Code, once the 'code' command is installed"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`mkdir -p .vscode` — makes the folder VS Code keeps per-project settings in",
+                      "`\"python.defaultInterpreterPath\": \"${workspaceFolder}/.venv/bin/python\"` — tells VS Code to use this project's venv without asking again",
+                      "`\"python.terminal.activateEnvironment\": true` — makes VS Code's built-in terminal activate the venv for you",
+                      "`\"editor.rulers\": [100]` — draws a faint line at 100 characters so lines stay readable",
+                      "`code .` — opens the current folder in VS Code; the dot means 'here'"
+                    ]
+                  }
+                ],
+                "n": 8
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "`.gitignore` is a list of things git must never record. It has to exist before your first commit, because git history is permanent: a secret committed once stays in the history even if you delete the file in the next commit, and public repositories are scanned by bots within minutes of a push."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Four kinds of thing belong in it. Secrets, meaning `.env`. Data, because the PeMS files are hundreds of megabytes a day and are re-downloadable. Anything rebuildable: `.venv`, trained models, outputs, logs, Python's `__pycache__` folders. And editor or operating system litter such as `.DS_Store`."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Patterns are simple. A name ending in `/` matches a folder, `*.pyc` matches by extension, and a line starting with `!` is an exception that keeps a file which an earlier pattern excluded. The `!.env.example` line below is exactly that: the real `.env` stays out, but a template with empty values stays in, so the next person knows which variables to set."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Write .gitignore before anything is committed."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "cat > .gitignore << 'EOF'\n# secrets\n.env\n!.env.example\n\n# data and anything rebuilt from it\ndata/\nmodels/\noutput/\nlogs/\n\n# the environment\n.venv/\n__pycache__/\n*.pyc\n\n# notebooks and macOS litter\n.ipynb_checkpoints/\n.DS_Store\nEOF\n\ngit status --short"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`.env` — the secrets file: never recorded",
+                      "`!.env.example` — an exception: the template with blank values is recorded, so the file list is documented",
+                      "`data/` — the trailing slash means a folder; everything inside it is ignored",
+                      "`*.pyc` — ignores compiled Python files wherever they appear",
+                      "`git status --short` — lists what git currently sees as new or changed; data and .venv must not appear"
+                    ]
+                  }
+                ],
+                "n": 9
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "511.org is the Bay Area's traveller information service, and its traffic events feed is one of the two data sources for the model. The key is free: go to 511.org/open-data/token, fill in your name and email, and the token arrives by email as a long string of letters, digits and dashes."
+                  },
+                  {
+                    "t": "p",
+                    "s": "A token is a secret. It goes in a file called `.env`, one `NAME=value` per line, with no spaces around the equals sign and no quotes. Nothing else reads that file by magic: the `python-dotenv` package's `load_dotenv()` reads it and puts the values into `os.environ`, the dictionary of environment variables that Python programs can see."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Name the variable `TOKEN_511` rather than `511_TOKEN`, because shell variable names cannot start with a digit and you will eventually want to export it by hand."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Write `.env.example` alongside it with the same names and empty values. It is the documented list of what a newcomer must supply, and it is safe to commit because it contains no secret."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Get a free 511 token, put it in .env, and write the example file beside it."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "cat > .env << 'EOF'\nTOKEN_511=paste-your-token-here\nEOF\n\ncat > .env.example << 'EOF'\n# copy this file to .env and fill in your own values\nTOKEN_511=\nEOF\n\npython -c \"from dotenv import load_dotenv; import os; load_dotenv(); print('token loaded:', bool(os.environ.get('TOKEN_511')))\""
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`TOKEN_511=paste-your-token-here` — replace the right-hand side with the token from your email; no quotes, no spaces",
+                      "`.env.example with an empty value` — documents the variable without revealing it, and is safe to commit",
+                      "`load_dotenv()` — reads .env from the current folder and adds its names to os.environ",
+                      "`print('token loaded:', bool(os.environ.get('TOKEN_511')))` — prints True when the token was found; False means the file is misspelt or you are in the wrong folder"
+                    ]
+                  }
+                ],
+                "n": 10
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Now the first real script: it asks 511 for the current traffic events near Fremont and appends them to a CSV file, one row per event per poll. Run it every few minutes and you build the incident history the model later joins to the detector data."
+                  },
+                  {
+                    "t": "p",
+                    "s": "What the code uses. `requests.get(url, params={...})` makes the web request and builds the query string for you. The 511 response carries a byte-order mark, an invisible marker at the start of the text that makes a plain `.json()` call fail with a confusing error, so the code decodes the bytes with `utf-8-sig`, which strips it. `.get('key')` on a dictionary returns `None` instead of crashing when a field is missing, which matters because not every event has every field. `csv.DictWriter` writes dictionaries as rows and can write the header line only when the file is new. `datetime.now(timezone.utc)` stamps each row with when we pulled it, in UTC. The `try` and `except` around the request means a network blip prints a message instead of killing the program. And `if __name__ == '__main__':` at the bottom means the file runs when you call it directly but stays importable from other scripts and tests."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Before trusting any of it, the script prints how many events came back and the keys of the first one, so you see the real shape of the data rather than assuming it."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Write 02_collect_events.py, run it once, and look at what it wrote."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "# 02_collect_events.py\nimport csv, os, sys\nfrom datetime import datetime, timezone\nfrom pathlib import Path\n\nimport requests\nfrom dotenv import load_dotenv\n\nURL = \"https://api.511.org/traffic/events\"\nOUT = Path(\"data/fremont_events_log.csv\")\nFIELDS = [\"pulled_at\", \"id\", \"event_type\", \"severity\", \"headline\", \"roads\", \"created\", \"updated\"]\n\n\ndef fetch_events(token):\n    r = requests.get(URL, params={\"api_key\": token, \"format\": \"json\"}, timeout=30)\n    r.raise_for_status()\n    return r.json() if not r.content.startswith(b\"\\xef\\xbb\\xbf\") else __import__(\"json\").loads(r.content.decode(\"utf-8-sig\"))\n\n\ndef flatten(event, pulled_at):\n    roads = event.get(\"roads\") or []\n    return {\n        \"pulled_at\": pulled_at,\n        \"id\": event.get(\"id\"),\n        \"event_type\": event.get(\"event_type\"),\n        \"severity\": event.get(\"severity\"),\n        \"headline\": (event.get(\"headline\") or \"\").replace(\"\\n\", \" \"),\n        \"roads\": \"; \".join(r.get(\"name\", \"\") for r in roads),\n        \"created\": event.get(\"created\"),\n        \"updated\": event.get(\"updated\"),\n    }\n\n\ndef main():\n    load_dotenv()\n    token = os.environ.get(\"TOKEN_511\")\n    if not token:\n        sys.exit(\"No TOKEN_511 in .env — see step 10.\")\n\n    try:\n        payload = fetch_events(token)\n    except requests.RequestException as e:\n        sys.exit(f\"Could not reach 511: {e}\")\n\n    events = payload.get(\"events\", [])\n    print(f\"{len(events)} events came back\")\n    if events:\n        print(\"fields on the first one:\", sorted(events[0].keys()))\n\n    pulled_at = datetime.now(timezone.utc).isoformat()\n    OUT.parent.mkdir(parents=True, exist_ok=True)\n    new_file = not OUT.exists()\n    with OUT.open(\"a\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.DictWriter(fh, fieldnames=FIELDS)\n        if new_file:\n            w.writeheader()\n        for e in events:\n            w.writerow(flatten(e, pulled_at))\n    print(f\"wrote {len(events)} rows to {OUT}\")\n\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`requests.get(URL, params={...}, timeout=30)` — asks 511 for the events; timeout stops it hanging forever",
+                      "`r.raise_for_status()` — turns an HTTP error such as 401 (bad token) into a Python exception you can see",
+                      "`decode(\"utf-8-sig\")` — strips the invisible byte-order mark that would otherwise break JSON parsing",
+                      "`event.get(\"severity\")` — returns None for a missing field instead of crashing",
+                      "`datetime.now(timezone.utc).isoformat()` — the moment of this poll, in UTC, as text; the delay between created and pulled_at is the model's blind spot",
+                      "`OUT.parent.mkdir(parents=True, exist_ok=True)` — creates the data folder the first time, and does nothing after that",
+                      "`OUT.open(\"a\", ...)` — opens the file in append mode so each run adds to the history",
+                      "`if new_file: w.writeheader()` — writes the column names only when the file was just created",
+                      "`if __name__ == \"__main__\": main()` — runs main() when you launch the file, but not when a test imports it"
+                    ]
+                  }
+                ],
+                "n": 11
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Now run it and read the output. Save the file in VS Code (Command and S), then run it from the terminal with the venv active. Three things should happen: a count of events, the field names of the first one, and a line saying rows were written."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Common failures and what they mean. `No TOKEN_511 in .env` means the file is missing, misspelt, or you are in the wrong folder. A 401 error means the token is wrong; copy it again without spaces. `ModuleNotFoundError: No module named requests` means the venv is not active in this terminal, so run `source .venv/bin/activate` and try again."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`head -2` prints the first two lines of a file: the header and one event. `wc -l` counts lines. Run the script twice, a minute apart, and the line count grows while the header stays single, which is the append working correctly."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Run the collector, then look at the CSV it produced."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "python 02_collect_events.py\nhead -2 data/fremont_events_log.csv\nwc -l data/fremont_events_log.csv"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`python 02_collect_events.py` — runs the script; the venv must be active in this terminal",
+                      "`head -2 ...csv` — shows the header line and the first event, so you can see the columns are what you declared",
+                      "`wc -l ...csv` — counts the lines; run the script again and this number grows"
+                    ]
+                  }
+                ],
+                "n": 12
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Time to record the work. Git has three places: the working tree (your files), the staging area (what the next commit will contain), and the repository (the permanent history). `git add` moves changes into staging, `git commit` writes them into history with a message, `git push` sends them to GitHub."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Check before you commit, every time. `git status --short` lists what will go in: `??` means untracked, `A` means added, `M` means modified. If `data/` or `.env` appear here, stop and fix `.gitignore` first, because after a commit and push it is too late and the honest fix becomes rotating the token."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`git ls-files` lists what git is actually tracking, which is the strongest check available: piping it through `grep` and counting should give zero for both the environment file and the data folder."
+                  },
+                  {
+                    "t": "p",
+                    "s": "If you cloned from GitHub, `git push` already knows where to send things. If you started with `git init`, create an empty repository on GitHub first, then add it as the remote named origin, as the commented lines show. `-u` on the first push links your local main to the remote one so later pushes are just `git push`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Check what is staged, commit, and push, proving no secret went with it."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "git status --short\ngit ls-files | grep -c -E '^\\.env$|^data/' || echo \"0 secrets tracked — good\"\n\ngit add -A\ngit status --short\ngit commit -m \"Set up the environment and the 511 collector\"\n\n# only if you started with git init:\n# git remote add origin https://github.com/YOURNAME/Traffic1.git\n\ngit push -u origin main\ngit log --oneline -3"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`git status --short` — the pre-commit check: two-letter codes beside every file that changed",
+                      "`git ls-files | grep -c -E '^\\.env$|^data/'` — counts tracked secrets and data files; anything but zero means fix .gitignore now",
+                      "`git add -A` — stages every change in the folder, respecting .gitignore",
+                      "`git commit -m \"...\"` — writes the staged changes into history with a message saying why",
+                      "`git push -u origin main` — sends the commits to GitHub and remembers the destination",
+                      "`git log --oneline -3` — shows the last three commits, newest first, one line each"
+                    ]
+                  }
+                ],
+                "n": 13
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "The last habit is the notebook, and it is not optional. A weekly plain-text file where you write what you did, what broke, and what confused you turns a scattered course into something you can look back through. Name it by ISO week so the files sort themselves."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Jupyter is the other kind of notebook: an app that runs Python one cell at a time and shows tables and plots underneath. `jupyter lab` starts it and opens a browser tab; press Control and C twice in the terminal to stop it. Inside, when you create a notebook, choose the kernel whose name matches your project's Python; because Jupyter was installed inside `.venv`, that is the default."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Use notebooks to look at data and scripts to build the pipeline. Anything that must run the same way twice belongs in a `.py` file."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Start the lab notebook, and open Jupyter once to see it work."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "mkdir -p notebook\ncat > notebook/2026-W37.md << 'EOF'\n# Week 37\n\n## Did\n- Installed arm64 Python, made the venv, wrote requirements.txt.\n- Got a 511 token, wrote 02_collect_events.py, first CSV has rows.\n\n## Confused by\n-\n\n## Next\n- Phase 1: read the collector line by line and write tests for it.\nEOF\n\njupyter lab"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`mkdir -p notebook` — one folder for the weekly logs",
+                      "`notebook/2026-W37.md` — ISO week numbering, so the files sort in order by name",
+                      "`## Confused by` — the most valuable heading in the file; fill it in honestly and revisit it a week later",
+                      "`jupyter lab` — starts the notebook app in your browser; Control-C twice in the terminal shuts it down"
+                    ]
+                  }
+                ],
+                "n": 14
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "One last thing to memorise, because it is what you will type at the start of every session from now on. A new terminal window knows nothing about your venv: it must be pointed at the project and switched on again."
+                  },
+                  {
+                    "t": "p",
+                    "s": "If you forget, the symptom is always the same: `ModuleNotFoundError` for a package you know you installed. The cure is the second line below."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Learn the three commands that start every working session."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "bash",
+                    "s": "cd ~/code/Traffic1\nsource .venv/bin/activate\ncode ."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`cd ~/code/Traffic1` — go to the project",
+                      "`source .venv/bin/activate` — turn the environment on; the prompt gains (.venv)",
+                      "`code .` — open the editor on this folder, if you want it"
+                    ]
+                  }
+                ],
+                "n": 15
+              },
+              {
                 "k": "check-yourself",
                 "b": [
                   {
@@ -5619,6 +6314,8 @@
               "vs-code",
               "semicolon",
               "target",
+              "def",
+              "for",
               "numpy",
               "gradient-boosting",
               "pytorch",
@@ -5629,7 +6326,43 @@
               "container",
               "mainline",
               "api-key",
-              "stage"
+              "stage",
+              "loop-detector",
+              "byte",
+              "format",
+              "dataframe",
+              "sorted",
+              "speed",
+              "gpu",
+              "curl",
+              "http",
+              "pandas",
+              "array",
+              "parquet",
+              "511",
+              "scikit-learn",
+              "baseline",
+              "calibration",
+              "neural-network",
+              "matplotlib",
+              "pytest",
+              "duckdb",
+              "sql",
+              "merge",
+              "gradient",
+              "inputs",
+              "server",
+              "exception",
+              "shift",
+              "pems",
+              "csv",
+              "incident",
+              "station",
+              "datetime",
+              "timezone",
+              "shape",
+              "pathlib",
+              "json"
             ]
           },
           {
@@ -7125,6 +7858,192 @@
                 "name": "PhD at Apple"
               },
               {
+                "k": "guided-walkthrough",
+                "b": [
+                  {
+                    "t": "p",
+                    "s": "Read the collector you wrote in Phase 0 line by line, then write the pieces yourself. Every command assumes the venv is active: `cd ~/code/Traffic1 && source .venv/bin/activate`."
+                  }
+                ]
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Python's four everyday containers are worth having straight before anything else. A list is an ordered, changeable sequence written with square brackets. A dictionary maps keys to values with curly braces, and is what a JSON object becomes when Python reads it. A tuple is a list that cannot be changed, written with parentheses. A set holds unique values with no order and answers 'is this in there?' quickly."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The interactive interpreter is the fastest way to learn them: type `python` with no filename and you get a prompt where each line runs as you type it. `exit()` or Control-D leaves."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Indexing and slicing work on lists and strings alike: `xs[0]` is the first item, `xs[-1]` the last, `xs[:3]` the first three. A list comprehension builds a new list from an old one in one line, and reads as 'this expression, for each item, if this condition'."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Open the interpreter and get the containers under your fingers."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "events = [{\"id\": 1, \"severity\": \"Minor\"}, {\"id\": 2}, {\"id\": 3, \"severity\": \"Major\"}]\n\nprint(len(events), events[0], events[-1][\"id\"])\nprint(events[0][\"severity\"])          # fine\nprint(events[1].get(\"severity\"))      # None, no crash\nprint(events[1].get(\"severity\", \"unknown\"))\n\nmajors = [e[\"id\"] for e in events if e.get(\"severity\") == \"Major\"]\nprint(majors)\n\nids = {e[\"id\"] for e in events}\nprint(3 in ids, 99 in ids)"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`events[0][\"severity\"]` — square brackets on a dictionary: works, but raises KeyError when the key is missing",
+                      "`events[1].get(\"severity\")` — the safe version: returns None rather than crashing",
+                      "`.get(\"severity\", \"unknown\")` — with a second argument, returns that instead of None",
+                      "`[e[\"id\"] for e in events if ...]` — a list comprehension: build a list by filtering another",
+                      "`{e[\"id\"] for e in events}` — curly braces with no colon build a set, for fast membership tests"
+                    ]
+                  }
+                ],
+                "n": 1
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "A function packages work behind a name. `def name(arguments):` opens it, the indented block is its body, and `return` hands a value back. A docstring, the triple-quoted string on the first line, says what it does; `help(name)` prints it."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The habit that matters in a pipeline is one job per function with a name that says what comes out. `flatten_event` takes the nested dictionary 511 sends and returns one flat dictionary whose keys are the CSV columns, and it does nothing else: no printing, no writing, no network. Functions like that are the ones you can test, which is the next topic."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Default arguments make a function easier to call: `def flatten(event, pulled_at=None)` lets the caller leave the timestamp out. Never use a list or dictionary as a default value, because Python creates it once and reuses it between calls; use `None` and build it inside."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Write flatten_event yourself from its description, then check it against three real events."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "from datetime import datetime, timezone\n\n\ndef flatten_event(event, pulled_at=None):\n    \"\"\"Turn one 511 event into a flat dict with the CSV's columns.\n\n    Missing fields become None; the roads list becomes one semicolon-separated string.\n    \"\"\"\n    if pulled_at is None:\n        pulled_at = datetime.now(timezone.utc).isoformat()\n    roads = event.get(\"roads\") or []\n    return {\n        \"pulled_at\": pulled_at,\n        \"id\": event.get(\"id\"),\n        \"event_type\": event.get(\"event_type\"),\n        \"severity\": event.get(\"severity\"),\n        \"headline\": (event.get(\"headline\") or \"\").replace(\"\\n\", \" \"),\n        \"roads\": \"; \".join(r.get(\"name\", \"\") for r in roads),\n        \"created\": event.get(\"created\"),\n        \"updated\": event.get(\"updated\"),\n    }\n\n\nsample = {\"id\": \"a1\", \"event_type\": \"INCIDENT\", \"roads\": [{\"name\": \"I-880 N\"}, {\"name\": \"Mowry Ave\"}]}\nprint(flatten_event(sample, \"2026-09-03T18:00:00+00:00\"))\nhelp(flatten_event)"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`def flatten_event(event, pulled_at=None):` — the definition: one required argument, one optional",
+                      "`\"\"\"Turn one 511 event...\"\"\"` — the docstring; help() prints it and future you will read it",
+                      "`event.get(\"roads\") or []` — when roads is missing or None, use an empty list, so the join below cannot fail",
+                      "`\"; \".join(r.get(\"name\", \"\") for r in roads)` — turns a list of road dictionaries into one string for the CSV cell",
+                      "`(event.get(\"headline\") or \"\").replace(\"\\n\", \" \")` — flattens any line break, which would otherwise split the CSV row in two"
+                    ]
+                  }
+                ],
+                "n": 2
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Files are opened with `with open(path) as fh:`. The `with` block closes the file for you even if an error happens inside it, which is why you rarely see a bare `open()` in good code. The mode string is the second argument: `r` reads, `w` overwrites, `a` appends."
+                  },
+                  {
+                    "t": "p",
+                    "s": "JSON and CSV are the two formats the project reads. `json.load(fh)` reads a file into Python objects; `json.loads(text)` does the same from a string; `json.dump(obj, fh)` writes. For CSV, `csv.DictReader` yields each row as a dictionary keyed by the header, and `csv.DictWriter` does the reverse."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`pathlib.Path` is the modern way to handle paths: `Path(\"data\") / \"log.csv\"` joins parts with the right separator, `.exists()` asks whether it is there, and `.mkdir(parents=True, exist_ok=True)` creates a folder tree without complaining."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Read the CSV you collected back into Python and count events by type."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import csv, json\nfrom collections import Counter\nfrom pathlib import Path\n\npath = Path(\"data/fremont_events_log.csv\")\nwith path.open(newline=\"\", encoding=\"utf-8\") as fh:\n    rows = list(csv.DictReader(fh))\n\nprint(len(rows), \"rows\")\nprint(rows[0])\nprint(Counter(r[\"event_type\"] for r in rows).most_common(5))\n\nPath(\"data/summary.json\").write_text(json.dumps({\"rows\": len(rows)}, indent=2))\nprint(json.loads(Path(\"data/summary.json\").read_text()))"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`with path.open(newline=\"\", encoding=\"utf-8\") as fh:` — opens the file and guarantees it closes; newline=\"\" is what the csv module wants",
+                      "`list(csv.DictReader(fh))` — reads every row as a dictionary keyed by the header line",
+                      "`Counter(r[\"event_type\"] for r in rows)` — counts how often each value appears",
+                      "`.most_common(5)` — the five most frequent, largest first",
+                      "`json.dumps(obj, indent=2)` — turns Python objects into JSON text, indented so a human can read it"
+                    ]
+                  }
+                ],
+                "n": 3
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "A script that always does exactly one thing is a script you will outgrow. `argparse` gives it options: you declare them, and it parses the command line, checks types, and writes the help text for you."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`parser.add_argument(\"--bootstrap\", action=\"store_true\")` makes a flag that is False unless present. `type=int` converts and rejects nonsense. Running the file with `--help` prints everything, which is why every option needs the `help=` text."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The `if __name__ == '__main__':` guard is what keeps this from firing when a test imports the file. When Python runs a file directly, it sets that variable to the string `\"__main__\"`; when it imports it, the variable is the module's name instead. So the guard means 'only when launched directly'."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Give the collector command line options and read its help."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import argparse\n\n\ndef main(argv=None):\n    p = argparse.ArgumentParser(description=\"Collect 511 traffic events into a CSV.\")\n    p.add_argument(\"--out\", default=\"data/fremont_events_log.csv\", help=\"where to append rows\")\n    p.add_argument(\"--limit\", type=int, default=0, help=\"stop after N events (0 = all)\")\n    p.add_argument(\"--dry-run\", action=\"store_true\", help=\"fetch and print, write nothing\")\n    args = p.parse_args(argv)\n    print(args)\n    return args\n\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`argparse.ArgumentParser(description=...)` — creates the parser; the description shows at the top of --help",
+                      "`p.add_argument(\"--out\", default=...)` — an option with a value and a fallback",
+                      "`type=int` — converts the text to an integer and rejects anything else with a clear message",
+                      "`action=\"store_true\"` — a flag: absent means False, present means True",
+                      "`p.parse_args(argv)` — reads sys.argv by default; passing a list instead makes the function testable",
+                      "`if __name__ == \"__main__\": main()` — runs only when the file is launched directly, never on import"
+                    ]
+                  }
+                ],
+                "n": 4
+              },
+              {
                 "k": "check-yourself",
                 "b": [
                   {
@@ -7172,6 +8091,7 @@
               "timezone",
               "script",
               "model",
+              "sorted",
               "yield",
               "stage",
               "pathlib",
@@ -7194,7 +8114,14 @@
               "mainline",
               "pytorch",
               "schema",
-              "511"
+              "command",
+              "virtual-environment",
+              "cd",
+              "container",
+              "511",
+              "timestamp",
+              "incident",
+              "merge"
             ]
           },
           {
@@ -7347,6 +8274,194 @@
                 "name": "PhD at Apple"
               },
               {
+                "k": "guided-walkthrough",
+                "b": [
+                  {
+                    "t": "p",
+                    "s": "Everything here runs from the project folder with the venv active. pytest was in requirements.txt, so it is already installed."
+                  }
+                ]
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "A test is a small function that runs your code with known input and asserts what should come out. pytest finds them by convention: files named `test_*.py`, functions named `test_*`, inside a `tests/` folder."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Every test has three parts, worth writing as three visible lines: arrange the input, act by calling the thing, assert the result. `assert` is plain Python; pytest rewrites it so a failure prints both sides of the comparison."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Test against a fake event rather than the live API. A test that calls the network is slow, fails when the internet does, and gives different answers each run. The fake is a dictionary you control, and it can include the awkward cases the real feed only shows you at midnight on a Sunday."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`pytest -q` runs quietly; `-x` stops at the first failure so you fix one thing at a time; `-k name` runs only tests whose name matches."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Write the first test for flatten_event and run it."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "# tests/test_flatten.py\nfrom collector import flatten_event          # the module you are testing\n\n\ndef test_flattens_roads_into_one_string():\n    event = {\"id\": \"a1\", \"roads\": [{\"name\": \"I-880 N\"}, {\"name\": \"Mowry Ave\"}]}   # arrange\n    row = flatten_event(event, \"2026-09-03T18:00:00+00:00\")                        # act\n    assert row[\"roads\"] == \"I-880 N; Mowry Ave\"                                    # assert\n\n\ndef test_missing_fields_become_none():\n    row = flatten_event({\"id\": \"a2\"}, \"2026-09-03T18:00:00+00:00\")\n    assert row[\"severity\"] is None\n    assert row[\"headline\"] == \"\"\n\n\ndef test_headline_never_contains_a_newline():\n    row = flatten_event({\"id\": \"a3\", \"headline\": \"Crash\\non I-880\"}, \"t\")\n    assert \"\\n\" not in row[\"headline\"]"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`from collector import flatten_event` — imports the function under test; put flatten_event in collector.py so both the script and the tests can use it",
+                      "`event = {...}` — arrange: a fake event, including only the fields this test cares about",
+                      "`row = flatten_event(event, ...)` — act: one call, no network, no files",
+                      "`assert row[\"roads\"] == \"I-880 N; Mowry Ave\"` — assert: the exact string the CSV should hold",
+                      "`assert row[\"severity\"] is None` — the missing-field case, which is the one that breaks in production"
+                    ]
+                  }
+                ],
+                "n": 1
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "One test per case gets repetitive when the cases differ only in their values. `@pytest.mark.parametrize` runs the same test body once per row of a table, and reports each as its own result, so you see exactly which case failed."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The decorator takes the argument names as a string and a list of tuples. Add a case whenever you find a new way the data surprises you; the test file becomes the written record of everything the feed has ever done."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`pytest -q` at the end prints a line of dots, one per passing test. Run it now and every time before a commit."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Turn the repetitive cases into one parametrized test, then run the suite."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import pytest\nfrom collector import flatten_event\n\n\n@pytest.mark.parametrize(\"event, expected\", [\n    ({\"id\": \"a\", \"roads\": [{\"name\": \"I-880 N\"}]}, \"I-880 N\"),\n    ({\"id\": \"b\", \"roads\": []}, \"\"),\n    ({\"id\": \"c\"}, \"\"),\n    ({\"id\": \"d\", \"roads\": None}, \"\"),\n    ({\"id\": \"e\", \"roads\": [{\"name\": \"I-680 S\"}, {\"name\": \"CA-84\"}]}, \"I-680 S; CA-84\"),\n])\ndef test_roads_column(event, expected):\n    assert flatten_event(event, \"t\")[\"roads\"] == expected"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`@pytest.mark.parametrize(\"event, expected\", [...])` — runs the test once per tuple, feeding the two arguments",
+                      "`({\"id\": \"b\", \"roads\": []}, \"\")` — an empty list of roads should give an empty cell",
+                      "`({\"id\": \"d\", \"roads\": None}, \"\")` — the case that crashes naive code, and the reason for `or []` in the function",
+                      "`pytest -q` — run it: one dot per passing case, a full report on any failure"
+                    ]
+                  }
+                ],
+                "n": 2
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "When something is wrong, stop guessing and look. `breakpoint()` is a line you add anywhere; running the script stops there and gives you a prompt inside the running program. Type a variable's name to see it, `n` to run the next line, `c` to continue, `q` to quit."
+                  },
+                  {
+                    "t": "p",
+                    "s": "VS Code gives the same thing with a mouse: click in the gutter to the left of a line number to set a red dot, then press F5 to run with the debugger attached. The panel on the left lists every variable's current value, which beats a dozen print statements."
+                  },
+                  {
+                    "t": "p",
+                    "s": "For scripts that run unattended, `logging` replaces print. It timestamps every line, labels it with a level, and can be turned down without editing code: `logging.info` for normal progress, `logging.warning` for something odd, `logging.error` for a failure. The collector running every five minutes under launchd needs this, because nobody is watching the screen."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Add logging to the collector and stop inside it once with a breakpoint."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import logging\n\nlogging.basicConfig(\n    level=logging.INFO,\n    format=\"%(asctime)s %(levelname)s %(message)s\",\n    filename=\"logs/collect.log\",\n)\n\ndef main():\n    events = fetch_events(token)\n    logging.info(\"fetched %d events\", len(events))\n    if not events:\n        logging.warning(\"empty response — is the token still valid?\")\n    # breakpoint()        # uncomment to stop here and look around\n    ..."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`logging.basicConfig(level=logging.INFO, ...)` — sets up logging once, at the top of the program",
+                      "`format=\"%(asctime)s %(levelname)s %(message)s\"` — every line gets a timestamp and a level, so the log can be read months later",
+                      "`filename=\"logs/collect.log\"` — writes to a file rather than the screen, which is what an unattended job needs",
+                      "`logging.info(\"fetched %d events\", len(events))` — note the comma: logging does the formatting only if the line will actually be written",
+                      "`breakpoint()` — stops the program here and gives you a prompt; n steps, c continues, q quits"
+                    ]
+                  }
+                ],
+                "n": 3
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Time is where quiet, expensive bugs live. The rule for this project: store UTC, convert to local only when a human or a feature needs the hour of day."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`datetime.now(timezone.utc)` is the correct way to get the current moment; `datetime.now()` without an argument gives a naive datetime with no timezone attached, which cannot be compared safely with anything. `ZoneInfo(\"America/Los_Angeles\")` from the standard library carries the full daylight-saving rules, and `.astimezone(...)` converts between zones."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Twice a year the local clock misbehaves. In March an hour never happens, so 02:30 local is not a real time. In November an hour happens twice, so 01:30 local is ambiguous: it could be either side of the change. pandas makes you say what to do through `ambiguous` and `nonexistent`, which is why the cleaning code in Phase 3 passes `ambiguous=\"NaT\"` and `nonexistent=\"shift_forward\"`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Write the test that proves the November hour is ambiguous."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "from datetime import datetime, timezone\nfrom zoneinfo import ZoneInfo\n\nimport pandas as pd\nimport pytest\n\nLA = ZoneInfo(\"America/Los_Angeles\")\n\n\ndef test_utc_round_trip():\n    t = datetime(2026, 9, 3, 18, 0, tzinfo=timezone.utc)\n    assert t.astimezone(LA).hour == 11          # UTC-7 in September\n    assert t.astimezone(LA).astimezone(timezone.utc) == t\n\n\ndef test_november_hour_is_ambiguous():\n    s = pd.Series(pd.to_datetime([\"2026-11-01 01:30:00\"]))\n    with pytest.raises(Exception):\n        s.dt.tz_localize(\"America/Los_Angeles\")            # refuses to guess\n    out = s.dt.tz_localize(\"America/Los_Angeles\", ambiguous=\"NaT\")\n    assert out.isna().all()                                # we chose to drop it"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`datetime(..., tzinfo=timezone.utc)` — a moment that knows its zone; never build one without tzinfo",
+                      "`.astimezone(LA)` — the same moment expressed on the California clock",
+                      "`pd.Series(...).dt.tz_localize(\"America/Los_Angeles\")` — attaches a zone to naive timestamps; raises here because 01:30 happened twice",
+                      "`pytest.raises(Exception)` — asserts that the call fails, which is the behaviour we want from pandas",
+                      "`ambiguous=\"NaT\"` — our decision: mark the doubtful hour as missing rather than guess it"
+                    ]
+                  }
+                ],
+                "n": 4
+              },
+              {
                 "k": "check-yourself",
                 "b": [
                   {
@@ -7384,6 +8499,9 @@
               "split",
               "timezone",
               "pytest",
+              "def",
+              "format",
+              "sorted",
               "bounding-box",
               "assert",
               "vs-code",
@@ -7400,6 +8518,7 @@
               "model",
               "average-precision",
               "precision",
+              "for",
               "timestamp",
               "seed",
               "gpu",
@@ -7409,7 +8528,14 @@
               "exception",
               "stage",
               "makefile",
+              "virtual-environment",
               "api",
+              "csv",
+              "commit",
+              "target",
+              "launchd",
+              "api-key",
+              "library",
               "speed"
             ]
           },
@@ -12121,6 +13247,190 @@
                 "name": "PhD at Apple"
               },
               {
+                "k": "guided-walkthrough",
+                "b": [
+                  {
+                    "t": "p",
+                    "s": "DuckDB was in requirements.txt, so there is nothing to install and no server to run: it reads Parquet and CSV files straight from disk and answers SQL over them."
+                  }
+                ]
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "SQL is the language for asking questions of tables. One statement has a fixed order of clauses: `SELECT` the columns you want, `FROM` the table, `WHERE` the row filter, `GROUP BY` the buckets, `HAVING` the filter on those buckets, `ORDER BY` the sort, `LIMIT` how many rows back."
+                  },
+                  {
+                    "t": "p",
+                    "s": "DuckDB is a database that lives inside your program with no server to start. `duckdb.sql(\"...\")` runs a query and prints the result; `.df()` hands it back as a pandas DataFrame. It can read a Parquet file by name inside the query, so the file is the table."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Start by looking at the shape of the data: `DESCRIBE` lists the columns and their types, and `LIMIT 5` shows a few rows. Never write a long query against a table you have not looked at."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Point DuckDB at the cleaned Parquet and look around."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import duckdb\n\nduckdb.sql(\"DESCRIBE SELECT * FROM 'data/pems_processed/2026-03.parquet'\").show()\nduckdb.sql(\"SELECT * FROM 'data/pems_processed/2026-03.parquet' LIMIT 5\").show()\nduckdb.sql(\"SELECT count(*) AS rows, count(DISTINCT station_id) AS stations \"\n           \"FROM 'data/pems_processed/2026-03.parquet'\").show()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`duckdb.sql(\"...\")` — runs a query; .show() prints the result as a table",
+                      "`FROM 'data/....parquet'` — the file is the table: no import step, no server",
+                      "`DESCRIBE SELECT *` — lists column names and types",
+                      "`count(DISTINCT station_id)` — how many detectors are in the file"
+                    ]
+                  }
+                ],
+                "n": 1
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "Grouping answers 'per something' questions. `GROUP BY station_id` makes one bucket per station, and the aggregate functions in the SELECT list summarise each bucket: `count(*)`, `avg(speed)`, `min`, `max`, `median`."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`WHERE` filters rows before grouping; `HAVING` filters the groups afterwards. That distinction is the one people trip over: you cannot use `WHERE avg(speed) < 40`, because the average does not exist yet at that point."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`AS` renames a column in the output, and the name is what you sort by. Rounding with `round(x, 1)` keeps the printout readable."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Ask which stations were slowest in the evening peak."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import duckdb\n\nduckdb.sql(\"\"\"\nSELECT station_id,\n       count(*)              AS rows,\n       round(avg(speed), 1)  AS mean_speed,\n       round(min(speed), 1)  AS worst\nFROM 'data/pems_processed/2026-03.parquet'\nWHERE hour(timezone('America/Los_Angeles', timestamp)) BETWEEN 16 AND 19\nGROUP BY station_id\nHAVING count(*) > 500\nORDER BY mean_speed\nLIMIT 10\n\"\"\").show()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`WHERE hour(timezone('America/Los_Angeles', timestamp)) BETWEEN 16 AND 19` — keeps the evening peak, converting to local time first because rush hour is a local idea",
+                      "`GROUP BY station_id` — one row of output per station",
+                      "`avg(speed) AS mean_speed` — an aggregate over each bucket, renamed for the output",
+                      "`HAVING count(*) > 500` — drops stations with too little data; a filter on groups, not rows",
+                      "`ORDER BY mean_speed` — slowest first, because the default sort is ascending"
+                    ]
+                  }
+                ],
+                "n": 2
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "A join combines two tables on a shared key. The station registry holds each detector's freeway, direction and neighbours; the readings hold the measurements. Joining them lets you ask questions the readings alone cannot answer."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`INNER JOIN` keeps only rows that match on both sides. `LEFT JOIN` keeps every row of the left table and fills the right side with nulls where nothing matched, which is what you want when a missing match is information rather than an error."
+                  },
+                  {
+                    "t": "p",
+                    "s": "Give each table a short alias (`r`, `m`) and prefix every column with it. Queries without aliases become unreadable the moment a column name appears in both tables."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Join the readings to the station registry and summarise by freeway."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import duckdb\n\nduckdb.sql(\"\"\"\nSELECT m.fwy, m.dir,\n       count(DISTINCT r.station_id) AS stations,\n       round(avg(r.speed), 1)       AS mean_speed\nFROM 'data/pems_processed/2026-03.parquet' AS r\nLEFT JOIN 'data/pems_meta/fremont_stations.parquet' AS m\n       ON r.station_id = m.ID\nGROUP BY m.fwy, m.dir\nORDER BY m.fwy, m.dir\n\"\"\").show()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`FROM '...2026-03.parquet' AS r` — the readings, aliased r",
+                      "`LEFT JOIN '...fremont_stations.parquet' AS m` — the registry, aliased m; LEFT keeps readings whose station is missing from the registry",
+                      "`ON r.station_id = m.ID` — the key the two tables share",
+                      "`count(DISTINCT r.station_id)` — how many detectors contributed to each freeway and direction"
+                    ]
+                  }
+                ],
+                "n": 3
+              },
+              {
+                "k": "step",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Before you do this",
+                    "s": "A window function computes across rows without collapsing them, which is exactly what a lag or a rolling mean needs. `GROUP BY` gives you one row per bucket; a window gives you every row plus a value calculated over its neighbours."
+                  },
+                  {
+                    "t": "p",
+                    "s": "The `OVER` clause says which neighbours. `PARTITION BY station_id` keeps the calculation inside one station, `ORDER BY timestamp` puts the rows in time order, and a frame such as `ROWS BETWEEN 5 PRECEDING AND CURRENT ROW` sets the window's width."
+                  },
+                  {
+                    "t": "p",
+                    "s": "`LAG(speed, 3)` is the speed three rows earlier: the same `speed_lag_3` feature the pandas code builds in Phase 4, expressed in one line. Computing features this way is how the same pipeline runs inside a database when the data outgrows one machine."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Do this",
+                    "s": "Build the lag and the rolling mean in SQL, then check them against pandas."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import duckdb, pandas as pd, numpy as np\n\nsql = duckdb.sql(\"\"\"\nSELECT station_id, timestamp, speed,\n       LAG(speed, 3) OVER w                                        AS speed_lag_3,\n       avg(speed) OVER (PARTITION BY station_id ORDER BY timestamp\n                        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW)  AS roll_30\nFROM 'data/pems_processed/2026-03.parquet'\nWINDOW w AS (PARTITION BY station_id ORDER BY timestamp)\nORDER BY station_id, timestamp\n\"\"\").df()\n\npdf = pd.read_parquet('data/pems_processed/2026-03.parquet').sort_values([\"station_id\", \"timestamp\"])\npdf[\"speed_lag_3\"] = pdf.groupby(\"station_id\").speed.shift(3)\n\nmerged = sql.merge(pdf[[\"station_id\", \"timestamp\", \"speed_lag_3\"]],\n                   on=[\"station_id\", \"timestamp\"], suffixes=(\"_sql\", \"_pd\"))\nprint(\"rows compared:\", len(merged))\nprint(\"mismatches:\", (~np.isclose(merged.speed_lag_3_sql, merged.speed_lag_3_pd, equal_nan=True)).sum())"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "What each line does",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`LAG(speed, 3) OVER w` — the value three rows back within the window: the lag feature",
+                      "`WINDOW w AS (PARTITION BY station_id ORDER BY timestamp)` — names the window once so several columns can reuse it",
+                      "`ROWS BETWEEN 5 PRECEDING AND CURRENT ROW` — a six-row window, which at five minutes a row is thirty minutes",
+                      "`.df()` — hands the result back as a pandas DataFrame",
+                      "`np.isclose(..., equal_nan=True)` — compares the two versions allowing for rounding, treating missing as equal to missing",
+                      "`mismatches: 0` — what you must see before trusting either implementation"
+                    ]
+                  }
+                ],
+                "n": 4
+              },
+              {
                 "k": "check-yourself",
                 "b": [
                   {
@@ -12182,12 +13492,19 @@
               "median",
               "five-minute-row",
               "mainline",
+              "sorted",
               "partition",
               "inputs",
               "chunking",
               "feature-store",
               "gpu",
-              "model-registry"
+              "model-registry",
+              "object-storage",
+              "shape",
+              "station-id",
+              "timezone",
+              "registry",
+              "numpy"
             ]
           }
         ],
