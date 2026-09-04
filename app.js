@@ -2139,23 +2139,49 @@
     if (sess) renderCard(); else if (!window.Games || !window.Games.onResize()) route();
   });
   window.addEventListener('hashchange', route);
-  WIDE_MQ.addEventListener('change', function () {
+
+  /* A lesson is a long read, and crossing the 900px breakpoint re-routes it —
+     landing back at the top of a 4,000px page loses your place. Sessions and
+     games already survive the flip; the book is put back where it was. */
+  var bookFrac = -1, wasWide = isWide(), sizeTimer = null;
+  document.addEventListener('scroll', function (e) {
+    var sc = e.target;
+    if (sc !== app && !(sc.classList && sc.classList.contains('pane-r'))) return;
+    if (!app.classList.contains('is-book')) { bookFrac = -1; return; }
+    var span = sc.scrollHeight - sc.clientHeight;
+    // a pane that has not laid out yet says nothing — keep the last real read
+    if (span > 40) bookFrac = sc.scrollTop / span;
+  }, true);
+
+  function reflowSplit() {
+    // both the MQ change and the resize watchdog land here; whichever arrives
+    // first owns the flip, or the second re-routes over the first's work
+    wasWide = isWide();
     // never restart a session — or a live game round — over a resize
-    if (sess) renderCard();
-    else if (window.Games && window.Games.onResize()) {}
-    else route();
-  });
+    if (sess) return renderCard();
+    if (window.Games && window.Games.onResize()) return;
+    var f = bookFrac;
+    route();
+    if (f < 0 || !app.classList.contains('is-book')) return;
+    // the new pane has to lay out before its height means anything, and a long
+    // lesson settles over a few frames — try until it has one
+    var tries = 0;
+    (function settle() {
+      var now = app.querySelector('.pane-r') || app;
+      var span = now.scrollHeight - now.clientHeight;
+      if (span > 40) { now.scrollTop = Math.round(f * span); return; }
+      if (tries++ < 12) requestAnimationFrame(settle);
+    })();
+  }
+  WIDE_MQ.addEventListener('change', reflowSplit);
   // Some engines never fire the MQ change event under emulation or in-page
   // resizes — watch resize too and re-render only when the split actually flips.
-  var wasWide = isWide(), sizeTimer = null;
   window.addEventListener('resize', function () {
     clearTimeout(sizeTimer);
     sizeTimer = setTimeout(function () {
       if (isWide() === wasWide) { fitVals(); return; }   // widths moved — refit values
       wasWide = isWide();
-      if (sess) renderCard();
-      else if (window.Games && window.Games.onResize()) {}
-      else route();
+      reflowSplit();
     }, 120);
   });
 
