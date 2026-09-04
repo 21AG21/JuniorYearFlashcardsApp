@@ -1433,6 +1433,10 @@
   function startReview(limit) {
     if (savedPending()) return waitingScreen();
     if (resume()) return;
+    /* …and a deal built while a course is still in flight is a deal from
+       whichever course arrived first: reloading onto #/review with 261 due
+       across five courses dealt thirty English cards and never re-dealt. */
+    if (decksInFlight()) return waitingScreen();
     var queue = buildDaily(limit ? { limit: limit } : null);
     if (!queue.length) {
       // say when the next card comes back, and where — not just that none are due
@@ -1622,8 +1626,8 @@
       '<div class="q' + sizeClass(c.q) + '">' + T.html(c.q) + '</div>' +
       // a hint given unasked is the answer half-spoiled — it waits for the tap
       (!sess.revealed && c.h ? (sess.hinted
-        ? '<div class="hint">' + T.html(c.h) + '</div>'
-        : '<button class="hint-btn" data-hint>Hint</button>') : '');
+        ? '<div class="hint" id="cardhint" role="note">' + T.html(c.h) + '</div>'
+        : '<button class="hint-btn" data-hint aria-expanded="false" aria-controls="cardhint">Hint</button>') : '');
 
     if (!sess.revealed) {
       // the prompt itself is the tap; no "Tap to reveal" caption (skill §8)
@@ -2228,6 +2232,17 @@
   /* The actions under an opened card row. Hidden until the row is open, so a
      hundred-row unit page costs nothing to look at; `data-star-card` carries
      the card so the same strip works on a unit, in search and in Starred. */
+  /* "due" said the same thing about a card owed since this morning and one
+     owed for five weeks, while the same line happily printed "in 12 d" for a
+     card in the future. Lateness is the number that decides what to open. */
+  function dueWord(st, today) {
+    if (!st || !(st.r || st.t || st.l)) return 'new';
+    var late = today - st.d;
+    if (late > 0) return late + ' d late';
+    if (late === 0) return 'due';
+    return 'in ' + (-late) + ' d';
+  }
+
   function rowActs(c, goHref) {
     var on = S.isStarred(c.i);
     return '<div class="qacts">' +
@@ -2283,11 +2298,13 @@
       return (aq === -1 ? 999 : aq) - (bq === -1 ? 999 : bq);
     });
     // the sheet belongs here too: the print stylesheet already knows .list.tight
-    out.innerHTML = '<div class="scoperow"><span class="k">' + plural(total, 'card') + '</span>' +
+    // typing into the field replaced 120 rows and said nothing about how many
+    out.innerHTML = '<div class="scoperow"><span class="k" role="status" aria-live="polite">' +
+        plural(total, 'card') + '</span>' +
       '<button class="textbtn quiet end" data-print>Print</button></div>' +
       '<ul class="list tight still">' + hits.slice(0, 120).map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u];
-        return '<li><button class="qrow" data-peek="' + c.i + '">' +
+        return '<li><button class="qrow" data-peek="' + c.i + '" aria-expanded="false">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
           (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
@@ -2579,8 +2596,8 @@
       'card — write the version that would have worked.</div>' +
       '<ul class="list tight still" style="margin-top:var(--s-4)">' + all.map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u], st = S.cs(c.i) || {};
-        var when = st.d <= today ? 'due' : 'in ' + (st.d - today) + ' d';
-        return '<li><button class="qrow" data-peek="' + c.i + '">' +
+        var when = dueWord(st, today);
+        return '<li><button class="qrow" data-peek="' + c.i + '" aria-expanded="false">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
           (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
@@ -2645,10 +2662,8 @@
         '<button class="textbtn quiet end" data-print>Print</button></div>' +
       '<ul class="list tight still" style="margin-top:var(--s-4)">' + list.map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u], st = S.cs(c.i);
-        var when = !st || !(st.r || st.t || st.l) ? 'new'
-          : st.d <= today ? 'due'
-          : 'in ' + (st.d - today) + ' d';
-        return '<li><button class="qrow" data-peek="' + c.i + '">' +
+        var when = dueWord(st, today);
+        return '<li><button class="qrow" data-peek="' + c.i + '" aria-expanded="false">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
           (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
@@ -2733,12 +2748,15 @@
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
           '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" aria-label="Account sync token" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
           '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
-      '<div class="setrow"><div class="sname">Typing</div>' +
-        '<button class="cyc" data-typing-cycle>' + (s.typing ? 'On' : 'Off') + '</button></div>' +
-      '<div class="setrow"><div class="sname">Session</div>' +
-        '<button class="cyc num" data-cycle="sessionSize">' + s.sessionSize + '</button></div>' +
-      '<div class="setrow"><div class="sname">New cards</div>' +
-        '<button class="cyc num" data-cycle="newPerSession">' + s.newPerSession + '</button></div>' +
+      '<div class="setrow"><div class="sname" id="set-typing">Typing</div>' +
+        '<button class="cyc" data-typing-cycle aria-labelledby="set-typing" ' +
+        'aria-label="Typing ' + (s.typing ? 'On' : 'Off') + '">' + (s.typing ? 'On' : 'Off') + '</button></div>' +
+      '<div class="setrow"><div class="sname" id="set-session">Session</div>' +
+        '<button class="cyc num" data-cycle="sessionSize" ' +
+        'aria-label="Session ' + s.sessionSize + ' cards">' + s.sessionSize + '</button></div>' +
+      '<div class="setrow"><div class="sname" id="set-new">New cards</div>' +
+        '<button class="cyc num" data-cycle="newPerSession" ' +
+        'aria-label="New cards ' + s.newPerSession + ' a session">' + s.newPerSession + '</button></div>' +
       // the two numbers above are a trade, and the trade was invisible
       (S.getIndex().courses.some(function (c) { return S.getDeck(c.id); })
         ? '<div class="setnote">' + esc(paceVerdict()) + '</div>' : '') +
@@ -2828,13 +2846,18 @@
     btn._label = btn.textContent;
     btn.textContent = label;
     btn.classList.add('armed');
-    btn._disarm = setTimeout(function () { disarm(btn); }, 3000);
+    // three seconds is under the time it takes to read what is about to
+    // happen, let alone to hear it — and a reader was told nothing at all
+    btn.setAttribute('aria-pressed', 'true');
+    announce(label);
+    btn._disarm = setTimeout(function () { disarm(btn); }, 9000);
     return false;
   }
   function disarm(btn) {
     if (!btn || !btn.getAttribute('data-armed')) return;
     clearTimeout(btn._disarm);
     btn.removeAttribute('data-armed');
+    btn.setAttribute('aria-pressed', 'false');
     btn.classList.remove('armed');
     if (btn._label) btn.textContent = btn._label;
   }
@@ -2854,7 +2877,13 @@
     if (t.closest('[data-exit]')) { exitSession(); return; }
     if (t.closest('[data-undo]')) { undo(); return; }
     if (t.closest('[data-hint]')) {
-      if (sess && !sess.revealed) { sess.hinted = true; renderCard(); }
+      // the button is replaced by the hint it asked for, so nothing is left to
+      // read the change off — say it
+      if (sess && !sess.revealed) {
+        sess.hinted = true; renderCard();
+        var hn = document.getElementById('cardhint');
+        announce('Hint. ' + (hn ? hn.textContent : ''));
+      }
       return;
     }
     if (t.closest('[data-reveal]')) { reveal(); return; }
@@ -2935,11 +2964,14 @@
       var qn = peek.querySelector('.qn');
       if (qn) qn.hidden = a.hidden;
       peek.classList.toggle('open', !a.hidden);
+      peek.setAttribute('aria-expanded', a.hidden ? 'false' : 'true');
       if (peek.parentNode) peek.parentNode.classList.toggle('open', !a.hidden);
       return;
     }
     if (t.closest('[data-typing-cycle]')) {
       S.setSetting('typing', !S.getSettings().typing);
+      // the value swaps in place, so nothing announces the change on its own
+      announce('Typing ' + (S.getSettings().typing ? 'on' : 'off'));
       refocus(viewSettings, '[data-typing-cycle]'); return;
     }
 
@@ -2989,6 +3021,8 @@
       var opts = ckey === 'sessionSize' ? [15, 20, 30, 50, 100] : [5, 10, 20, 40];
       var at = opts.indexOf(S.getSettings()[ckey]);
       S.setSetting(ckey, opts[(at + 1) % opts.length]);
+      announce((ckey === 'sessionSize' ? 'Session ' : 'New cards ') +
+        S.getSettings()[ckey] + (ckey === 'sessionSize' ? ' cards' : ' a session'));
       if (sess) renderCard(); else refocus(route, '[data-cycle="' + ckey + '"]');
       return;
     }

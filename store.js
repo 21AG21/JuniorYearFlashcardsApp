@@ -691,7 +691,14 @@
     restore: restore,
     dayNum: dayNum, dayKey: dayKey,
     loadIndex: loadIndex, loadDeck: loadDeck, loadAll: loadAll,
-    getIndex: function () { return index; }, getDeck: function (id) { return decks[id]; },
+    /* An index that has not landed used to be null, and every one of the two
+       dozen `S.getIndex().courses` calls threw on it — tapping a tab in the
+       first second of a cold start raised "Cannot read properties of null".
+       An empty shelf is the honest shape of "nothing yet", and it is the same
+       shape as the real thing. */
+    getIndex: function () { return index || { courses: [], total: 0 }; },
+    indexReady: function () { return !!index; },
+    getDeck: function (id) { return decks[id]; },
     deckPending: function (id) { return !!loading[id]; },
     cs: cs, isNew: isNew, isDue: isDue, isSeen: isSeen, isKnown: isKnown, isStarred: isStarred,
     ivl: ivl,
