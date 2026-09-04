@@ -129,6 +129,15 @@
   // Without it the row says "Never" forever and never says why.
   var lastFail = '';
 
+  /* Whoever touched the star last wins; with no evidence either way a star
+     survives, because losing one is the mistake the reader would notice. */
+  function pickStar(mine, theirs) {
+    var ma = mine ? (mine.sa || 0) : -1, ta = theirs ? (theirs.sa || 0) : -1;
+    if (ta > ma) return theirs.s || 0;
+    if (ma > ta) return mine.s || 0;
+    return ((mine && mine.s) || (theirs && theirs.s)) ? 1 : 0;
+  }
+
   function mergeRemote(remote) {
     if (!remote || typeof remote !== 'object') return false;
     var changed = false;
@@ -139,10 +148,13 @@
           ((theirs.t || 0) === (mine.t || 0) && (theirs.r || 0) > (mine.r || 0))) {
         // the schedule is whichever side is newer, but a star is a wish, not a
         // measurement — losing the card wholesale silently dropped it
-        if (mine && mine.s && !theirs.s) theirs.s = mine.s;
+        theirs.s = pickStar(mine, theirs);
+        theirs.sa = Math.max((mine && mine.sa) || 0, theirs.sa || 0);
         state.cards[id] = theirs; changed = true;
-      } else if (theirs.s && mine && !mine.s) {
-        mine.s = 1; changed = true;
+      } else {
+        var ns = pickStar(mine, theirs);
+        if (ns !== (mine.s || 0)) { mine.s = ns; changed = true; }
+        if ((theirs.sa || 0) > (mine.sa || 0)) { mine.sa = theirs.sa; changed = true; }
       }
     }
     var rl = remote.log || {};
@@ -307,17 +319,21 @@
   function toggleStar(id) {
     var s = state.cards[id] || blank();
     s.s = s.s ? 0 : 1;
-    // stamp it, or a star sits at t:0 and loses every merge it is in
-    s.t = Math.max(s.t || 0, dayNum());
+    // The star gets its OWN timestamp. Stamping `t` would have been a quiet
+    // disaster: `t` means "last studied", and both deckStats and the daily
+    // deal read it — starring a card you had never opened would have counted
+    // it as seen and dealt it as due.
+    s.sa = dayNum();
     state.cards[id] = s; save();
     return !!s.s;
   }
-  function blank() { return { e: 2.5, r: 0, i: 0, d: dayNum(), l: 0, s: 0, n: -1, t: 0 }; }
+  function blank() { return { e: 2.5, r: 0, i: 0, d: dayNum(), l: 0, s: 0, sa: 0, n: -1, t: 0 }; }
 
   /* Intervals a rating would produce, for the button captions. */
-  function preview(id, grade) {
+  function preview(id, grade, capDay) {
     var s = state.cards[id] || blank();
     var i = nextInterval(s, grade).i;
+    if (capDay) i = Math.min(i, Math.max(1, capDay - dayNum()));   // never past the exam
     if (grade === 0) return 'now';
     if (i < 1) return 'today';
     if (i === 1) return '1 d';
@@ -343,12 +359,16 @@
   }
 
   /* grade: 0 again, 1 good, 2 easy */
-  function grade(id, g) {
+  function grade(id, g, capDay) {
     var today = dayNum();
     var s = state.cards[id] || blank();
     var nx = nextInterval(s, g);
     s.e = nx.e; s.r = nx.r; s.i = nx.i;
     s.d = today + nx.i;
+    // A card scheduled past its exam is a card you will never see again in
+    // time: five Easy presses parked one until August for a May exam. The
+    // interval it earned still stands; only the date is pulled back.
+    if (capDay && s.d > capDay) s.d = Math.max(today + 1, capDay);
     if (g === 0) s.l = (s.l || 0) + 1;
     s.n = g; s.t = today;
     state.cards[id] = s;

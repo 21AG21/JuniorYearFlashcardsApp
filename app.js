@@ -64,8 +64,11 @@
     app.classList.toggle('is-wide', isWide());
     app.classList.toggle('is-session', !!(opts && opts.session));
     // a game round has no card stage to scroll inside, so the screen itself
-    // has to be the scroller — a tall board used to clip with no way down
-    app.classList.toggle('is-game', !!(opts && opts.session) && html.indexOf('cardstage') < 0);
+    // has to be the scroller — a tall board used to clip with no way down.
+    // (A study session always has `sess` set when it mounts; a game never
+    // does. Sniffing the markup for "cardstage" was one card about CSS away
+    // from being wrong.)
+    app.classList.toggle('is-game', !!(opts && opts.session) && !sess);
     app.classList.toggle('is-quiz', !!(opts && opts.quiz));
     app.classList.toggle('is-book', !!(opts && opts.book));
     tabs.hidden = isWide() || !!(opts && opts.session) || !!(opts && opts.book);
@@ -272,6 +275,67 @@
     out.sure = true;
     return out;
   }
+  /* COVERAGE — will every card in this deck have been dealt before its exam?
+     The daily deal takes newPerSession unseen cards and interleaves the decks,
+     so one deck's share of that rate is it divided among the decks that still
+     have unseen cards. The student cannot see any of this, and it is the one
+     number that decides whether the syllabus gets covered in time — a session
+     that reviews beautifully and never reaches Unit 7 is not revision. */
+  /* The deal hands unseen cards out round-robin across the decks that still
+     have any, so a deck's share rises as its neighbours finish. Run that
+     rotation forward rather than assuming a fixed 1/5 share, which said APUSH
+     would be 14 cards short when in fact the whole library lands in 222 days. */
+  function coverRun(perDay) {
+    var decks = [], out = {};
+    S.getIndex().courses.forEach(function (c) {
+      var dk = S.getDeck(c.id); if (!dk) return;
+      decks.push({ id: c.id, left: S.deckStats(dk).fresh });
+    });
+    decks.forEach(function (x) { if (!x.left) out[x.id] = 0; });
+    var day = 0, guard = 0;
+    while (guard++ < 2000 && decks.some(function (x) { return x.left > 0; })) {
+      day++;
+      var n = perDay;
+      while (n > 0) {
+        var live = decks.filter(function (x) { return x.left > 0; });
+        if (!live.length) break;
+        for (var i = 0; i < live.length && n > 0; i++) {
+          live[i].left--; n--;
+          if (!live[i].left) out[live[i].id] = day;
+        }
+      }
+    }
+    return { byDeck: out, all: day };
+  }
+  var COVER = null;
+  function coverage(deckId) {
+    var set = S.getSettings(), exam = examDayNum(deckId), today = S.dayNum();
+    if (!exam || exam <= today) return null;
+    var perDay = Math.max(1, Math.min(set.newPerSession, set.sessionSize));
+    if (!COVER || COVER.perDay !== perDay || COVER.at !== today) {
+      COVER = coverRun(perDay); COVER.perDay = perDay; COVER.at = today;
+    }
+    var need = COVER.byDeck[deckId];
+    return { need: need, days: exam - today, perDay: perDay, all: COVER.all };
+  }
+  function coverLine(deckId) {
+    var cv = coverage(deckId);
+    if (!cv || !cv.need) return '';                      // nothing unseen left
+    if (cv.need <= cv.days) {
+      var spare = cv.days - cv.need;
+      return 'Every card seen by ' + dateWord(S.dayNum() + cv.need) +
+        (spare > 0 ? ' · ' + spare + ' days spare' : '');
+    }
+    // the honest version: name the shortfall and the setting that closes it
+    var want = Math.ceil(cv.perDay * cv.need / cv.days);
+    return 'Not every card before the exam at ' + cv.perDay + ' new a day · ' +
+      want + ' a day covers it';
+  }
+  function dateWord(dayN) {
+    var dt = new Date(S.dayKey(dayN) + 'T12:00:00Z');
+    return dt.getUTCDate() + ' ' + MONTHS[dt.getUTCMonth() + 1];   // MONTHS is 1-indexed
+  }
+
   function paceLine(d) {
     var p = corePace(d);
     if (!p) return '';
@@ -337,9 +401,14 @@
   }
   function weightText(u) {
     if (!u || !u.weight) return '';
-    // a format breakdown is printed as itself — "MC 50% · FRQ 50% of the exam"
-    // read as a claim about that unit's share, and there was no way to tell
-    return shareOf(u) === null ? String(u.weight) : String(u.weight) + ' of the exam';
+    var w = String(u.weight);
+    // A bare share is a claim about the exam and says so. A format breakdown
+    // is printed as itself — "MC 50% · FRQ 50% of the exam" read as a claim
+    // about that unit's share, and nothing told the reader otherwise. Anything
+    // with no percentage in it ("Big Idea 1", "Thème 1") only repeats the unit
+    // number printed directly above, so it stays off the row.
+    if (shareOf(u) !== null) return w + ' of the exam';
+    return w.indexOf('%') > -1 ? w : '';
   }
 
   /* ==========================================================================
@@ -386,25 +455,23 @@
         else if (S.isDue(c.i, today)) due.push(c);
       });
     });
-    // the floor: the app must never stop teaching new cards. An explicitly
-    // sized deal ("Quick ten") is a request for that many cards, so the
-    // per-session new-card cap governs the daily deal, not that one.
+    /* New cards are the BUDGET, not the leftovers.
+       There are 4,441 cards and 241 days to the first exam. Whether the
+       syllabus gets covered is decided by one number — how many unseen cards
+       are dealt per day — so that number is reserved first and the reviews
+       fill what is left. Computing it as "whatever the reviews did not want"
+       capped the rate at two a day once the due pile passed the session size,
+       which showed a daily student 849 of 4,441 cards by May and never dealt
+       one card from seven Chemistry units. An explicitly sized deal ("Quick
+       ten") is a request for that many cards, so it sets its own cap. */
     var newCap = (opts && opts.limit) ? limit : set.newPerSession;
-    var newSlots = Math.min(newCap, fresh.length, Math.max(1, Math.round(limit * 0.25)));
-    if (!due.length) newSlots = Math.min(newCap, fresh.length, limit);
     var byScore = function (a, b) { return b._sc - a._sc; };
     S.shuffle(due); S.shuffle(fresh);          // ties break fresh every day
     due.sort(byScore); fresh.sort(byScore);
-    // The quarter reserved for new cards is a floor, not a toll. Spending it
-    // whole meant "Review 25" dealt 22 of them and still read "Review 3" when
-    // you finished — so it shrinks (never below two) to let the due cards fit.
-    var hardFloor = Math.min(2, fresh.length, newCap);
-    var keepNew = Math.max(hardFloor, Math.min(newSlots, Math.max(0, limit - due.length)));
-    var takeDue = due.slice(0, Math.max(0, limit - keepNew));
-    // due came up short — the slots it left go to new cards rather than
-    // silently shrinking the deal to four
-    var room = Math.max(keepNew, limit - takeDue.length);
-    var picked = takeDue.concat(fresh.slice(0, Math.min(newCap, room)));
+    var wantNew = Math.min(newCap, fresh.length, limit);
+    var takeDue = due.slice(0, Math.max(0, limit - wantNew));
+    // reviews came up short — the room they left goes back to new cards
+    var picked = takeDue.concat(fresh.slice(0, Math.min(newCap, limit - takeDue.length)));
     if (decks.length > 1 && picked.length) {
       var cap = Math.ceil(limit * 0.4), per = {}, kept = [], spill = [];
       picked.forEach(function (c) {
@@ -507,10 +574,12 @@
 
     // the app knows when the exam is — the countdown sits over the course name
     var pl = paceLine(d);
+    var cl = coverLine(deckId);
 
     // the name is the way back; the number is a fact, not a hidden link
     mount(
       (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '') +
+      (cl ? '<div class="ulabel cover">' + esc(cl) + '</div>' : '') +
       '<div class="dhero">' +
         '<button class="dn" data-back>' + esc(nice(d)) + '</button>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
@@ -1309,9 +1378,14 @@
   /* Cram is practice: a pass on an already-scheduled card writes nothing (see
      doGrade). The caption knew nothing about that guard, so Good and Easy
      advertised "2 mo" on a card whose due date would not move a single day. */
+  // the last day a card may be scheduled for and still be seen before its exam
+  function examCap(c) {
+    var e = examDayNum(c.deck);
+    return e ? e - 1 : 0;
+  }
   function passWord(c, g) {
     if (sess && sess.cram && !S.isNew(c.i) && !S.isDue(c.i)) return 'stays';
-    return S.preview(c.i, g);
+    return S.preview(c.i, g, examCap(c));
   }
 
   function doGrade(g) {
@@ -1325,7 +1399,7 @@
     // cram is practice: a pass must not shove a well-timed card into the
     // future, but a miss is real information and new or due cards earn grades
     var wrote = !sess.cram || g === 0 || S.isNew(c.i) || S.isDue(c.i);
-    if (wrote) S.grade(c.i, g);
+    if (wrote) S.grade(c.i, g, examCap(c));
     sess.history.push({ card: c, before: before, g: g, rq: g === 0, wrote: wrote, day: S.dayNum() });
     if (g === 0) {
       sess.again++; sess.planned++;   // a re-queued card is one more to do
@@ -1381,7 +1455,7 @@
     // the same cram guard as doGrade — a switched-to-MCQ cram stays honest
     var wrote = !sess.cram || !correct || S.isNew(c.i) || S.isDue(c.i);
     sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false, wrote: wrote, day: S.dayNum() });
-    if (wrote) S.grade(c.i, correct ? 1 : 0);
+    if (wrote) S.grade(c.i, correct ? 1 : 0, examCap(c));
     renderCard();
     // the result must be seen, not hunted for
     requestAnimationFrame(function () {
