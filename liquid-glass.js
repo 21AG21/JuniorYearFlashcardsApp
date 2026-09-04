@@ -153,7 +153,12 @@
     var geo = function (i) { var it = items[i]; return { x: it.offsetLeft - EXTRA, w: it.offsetWidth + 2 * EXTRA }; };
     var bounds = function () { var first = items[0], last = items[items.length - 1]; return { min: first.offsetLeft - EXTRA, max: last.offsetLeft + last.offsetWidth + EXTRA }; };
     var nearest = function (cx) { var best = 0, bd = 1e9; items.forEach(function (it, k) { var d = Math.abs(it.offsetLeft + it.offsetWidth / 2 - cx); if (d < bd) { bd = d; best = k; } }); return best; };
-    var mark = function (i) { items.forEach(function (it, k) { it.classList.toggle('is-active', k === i); it.setAttribute('aria-selected', k === i); }); };
+    // roving tabindex: the group is one tab stop, the arrows move inside it
+    var mark = function (i) { items.forEach(function (it, k) {
+      it.classList.toggle('is-active', k === i);
+      it.setAttribute('aria-selected', k === i);
+      it.tabIndex = k === i ? 0 : -1;
+    }); };
     var select = function (i, opt) {
       opt = opt || {};
       index = clamp(i, 0, items.length - 1);
@@ -207,6 +212,25 @@
       select(best, { fire: true, velocity: v, response: 0.42, damping: 0.78 });
     };
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    // a group of divs is invisible to a keyboard unless it is wired by hand
+    el.addEventListener('keydown', function (e) {
+      var it = e.target && e.target.closest && e.target.closest(itemSel);
+      if (!it) return;
+      var i = items.indexOf(it);
+      if (i < 0) return;
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault(); e.stopPropagation();
+        select(i, { fire: true });
+        return;
+      }
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var n = i + (e.key === 'ArrowRight' ? 1 : -1);
+      if (n < 0 || n >= items.length) return;
+      e.preventDefault(); e.stopPropagation();
+      select(n, { fire: true });
+      try { items[n].focus(); } catch (_) {}
+    });
+    if (!el.getAttribute('role')) el.setAttribute('role', 'tablist');
     items.forEach(function (it) { it.setAttribute('role', 'tab'); });
     select(index, { immediate: true });
     window.addEventListener('resize', function () { select(index, { immediate: true }); });

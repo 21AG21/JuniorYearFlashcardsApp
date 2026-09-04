@@ -82,11 +82,9 @@
     fitPair(row, name, val);
   }
   function fitVals() {
-    app.querySelectorAll('.ledger').forEach(function (row) {
-      // numbers grow to match a wrapped name; a word value keeps its size
-      var name = row.querySelector('.lname'), val = row.querySelector('.lval.num');
-      if (name && val && val.textContent.trim()) fitPair(row, name, val);
-    });
+    // Only the hero's number grows to its name. In a list the numbers are
+    // quantities you compare down the column, and sizing them by how long
+    // the title beside them happens to be made 140 smaller than 68.
     app.querySelectorAll('.dhero').forEach(function (hero) {
       var dn = hero.querySelector('.dn'), dv = hero.querySelector('.dv');
       if (dn && dv && dv.textContent.trim()) fitHero(hero, dn, dv);
@@ -107,7 +105,7 @@
       due += st.due;
       return '<li><button class="ledger' + (c.id === curDeckId ? ' on' : '') + '" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
-        '<span class="lval num">' + c.count + '</span>' +
+        '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
         (st.due ? '<span class="lsub">' + st.due + ' due</span>' : '') +
         '</button></li>';
     }).join('');
@@ -153,12 +151,21 @@
     if (p[0] === 'd' && p[2] === 'l') { var bi = bookOf(p[1]), it = bi && bi.items[p[3]]; return '#/d/' + p[1] + (it ? '/u/' + it.u : ''); }
     if (p[0] === 'd' && p[2] === 'r') { var br = bookOf(p[1]), rp = br && br.resPhase[p[3]]; return '#/d/' + p[1] + (rp ? '/b/' + rp.n : ''); }
     if (p[0] === 'd' && p[2] === 'b') { var bp = bookOf(p[1]), ph = bp && bp.phases[p[3]]; return '#/d/' + p[1] + (ph ? '/u/' + ph.u : ''); }
-    if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1];
+    if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1] + (p[3] ? '/u/' + p[3] : '');
     if (p[0] === 'cram' && p[1]) return p[2] ? '#/d/' + p[1] + '/u/' + p[2] : '#/d/' + p[1];
     if (p[0] === 'weak') return '#/stats';
     return '#/';
   }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+  /* a US keyboard cannot type é — search folds accents off both sides so
+     "societe" finds "société". Older engines without \\p{M} keep their text. */
+  var MARKS = null;
+  try { MARKS = new RegExp('\\p{M}', 'gu'); } catch (e) { MARKS = null; }
+  function fold(s) {
+    s = String(s == null ? '' : s);
+    if (!MARKS || !s.normalize) return s;
+    return s.normalize('NFD').replace(MARKS, '');
+  }
   // Shorten the label before the type (skill §3): the course identity, one line.
   var NICE = { lang: 'English', chem: 'Chemistry', french: 'French', calcbc: 'Calc BC', apush: 'US History' };
   function nice(idOrDeck) {
@@ -313,13 +320,20 @@
         else if (S.isDue(c.i, today)) due.push(c);
       });
     });
-    // the floor: the app must never stop teaching new cards
-    var newSlots = Math.min(set.newPerSession, fresh.length, Math.max(1, Math.round(limit * 0.25)));
-    if (!due.length) newSlots = Math.min(set.newPerSession, fresh.length, limit);
+    // the floor: the app must never stop teaching new cards. An explicitly
+    // sized deal ("Quick ten") is a request for that many cards, so the
+    // per-session new-card cap governs the daily deal, not that one.
+    var newCap = (opts && opts.limit) ? limit : set.newPerSession;
+    var newSlots = Math.min(newCap, fresh.length, Math.max(1, Math.round(limit * 0.25)));
+    if (!due.length) newSlots = Math.min(newCap, fresh.length, limit);
     var byScore = function (a, b) { return b._sc - a._sc; };
     S.shuffle(due); S.shuffle(fresh);          // ties break fresh every day
     due.sort(byScore); fresh.sort(byScore);
-    var picked = due.slice(0, Math.max(0, limit - newSlots)).concat(fresh.slice(0, newSlots));
+    var takeDue = due.slice(0, Math.max(0, limit - newSlots));
+    // due came up short — the slots it left go to new cards rather than
+    // silently shrinking the deal to four
+    var room = Math.max(newSlots, limit - takeDue.length);
+    var picked = takeDue.concat(fresh.slice(0, Math.min(newCap, room)));
     if (decks.length > 1 && picked.length) {
       var cap = Math.ceil(limit * 0.4), per = {}, kept = [], spill = [];
       picked.forEach(function (c) {
@@ -358,7 +372,7 @@
       // second line on the rows where it is true (skill §4.1)
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
-        '<span class="lval num">' + c.count + '</span>' +
+        '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
         (st.due ? '<span class="lsub">' + st.due + ' due</span>' : '') +
         '</button></li>';
     }).join('');
@@ -424,7 +438,7 @@
     mount(
       (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '') +
       '<div class="dhero">' +
-        '<button class="dn" data-go="#/">' + esc(nice(d)) + '</button>' +
+        '<button class="dn" data-back>' + esc(nice(d)) + '</button>' +
         '<span class="dv num">' + st.total + '</span>' +
       '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart">' + (st.due ? 'Review ' + st.due : 'Study') + '</button>' +
@@ -472,7 +486,7 @@
       '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n +
         (weightText(u) ? ' · ' + esc(weightText(u)) : '') + '</div>' +
       '<div class="dhero">' +
-        '<button class="dn" data-go="#/d/' + deckId + '">' + esc(u.title) + '</button>' +
+        '<button class="dn" data-back>' + esc(u.title) + '</button>' +
         '<span class="dv num">' + us.total + '</span>' +
       '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due : 'Study') + '</button>' +
@@ -631,7 +645,9 @@
   }
   function readingWord() { return ladder.all ? 'Reading every level' : 'Reading at: ' + LVL_NAMES[ladder.lvl]; }
   function toplineHTML(back, pos) {
-    return '<div class="topline"><button class="pos" data-go="' + back + '">' + esc(pos) + '</button>' +
+    // the breadcrumb is the only way out of a lesson — a chevron says so, and
+    // the padding gives it a target a thumb can actually land on
+    return '<div class="topline"><button class="pos" data-go="' + back + '"><span class="cv">\u2039</span> ' + esc(pos) + '</button>' +
       '<span class="now"><span data-book-now>' + esc(readingWord()) + '</span>' +
       '<button class="all" data-book-all>' + (ladder.all ? 'One level' : 'All six levels') + '</button></span></div>';
   }
@@ -948,8 +964,13 @@
       '<button class="iconbtn" data-exit aria-label="Close"><svg><use href="#i-close"/></svg></button>' +
       // in quiz mode undo can only take back the just-given answer — the
       // control shows exactly when it can act
-      (sess.history.length && (!sess.quiz || sess.answered)
-        ? '<button class="iconbtn" data-undo aria-label="Undo"><svg><use href="#i-undo"/></svg></button>' : '') +
+      // Undo holds its slot from the first card on. Appearing only from card
+      // two put the star where undo now sits, so the spot that starred a card
+      // a moment ago un-graded one instead.
+      '<button class="iconbtn' + (sess.history.length && (!sess.quiz || sess.answered) ? '' : ' ghost') +
+        '" data-undo aria-label="Undo"' +
+        (sess.history.length && (!sess.quiz || sess.answered) ? '' : ' disabled aria-hidden="true"') +
+        '><svg><use href="#i-undo"/></svg></button>' +
       (starred != null ? '<button class="iconbtn" data-star aria-label="Star" aria-pressed="' + starred + '">' +
         '<svg><use href="#i-star' + (starred ? '-fill' : '') + '"/></svg></button>' : '') +
       // the mode word changes THIS session only — Settings owns the default
@@ -1016,9 +1037,14 @@
     mount(
       '<div class="session">' + sessTop(c) +
       '<div class="cardstage">' +
-        '<span class="swipehint l">Again</span><span class="swipehint r">Good</span>' +
-        '<div class="cardwrap"><div class="card enter" id="card" role="group">' + body + '</div></div>' +
-      '</div>' + footer + sessUtil(starred) + '</div>',
+        // the hints are painted feedback for a drag in progress — a screen
+        // reader was announcing both of them ahead of every question
+        '<span class="swipehint l" aria-hidden="true">Again</span>' +
+        '<span class="swipehint r" aria-hidden="true">Good</span>' +
+        // only a NEW card enters; revealing used to re-run the animation, so
+        // the question you were reading blinked out and jumped 10px
+        '<div class="cardwrap"><div class="card' + (sess.revealed ? '' : ' enter') + '" id="card" role="group">' + body + '</div></div>' +
+      '</div><div class="morecue" aria-hidden="true">\u2304</div>' + footer + sessUtil(starred) + '</div>',
       { session: true }
     );
     wireCard();
@@ -1049,7 +1075,8 @@
 
     mount(
       '<div class="session">' + sessTop(c) +
-      '<div class="cardstage"><div class="cardwrap"><div class="card enter" id="card">' + body + '</div></div></div>' +
+      '<div class="cardstage"><div class="cardwrap"><div class="card' + (sess.answered ? '' : ' enter') + '" id="card">' + body + '</div></div></div>' +
+      '<div class="morecue" aria-hidden="true">\u2304</div>' +
       footer + sessUtil(starred) + '</div>', { session: true, quiz: true });
     wireCard();
   }
@@ -1081,7 +1108,10 @@
     var wrap = card.parentNode;
 
     if (!sess.quiz && !sess.revealed) {
-      card.addEventListener('click', function (e) {
+      // the whole stage flips the card, not just the text block inside it —
+      // two thirds of what looks like the card was inert
+      var stage = card.closest('.cardstage') || card;
+      stage.addEventListener('click', function (e) {
         if (e.target.closest('[data-star]') || e.target.closest('input') || e.target.closest('[data-hint]')) return;
         reveal();
       });
@@ -1094,6 +1124,20 @@
       });
     }
     if (sess.revealed && !sess.quiz) attachSwipe(wrap);
+
+    // a card taller than the stage was simply cut — the fourth option of an
+    // MCQ could be off-screen with nothing saying to scroll
+    var stage = card.closest('.cardstage');
+    if (stage) {
+      var host = stage.closest('.session') || stage;
+      var flag = function () {
+        var over = stage.scrollHeight - stage.clientHeight;
+        host.classList.toggle('more', over > 4 && stage.scrollTop < over - 4);
+      };
+      stage.addEventListener('scroll', flag, { passive: true });
+      flag();
+      requestAnimationFrame(flag);
+    }
   }
 
   function normalize(s) {
@@ -1128,6 +1172,9 @@
 
   function reveal() {
     if (!sess || sess.revealed) return;
+    // …and the mirror: grading, then the same double tap flipping the next
+    // card's answer before its question has been read
+    if (Date.now() - (sess.gradedAt || 0) < 320) return;
     var c = sess.queue[0];
     if (sess.typing) {
       var input = document.getElementById('typein');
@@ -1144,6 +1191,10 @@
 
   function doGrade(g) {
     if (!sess || !sess.revealed) return;
+    // "Show answer" and "Again" overlap: a double tap used to reveal and grade
+    // in one gesture, with the answer never on screen. The keyboard already
+    // guarded this; the finger did not.
+    if (Date.now() - (sess.revealedAt || 0) < 320) return;
     var c = sess.queue.shift();
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     // cram is practice: a pass must not shove a well-timed card into the
@@ -1159,6 +1210,7 @@
     else sess.easy++;
     sess.done++;
     sess.revealed = false; sess.verdict = null; sess.typed = ''; sess.hinted = false;
+    sess.gradedAt = Date.now();
     renderCard();
   }
 
@@ -1228,7 +1280,13 @@
   /* the exit control's one true path, shared with the Escape key — replace,
      so the platform back gesture cannot fall into a dead session */
   function exitSession() {
-    var back = sess && sess.back ? sess.back : sess && sess.deck ? '#/d/' + sess.deck.id : '#/';
+    // closing a unit's session goes back to that unit, not up to the course —
+    // losing your place in Period 3 on the way out is not "back"
+    // a mixed review exits to the root: #/review IS the session, so "back to
+    // Review" would silently deal another one
+    var back = sess && sess.back ? sess.back
+      : sess && !sess.mixed && sess.deck ? '#/d/' + sess.deck.id + (sess.unitId ? '/u/' + sess.unitId : '')
+      : '#/';
     sess = null; goReplace(back);
   }
 
@@ -1288,14 +1346,21 @@
       ? [['Correct', 0], ['Missed', 0]]
       : [['Again', 0], ['Good', 0], ['Easy', 0]];
     var rows = lines.map(function (l) {
-      return '<button class="ledger" style="pointer-events:none"><span class="lname">' + l[0] +
-        '</span><span class="lval num">' + l[1] + '</span></button>';
+      // a tally is a fact, not a control — it used to be a focusable button
+      // with its pointer events switched off, so a keyboard walked three
+      // "buttons" that do nothing
+      return '<div class="ledger"><span class="lname">' + l[0] +
+        '</span><span class="lval num">' + l[1] + '</span></div>';
     }).join('');
     // "Keep going" must know what is left — a mixed review counts every deck
+    // …and "what is left" is due cards plus cards never seen. Counting only
+    // the due ones said "All caught up" over four thousand untouched cards,
+    // and hid the button that would have dealt the next twenty.
     var dueLeft = 0;
-    if (d) dueLeft = S.deckStats(d).due;
+    var addLeft = function (dk) { var t = S.deckStats(dk); dueLeft += t.due + Math.max(0, t.total - t.seen); };
+    if (d) addLeft(d);
     else S.getIndex().courses.forEach(function (c) {
-      var dk = S.getDeck(c.id); if (dk) dueLeft += S.deckStats(dk).due;
+      var dk = S.getDeck(c.id); if (dk) addLeft(dk);
     });
     var again = sess.mixed ? '#/review' :
       sess.mode === 'cram' ? '#/cram/' + d.id + (sess.unitId ? '/' + sess.unitId : '') :
@@ -1363,33 +1428,53 @@
   function runSearch() {
     var out = document.getElementById('results');
     if (!out) return;
-    var q = searchState.q.trim().toLowerCase();
-    if (q.length < 2) { out.innerHTML = ''; return; }   // show results or show nothing
+    var q = fold(searchState.q.trim().toLowerCase());
+    // one letter used to blank the screen, which looks like a crash
+    if (!q) { out.innerHTML = ''; return; }
+    if (q.length < 2) { out.innerHTML = '<div class="empty">Keep typing</div>'; return; }
     var terms = q.split(/\s+/);
-    var hits = [];
+    // every deck is scanned, always: a budget that stopped at the first deck
+    // to fill it meant a common word only ever found English cards, and the
+    // capped number was printed as if it were the answer
+    var per = [], total = 0;
     S.getIndex().courses.forEach(function (c) {
       var d = S.getDeck(c.id); if (!d) return;
+      var mine = [];
       d.cards.forEach(function (card) {
-        if (hits.length > 400) return;
-        var hay = (card._hay || (card._hay = (T.plain(card.q) + ' ' + T.plain(card.a) + ' ' + (card.n || '') + ' ' + (card.t || '')).toLowerCase()));
+        var hay = (card._hay || (card._hay = fold((T.plain(card.q) + ' ' + T.plain(card.a) + ' ' + (card.n || '') + ' ' + (card.t || '')).toLowerCase())));
         for (var i = 0; i < terms.length; i++) if (hay.indexOf(terms[i]) === -1) return;
-        hits.push(card);
+        mine.push(card);
       });
+      total += mine.length;
+      if (mine.length) per.push(mine);
     });
+    // round-robin across the decks, so the rendered slice is never one course
+    var hits = [];
+    for (var r = 0; hits.length < 400 && per.length; r++) {
+      var any = false;
+      for (var pi = 0; pi < per.length; pi++) {
+        if (r < per[pi].length) { hits.push(per[pi][r]); any = true; }
+      }
+      if (!any) break;
+    }
     if (!hits.length) { out.innerHTML = '<div class="empty">No matches</div>'; return; }
     hits.sort(function (a, b) {
-      var aq = T.plain(a.q).toLowerCase().indexOf(q), bq = T.plain(b.q).toLowerCase().indexOf(q);
+      var aq = fold(T.plain(a.q).toLowerCase()).indexOf(q), bq = fold(T.plain(b.q).toLowerCase()).indexOf(q);
       return (aq === -1 ? 999 : aq) - (bq === -1 ? 999 : bq);
     });
-    out.innerHTML = '<div class="k" style="margin-bottom:var(--s-3)">' + plural(hits.length, 'card') + '</div>' +
+    out.innerHTML = '<div class="k" style="margin-bottom:var(--s-3)">' + plural(total, 'card') + '</div>' +
       '<ul class="list tight still">' + hits.slice(0, 120).map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u];
         return '<li><button class="qrow" data-peek="' + c.i + '">' +
           '<span class="qq">' + T.html(c.q) + '</span>' +
           '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
-          '<span class="qmeta">' + esc(nice(d)) + ' · ' + esc(u ? u.title : '') + '</span></button></li>';
+          '<span class="qmeta">' + esc(nice(d)) + ' · ' + esc(u ? u.title : '') + '</span></button>' +
+          // a search result was a dead end: reading the answer was all you
+          // could do with it. An open row offers the unit it came from.
+          '<button class="qgo textbtn quiet" data-go="#/d/' + c.deck +
+            (u ? '/u/' + u.id : '') + '">Study this unit</button></li>';
       }).join('') + '</ul>' +
-      (hits.length > 120 ? '<div class="empty cap">First 120</div>' : '');
+      (total > 120 ? '<div class="empty cap">First 120</div>' : '');
   }
 
   /* ==========================================================================
@@ -1452,10 +1537,16 @@
 
     // the hero states what is true today — "0 of 4,097" over "12 cards today"
     // reads as a contradiction, so lead with the day until cards are known
-    var hero = totals.known ? totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString()
+    // …and with nothing tracked at all it must not echo the deck list's own
+    // headline: "4,441 cards" on two different tabs reads as a screen that
+    // failed to load rather than one waiting for you
+    var blank = !totals.seen && !S.studiedToday();
+    var hero = blank ? 'Nothing tracked yet'
+      : totals.known ? totals.known.toLocaleString() + ' of ' + totals.total.toLocaleString()
       : S.studiedToday() ? plural(S.studiedToday(), 'card') + ' today'
       : totals.total.toLocaleString() + ' cards';
     var caption = [];
+    if (blank) caption.push('Study a card and this fills in');
     if (totals.known && S.studiedToday()) caption.push(plural(S.studiedToday(), 'card') + ' today');
     if (S.streak() > 1) caption.push(S.streak() + '-day streak');
     mount(
@@ -1496,6 +1587,12 @@
      whether a token string happens to exist */
   function syncWord() {
     var at = S.account.lastSyncAt();
+    // a failure that says nothing is worse than one that says so: the row used
+    // to read "Never" through an entire review whatever the server answered
+    var f = S.account.lastFail ? S.account.lastFail() : '';
+    if (f === 'auth') return 'Token refused';
+    if (f === 'off') return 'Sync is off here';
+    if (f === 'net' && !at) return 'Cannot reach sync';
     if (!at) return 'Never';
     var m = (Date.now() - at) / 60000;
     if (m < 5) return 'Just now';
@@ -1514,7 +1611,8 @@
       '<div class="setgroup">' +
       (S.account.connected()
         ? '<div class="setrow"><div class="sname">Sync</div>' +
-          '<button class="cyc" data-acct-off>' + esc(syncWord()) + '</button></div>' +
+          // the value doubles as the control, so it has to name the verb
+          '<button class="cyc" data-acct-off>' + esc(syncWord()) + ' · turn off</button></div>' +
           // the account id a private deck is addressed to — tap copies it
           (S.account.ownerId()
             ? '<div class="setrow"><div class="sname">ID</div>' +
@@ -1556,6 +1654,18 @@
 
   /* destructive actions arm on the first tap and revert after ~3s — ink and
      weight say "are you sure", never a dialog and never red */
+  /* A settings row rebuilds the screen under the button you just pressed, so
+     the keyboard was left on <body> and a second Enter did nothing. Re-render,
+     then hand focus back to the row's own control. */
+  function refocus(render, sel) {
+    var had = document.activeElement && document.activeElement.matches &&
+              document.activeElement.matches(sel);
+    render();
+    if (!had) return;
+    var el = app.querySelector(sel);
+    if (el) try { el.focus(); } catch (e) {}
+  }
+
   function armConfirm(btn, label) {
     if (btn.getAttribute('data-armed')) { disarm(btn); return true; }
     btn.setAttribute('data-armed', '1');
@@ -1604,11 +1714,12 @@
       var a = peek.querySelector('.qa');
       a.hidden = !a.hidden;
       peek.classList.toggle('open', !a.hidden);
+      if (peek.parentNode) peek.parentNode.classList.toggle('open', !a.hidden);
       return;
     }
     if (t.closest('[data-typing-cycle]')) {
       S.setSetting('typing', !S.getSettings().typing);
-      viewSettings(); return;
+      refocus(viewSettings, '[data-typing-cycle]'); return;
     }
     if (t.closest('[data-qmode]') && sess) {
       // an answered-but-not-advanced question would be re-served and graded a
@@ -1656,7 +1767,7 @@
       var opts = ckey === 'sessionSize' ? [15, 20, 30, 50, 100] : [5, 10, 20, 40];
       var at = opts.indexOf(S.getSettings()[ckey]);
       S.setSetting(ckey, opts[(at + 1) % opts.length]);
-      if (sess) renderCard(); else route();
+      if (sess) renderCard(); else refocus(route, '[data-cycle="' + ckey + '"]');
       return;
     }
     var rst = t.closest('[data-reset]');
@@ -1715,14 +1826,37 @@
       }
       return;
     }
-    if (t.closest('[data-import]')) {
-      var text = prompt('Paste a backup');
-      if (!text) return;
-      try { S.importData(text); applyTheme(); viewSettings(); toast('Backup restored'); }
-      catch (err) { alert('That does not look like an AP Decks backup.'); }
+    var imp = t.closest('[data-import]');
+    if (imp) {
+      // Restore replaces everything — it is the most destructive control on
+      // the screen and used to run on one tap, while the milder reset above it
+      // asked twice. It asks twice now, and it takes the file Backup wrote.
+      if (!armConfirm(imp, 'Tap again to replace everything')) return;
+      var paste = function () { var text = prompt('Paste a backup'); if (text) doRestore(text); };
+      if (!window.FileReader) { paste(); return; }
+      var pick = document.createElement('input');
+      pick.type = 'file'; pick.accept = 'application/json,.json';
+      pick.style.cssText = 'position:fixed;left:-9999px;top:0';
+      pick.addEventListener('change', function () {
+        var f = pick.files && pick.files[0];
+        pick.remove();
+        if (!f) return;                        // cancelled — nothing was touched
+        var fr = new FileReader();
+        fr.onload = function () { doRestore(String(fr.result)); };
+        fr.onerror = function () { toast('Could not read that file'); };
+        fr.readAsText(f);
+      });
+      document.body.appendChild(pick);
+      try { pick.click(); } catch (e5) { pick.remove(); paste(); }
       return;
     }
   });
+
+  function doRestore(text) {
+    if (!text) return;
+    try { S.importData(text); applyTheme(); viewSettings(); toast('Backup restored'); }
+    catch (err) { toast('That does not look like an AP Decks backup'); }
+  }
 
   function showBackup(data) {
     var w = document.createElement('textarea');
@@ -1810,7 +1944,11 @@
       lastTabIdx = idx;
     }
     var items = tabbar.querySelectorAll('.lg-tab');
-    items.forEach(function (el, i) { el.classList.toggle('is-active', i === idx); });
+    // roving tabindex: one stop for the whole bar, arrows move inside it
+    items.forEach(function (el, i) {
+      el.classList.toggle('is-active', i === idx);
+      el.tabIndex = i === idx ? 0 : -1;
+    });
     // The sliding pill needs real geometry. Coming back from a session the bar
     // is still hidden at route time — select on the next frame, once it shows.
     var apply = function () { if (tabbar.lgSelect) tabbar.lgSelect(idx); };
@@ -1868,9 +2006,16 @@
     if (r) goTab(r);
   });
   tabbar.addEventListener('click', function (e) {
+    // lg-change already fired from the pill's own pointerup, and mounting the
+    // screen twice cancels the slide. A keyboard-synthesised click carries
+    // detail 0; a bar that never initialised has no lgSelect and still needs
+    // this path.
+    if (tabbar.lgSelect && e.detail !== 0) return;
     var tab = e.target.closest('[data-route]');
     if (tab) goTab(tab.getAttribute('data-route'));
   });
+  // Enter, Space and the arrows come from the pill group itself (liquid-glass),
+  // which fires the same lg-change a tap does — one path, not two.
 
   window.addEventListener('hashchange', route);
   WIDE_MQ.addEventListener('change', function () {
@@ -1926,7 +2071,9 @@
       if (S.account.setToken(e.target.value)) {
         // never rebuild the DOM out from under the focused field mid-blur
         try { e.target.blur(); } catch (err) {}
-        setTimeout(route, 0);
+        setTimeout(function () { route(); toast('Account connected'); }, 0);
+      } else if (e.target.value.trim()) {
+        toast('That does not look like a token');
       }
     }
   });

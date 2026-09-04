@@ -112,6 +112,10 @@
      max per day; settings follow whichever side wrote the blob later. */
   var API = '/api/state';
   var pushTimer = null, lastSyncAt = read('syncat', 0), syncing = false;
+  // why the last attempt did not land: '' ok, 'auth' rejected, 'off' the
+  // deployment has no sync configured, 'net' offline or a server error.
+  // Without it the row says "Never" forever and never says why.
+  var lastFail = '';
 
   function mergeRemote(remote) {
     if (!remote || typeof remote !== 'object') return false;
@@ -139,17 +143,19 @@
     if (!token()) return Promise.resolve(false);
     return fetch(API, { headers: { Authorization: 'Bearer ' + token() } })
       .then(function (r) {
-        if (r.status === 401) { return false; }
-        if (!r.ok) return false;
+        if (r.status === 401) { lastFail = 'auth'; return false; }
+        if (r.status === 503) { lastFail = 'off'; return false; }
+        if (!r.ok) { lastFail = 'net'; return false; }
         return r.json().then(function (j) {
           var changed = j && j.state ? mergeRemote(j.state) : false;
+          lastFail = '';
           lastSyncAt = Date.now(); write('syncat', lastSyncAt);
           if (changed) { write(stateKey(), state); }
           try { window.dispatchEvent(new CustomEvent('apdecks-sync', { detail: { changed: changed } })); } catch (e) {}
           return changed;
         });
       })
-      .catch(function () { return false; });
+      .catch(function () { lastFail = 'net'; return false; });
   }
 
   function pushNow() {
@@ -161,8 +167,11 @@
       method: 'PUT',
       headers: { Authorization: 'Bearer ' + token(), 'content-type': 'application/json' },
       body: JSON.stringify(blob),
-    }).then(function (r) { if (r.ok) { lastSyncAt = at; write('syncat', at); } })
-      .catch(function () { /* offline: the next save retries */ })
+    }).then(function (r) {
+      if (r.ok) { lastFail = ''; lastSyncAt = at; write('syncat', at); }
+      else lastFail = r.status === 401 ? 'auth' : r.status === 503 ? 'off' : 'net';
+    })
+      .catch(function () { lastFail = 'net'; /* offline: the next save retries */ })
       .then(function () { syncing = false; });
   }
   function schedulePush() {
@@ -426,7 +435,9 @@
     return true;
   }
   function resetProgress(deckId) {
-    if (!deckId) { state.cards = {}; state.log = {}; }
+    // the reader's done marks are progress too, not a preference — leaving
+    // them behind made "Progress reset" a lie on the Ladders index
+    if (!deckId) { state.cards = {}; state.log = {}; delete state.settings.ladderDone; }
     else {
       var d = decks[deckId];
       if (d) d.cards.forEach(function (c) { delete state.cards[c.i]; });
@@ -483,6 +494,7 @@
       connected: function () { return !!token(); },
       setToken: setToken, clearToken: clearToken,
       pull: pull, lastSyncAt: function () { return lastSyncAt; },
+      lastFail: function () { return lastFail; },
       ownerId: function () { return ownerHex; }
     }
   };
