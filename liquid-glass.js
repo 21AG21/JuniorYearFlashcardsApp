@@ -130,6 +130,22 @@
   /* ---------------------------------------------------------------------- */
   /* Tab bar / segmented control: fluid selection pill                       */
   /* ---------------------------------------------------------------------- */
+  var GROUPS = [];
+  function pruneGroups() {
+    for (var i = GROUPS.length - 1; i >= 0; i--) {
+      if (!GROUPS[i].el.isConnected) GROUPS.splice(i, 1);
+    }
+  }
+  function trackGroup(el, reselect) {
+    pruneGroups();
+    for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].el === el) { GROUPS[i].reselect = reselect; return; }
+    GROUPS.push({ el: el, reselect: reselect });
+  }
+  window.addEventListener('resize', function () {
+    pruneGroups();
+    for (var i = 0; i < GROUPS.length; i++) GROUPS[i].reselect();
+  });
+
   function pillGroup(el, itemSel) {
     var pill = el.querySelector('.lg-pill');
     if (!pill) { pill = document.createElement('div'); pill.className = 'lg-pill'; el.insertBefore(pill, el.firstChild); }
@@ -233,7 +249,11 @@
     if (!el.getAttribute('role')) el.setAttribute('role', 'tablist');
     items.forEach(function (it) { it.setAttribute('role', 'tab'); });
     select(index, { immediate: true });
-    window.addEventListener('resize', function () { select(index, { immediate: true }); });
+    // One shared resize handler for every pill group. A listener per group
+    // never came off, and the reader re-creates its level pill on every
+    // lesson: 39 lessons left 28,847 detached nodes pinned by 41 dead
+    // listeners, and four read-throughs left 115,036.
+    trackGroup(el, function () { select(index, { immediate: true }); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { select(index, { immediate: true }); });
     el.lgSelect = function (i) { select(i, {}); };
   }
@@ -369,6 +389,7 @@
   /* ---------------------------------------------------------------------- */
   function init(root) {
     root = root || document;
+    pruneGroups();          // the last mount's pill groups are gone with its DOM
     root.querySelectorAll('.lg-slider').forEach(function (el) { if (!el.lgSet) slider(el); });
     root.querySelectorAll('.lg-toggle').forEach(function (el) { if (!el.lgSet) toggle(el); });
     root.querySelectorAll('.lg-tabbar').forEach(function (el) { if (!el.lgSelect) pillGroup(el, '.lg-tab'); });

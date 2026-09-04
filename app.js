@@ -307,6 +307,20 @@
     }
     return { byDeck: out, all: day };
   }
+  /* the smallest new-cards-a-day that gets THIS deck finished in time, found
+     by running the rotation rather than by scaling the current rate */
+  var PACE = {};
+  function paceFor(deckId, days) {
+    var key = deckId + '|' + days + '|' + S.dayNum();
+    if (PACE[key] !== undefined) return PACE[key];
+    var lo = 1, hi = 120, ans = 0;
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1;
+      var got = coverRun(mid).byDeck[deckId];
+      if (got !== undefined && got <= days) { ans = mid; hi = mid - 1; } else lo = mid + 1;
+    }
+    return (PACE[key] = ans);
+  }
   var COVER = null;
   function coverage(deckId) {
     var set = S.getSettings(), exam = examDayNum(deckId), today = S.dayNum();
@@ -323,13 +337,19 @@
     if (!cv || !cv.need) return '';                      // nothing unseen left
     if (cv.need <= cv.days) {
       var spare = cv.days - cv.need;
-      return 'Every card seen by ' + dateWord(S.dayNum() + cv.need) +
-        (spare > 0 ? ' · ' + spare + ' days spare' : '');
+      return '<div class="ulabel cover">' + esc('Every card seen by ' + dateWord(S.dayNum() + cv.need) +
+        (spare > 0 ? ' · ' + spare + ' days spare' : '')) + '</div>';
     }
-    // the honest version: name the shortfall and the setting that closes it
-    var want = Math.ceil(cv.perDay * cv.need / cv.days);
-    return 'Not every card before the exam at ' + cv.perDay + ' new a day · ' +
-      want + ' a day covers it';
+    // the honest version: name the shortfall, and make the rate that closes it
+    // one tap away — a forecast you cannot act on is just bad news. The rate
+    // is SOLVED for, not scaled: raising it changes every deck's share, so
+    // "16 a day covers it" once set turned into "18 a day covers it".
+    var want = paceFor(deckId, cv.days);
+    if (!want) return '<div class="ulabel cover">' +
+      esc('Not every card before the exam at ' + cv.perDay + ' new a day') + '</div>';
+    return '<div class="ulabel cover">' +
+      esc('Not every card before the exam at ' + cv.perDay + ' new a day · ') +
+      '<button class="pace" data-pace="' + want + '">' + want + ' a day covers it</button></div>';
   }
   function dateWord(dayN) {
     var dt = new Date(S.dayKey(dayN) + 'T12:00:00Z');
@@ -428,6 +448,24 @@
     }
     return score;
   }
+  /* deck by deck in rotation — the same rotation the coverage forecast runs,
+     so what the forecast promises is what the deal does */
+  function roundRobin(list, n) {
+    var lanes = {}, order = [];
+    list.forEach(function (c) {
+      if (!lanes[c.deck]) { lanes[c.deck] = []; order.push(c.deck); }
+      lanes[c.deck].push(c);
+    });
+    var out = [];
+    while (out.length < n) {
+      var moved = false;
+      for (var i = 0; i < order.length && out.length < n; i++) {
+        if (lanes[order[i]].length) { out.push(lanes[order[i]].shift()); moved = true; }
+      }
+      if (!moved) break;
+    }
+    return out;
+  }
   function interleave(list) {                                 // one deck never runs deep
     var lanes = {}, order = [];
     list.forEach(function (c) {
@@ -464,14 +502,17 @@
        which showed a daily student 849 of 4,441 cards by May and never dealt
        one card from seven Chemistry units. An explicitly sized deal ("Quick
        ten") is a request for that many cards, so it sets its own cap. */
-    var newCap = (opts && opts.limit) ? limit : set.newPerSession;
+    var newCap = (opts && opts.noNew) ? 0
+      : (opts && opts.limit) ? limit : set.newPerSession;
     var byScore = function (a, b) { return b._sc - a._sc; };
     S.shuffle(due); S.shuffle(fresh);          // ties break fresh every day
     due.sort(byScore); fresh.sort(byScore);
     var wantNew = Math.min(newCap, fresh.length, limit);
     var takeDue = due.slice(0, Math.max(0, limit - wantNew));
-    // reviews came up short — the room they left goes back to new cards
-    var picked = takeDue.concat(fresh.slice(0, Math.min(newCap, limit - takeDue.length)));
+    // reviews came up short — the room they left goes back to new cards, and
+    // the new cards are taken deck by deck in rotation, so a first session
+    // touches every course instead of twenty cards of the heaviest unit
+    var picked = takeDue.concat(roundRobin(fresh, Math.min(newCap, limit - takeDue.length)));
     if (decks.length > 1 && picked.length) {
       var cap = Math.ceil(limit * 0.4), per = {}, kept = [], spill = [];
       picked.forEach(function (c) {
@@ -544,6 +585,9 @@
     // silently back to the deck list made it look like a dead row.
     var listed = S.getIndex().courses.some(function (c) { return c.id === deckId; });
     if (!d && !listed) return go('#/');
+    // …and one still on its way is neither: it says so and repaints on arrival
+    if (!d && S.deckPending && S.deckPending(deckId)) return mount(
+      '<div class="head"><span class="k">' + esc(nice(deckId)) + '</span><h1>Loading</h1></div>');
     if (!d) return mount(
       '<div class="head"><span class="k">' + esc(nice(deckId)) + '</span>' +
       '<h1>Not downloaded</h1><div class="sub">This course did not load. Open it once with a connection.</div></div>' +
@@ -579,7 +623,7 @@
     // the name is the way back; the number is a fact, not a hidden link
     mount(
       (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '') +
-      (cl ? '<div class="ulabel cover">' + esc(cl) + '</div>' : '') +
+      cl +
       '<div class="dhero">' +
         '<button class="dn" data-back>' + esc(nice(d)) + '</button>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
@@ -589,6 +633,9 @@
         '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
         '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Quiz</button>' +
         (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Starred</button>' : '') +
+        (st.due > S.getSettings().sessionSize
+          ? '<button class="textbtn" data-go="#/study/' + deckId + '/due">Catch up · ' +
+            st.due.toLocaleString() + '</button>' : '') +
         '<button class="textbtn" data-go="#/study/' + deckId + '/hard">Trouble spots</button>' +
         '<button class="textbtn" data-go="#/study/' + deckId + '/all">Shuffle</button>' +
         (window.Games && window.Games.linksFor(deckId).length
@@ -1001,6 +1048,11 @@
     var queue = lesson ? lessonQueue(d, lesson)
       : (mode || 'smart') === 'smart'
       ? buildDaily({ deck: d, unit: unitId || null })
+      // "Catch up" is the other half of the trade the coverage line names:
+      // the daily deal covers the syllabus and lets a review debt build, and
+      // this drains the debt without introducing anything new
+      : mode === 'due'
+      ? buildDaily({ deck: d, unit: unitId || null, noNew: true })
       : S.buildSession(d, unitId || null, mode);
     if (!queue.length) return renderEmptySession(d, unitId, mode);
     sess = {
@@ -1161,11 +1213,15 @@
     if (!sess.revealed) {
       // the prompt itself is the tap; no "Tap to reveal" caption (skill §8)
       if (sess.typing) body += '<div class="typewrap"><input class="typein" id="typein" autocomplete="off" autocorrect="off" ' +
-          'autocapitalize="none" spellcheck="false" placeholder="Type your answer"></div>';
+          'autocapitalize="none" spellcheck="false" placeholder="' +
+          (typeable(c) ? 'Type your answer' : 'Type what you can') + '"></div>';
     } else {
       body += '<div class="rule reveal"></div>' +
         '<div class="a reveal' + sizeClass(c.a) + '">' + T.html(c.a) + '</div>' +
-        (sess.verdict ? '<div class="verdict reveal ' + sess.verdict.ok + '">' + esc(sess.verdict.text) + '</div>' : '') +
+        (sess.verdict ? '<div class="verdict reveal ' +
+          (sess.verdict.ok === 'miss' && !typeable(c) ? 'long' : sess.verdict.ok) + '">' +
+          esc(sess.verdict.ok === 'miss' && !typeable(c) ? 'too long to type — grade yourself'
+              : sess.verdict.text) + '</div>' : '') +
         (c.n ? '<div class="note reveal' + (stacked(c.n) ? ' mathy' : '') + '">' + T.html(c.n) + '</div>' : '') +
         (topicLabel(c) ? '<div class="meta reveal">' + esc(topicLabel(c)) + '</div>' : '');
     }
@@ -1173,7 +1229,7 @@
     // grades in the flow, as text; the recommended grade is the heavier ink —
     // and after a scored miss the recommendation is Again, not Good
     var footer = sess.revealed
-      ? '<div class="rate' + (sess.verdict && sess.verdict.ok === 'miss' ? ' miss' : '') + '">' +
+      ? '<div class="rate' + (sess.verdict && sess.verdict.ok === 'miss' && typeable(c) ? ' miss' : '') + '">' +
           '<button class="r-again" data-grade="0"><span class="lab">Again</span><span class="when">' + S.preview(c.i, 0) + '</span></button>' +
           '<button class="r-good" data-grade="1"><span class="lab">Good</span><span class="when">' + esc(passWord(c, 1)) + '</span></button>' +
           '<button class="r-easy" data-grade="2"><span class="lab">Easy</span><span class="when">' + esc(passWord(c, 2)) + '</span></button>' +
@@ -1331,6 +1387,21 @@
       .normalize('NFD').replace(/[̀-ͯ]/g, '')
       .replace(/[^a-z0-9]+/g, ' ').trim();
   }
+  /* Typing mode only where typing is possible. Nine answers in ten run past
+     eighty characters — a whole worked FRQ, a paragraph of French — and no
+     one types those on a phone. Every attempt scored a miss, a miss
+     recommends Again, Again logs a lapse, and lapses drive Trouble spots and
+     Weak spots: turning on a documented setting quietly corrupted the
+     student's own picture of what they were bad at. Long answers flip. */
+  var TYPE_MAX = 60;
+  function typeable(c) {
+    if (!c) return false;
+    var a = T.plain(c.a || '');
+    if (a.length <= TYPE_MAX) return true;
+    // a long answer with a short accepted alias is still typeable
+    return (c.x || []).some(function (alt) { return T.plain(alt || '').length <= TYPE_MAX; });
+  }
+
   function checkTyped(c, typed) {
     if (!typed || !typed.trim()) return null;
     var got = normalize(typed);
@@ -1627,6 +1698,28 @@
     runSearch();
   }
 
+  /* The search index is 4,870 folded strings. Building it on the first
+     keystroke cost 410 ms — a stall exactly where the app should feel
+     fastest — so it is built during idle time after the decks land instead,
+     in slices short enough not to drop a frame. */
+  function hayOf(card) {
+    return card._hay || (card._hay = fold(
+      (T.plain(card.q) + ' ' + T.plain(card.a) + ' ' + (card.n || '') + ' ' + (card.t || '')).toLowerCase()));
+  }
+  function warmSearch() {
+    var all = [];
+    (S.getIndex().courses || []).forEach(function (c) {
+      var d = S.getDeck(c.id); if (d) all = all.concat(d.cards);
+    });
+    var i = 0;
+    var idle = window.requestIdleCallback || function (fn) { return setTimeout(fn, 24); };
+    (function slice() {
+      var end = Date.now() + 6;
+      while (i < all.length && Date.now() < end) hayOf(all[i++]);
+      if (i < all.length) idle(slice);
+    })();
+  }
+
   function runSearch() {
     var out = document.getElementById('results');
     if (!out) return;
@@ -1643,7 +1736,7 @@
       var d = S.getDeck(c.id); if (!d) return;
       var mine = [];
       d.cards.forEach(function (card) {
-        var hay = (card._hay || (card._hay = fold((T.plain(card.q) + ' ' + T.plain(card.a) + ' ' + (card.n || '') + ' ' + (card.t || '')).toLowerCase())));
+        var hay = hayOf(card);
         for (var i = 0; i < terms.length; i++) if (hay.indexOf(terms[i]) === -1) return;
         mine.push(card);
       });
@@ -1932,7 +2025,7 @@
       // second time — take the pending answer back before switching modes
       if (sess.quiz && sess.answered && sess.history.length) {
         var hm = sess.history.pop();
-        if (hm.wrote !== false) S.restore(hm.card.i, hm.before);
+        if (hm.wrote !== false) S.restore(hm.card.i, hm.before, hm.day);   // the day log goes back too
         if (hm.g === 1) sess.right = Math.max(0, sess.right - 1);
         else sess.wrong = Math.max(0, sess.wrong - 1);
         S.save(true);
@@ -1974,6 +2067,17 @@
       var at = opts.indexOf(S.getSettings()[ckey]);
       S.setSetting(ckey, opts[(at + 1) % opts.length]);
       if (sess) renderCard(); else refocus(route, '[data-cycle="' + ckey + '"]');
+      return;
+    }
+    var pace = t.closest('[data-pace]');
+    if (pace) {
+      var n = parseInt(pace.getAttribute('data-pace'), 10);
+      if (n > 0) {
+        S.setSetting('newPerSession', n);
+        if (n > S.getSettings().sessionSize) S.setSetting('sessionSize', n);
+        route();
+        toast(n + ' new cards a day');
+      }
       return;
     }
     var rst = t.closest('[data-reset]');
@@ -2106,6 +2210,13 @@
     if (e.repeat) return;                        // holding a key never burns cards
     if (sess) {
       if (e.code === 'Space' || e.key === 'Enter') {
+        // A focused control activates itself. The session's own Space/Enter
+        // used to run first and preventDefault() the button's activation, so
+        // Enter on Close revealed the card instead of closing the session —
+        // and mount()'s focus restore parks focus on exactly those controls.
+        var af = document.activeElement;
+        if (af && af !== document.body && af.closest &&
+            af.closest('button,[role="button"],a[href]') && app.contains(af)) return;
         e.preventDefault();
         if (sess.quiz) { if (sess.answered) nextQuiz(); }
         else if (!sess.revealed) reveal();
@@ -2113,7 +2224,8 @@
           // a breath after the reveal, and the shortcut grades what the verdict
           // says — a scored miss must never default to Good
           if (Date.now() - (sess.revealedAt || 0) < 300) return;
-          doGrade(sess.verdict && sess.verdict.ok === 'miss' ? 0 : 1);
+          var miss = sess.verdict && sess.verdict.ok === 'miss' && typeable(sess.queue[0]);
+          doGrade(miss ? 0 : 1);
         }
         return;
       }
@@ -2203,6 +2315,14 @@
         return viewCourse(lastDeckId || firstDue || ixw.courses[0].id);
       }
       return viewDecks();
+    }
+    // A deep link can land before its deck has arrived — the app paints on the
+    // index now, so the decks are still in flight. Say "Loading" and repaint
+    // when it lands, rather than bouncing the reader off their own lesson.
+    var wantsDeck = (p[0] === 'd' || p[0] === 'study' || p[0] === 'quiz' || p[0] === 'cram') && p[1];
+    if (wantsDeck && !S.getDeck(p[1]) && S.deckPending && S.deckPending(p[1]) &&
+        (S.getIndex().courses || []).some(function (c) { return c.id === p[1]; })) {
+      return mount('<div class="head"><span class="k">' + esc(nice(p[1])) + '</span><h1>Loading</h1></div>');
     }
     if (p[0] === 'd' && p[1] && p[2] === 'b' && p[3]) return viewPhase(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
@@ -2368,11 +2488,30 @@
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
 
   app.innerHTML = '<div class="head"><span class="k">AP Decks</span><h1>Loading</h1></div>';
-  S.loadAll().then(function () {
+
+  /* The deck list needs the 6 KB index, not the 2.8 MB of decks behind it.
+     Holding the whole app until the last deck landed meant 16.5 s of a blank
+     screen on a slow connection — 36 s with the private deck — while every
+     row's name and count was already in hand. Paint on the index, fill in as
+     each deck arrives. */
+  var booting = true;
+  window.addEventListener('apdecks-deck', function () {
+    if (!sess && !booting) route();
+  });
+  S.loadIndex().then(function (ix) {
+    booting = false;
+    // start every deck fetching BEFORE the first route, so a deep link to a
+    // lesson sees "pending" rather than "missing" and waits instead of
+    // bouncing the reader back to the course
+    (ix.courses || []).forEach(function (c) { S.loadDeck(c.id); });
     route();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(function () {});
     }
+    return S.loadAll();
+  }).then(function () {
+    if (!sess) route();                    // counts and due numbers settle
+    warmSearch();
   }).catch(function (err) {
     app.innerHTML = '<div class="head"><span class="k">AP Decks</span><h1>Could not load the decks</h1>' +
       '<div class="sub">' + esc(err.message) + '</div></div>' +

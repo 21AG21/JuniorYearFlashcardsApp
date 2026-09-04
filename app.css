@@ -377,6 +377,8 @@ button.hero-tap:active{ opacity:.55; }
 .verdict{ margin-top:12px; font-size:13.5px; font-weight:500; color:var(--ink); }
 .verdict.miss::before{ content:"Not quite — "; font-weight:500; color:var(--muted); }
 .verdict.hit::before{ content:"Correct — "; font-weight:500; color:var(--muted); }
+/* an answer no one could type is not a miss — it carries no verdict word */
+.verdict.long{ color:var(--muted); }
 
 /* --- quiz: choices are text rows separated by hairlines -------------------- */
 /* a search result opens to its answer and to the unit it came from */
@@ -470,8 +472,14 @@ sub,sup{ font-size:.68em; }
 .warnline{ display:block; width:100%; text-align:left; background:none; border:0;
   border-bottom:1px solid var(--hair); font:inherit; font-size:14px; font-weight:500;
   color:var(--ink); padding:10px 0 11px; margin:0 0 var(--s-3); letter-spacing:-.005em; }
-/* the coverage forecast sits under the countdown, one shade quieter */
+/* the coverage forecast sits under the countdown, one shade quieter — and the
+   rate that would fix it is a control, not a suggestion */
 .ulabel.cover{ margin-top:2px; color:var(--muted); }
+.ulabel.cover .pace{ position:relative; background:none; border:0; padding:0; margin:0; font:inherit;
+  color:var(--ink); cursor:pointer; text-decoration:underline; text-underline-offset:3px;
+  text-decoration-thickness:1px; text-decoration-color:var(--hair); }
+.ulabel.cover .pace::after{ content:""; position:absolute; inset:-13px -10px; }
+.ulabel.cover .pace:active{ opacity:.5; }
 /* --- toast ------------------------------------------------------------------ */
 #toast{ position:fixed; z-index:60; left:calc(env(safe-area-inset-left,0px) + var(--gutter));
   right:calc(env(safe-area-inset-right,0px) + var(--gutter));

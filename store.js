@@ -284,6 +284,8 @@
         d.units.forEach(function (u) { d.unitById[u.id] = u; });
         d.cards.forEach(function (c) { c.deck = id; d.byId[c.i] = c; });
         decks[id] = d; delete loading[id];
+        // the app paints from the index alone and fills in as decks land
+        try { global.dispatchEvent(new CustomEvent('apdecks-deck', { detail: id })); } catch (e) {}
         return d;
       });
     return loading[id];
@@ -538,6 +540,7 @@
     dayNum: dayNum, dayKey: dayKey,
     loadIndex: loadIndex, loadDeck: loadDeck, loadAll: loadAll,
     getIndex: function () { return index; }, getDeck: function (id) { return decks[id]; },
+    deckPending: function (id) { return !!loading[id]; },
     cs: cs, isNew: isNew, isDue: isDue, isKnown: isKnown, isStarred: isStarred,
     toggleStar: toggleStar, grade: grade, preview: preview,
     pool: pool, buildSession: buildSession, deckStats: deckStats, unitStats: unitStats,

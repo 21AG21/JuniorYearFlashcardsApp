@@ -1,5 +1,5 @@
 /* AP Decks service worker — precache the shell and every deck, serve offline. */
-var VERSION = 'apdecks-v59';
+var VERSION = 'apdecks-v60';
 var ASSETS = [
   './', './index.html', './app.css', './app.js', './store.js', './tex.js', './games.js',
   './liquid-glass.css', './liquid-glass.js',
@@ -17,8 +17,14 @@ var ASSETS = [
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(VERSION).then(function (c) {
+      // The shell is force-refetched so a stale HTTP copy cannot survive a
+      // version bump. Deck JSON is not: the page has just fetched every one of
+      // them, and reloading made a first visit pull 1.53 MB over the wire for
+      // a 765 KB app.
       return Promise.all(ASSETS.map(function (u) {
-        return c.add(new Request(u, { cache: 'reload' })).catch(function () { /* keep going */ });
+        var data = u.indexOf('/data/') > -1;
+        return c.add(data ? new Request(u) : new Request(u, { cache: 'reload' }))
+          .catch(function () { /* keep going */ });
       }));
     }).then(function () { return self.skipWaiting(); })
   );
