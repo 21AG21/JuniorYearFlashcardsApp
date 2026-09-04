@@ -79,6 +79,13 @@ body{
   touch-action:manipulation;
 }
 input,textarea{ -webkit-user-select:text; user-select:text; }
+/* the course is something you read, quote and paste: every word of a Ladders
+   page can be selected, and a long press offers copy. Its controls cannot —
+   selecting a tap target instead of firing it is the old iOS annoyance. */
+.book{ -webkit-user-select:text; user-select:text; -webkit-touch-callout:default; }
+.book button,.book .segwrap,.book .topline,.book .chk,.book summary,.book .idx{
+  -webkit-user-select:none; user-select:none; }
+.book .tm,.book .tq,.book pre,.book code{ -webkit-user-select:text; user-select:text; }
 
 /* --- app shell ------------------------------------------------------------ */
 #app{
@@ -247,9 +254,16 @@ button.hero-tap:active{ opacity:.55; }
   overflow-y:auto; overscroll-behavior-y:contain; }
 #app.is-session:not(.is-wide) .rate{ margin-top:var(--s-3); }
 #app.is-session:not(.is-wide) .sess-util{ margin-top:12px; }
-.sess-top{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin-bottom:var(--s-4); }
-.sess-top .scope{ font-size:15px; font-weight:500; color:var(--muted); min-width:0; }
+.sess-top{ display:flex; align-items:baseline; gap:12px; margin-bottom:var(--s-4); }
+.sess-top .scope{ font-size:15px; font-weight:500; color:var(--muted); min-width:0; margin-right:auto; }
 .sess-top .pos{ font-size:15px; font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+/* what this game asks of you, in one glyph pair — read before it is read */
+.ledger .gkind{ font-size:14px; color:var(--muted); letter-spacing:.14em; font-weight:400; }
+.sess-top .cue{ font-size:14px; color:var(--muted); letter-spacing:.14em; white-space:nowrap; flex:none; }
+.sess-top .tick{ color:var(--ink-soft); }
+/* a filled dot is a question behind you, a hollow one is still ahead */
+.sess-top .dots{ font-size:9px; letter-spacing:.22em; color:var(--muted); line-height:1; }
+.done-hero .v{ font-variant-numeric:tabular-nums; }
 
 .cardstage{ position:relative; display:flex; align-items:flex-start; padding:0 0 var(--s-3); }
 .cardwrap{ width:100%; will-change:transform; }

@@ -332,10 +332,10 @@
     ctx.mount(
       ctx.backbar(GAMES[id].name) +
       '<div class="done-hero"><span class="k">' + esc(GAMES[id].name) + '</span>' +
-      '<div class="v">Offline</div>' +
+      '<div class="v">◌</div>' +
       '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">This game needs its data — try again in a moment</div></div>' +
-      '<button class="act" data-gagain="' + id + '">Try again</button>' +
-      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games">Games</button></div>',
+      '<button class="act" data-gagain="' + id + '" aria-label="Try again">↻</button>' +
+      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games" aria-label="All games">☰</button></div>',
       { session: true }
     );
   }
@@ -407,7 +407,7 @@
   /* quiz modes, cycled by a header word exactly like the filter word.
      In-memory per game id, like FILT. */
   var MODE = {};
-  var MODE_NAMES = ['Classic', 'Sprint', 'Streak'];
+  var MODE_NAMES = ['≡', '◷', '↑'];      // a fixed set · against the clock · until one is wrong
   function modeCtl(id) {
     if (GAMES[id].kind !== 'quiz') return '';
     return '<button class="textbtn quiet gfilt" data-gmode>' +
@@ -491,7 +491,8 @@
         if (GAMES[id].deck !== deckId) return;
         rows += '<li><button class="ledger mid" data-go="#/game/' + id + '">' +
           '<span class="lname">' + esc(GAMES[id].name) + '</span>' +
-          (b[id] ? '<span class="lsub">best ' + esc(b[id].label) + '</span>' : '') +
+          '<span class="lval word gkind">' + (CUE[GAMES[id].kind] || '') + '</span>' +
+          (b[id] ? '<span class="lsub">★ ' + esc(b[id].label) + '</span>' : '') +
           '</button></li>';
       });
       if (rows) html += '<div class="ulabel">' + esc(ctx.nice(deckId)) + '</div><ul class="list" style="gap:0">' + rows + '</ul>';
@@ -731,18 +732,16 @@
         dealBoard(st.rounds[st.stage]);
       } else {
         var grand = st.played + st.total;
-        return gameDone(st.id, st.score, grand, st.score + ' of ' + grand);
+        return gameDone(st.id, st.score, grand, st.score + ' / ' + grand);
       }
     }
     var f = st.facts[st.i];
-    var scope = st.stage != null
-      ? STAGES[st.stage][0] + ' · ' + st.score + ' first try'
-      : st.score + ' first try';
+    var scope = (st.stage != null ? esc(STAGES[st.stage][0]) + ' ' : '') + right(st.score);
     // long expressions get two wide columns instead of three broken ones
     var wide = st.tiles.some(function (tl) { return estLen(tl.t) > 14; });
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
-      gameTop(scope, (st.played + st.i + 1) + ' of ' + (st.stage != null ? st.grand : st.total)) +
+      gameTop(st.id, scope, dots(st.played + st.i, st.stage != null ? st.grand : st.total)) +
       '<div class="gcur bcur' + (still ? '' : ' swap') + '">' +
         '<div class="gname num' + (flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
       '<div class="board' + (wide ? ' b2' : '') + (st.anim ? ' deal' : '') + '">' + st.tiles.map(function (tl, i) {
@@ -779,9 +778,29 @@
     }
   }
 
-  function gameTop(scopeText, posText) {
-    return '<div class="sess-top"><span class="scope">' + esc(scopeText) + '</span>' +
-      '<span class="pos num">' + esc(posText) + '</span></div>';
+  /* The chrome says everything in symbols, so a round can be read before it can
+     be read: ✓ right, ✗ wrong, ↑ in a row, ↻ tries, ◷ seconds left, ● a question
+     answered, ○ one still to come, and a cue showing what this game asks of you. */
+  var CUE = { quiz: '? ▢', match: '▢ ↔ ▢', order: '▢ ↕', board: '? ▢', circle: '? ◯', graph: '? ∿' };
+  function cue(id) {
+    var k = GAMES[id] && GAMES[id].kind;
+    return CUE[k] ? '<span class="cue">' + CUE[k] + '</span>' : '';
+  }
+  function right(n) { return '<span class="tick">✓</span> ' + n; }
+  function straight(n) { return '<span class="tick">↑</span> ' + n; }
+  function tries(n) { return '<span class="tick">↻</span> ' + n; }
+  /* dots while a round is short enough to count at a glance, digits past that */
+  function dots(done, total) {
+    var at = ' data-done="' + done + '" data-total="' + (total || 0) + '"';
+    if (!total || total > 14) return '<span class="num"' + at + '>' + done + ' / ' + (total || '·') + '</span>';
+    var out = '';
+    for (var i = 0; i < total; i++) out += i < done ? '●' : '○';
+    return '<span class="dots"' + at + '>' + out + '</span>';
+  }
+  function gameTop(id, leftHtml, posHtml) {
+    return '<div class="sess-top">' + cue(id) +
+      '<span class="scope">' + leftHtml + '</span>' +
+      '<span class="pos">' + posHtml + '</span></div>';
   }
   var doneAt = 0;   // the ghost half of a double tap must not dismiss the score
   function gameDone(id, score, total, label) {
@@ -795,8 +814,8 @@
       ctx.backbar(GAMES[id].name) +
       '<div class="done-hero"><span class="k">' + esc(g.name) + '</span>' +
       '<div class="v num">' + esc(label) + '</div></div>' +
-      '<button class="act" data-gagain="' + id + '">Play again</button>' +
-      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games">Games</button></div>',
+      '<button class="act" data-gagain="' + id + '" aria-label="Play again">↻</button>' +
+      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games" aria-label="All games">☰</button></div>',
       { session: true }
     );
   }
@@ -881,7 +900,7 @@
 
   function renderOrder(justIdx) {
     if (!st.cur) {
-      var label = st.score + ' of ' + st.total;
+      var label = st.score + ' / ' + st.total;
       return gameDone(st.id, st.score, st.total, label);
     }
     var rows = '<button class="gap" data-gap="0" aria-label="Place first"></button>';
@@ -892,7 +911,7 @@
     });
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
-      gameTop(st.axis.title, (st.done + 1) + ' of ' + st.total) +
+      gameTop(st.id, esc(st.axis.title), dots(st.done, st.total)) +
       '<div class="gcur"><div class="gname">' + esc(st.cur.n) + '</div></div>' +
       '<div class="gline">' + rows + '</div>',
       { session: true, keepScroll: st.done > 0 }
@@ -1175,7 +1194,7 @@
 
   function renderMatch() {
     if (st.hits === st.total) {
-      var label = st.total + ' in ' + st.tries;
+      var label = st.total + ' / ' + st.tries + ' ↻';
       return gameDone(st.id, st.total, Math.max(st.tries, st.total), label);
     }
     var head = {
@@ -1197,7 +1216,7 @@
     }
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, filtCtl(st.id)) +
-      gameTop(st.hits + ' of ' + st.total, st.tries + (st.tries === 1 ? ' try' : ' tries')) +
+      gameTop(st.id, tries(st.tries), dots(st.hits, st.total)) +
       '<div class="mcols' + (st.anim ? ' deal' : '') + '">' +
         '<div><div class="k mhead">' + esc(head[0]) + '</div>' + col(st.left, 'l', st.selL) + '</div>' +
         '<div><div class="k mhead">' + esc(head[1]) + '</div>' + col(st.right, 'r', st.selR) + '</div>' +
@@ -1304,14 +1323,14 @@
 
   function renderCircle() {
     if (st.i >= st.total) {
-      var label = st.score + ' of ' + st.total;
+      var label = st.score + ' / ' + st.total;
       return gameDone(st.id, st.score, st.total, label);
     }
     var q = st.qs[st.i];
     var prompt = circlePrompt(q);
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
-      gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
+      gameTop(st.id, right(st.score), dots(st.i, st.total)) +
       '<div class="gcur"><div class="gname" data-plain="' + esc(flat(prompt)) + '">' + fx(prompt) + '</div></div>' +
       '<div class="ucwrap">' + circleSVG(q) + '</div>' +
       circleChoices(q),
@@ -1813,8 +1832,8 @@
     renderQuiz();
   }
 
-  function clockLabel() {
-    return Math.max(0, Math.ceil((st.endAt - Date.now()) / 1000)) + ' s';
+  function clockLabel() {   // ◷ and the seconds left, no word for it
+    return '◷ ' + Math.max(0, Math.ceil((st.endAt - Date.now()) / 1000));
   }
   function sprintTick() {
     if (!st || st.kind !== 'quiz' || st.mode !== 'sprint') { clearInterval(sclock); return; }
@@ -1835,13 +1854,13 @@
     if (st.mode === 'sprint') {
       // the countdown updates in place via [data-clock] — a full re-render
       // every tick would eat taps mid-answer
-      top = '<div class="sess-top"><span class="scope">' + esc(st.score + ' right') + '</span>' +
+      top = '<div class="sess-top">' + cue(st.id) + '<span class="scope">' + right(st.score) + '</span>' +
         '<span class="pos num" data-clock>' + esc(clockLabel()) + '</span></div>';
     } else if (st.mode === 'streak') {
-      top = gameTop(st.score + ' straight', String(st.i + 1));
+      top = gameTop(st.id, straight(st.score), '<span class="num">' + (st.i + 1) + '</span>');
     } else {
-      top = gameTop(st.score + ' right' + (st.streak > 2 ? ' · ' + st.streak + ' straight' : ''),
-        (st.i + 1) + ' of ' + st.total);
+      top = gameTop(st.id, right(st.score) + (st.streak > 2 ? ' <span class="tick">↑</span> ' + st.streak : ''),
+        dots(st.i, st.total));
     }
     ctx.mount(
       ctx.backbar(GAMES[st.id].name, modeCtl(st.id) + filtCtl(st.id, true)) +
@@ -1897,9 +1916,9 @@
     var id = st.id, mode = st.mode;
     var key = mode === 'sprint' ? id + '!sprint' : mode === 'streak' ? id + '!streak' : id;
     var n, label;
-    if (mode === 'sprint') { n = st.score; label = st.score + ' in 60 s'; }
-    else if (mode === 'streak') { n = st.score; label = st.score + ' straight'; }
-    else { n = st.total > 0 ? st.score / st.total : 0; label = st.score + ' of ' + st.total; }
+    if (mode === 'sprint') { n = st.score; label = st.score + ' ◷'; }
+    else if (mode === 'streak') { n = st.score; label = st.score + ' ↑'; }
+    else { n = st.total > 0 ? st.score / st.total : 0; label = st.score + ' / ' + st.total; }
     // a filtered round plays a different game than the best describes — and a
     // miss replay is a fraction of one; neither ever earns a best
     if (!FILT[id] && !st.noBest) saveBest(key, n, label);
@@ -1911,14 +1930,14 @@
     ctx.mount(
       ctx.backbar(GAMES[id].name) +
       '<div class="done-hero"><span class="k">' +
-        esc(GAMES[id].name + (mode === 'classic' ? '' : ' · ' + (mode === 'sprint' ? 'Sprint' : 'Streak'))) + '</span>' +
+        esc(GAMES[id].name + (mode === 'classic' ? '' : ' · ' + (mode === 'sprint' ? '◷' : '↑'))) + '</span>' +
       '<div class="v num">' + esc(label) + '</div>' +
-      (bb ? '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">best ' + esc(bb.label) + '</div>' : '') +
+      (bb ? '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">★ ' + esc(bb.label) + '</div>' : '') +
       '</div>' +
-      '<button class="act" data-gagain="' + id + '">Play again</button>' +
+      '<button class="act" data-gagain="' + id + '" aria-label="Play again">↻</button>' +
       '<div style="margin-top:var(--s-3)">' +
-        (lastMiss ? '<button class="textbtn" data-gmiss style="margin-right:18px">Replay misses</button>' : '') +
-        '<button class="textbtn" data-go="#/games">Games</button></div>',
+        (lastMiss ? '<button class="textbtn" data-gmiss style="margin-right:18px" aria-label="Replay the ones you missed">✗ ↻</button>' : '') +
+        '<button class="textbtn" data-go="#/games" aria-label="All games">☰</button></div>',
       { session: true }
     );
   }
@@ -2005,7 +2024,7 @@
 
   function renderGraph() {
     if (st.i >= st.total) {
-      return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
+      return gameDone(st.id, st.score, st.total, st.score + ' / ' + st.total);
     }
     var g = st.qs[st.i];
     if (!g.choices) {
@@ -2021,7 +2040,7 @@
     }).join('') + '</div>';
     ctx.mount(
       ctx.backbar(GAMES[st.id].name) +
-      gameTop(st.score + ' right', (st.i + 1) + ' of ' + st.total) +
+      gameTop(st.id, right(st.score), dots(st.i, st.total)) +
       '<div class="gcur"><div class="gname num">y = ?</div></div>' +
       '<div class="tgwrap">' + graphSVG(g) + '</div>' + ch,
       { session: true, keepScroll: st.i > 0 }
