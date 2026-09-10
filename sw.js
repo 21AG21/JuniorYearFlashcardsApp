@@ -1,5 +1,5 @@
 /* AP Decks service worker — precache the shell and every deck, serve offline. */
-var VERSION = 'apdecks-v78';
+var VERSION = 'apdecks-v79';
 var ASSETS = [
   './', './index.html', './app.css', './app.js', './store.js', './tex.js', './games.js',
   './liquid-glass.css', './liquid-glass.js',
@@ -7,7 +7,7 @@ var ASSETS = [
   './icon-180.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './data/index.json', './data/timeline.json', './data/fr-vocab.json',
   './data/lang.json', './data/chem.json', './data/french.json',
-  './data/calcbc.json', './data/apush.json'
+  './data/calcbc.json', './data/apush.json', './data/sat.json'
   // NOTE: a private deck is not listed here — it is 3.6 MB and only its owner
   // can see it, so it is never shipped to every device. It is picked up at
   // runtime and carried across version bumps by the activate handler below.

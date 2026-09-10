@@ -246,7 +246,8 @@
     return s.normalize('NFD').replace(MARKS, '');
   }
   // Shorten the label before the type (skill §3): the course identity, one line.
-  var NICE = { lang: 'English', chem: 'Chemistry', french: 'French', calcbc: 'Calc BC', apush: 'US History' };
+  var NICE = { lang: 'English', chem: 'Chemistry', french: 'French', calcbc: 'Calc BC', apush: 'US History',
+               sat: 'SAT Vocab' };
   function nice(idOrDeck) {
     var id = typeof idOrDeck === 'string' ? idOrDeck : idOrDeck.id;
     if (NICE[id]) return NICE[id];
