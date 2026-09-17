@@ -1126,6 +1126,16 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book .walk .ln li code{ font-size:12.5px; color:var(--ink); white-space:pre-wrap; word-break:break-word; }
 .book .walk .ln li span{ color:var(--ink-soft); }
 
+/* a file's contract on a Build page: the path, what kind of file, then the
+   purpose, what it reads and writes, what it must contain, the skeleton, the check */
+.book .fb{ display:flex; flex-direction:column; gap:10px; border-top:1px solid var(--hair-soft); padding-top:16px; }
+.book .fbh{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; }
+.book .fbh .fn{ font:600 15px/1.35 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink); letter-spacing:0; overflow-wrap:anywhere; }
+.book .fbh .ft{ font-size:13px; font-weight:600; color:var(--ink-soft); }
+.book .fb p,.book .fb li,.book .row.build>p{ font-size:15.5px; line-height:1.5; max-width:72ch; }
+.book .fb .gk{ margin-top:4px; }
+.book .fb pre,.book .phase pre{ white-space:pre-wrap; overflow-wrap:anywhere; }
+
 /* resources: title links out, meta, rungs, the study guide */
 .book .res{ display:flex; flex-direction:column; gap:12px; }
 .book .res h3.title a{ text-decoration-color:var(--hair); }

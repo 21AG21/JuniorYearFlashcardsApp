@@ -5299,6 +5299,7 @@
     "about": [
       {
         "title": "Six rules",
+        "id": "rules",
         "sections": [
           {
             "k": "intro",
@@ -5335,10 +5336,503 @@
             ],
             "title": "What really good looks like"
           }
+        ],
+        "terms": [
+          "stage",
+          "model",
+          "library",
+          "numpy",
+          "baseline",
+          "metric",
+          "leakage",
+          "logistic-regression",
+          "probability",
+          "readme",
+          "target",
+          "horizon",
+          "transformer",
+          "split",
+          "retraining",
+          "loop-detector"
+        ]
+      },
+      {
+        "title": "The project, laid out",
+        "id": "layout",
+        "sections": [
+          {
+            "k": "intro",
+            "b": [
+              {
+                "t": "p",
+                "s": "Every file the course asks you to make, in one place, before any phase asks for it. Read this page once now and come back whenever a Build page names a file: the folder it lives in, who writes it, what it reads and what it writes are all here, and the twelve Build pages hold the contract for each file in full. If a Build page and this page ever disagree, this page is wrong; tell someone."
+              },
+              {
+                "t": "p",
+                "s": "The repository on GitHub holds four documents and nothing else: the plan (`21_PLAN_M1_TRAFFIC_MODEL.md`), two superseded drafts of this course (`22_LEARNING_PATH_ML.md`, `23_LESSONS_SIX_LEVELS.md`) and the course itself (`24_APPRENTICESHIP_SIX_LEVELS.md`). Every script, module, test and folder below is yours to write, in the phase named beside it. Nothing is assumed to exist that this page does not say you will create."
+              }
+            ]
+          },
+          {
+            "k": "h3",
+            "b": [
+              {
+                "t": "ul",
+                "items": [
+                  "A Mac with Apple silicon. The plan budgets a 16 GB M1 Mac mini and every number in it is measured against those 16 GB. An 8 GB machine gets through phase 4 on three months of data; an Intel Mac runs everything except the GPU lessons in phases 7 and 8, which fall back to the processor.",
+                  "macOS with Apple's Command Line Tools (`xcode-select --install`) and Homebrew (from brew.sh), which is only needed once, for `brew install libomp`, the OpenMP runtime LightGBM cannot ship.",
+                  "Native arm64 Python 3.11 or newer from miniforge or python.org, and a virtual environment at `.venv` inside the project. Rosetta Python runs at half speed and cannot use the GPU.",
+                  "Google Chrome, installed the normal way. Phase 3 drives it with Selenium to download PeMS files; nothing else uses it.",
+                  "VS Code with Microsoft's Python extension, and a GitHub account holding your own copy of Traffic1.",
+                  "Two free accounts and one key. A 511.org token (511.org/open-data/token; it arrives by email) for the incident feed, from phase 0. A PeMS account (pems.dot.ca.gov, free registration, approved by hand within a day or two) for the detector history, from phase 3. Open-Meteo, the weather source in phase 6, needs no account.",
+                  "Disk. Raw PeMS is about 16 GB per year; the cleaned Parquet is 100 to 150 MB per year. Keep 25 GB free or put `data/pems_raw/` on an external SSD. Five gigabytes is enough through phase 4 on three months of data.",
+                  "Ten hours a week. The hours on each phase page assume a beginner."
+                ]
+              }
+            ],
+            "title": "The machine, the accounts and the time"
+          },
+          {
+            "k": "h3",
+            "b": [
+              {
+                "t": "ul",
+                "items": [
+                  "Numbered scripts, `NN_name.py`, are runners. Each one parses its command line, calls one module, writes its files and prints one log line. Their names start with a digit so `ls` shows the pipeline in order, and that is also why Python cannot import them: `import 02_collect_events` is a syntax error. Nothing imports a runner.",
+                  "The code that does the work lives in plain modules with importable names: `common.py`, `collector.py`, `pems.py`, `labels.py`, `incidents.py`, `weather.py`, `features.py`, `split.py`, `evaluate.py`, `stnet.py`. Tests import these. The serving loop imports these. There is one implementation of every feature, and it is in `features.py`.",
+                  "Every runner answers `python NN_name.py --help`. Runners that work on history take `--month YYYY-MM` and default to every month present. Every runner writes to a `.tmp` path and renames it into place at the end, so a crash never leaves a half-written file that the next stage would read.",
+                  "Every runner ends with the line `stage=<name> seconds=<n> rss_gb=<n> rows=<n>` from `common.log_stage()`, on the screen and appended to `logs/pipeline.log`. The plan's memory budgets are checked against these lines, not guessed.",
+                  "Every stage has a page in `docs/stages/`, named after its runner: what it reads, what it writes with the column list, how to run it, the numbers from the last run and what surprised you. Phase 9's `make all` fails if a stage has no page.",
+                  "Every command in the course is run from the repository root with the venv active: `cd ~/code/Traffic1 && source .venv/bin/activate`. Every path is relative to that root.",
+                  "Code, tests, docs, `launchd/`, `sql/`, `studies/`, `serve/`, `bench/`, `notebook/`, `requirements.txt`, `Makefile`, `.gitignore`, `.env.example` and `.vscode/settings.json` are committed. `data/`, `models/`, `output/`, `logs/`, `.venv/` and `.env` never are; `.gitignore` says so and phase 0 proves it with `git ls-files`.",
+                  "Model files carry the label definition in their name, `thresh0.6_win3`, and the split they were trained on lives in `models/manifest.json`. A model whose name does not say what it predicts is not kept.",
+                  "The numbers that define the problem are written once, in `common.py`, and imported everywhere. They are listed at the bottom of this page."
+                ]
+              }
+            ],
+            "title": "The one convention every file follows"
+          },
+          {
+            "k": "h3",
+            "b": [
+              {
+                "t": "p",
+                "s": "What the finished repository looks like. The phase in which each thing is first written is in the comment; folders marked generated are never committed."
+              },
+              {
+                "t": "code",
+                "lang": "",
+                "s": "Traffic1/\n├── README.md                       # phase 0: what this is, how to set up, how to run\n├── requirements.txt                # phase 0: loose pins; later phases add lines\n├── requirements.lock.txt           # phase 0: pip freeze, the exact versions that worked\n├── .env.example                    # phase 0: every secret's name, no values\n├── .env                            # phase 0: the values (never committed)\n├── .gitignore                      # phase 0\n├── .vscode/settings.json           # phase 0: the venv interpreter, a 100-column ruler\n├── Makefile                        # phase 0: setup, check, test; phase 9: all, retrain, serve, rollback\n├── 21_PLAN_M1_TRAFFIC_MODEL.md     # exists: the plan this course builds\n├── 22_LEARNING_PATH_ML.md          # exists: superseded by 24\n├── 23_LESSONS_SIX_LEVELS.md        # exists: superseded by 24\n├── 24_APPRENTICESHIP_SIX_LEVELS.md # exists: this course\n│\n├── common.py          # phase 0: paths, constants, log_stage(), atomic_write()\n├── collector.py       # phase 1: the 511 poller's functions (phase 0 writes them inside the runner)\n├── pems.py            # phase 3: station registry, PeMS file parsing and cleaning\n├── labels.py          # phase 4: the train-only profile and both labels\n├── incidents.py       # phase 4: the interval join of 511 events onto station rows\n├── features.py        # phase 4: every feature and the forward-shifted targets; phase 6 extends it\n├── split.py           # phase 4: the chronological split with gaps; phase 6 adds rolling origin\n├── evaluate.py        # phase 4: row-level metrics; phase 6 adds episodes and lead time\n├── weather.py         # phase 6: Open-Meteo archive and forecast for Fremont\n├── stnet.py           # phase 7: the spatio-temporal network and its windows\n│\n├── 02_collect_events.py        # phase 0: poll 511, append to the CSV\n├── 03_train_from_scratch.py    # phase 2: the 144-cell logistic regression, by hand\n├── 04_predict_live.py          # phase 2: score the current hour with those weights\n├── 09_collect_pems_selenium.py # phase 3: download PeMS district files, one per 305 s\n├── 10_clean_pems.py            # phase 3: registry, then one Parquet per month\n├── 11_build_labels.py          # phase 4: profile, speed_ratio, label, label_abs\n├── 12_join_incidents.py        # phase 4: incident columns\n├── 13_feature_engineering.py   # phase 4: feature table with y_15, y_30, y_60; phase 6: neighbors, weather, folds\n├── 14_train_baselines.py       # phase 4: persistence, profile rate, ratio rule\n├── 15_train_logreg.py          # phase 4: numpy logistic regression beside scikit-learn's\n├── 16_train_lgbm.py            # phase 4: LightGBM, one model per horizon\n├── 16b_calibrate_select.py     # phase 4: isotonic maps, tau per horizon; phase 7: the 0.02 rule\n├── 17a_train_mlp.py            # phase 7: the numpy MLP with backprop by hand, then PyTorch\n├── 17b_train_stnet.py          # phase 7: the spatio-temporal net on MPS\n├── 18_evaluate_lead_time.py    # phase 4: row level; phase 6: episodes, lead time, false alarms\n├── 19_predict_live.py          # phase 9: every five minutes, replay mode first\n├── 20_monitor.py               # phase 9: weekly scoring, drift, the retrain trigger\n│\n├── tests/                      # phase 1 onward: pytest, one file per module, fixtures/ for small data\n├── docs/stages/                # one page per runner\n├── docs/decisions/             # phase 6: label.md; phase 7: challenger.md\n├── docs/                       # phase 9: compute_budget.md, ml_test_score.md; phase 10: model_card.md, datasheet.md; phase 11: writeup.md\n├── sql/                        # phase 3: the DuckDB versions of the profile and one lag\n├── studies/                    # phases 5, 8, 10, 11: one script per side study, each writing output/studies/<name>.json\n├── serve/                      # phase 9: app.py (FastAPI) and Dockerfile\n├── launchd/                    # phase 9: four .plist files\n├── bench/pems_bay/             # phase 11: the DCRNN-style reproduction\n├── notebook/                   # phase 0 onward: YYYY-WW.md, one per week\n│\n├── data/                       # generated, never committed\n│   ├── fremont_events_log.csv          # 02: one row per event per poll\n│   ├── events_raw/YYYY-MM-DD.jsonl     # 02 (phase 1): every poll's raw JSON\n│   ├── pems_raw/*.txt.gz               # 09: district 4 station_5min files\n│   ├── pems_raw/manifest.json          # 09: filename, bytes, sha256, downloaded_at\n│   ├── pems_raw/pems_last_request.json # 09: the 305-second clock across runs\n│   ├── pems_meta/d04_text_meta_*.txt   # 09: the station meta file\n│   ├── pems_meta/fremont_stations.parquet  # 10: the registry with neighbors\n│   ├── pems_processed/YYYY-MM.parquet  # 10: cleaned rows on the full grid\n│   ├── labels/YYYY-MM.parquet          # 11: profile columns and both labels\n│   ├── incidents/YYYY-MM.parquet       # 12: the six incident columns\n│   ├── weather/openmeteo_hourly.parquet # weather.py: hourly rain for Fremont\n│   ├── features/YYYY-MM.parquet        # 13: the training table, monthly parts\n│   ├── golden/YYYY-MM-DD/              # phase 9: one stored day and its expected feature rows\n│   └── labels/headlines_50.csv         # phase 8: fifty hand-labelled 511 headlines\n├── models/                     # generated, never committed\n│   ├── bottleneck_weights.npz          # 03\n│   ├── profile_<split>.parquet         # 11\n│   ├── gbt_h{15,30,60}_thresh0.6_win3.txt   # 16\n│   ├── gbt_h{h}_features.json          # 16: the feature list in training order\n│   ├── categorical_dtypes.joblib       # 16: the category sets, reused at serving\n│   ├── iso_h{h}.joblib                 # 16b: the isotonic maps\n│   ├── calibration.json                # 16b: tau per horizon, validation AP, the chosen model\n│   ├── mlp_h30.pt, stnet_thresh0.6_win3.pt  # 17a, 17b\n│   └── manifest.json                   # phase 9: which files are live, trained on which split, when\n├── output/                     # generated, never committed\n│   ├── evaluation_report.json          # 18\n│   ├── predictions_latest.json         # 19: rewritten every five minutes\n│   ├── predictions_log.parquet         # 19: appended every five minutes\n│   ├── monitor/YYYY-WW.json            # 20\n│   └── studies/                        # the side studies' numbers and figures\n└── logs/                       # generated: pipeline.log, collect.log, predict.log, predict.err"
+              }
+            ],
+            "title": "The tree"
+          },
+          {
+            "k": "h3",
+            "b": [
+              {
+                "t": "p",
+                "s": "This is the index; each phase's Build page carries the contract for every file named here."
+              },
+              {
+                "t": "ul",
+                "items": [
+                  "Phase 0 · `README.md`, `requirements.txt`, `.env` and `.env.example`, `.gitignore`, `.vscode/settings.json`, `Makefile` (setup, check), `common.py`, `02_collect_events.py` as one file, `notebook/2026-W37.md`.",
+                  "Phase 1 · split the collector into `collector.py` and the runner; add `first_seen_at`, `last_seen_at`, `geo_missing`, the raw JSON log and the `--bootstrap` mode; `tests/test_collector.py`, `tests/test_timezones.py`, `studies/events_per_road_day.py`, `docs/stages/02_collect_events.md`.",
+                  "Phase 2 · `03_train_from_scratch.py`, `04_predict_live.py`, `tests/test_gradient.py`, `studies/sigmoid_and_loss.py`, the notebook page 'why the median', `docs/stages/03_train_from_scratch.md`.",
+                  "Phase 3 · `09_collect_pems_selenium.py`, `pems.py`, `10_clean_pems.py`, `tests/test_clean_pems.py` with `tests/fixtures/pems_100rows.txt` and `tests/fixtures/meta_10rows.txt`, `sql/profile.sql`, `sql/lag.sql`, `studies/plot_station.py`, `studies/pandas_vs_polars.py`, `docs/stages/09_collect_pems_selenium.md`, `docs/stages/10_clean_pems.md`.",
+                  "Phase 4 · `labels.py` and `11_build_labels.py`, `incidents.py` and `12_join_incidents.py`, `features.py` and `13_feature_engineering.py` (first version), `split.py`, `14_train_baselines.py`, `15_train_logreg.py`, `16_train_lgbm.py`, `16b_calibrate_select.py`, `evaluate.py` and `18_evaluate_lead_time.py` (row level), `studies/leakage_experiment.py`, `studies/shap_summary.py`, `tests/test_labels.py`, `tests/test_incidents.py`, `tests/test_features.py`, `tests/test_split.py`, a stage page for each runner.",
+                  "Phase 5 · `studies/regression_twin.py`, `studies/multiclass_ratio.py`, `studies/station_clusters.py`, `studies/tune_lgbm.py`, `studies/feature_information.py`, `docs/reports/phase5.md`.",
+                  "Phase 6 · `weather.py`, `features.py` and `13_feature_engineering.py` (second version: neighbors, rolling, weather, rolling-origin folds), `split.py` (rolling origin), `evaluate.py` and `18_evaluate_lead_time.py` (episodes, lead time, false alarms), `studies/acf_shockwave.py`, `studies/label_choice.py`, `docs/decisions/label.md`, tests extended.",
+                  "Phase 7 · `17a_train_mlp.py`, `stnet.py`, `17b_train_stnet.py`, `tests/test_backprop.py`, `studies/mps_vs_cpu.py`, `16b_calibrate_select.py` extended with the 0.02 rule, `docs/decisions/challenger.md`.",
+                  "Phase 8 · `studies/cnn_digits.py`, `studies/finetune_resnet.py`, `studies/headline_severity.py`, `studies/llm_extract.py` with `data/labels/headlines_50.csv`, `studies/rag_docs.py` with `tests/fixtures/rag_questions.json`, `studies/profile_autoencoder.py`, `studies/profile_cvae.py`, `studies/masked_pretrain.py`, `docs/reports/phase8.md`.",
+                  "Phase 9 · `19_predict_live.py`, `20_monitor.py`, `launchd/com.traffic1.{poll,predict,monitor,retrain}.plist`, the finished `Makefile`, `tests/test_golden_features.py` with `data/golden/`, `serve/app.py`, `serve/Dockerfile`, `tests/test_serve.py`, `studies/profile_stnet_step.py`, `docs/compute_budget.md`, `docs/ml_test_score.md`, `models/manifest.json` and the rollback rule, every missing stage page.",
+                  "Phase 10 · `studies/rl_gridworld.py`, `studies/bandit_alerts.py`, `studies/rain_effect_ipw.py`, `docs/causal/dag.md`, `docs/experiments/switchback.md`, `studies/fairness_audit.py`, `studies/dp_release.py`, `docs/model_card.md`, `docs/datasheet.md`, `studies/rank_segments.py`.",
+                  "Phase 11 · `bench/pems_bay/` (download, config, train, ablation), `studies/conformal.py` and the coverage line in `20_monitor.py`, `studies/bayes_station_rates.py`, `docs/writeup.md`, `docs/reading_log.md`."
+                ]
+              }
+            ],
+            "title": "Files you write, phase by phase"
+          },
+          {
+            "k": "h3",
+            "b": [
+              {
+                "t": "p",
+                "s": "The setup files, exactly as phase 0 writes them. Later phases append to `requirements.txt` and `.env.example`; the lines they add are listed under each file so the finished versions are also here."
+              },
+              {
+                "t": "file",
+                "name": "requirements.txt",
+                "tag": "phase 0 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The packages the project needs, one per line with the lowest version that will do. `pip install -r requirements.txt` installs them all into the venv. Loose pins resolve on any day; the exact versions that worked are frozen separately in `requirements.lock.txt`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Contents, as phase 0 writes it",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "text",
+                    "s": "# data\npandas>=2.2            # tables: read, clean, group, join\nnumpy>=1.26            # arrays and the maths under pandas\npyarrow>=15.0          # lets pandas read and write Parquet files\n\n# getting the data\nrequests>=2.31         # HTTP calls to the 511 traffic feed\npython-dotenv>=1.0     # loads secrets from the .env file\n\n# models\nscikit-learn>=1.4      # baselines, metrics, calibration, splits\nlightgbm>=4.3          # gradient boosted trees: the production model\ntorch>=2.2             # PyTorch, the neural networks (large download)\nshap>=0.45             # explains which features drove a prediction\n\n# looking at things\nmatplotlib>=3.8        # plots\njupyterlab>=4.1        # notebooks for exploring\n\n# the rest\npytest>=8.0            # tests\nholidays>=0.45         # public holiday calendar for the feature set\npsutil>=5.9            # memory and timing for every pipeline stage\nduckdb>=0.10           # SQL over Parquet without a database server\ntqdm>=4.66             # progress bars for long loops"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Lines later phases add",
+                    "s": "Each phase's Build page says when."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "text",
+                    "s": "# phase 3\nselenium>=4.18         # drives Chrome to download PeMS files\npolars>=0.20           # the faster second pass at cleaning\njoblib>=1.3            # saves the category sets and isotonic maps\n\n# phase 5\noptuna>=3.5            # hyperparameter search with a budget\n\n# phase 8\ntorchvision>=0.17      # digits, ResNet and image transforms\ntransformers>=4.38     # the small pretrained text encoder\nsentence-transformers>=2.5   # embeddings for retrieval\n\n# phase 9\nfastapi>=0.110         # the prediction service\nuvicorn>=0.27          # runs it\nhttpx>=0.27            # the service's tests call it\n\n# phase 11\npymc>=5.10             # the hierarchical Bayesian model"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`pip install -r requirements.txt` finishes without a red line, and the import block in the phase 0 walkthrough prints `arm64` and one version per package. If `import lightgbm` fails naming `libomp`, run `brew install libomp` and open a new terminal."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "requirements.lock.txt",
+                "tag": "phase 0 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The exact versions that worked, written by `pip freeze > requirements.lock.txt` once the install is clean. This is what a new machine installs from (`pip install -r requirements.lock.txt`) when it must behave identically; `requirements.txt` is what you edit. Regenerate it whenever `requirements.txt` changes and commit both."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": ".env` and `.env.example",
+                "tag": "phase 0 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "`.env` holds the secrets, one `NAME=value` per line, no quotes, no spaces around the equals sign; `python-dotenv`'s `load_dotenv()` reads it into `os.environ`. It is never committed. `.env.example` has the same names with empty values and is committed, so the list of what a newcomer must supply is documented without revealing anything."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Contents of `.env.example`, finished",
+                    "s": "Phase 0 writes the first line; phase 3 adds the two PeMS lines; phase 9 adds the last three, which have safe defaults and can stay empty."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "text",
+                    "s": "# copy this file to .env and fill in your own values\nTOKEN_511=\nPEMS_USERNAME=\nPEMS_PASSWORD=\nTRAFFIC1_ROOT=          # phase 9: absolute path of the repo for launchd; defaults to the folder .env is in\nPREDICT_INTERVAL_S=     # phase 9: seconds between prediction cycles; defaults to 300\nALERT_PRECISION=        # phase 9: the precision the alert must keep; defaults to 0.5"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -c \"from dotenv import load_dotenv; import os; load_dotenv(); print(bool(os.environ.get('TOKEN_511')))\"` prints `True`, and `git ls-files | grep -c '^\\.env$'` prints `0`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": ".gitignore",
+                "tag": "phase 0 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "What git must never record: the secret, the data, everything rebuildable, editor and system litter. It exists before the first commit because history is permanent."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Contents, verbatim",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "text",
+                    "s": "# secrets\n.env\n!.env.example\n\n# data and anything rebuilt from it\ndata/\nmodels/\noutput/\nlogs/\n\n# the environment\n.venv/\n__pycache__/\n*.pyc\n\n# notebooks and macOS litter\n.ipynb_checkpoints/\n.DS_Store"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`git status --short` never lists `data/`, `models/`, `.venv/` or `.env`; `git ls-files | grep -c -E '^\\.env$|^data/'` prints `0`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": ".vscode/settings.json",
+                "tag": "phase 0 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Makes VS Code use the project's venv without asking, activates it in the editor's terminal, trims trailing whitespace and draws a ruler at 100 columns."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Contents, verbatim",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "json",
+                    "s": "{\n  \"python.defaultInterpreterPath\": \"${workspaceFolder}/.venv/bin/python\",\n  \"python.terminal.activateEnvironment\": true,\n  \"files.trimTrailingWhitespace\": true,\n  \"editor.rulers\": [100]\n}"
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "Makefile",
+                "tag": "phase 0, finished in phase 9 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "One word per job, so the whole pipeline is `make all` and nobody has to remember fourteen commands in order. Phase 0 writes `setup`, `check` and `test`; phase 9 adds the rest. Recipes are indented with a tab, never spaces; that is the only trap in a Makefile."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Targets, finished",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`setup` · creates `.venv` if missing, upgrades pip, installs `requirements.txt`, runs `brew install libomp` if `brew` exists and libomp is absent.",
+                      "`check` · the import block from phase 0: prints the machine type and every package version, and whether MPS is available.",
+                      "`test` · `pytest -q`.",
+                      "`collect` · one poll of `02_collect_events.py`.",
+                      "`pems` · `09_collect_pems_selenium.py` for the months in `MONTHS`, newest first.",
+                      "`clean`, `labels`, `incidents`, `features` · runners 10 to 13 for `MONTHS`, in that order, each depending on the one before.",
+                      "`baselines`, `train`, `calibrate`, `evaluate` · runners 14, 16, 16b, 18; `train` also runs 15 so the numpy and scikit-learn numbers sit in the same log.",
+                      "`all` · `clean labels incidents features baselines train calibrate evaluate`, then checks that `docs/stages/` has a page for every runner and fails if one is missing.",
+                      "`predict` · one cycle of `19_predict_live.py --replay`.",
+                      "`monitor` · `20_monitor.py`.",
+                      "`retrain` · `features train calibrate evaluate` for the newest month, then `20_monitor.py --promote`, which swaps the model files atomically and records the previous set in `models/manifest.json`.",
+                      "`rollback` · `20_monitor.py --rollback`: the previous set becomes live again.",
+                      "`serve` · `uvicorn serve.app:app --port 8000`.",
+                      "`MONTHS ?= $(shell ls data/pems_processed | sed 's/.parquet//')` at the top, so every target defaults to every month present and `make features MONTHS=2026-03` does one."
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "README.md",
+                "tag": "phase 0 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The page a stranger reads first. It must say, in this order: what the project predicts in one sentence (the plan's bold line); the three data sources and where their keys come from; setup in four commands (`git clone`, `python -m venv .venv && source .venv/bin/activate`, `pip install -r requirements.txt`, `cp .env.example .env` and fill it in); how to run one poll and how to run everything (`make collect`, `make all`); the tree above, abridged to the folders; the convention that runners are numbered and modules are imported; where the numbers are (`output/evaluation_report.json`) and where the decisions are (`docs/decisions/`). Under 120 lines. Phase 0 writes the first four parts; each later phase adds its line to the run section."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "common.py",
+                "tag": "phase 0 · repo root",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The one module every other module imports: the paths, the constants that define the problem, and three helpers. Nothing in it does any work on data."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`ROOT = Path(__file__).resolve().parent`, and `DATA`, `MODELS`, `OUTPUT`, `LOGS` as `ROOT / 'data'` and so on. Every other file builds paths from these, never from a string.",
+                      "The constants listed in the last section of this page, with these exact names, so a Build page can say `common.SLOW_RATIO` and mean one number.",
+                      "`log_stage(name, t0, rows=None, **extra)` · prints and appends to `logs/pipeline.log` the line `stage=<name> seconds=<n> rss_gb=<n> rows=<n>` plus any extra key=value pairs; the seconds are `time.time() - t0`, the memory is `psutil.Process().memory_info().rss / 1e9`.",
+                      "`atomic_write(df_or_obj, path)` · writes a DataFrame (Parquet), a dict (JSON) or text to `path.with_suffix(path.suffix + '.tmp')`, then `os.replace` into place.",
+                      "`env(name, default=None, required=False)` · reads `.env` once through `load_dotenv()` and returns the variable, exiting with a one-line message naming it when required and missing."
+                    ]
+                  }
+                ]
+              }
+            ],
+            "title": "The requirements"
+          },
+          {
+            "k": "h3",
+            "b": [
+              {
+                "t": "p",
+                "s": "Every generated file, who writes it and what it holds. Column lists are in the Build page of the runner that writes the file; the plan has the same tables under each stage."
+              },
+              {
+                "t": "ul",
+                "items": [
+                  "`data/fremont_events_log.csv` · runner 02, from phase 0. One row per event per poll. Phase 0's columns: `pulled_at, id, event_type, severity, headline, roads, created, updated`. Phase 1 renames `id` to `event_id` and `roads` to `road_names`, and adds `status, directions, lat, lon, geo_missing, first_seen_at, last_seen_at`, which is the plan's stage 2 layout.",
+                  "`data/events_raw/YYYY-MM-DD.jsonl` · runner 02, from phase 1. Every poll's raw response, one JSON object per line with `pulled_at` added, so the join rules can change without polling again.",
+                  "`data/pems_raw/*.txt.gz`, `manifest.json`, `pems_last_request.json` · runner 09, phase 3. Raw district-4 files, about 45 MB each; the manifest makes reruns skip finished days and catches truncated downloads; the request clock keeps the 305-second gap across runs.",
+                  "`data/pems_meta/d04_text_meta_*.txt` and `fremont_stations.parquet` · runner 09 moves the meta file; runner 10 builds the registry from it, about 100 mainline stations with `upstream_id`, `downstream_id`, `lanes`, `length`, `abs_pm`.",
+                  "`data/pems_processed/YYYY-MM.parquet` · runner 10. Columns `station_id, timestamp, speed, occupancy, flow, observed_frac, samples`, float32, one row per station per five-minute UTC slot, no gaps.",
+                  "`data/labels/YYYY-MM.parquet` · runner 11. Adds `profile_speed, speed_ratio, ratio_ff, label, label_abs`; the profile itself is a model artifact, `models/profile_<split>.parquet`.",
+                  "`data/incidents/YYYY-MM.parquet` · runner 12. The six incident columns keyed by `station_id, timestamp`.",
+                  "`data/weather/openmeteo_hourly.parquet` · `weather.py`, phase 6. Hourly `precip_mm` for Fremont, UTC.",
+                  "`data/features/YYYY-MM.parquet` · runner 13. About 60 feature columns plus `y_15, y_30, y_60, speed_t30`, keys `station_id, timestamp`; rows whose target is unknown are dropped, never filled.",
+                  "`models/` · `bottleneck_weights.npz` (03); `profile_<split>.parquet` (11); `gbt_h{h}_thresh0.6_win3.txt`, `gbt_h{h}_features.json`, `categorical_dtypes.joblib` (16); `iso_h{h}.joblib`, `calibration.json` (16b); `mlp_h30.pt` (17a); `stnet_thresh0.6_win3.pt` (17b); `manifest.json` (phase 9).",
+                  "`output/` · `evaluation_report.json` (18); `predictions_latest.json` and `predictions_log.parquet` (19); `monitor/YYYY-WW.json` (20); `studies/<name>.json` and `.png` (every side study).",
+                  "`logs/` · `pipeline.log` (every runner's last line), `collect.log`, `predict.log`, `predict.err`."
+                ]
+              }
+            ],
+            "title": "The data, the models and the outputs"
+          },
+          {
+            "k": "h3",
+            "b": [
+              {
+                "t": "p",
+                "s": "Written once in `common.py` and imported everywhere. Each is the plan's value; the Build pages say where each is used and phase 6 is where the label numbers are finally decided with data."
+              },
+              {
+                "t": "ul",
+                "items": [
+                  "`FREMONT_BOX = (37.447, 37.612, -122.075, -121.888)` · south, north, west, east; latitude then longitude.",
+                  "`ROUTES = {880, 680, 84}` and `LANE_TYPE = 'ML'` · mainline detectors on I-880, I-680 and SR-84 only.",
+                  "`FREMONT_ROADS` · the road-name fragments the 511 filter accepts: I-880, I-680, SR-84, CA-84, Mission Blvd, Fremont Blvd, Auto Mall Pkwy, Dumbarton.",
+                  "`TZ = 'America/Los_Angeles'`; every stored timestamp is UTC; `tz_localize(TZ, ambiguous='NaT', nonexistent='shift_forward')` is the only allowed conversion.",
+                  "`STEP = '5min'`, `STEPS_PER_DAY = 288`.",
+                  "`MIN_OBSERVED = 50` · rows with `% Observed` below this are nulled; `MAX_FFILL = 3` · the longest gap forward-filled, in steps.",
+                  "`SPEED_RANGE = (0, 100)`, `OCC_RANGE = (0, 100)`, `FLOW_PER_LANE_MAX = 3000` · bounds; anything outside becomes NaN.",
+                  "`PROFILE_SMOOTH = 7`, `PROFILE_MIN_N = 20` · the centred rolling median over slots, and the sample count below which a cell falls back to the hourly median.",
+                  "`SLOW_RATIO = 0.6`, `SLOW_WINDOW = 3`, `SLOW_ABS_MPH = 35`, `FREE_FLOW_Q = 0.85` · the relative label, its run length, the absolute label, the free-flow percentile.",
+                  "`HORIZONS = {15: 3, 30: 6, 60: 12}` · minutes to steps.",
+                  "`LAGS = (0, 1, 2, 3, 6, 12)`, `ROLL_STEPS = {30: 6, 60: 12}`.",
+                  "`SPLIT_GAP_DAYS = 1` · between train and validation, and between validation and test.",
+                  "`INCIDENT_MILES = 1.0`, `INCIDENT_MIN_MINUTES = 20`, `NO_INCIDENT_MILES = 99`, `SEVERITY = {'Unknown': 1, 'Minor': 1, 'Moderate': 2, 'Major': 3}`.",
+                  "`LGBM_PARAMS` · `objective='binary', is_unbalance=True, num_leaves=63, min_data_in_leaf=200, learning_rate=0.05, feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, lambda_l2=1.0, max_bin=255, num_threads=8, metric='average_precision', verbose=-1`; `LGBM_ROUNDS = 3000`, `LGBM_PATIENCE = 100`.",
+                  "`CATEGORICALS = ['station_id', 'fwy', 'dir', 'daytype']`.",
+                  "`ALERT_PRECISION = 0.5` · the validation precision `tau_h` must keep; `CHALLENGER_MARGIN = 0.02` · the validation AP gain the net needs to be shipped.",
+                  "`PSI_ALERT = 0.2`, `RETRAIN_DROP = 0.2`, `RETRAIN_WEEKS = 2` · drift and decay rules for `20_monitor.py`.",
+                  "`POLL_SECONDS = 900`, `PEMS_GAP_SECONDS = 305`, `PREDICT_SECONDS = 300`."
+                ]
+              }
+            ],
+            "title": "The numbers the whole project shares"
+          }
+        ],
+        "terms": [
+          "makefile",
+          "repository",
+          "script",
+          "split",
+          "arm64",
+          "byte",
+          "exception",
+          "gpu",
+          "command",
+          "gradient-boosting",
+          "python",
+          "conda",
+          "virtual-environment",
+          "speed",
+          "pems",
+          "vs-code",
+          "511",
+          "api-key",
+          "incident",
+          "station",
+          "parquet",
+          "cd",
+          "target",
+          "inputs",
+          "loop-detector",
+          "path",
+          "stage",
+          "launchd",
+          "gitignore",
+          "model",
+          "readme",
+          "def",
+          "pip",
+          "retraining",
+          "registry",
+          "profile",
+          "merge",
+          "nn-module",
+          "rolling",
+          "metric",
+          "onset",
+          "csv",
+          "logistic-regression",
+          "parameters",
+          "y-30",
+          "persistence",
+          "numpy",
+          "scikit-learn",
+          "horizon",
+          "neural-network",
+          "pytorch",
+          "drift",
+          "pytest",
+          "model-card",
+          "duckdb",
+          "gcn",
+          "json",
+          "for",
+          "grid",
+          "calibration",
+          "average-precision",
+          "bootstrap",
+          "median",
+          "conformal-prediction",
+          "semicolon",
+          "library",
+          "pandas",
+          "array",
+          "http",
+          "baseline",
+          "gradient",
+          "matplotlib",
+          "sql",
+          "server",
+          "hyperparameter",
+          "residual",
+          "transform",
+          "transformer",
+          "embedding",
+          "bayesian",
+          "terminal",
+          "commit",
+          "precision",
+          "git-status",
+          "swap",
+          "port",
+          "shell",
+          "dataframe",
+          "polling",
+          "mainline",
+          "station-id",
+          "timestamp",
+          "occupancy",
+          "flow",
+          "float32",
+          "timezone",
+          "five-minute-row",
+          "nan",
+          "observed",
+          "quantile",
+          "num-leaves",
+          "categorical"
         ]
       },
       {
         "title": "How to study so it sticks",
+        "id": "habits",
         "sections": [
           {
             "k": "intro",
@@ -5375,6 +5869,25 @@
             ],
             "title": "Honest notes"
           }
+        ],
+        "terms": [
+          "baseline",
+          "persistence",
+          "profile",
+          "exception",
+          "metric",
+          "roc",
+          "f1",
+          "threshold",
+          "split",
+          "time-series",
+          "dataframe",
+          "model",
+          "drift",
+          "mainline",
+          "gradient",
+          "neural-network",
+          "q-learning"
         ]
       }
     ],
@@ -5703,7 +6216,7 @@
                       "`bash Miniforge3-MacOSX-arm64.sh -b -p ~/miniforge3` — runs it without prompts, installing into a folder called miniforge3 in your home folder",
                       "`~/miniforge3/bin/conda init zsh` — adds a few lines to ~/.zshrc so future terminals find this Python first",
                       "`python -c \"...print(platform.machine(), sys.version)\"` — runs one line of Python; it must print arm64 followed by a version of 3.11 or newer",
-                      "`which python` — shows which file the word python actually runs; it should be inside your miniforge3 folder, not /usr/bin. `which python3` prints the identical path: from here on the two names are the same interpreter, so instructions that say `python3` and instructions that say `python` mean exactly the same thing"
+                      "`which python` — shows which file the word python actually runs; it should be inside your miniforge3 folder, not /usr/bin"
                     ]
                   }
                 ],
@@ -5792,7 +6305,7 @@
                     "items": [
                       "`python -m venv .venv` — creates the private environment in a hidden folder called .venv",
                       "`source .venv/bin/activate` — switches this terminal into it; your prompt gains a (.venv) prefix",
-                      "`which python` — must now print .../Traffic1/.venv/bin/python — inside the project, not miniforge3. `which python3` prints that same path; inside a venv both names run the one interpreter, so either spelling works",
+                      "`which python` — must now print .../Traffic1/.venv/bin/python — inside the project, not miniforge3",
                       "`python -V` — prints the version, which should match the Python you installed"
                     ]
                   }
@@ -12796,7 +13309,7 @@
                   },
                   {
                     "t": "p",
-                    "s": "Neighbors: PeMS gives every station a postmile, `Abs_PM`, its distance along the freeway. Caltrans measures it from the south end and from the west end, so postmile grows as you drive north or east and shrinks as you drive south or west. Sorting on `Abs_PM` therefore lines the stations up in driving order on the N and E sides only; on the S and W sides it lines them up backwards, and upstream and downstream come out swapped for half the corridor. Multiplying by +1 for N and E and by −1 for S and W gives `drive_pm`, a number that always grows in the direction traffic moves, and sorting on that fixes both sides at once. `groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` then gives, within each freeway-direction, the station one position earlier in driving order: the upstream neighbor, the one traffic comes from. `shift(-1)` gives the downstream neighbor, the one traffic goes to. `to_parquet` saves the registry."
+                    "s": "Neighbors: PeMS gives every station a postmile, `Abs_PM`, its distance along the freeway. Sort by freeway, direction and postmile and the stations line up in driving order. `groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` then gives, within each freeway-direction, the station one position earlier in the list: the upstream neighbor, the one traffic comes from. `shift(-1)` gives the downstream neighbor, the one traffic goes to. `to_parquet` saves the registry."
                   },
                   {
                     "t": "p",
@@ -12806,7 +13319,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "meta = pd.read_csv(\"data/pems_meta/d04_text_meta_2026_03_01.txt\", sep=\"\\t\")\nfre = meta[(meta.Fwy.isin([880, 680, 84])) & meta.Latitude.between(37.447, 37.612)\n           & meta.Longitude.between(-122.075, -121.888) & (meta.Type == \"ML\")].copy()\nfre[\"drive_pm\"] = fre.Abs_PM * fre.Dir.map({\"N\": 1, \"E\": 1, \"S\": -1, \"W\": -1})\nfre = fre.sort_values([\"Fwy\", \"Dir\", \"drive_pm\"])\nfre[\"upstream_id\"]   = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)\nfre[\"downstream_id\"] = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(-1)\nfre.to_parquet(\"data/pems_meta/fremont_stations.parquet\")"
+                    "s": "meta = pd.read_csv(\"data/pems_meta/d04_text_meta_2026_03_01.txt\", sep=\"\\t\")\nfre = meta[(meta.Fwy.isin([880, 680, 84])) & meta.Latitude.between(37.447, 37.612)\n           & meta.Longitude.between(-122.075, -121.888) & (meta.Type == \"ML\")].copy()\nfre = fre.sort_values([\"Fwy\", \"Dir\", \"Abs_PM\"])\nfre[\"upstream_id\"]   = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)\nfre[\"downstream_id\"] = fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(-1)\nfre.to_parquet(\"data/pems_meta/fremont_stations.parquet\")"
                   },
                   {
                     "t": "p",
@@ -12818,9 +13331,8 @@
                     "items": [
                       "`meta = pd.read_csv(..., sep=\"\\t\")` — load the station list, tab-separated",
                       "`fre = meta[(...isin...) & (...between...) & (...between...) & (...== \"ML\")].copy()` — keep mainline stations on 880, 680 and 84 inside the Fremont bounding box",
-                      "`fre[\"drive_pm\"] = fre.Abs_PM * fre.Dir.map({\"N\": 1, \"E\": 1, \"S\": -1, \"W\": -1})` — a postmile that grows in the direction of travel, not just northward",
-                      "`fre.sort_values([\"Fwy\", \"Dir\", \"drive_pm\"])` — order stations along each freeway in the direction cars actually drive it",
-                      "`fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` — the previous station in driving order: upstream, on every direction",
+                      "`fre.sort_values([\"Fwy\", \"Dir\", \"Abs_PM\"])` — order stations along each freeway in each direction",
+                      "`fre.groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` — the previous station along the road: upstream",
                       "`...shift(-1)` — the next station along the road: downstream",
                       "`fre.to_parquet(\"data/pems_meta/fremont_stations.parquet\")` — save the registry for every later stage"
                     ]
@@ -12911,11 +13423,11 @@
                   {
                     "t": "p",
                     "lead": "Before you do this",
-                    "s": "Every later stage assumes that each station has exactly one row per five-minute slot, in order, with no gaps: the full grid. Missing rows must be added as NaN, not skipped. An index in pandas is the row labels; a MultiIndex is a two-level index, here (station, timestamp). `pd.MultiIndex.from_product` builds every combination of the station list and the timestamp list: N stations × the slots in the day, 288 of them on an ordinary day."
+                    "s": "Every later stage assumes that each station has exactly one row per five-minute slot, in order, with no gaps: the full grid. Missing rows must be added as NaN, not skipped. An index in pandas is the row labels; a MultiIndex is a two-level index, here (station, timestamp). `pd.MultiIndex.from_product` builds every combination of the station list and the timestamp list: N stations × 288 slots."
                   },
                   {
                     "t": "p",
-                    "s": "The day in a PeMS file is a Pacific day, but the timestamps were converted to UTC in the last step, and `floor(\"D\")` on a UTC timestamp floors to midnight UTC — five in the afternoon of the day before, in California. A grid anchored there starts the previous evening and stops around five in the afternoon, throwing away the evening rush hour: the part of the day this whole course exists to predict. So convert back to `America/Los_Angeles` first, floor there to get local midnight, and walk the day out from that point. `start + pd.DateOffset(days=1)` is the same wall-clock time the next morning, 24 hours on an ordinary day and 23 or 25 on the two days the clocks change, so the slot count comes out right without being hardcoded; `.tz_convert(\"UTC\")` puts the finished slots back on the UTC axis the tidy table stores. `set_index([...])` makes station and timestamp the row labels; `rename_axis` gives the levels the names the rest of the course uses; `reindex(grid)` reorders onto the full grid, inserting NaN rows for any missing slot."
+                    "s": "`pd.date_range(start, periods=288, freq=\"5min\", tz=\"UTC\")` makes the 288 slot timestamps; `day.timestamp.min().floor(\"D\")` is midnight UTC of the day in the file. `set_index([...])` makes station and timestamp the row labels; `rename_axis` gives the levels the names the rest of the course uses; `reindex(grid)` reorders onto the full grid, inserting NaN rows for any missing slot."
                   },
                   {
                     "t": "p",
@@ -12924,12 +13436,12 @@
                   {
                     "t": "p",
                     "lead": "Do this",
-                    "s": "Anchor the grid on the local day, reindex onto it per station, then forward-fill within station."
+                    "s": "Reindex onto the full grid per station, then forward-fill within station."
                   },
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "start = day.timestamp.min().tz_convert(\"America/Los_Angeles\").floor(\"D\")\nslots = pd.date_range(start, start + pd.DateOffset(days=1), freq=\"5min\", inclusive=\"left\").tz_convert(\"UTC\")\ngrid = pd.MultiIndex.from_product([sorted(keep), slots], names=[\"station_id\", \"timestamp\"])\ntidy = day.set_index([\"station\", \"timestamp\"]).rename_axis([\"station_id\", \"timestamp\"]).reindex(grid)\ntidy[[\"speed\", \"occ\", \"flow\"]] = tidy.groupby(level=\"station_id\")[[\"speed\", \"occ\", \"flow\"]].ffill(limit=3)\ntidy = tidy.astype({\"speed\": \"float32\", \"occ\": \"float32\", \"flow\": \"float32\"})"
+                    "s": "grid = pd.MultiIndex.from_product([sorted(keep), pd.date_range(day.timestamp.min().floor(\"D\"), periods=288, freq=\"5min\", tz=\"UTC\")],\n                                  names=[\"station_id\", \"timestamp\"])\ntidy = day.set_index([\"station\", \"timestamp\"]).rename_axis([\"station_id\", \"timestamp\"]).reindex(grid)\ntidy[[\"speed\", \"occ\", \"flow\"]] = tidy.groupby(level=\"station_id\")[[\"speed\", \"occ\", \"flow\"]].ffill(limit=3)\ntidy = tidy.astype({\"speed\": \"float32\", \"occ\": \"float32\", \"flow\": \"float32\"})"
                   },
                   {
                     "t": "p",
@@ -12939,9 +13451,7 @@
                   {
                     "t": "ul",
                     "items": [
-                      "`start = day.timestamp.min().tz_convert(\"America/Los_Angeles\").floor(\"D\")` — local midnight, not midnight UTC, so the evening peak stays in the day",
-                      "`slots = pd.date_range(start, start + pd.DateOffset(days=1), freq=\"5min\", inclusive=\"left\").tz_convert(\"UTC\")` — the day’s five-minute slots, 288 of them on an ordinary day",
-                      "`grid = pd.MultiIndex.from_product([stations, slots], names=[\"station_id\", \"timestamp\"])` — every station × every slot",
+                      "`grid = pd.MultiIndex.from_product([stations, slots], names=[\"station_id\", \"timestamp\"])` — every station × every five-minute slot of the day",
                       "`tidy = day.set_index([\"station\", \"timestamp\"]).rename_axis([...]).reindex(grid)` — put the rows on that grid, with NaN where a slot is missing",
                       "`tidy[...] = tidy.groupby(level=\"station_id\")[...].ffill(limit=3)` — carry each station's last reading forward for up to three slots",
                       "`tidy = tidy.astype({... \"float32\"})` — halve the memory of the measurement columns"
@@ -12956,7 +13466,7 @@
                   {
                     "t": "p",
                     "lead": "Before you do this",
-                    "s": "`assert` is Python's way of saying 'this must be true, stop with an error if not'. It is the cheapest safety net there is: an assertion that fails at the end of a stage is far better than a silent wrong file used by every later stage. Here it checks that every station really has one row per slot after reindexing — `len(slots)`, not a hardcoded 288, so the check still holds on the two days a year the clocks change; the `.all()` says the test must hold for every station."
+                    "s": "`assert` is Python's way of saying 'this must be true, stop with an error if not'. It is the cheapest safety net there is: an assertion that fails at the end of a stage is far better than a silent wrong file used by every later stage. Here it checks that every station really has 288 rows after reindexing; the `.all()` says the test must hold for every station."
                   },
                   {
                     "t": "p",
@@ -12965,12 +13475,12 @@
                   {
                     "t": "p",
                     "lead": "Do this",
-                    "s": "Validate before writing: one row per slot per station, values in range, and log memory and seconds."
+                    "s": "Validate before writing: 288 rows per station, values in range, and log memory and seconds."
                   },
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "assert (tidy.groupby(level=\"station_id\").size() == len(slots)).all()\ntidy.reset_index().to_parquet(\"data/pems_processed/2026-03.parquet\")"
+                    "s": "assert (tidy.groupby(level=\"station_id\").size() == 288).all()\ntidy.reset_index().to_parquet(\"data/pems_processed/2026-03.parquet\")"
                   },
                   {
                     "t": "p",
@@ -12980,7 +13490,7 @@
                   {
                     "t": "ul",
                     "items": [
-                      "`assert (tidy.groupby(level=\"station_id\").size() == len(slots)).all()` — stop if any station is not on the full daily grid",
+                      "`assert (tidy.groupby(level=\"station_id\").size() == 288).all()` — stop if any station is not on the full daily grid",
                       "`tidy.reset_index().to_parquet(\"data/pems_processed/2026-03.parquet\")` — write the tidy table with station and timestamp as columns"
                     ]
                   }
@@ -17282,17 +17792,17 @@
                   },
                   {
                     "t": "p",
-                    "s": "The feature list is everything in the table except the columns that are not inputs: the timestamp, the two present-time labels, the three targets and any helper column. Building it by exclusion is convenient and dangerous — anything you forget to name is silently used as a feature, and the table still carries `ts`, the original timestamp text, along with `district` and `lane_type`, which hold the same value in every row here. LightGBM will not train on text at all: a column of Python strings stops it with `DataFrame.dtypes for data must be int, float or bool` before the first tree is built, so those three have to be named in `drop`. A categorical feature is one whose values are names rather than quantities (station id, freeway, direction, day type); declaring them lets LightGBM split on 'is the station one of these' instead of treating the id as a number. Declaring is not enough on its own: the column has to be pandas `category` dtype first, and the categories have to be the same list in every split, or the same code means a different station in training and in validation. `pd.CategoricalDtype(sorted(train_table[c].dropna().unique()))` builds one shared dtype per column from the whole table and `astype` applies it to all three splits. `lgb.Dataset` wraps a table and its targets in LightGBM's own binned format; `reference=dtr` makes the validation set use the same bins as training; `free_raw_data=False` keeps the original table available for later predictions. The `assert` is there because this is the mistake that costs an evening: it fails loudly, and here, if a text column is still in the list."
+                    "s": "The feature list is everything in the table except the columns that are not inputs: the timestamp, the two present-time labels, the three targets and any helper column. The list comprehension `[c for c in ... if c not in (...)]` builds that list. A categorical feature is one whose values are names rather than quantities (station id, freeway, direction); declaring them lets LightGBM split on 'is the station one of these' instead of treating the id as a number. `lgb.Dataset` wraps a table and its targets in LightGBM's own binned format; `reference=dtr` makes the validation set use the same bins as training; `free_raw_data=False` keeps the original table available for later predictions."
                   },
                   {
                     "t": "p",
                     "lead": "Do this",
-                    "s": "Drop the text columns, give the categoricals one shared dtype, then build the LightGBM datasets."
+                    "s": "Prepare LightGBM datasets with categoricals declared."
                   },
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "import lightgbm as lgb\ndrop = {\"timestamp\", \"ts\", \"district\", \"lane_type\", \"label\", \"label_abs\", \"y_15\", \"y_30\", \"y_60\", \"speed_t30\"}\ncats = [\"station_id\", \"fwy\", \"dir\", \"daytype\"]\nctype = {c: pd.CategoricalDtype(sorted(train_table[c].dropna().unique())) for c in cats}\ntr = tr.astype(ctype); va = va.astype(ctype); te = te.astype(ctype)\nfeats = [c for c in train_table.columns if c not in drop]\nassert not [c for c in feats if tr[c].dtype == object], \"a text column is still in feats\"\ndtr = lgb.Dataset(tr[feats], tr.y_30, categorical_feature=cats, free_raw_data=False)\ndva = lgb.Dataset(va[feats], va.y_30, categorical_feature=cats, reference=dtr)"
+                    "s": "import lightgbm as lgb\nfeats = [c for c in train_table.columns if c not in (\"timestamp\", \"label\", \"label_abs\", \"y_15\", \"y_30\", \"y_60\", \"speed_t30\")]\ncats = [\"station_id\", \"fwy\", \"dir\"]\ndtr = lgb.Dataset(tr[feats], tr.y_30, categorical_feature=cats, free_raw_data=False)\ndva = lgb.Dataset(va[feats], va.y_30, categorical_feature=cats, reference=dtr)"
                   },
                   {
                     "t": "p",
@@ -17302,11 +17812,7 @@
                   {
                     "t": "ul",
                     "items": [
-                      "`drop = {\"timestamp\", \"ts\", \"district\", \"lane_type\", ...}` — the timestamp, the text columns and the label columns, none of which are inputs",
-                      "`ctype = {c: pd.CategoricalDtype(sorted(train_table[c].dropna().unique())) for c in cats}` — one shared category list per column, so the codes mean the same thing in every split",
-                      "`tr = tr.astype(ctype); va = va.astype(ctype); te = te.astype(ctype)` — apply it to all three splits",
-                      "`feats = [c for c in train_table.columns if c not in drop]` — every column that is a legitimate input",
-                      "`assert not [c for c in feats if tr[c].dtype == object]` — fail here if a text column slipped through, not deep inside LightGBM",
+                      "`feats = [c for c in train_table.columns if c not in (...)]` — every column that is a legitimate input",
                       "`cats = [\"station_id\", \"fwy\", \"dir\"]` — the columns that are names, not amounts",
                       "`dtr = lgb.Dataset(tr[feats], tr.y_30, categorical_feature=cats, free_raw_data=False)` — training data in LightGBM's format",
                       "`dva = lgb.Dataset(va[feats], va.y_30, categorical_feature=cats, reference=dtr)` — validation data, binned the same way"
@@ -20287,7 +20793,7 @@
                 "b": [
                   {
                     "t": "p",
-                    "s": "Clustering as optimization: k-means turns out to be a form of coordinate descent that minimizes within-cluster variance, and a Gaussian mixture fit with EM is its probabilistic, soft-assignment version. There is no ground truth to check a clustering against, so a 'good' clustering is judged by stability across reruns and by whether it helps a downstream task instead. Distance-based methods like k-means also run into the curse of dimensionality: with enough features, every pair of points ends up looking almost equally far apart, which weakens what 'nearest' even means. PCA is the best possible low-rank approximation of the data in a precise sense (the Eckart-Young theorem), it is closely related to the singular value decomposition (SVD), and its real limit is that it only ever looks for linear structure, so variance along a curved or nonlinear pattern is not something PCA can see as signal. Nonlinear techniques like t-SNE and UMAP exist for exactly that gap, but they are built for looking, not for feeding: they preserve which points were close neighbors well enough to plot, not the kind of well-defined, reusable axes PCA produces. t-SNE has no way to place a new point at all once it is fitted, which rules it out as a feature transform outright; UMAP can transform new data, but its embedding shifts with its random seed and its neighbourhood settings, so if you use it as a feature you must fit it on the training split only and treat the whole embedding as one more hyperparameter to validate."
+                    "s": "Clustering as optimization: k-means turns out to be a form of coordinate descent that minimizes within-cluster variance, and a Gaussian mixture fit with EM is its probabilistic, soft-assignment version. There is no ground truth to check a clustering against, so a 'good' clustering is judged by stability across reruns and by whether it helps a downstream task instead. Distance-based methods like k-means also run into the curse of dimensionality: with enough features, every pair of points ends up looking almost equally far apart, which weakens what 'nearest' even means. PCA is the best possible low-rank approximation of the data in a precise sense (the Eckart-Young theorem), it is closely related to the singular value decomposition (SVD), and its real limit is that it only ever looks for linear structure, so variance along a curved or nonlinear pattern is not something PCA can see as signal. Nonlinear techniques like t-SNE and UMAP exist for exactly that gap, but only for visualization: they preserve which points were close neighbors well enough to plot, not the kind of well-defined axes PCA produces, so their output should never be fed into another model as a feature."
                   },
                   {
                     "t": "p",
@@ -22324,7 +22830,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "sid = df.station_id.value_counts().idxmax()      # a busy station with the fewest gaps; any id from reg.ID works\ns = df[df.station_id == sid].set_index(\"timestamp\").speed.interpolate(limit=3)\nacf = [s.autocorr(lag) for lag in range(1, 49)]\nimport matplotlib.pyplot as plt; plt.plot(range(1, 49), acf); plt.xlabel(\"lag (5-min steps)\"); plt.ylabel(\"autocorrelation\"); plt.show()"
+                    "s": "s = df[df.station_id == sid].set_index(\"timestamp\").speed.interpolate(limit=3)\nacf = [s.autocorr(lag) for lag in range(1, 49)]\nimport matplotlib.pyplot as plt; plt.plot(range(1, 49), acf); plt.xlabel(\"lag (5-min steps)\"); plt.ylabel(\"autocorrelation\"); plt.show()"
                   },
                   {
                     "t": "p",
@@ -22395,7 +22901,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "ids = sorted(reg.ID); pos = {i: k for k, i in enumerate(ids)}; N = len(ids)   # same order as df.pivot's station columns\nA_up = np.zeros((N, N), np.float32); A_down = np.zeros((N, N), np.float32)\nfor _, r in reg.iterrows():\n    if pd.notna(r.upstream_id):   A_up[pos[r.ID], pos[r.upstream_id]] = 1\n    if pd.notna(r.downstream_id): A_down[pos[r.ID], pos[r.downstream_id]] = 1\nassert ids == sorted(df.station_id.unique()), \"graph order must match the pivot's station order\""
+                    "s": "ids = list(reg.ID); pos = {i: k for k, i in enumerate(ids)}; N = len(ids)\nA_up = np.zeros((N, N), np.float32); A_down = np.zeros((N, N), np.float32)\nfor _, r in reg.iterrows():\n    if pd.notna(r.upstream_id):   A_up[pos[r.ID], pos[r.upstream_id]] = 1\n    if pd.notna(r.downstream_id): A_down[pos[r.ID], pos[r.downstream_id]] = 1"
                   },
                   {
                     "t": "p",
@@ -22425,7 +22931,7 @@
                   },
                   {
                     "t": "p",
-                    "s": "`to_numpy(np.float32).reshape(T, 6, N)` gives a three-dimensional array: time × channel × station. Convert once, before the list comprehension — putting `wide.to_numpy(...)` inside it re-converts the whole table for every window and turns a fraction of a second into minutes. The comprehension then slices, for every t from 12 onward, the twelve rows before t; `np.stack` piles those slices into a four-dimensional array of shape (windows, 12, 6, N). Shapes are the whole difficulty of deep learning code; print `X.shape` and say each number's meaning out loud. Memory: a month is about 8,600 windows × 12 × 6 × N floats, a few hundred megabytes for N near a hundred, fine on 16 GB."
+                    "s": "`to_numpy(np.float32).reshape(T, 6, N)` gives a three-dimensional array: time × channel × station. The list comprehension slices, for every t from 12 onward, the twelve rows before t; `np.stack` piles those slices into a four-dimensional array of shape (windows, 12, 6, N). Shapes are the whole difficulty of deep learning code; print `X.shape` and say each number's meaning out loud. Memory: a month is about 8,600 windows × 12 × 6 × N floats, a few hundred megabytes for N near a hundred, fine on 16 GB."
                   },
                   {
                     "t": "p",
@@ -22435,7 +22941,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "chan = [\"speed_ratio\", \"occ\", \"flow\", \"incident_active\", \"min_sin\", \"min_cos\"]\ndf[\"incident_active\"] = df.get(\"incident_active\", 0)          # 511 flag from stage 7; 0 if you skipped it\nwide = df.pivot(index=\"timestamp\", columns=\"station_id\", values=chan)        # (T, 6*N), stations sorted ascending\narr = wide.to_numpy(np.float32).reshape(len(wide), len(chan), N)            # time × channel × station\narr = np.nan_to_num(arr)                                                    # a NaN anywhere makes the whole loss NaN\nX = np.stack([arr[t - 12:t] for t in range(12, len(wide))])                 # (T-12, 12, 6, N)"
+                    "s": "chan = [\"speed_ratio\", \"occ\", \"flow_scaled\", \"incident_active\", \"min_sin\", \"min_cos\"]\nwide = df.pivot(index=\"timestamp\", columns=\"station_id\", values=chan)        # (T, 6*N)\nX = np.stack([wide.to_numpy(np.float32).reshape(len(wide), len(chan), N)[t - 12:t] for t in range(12, len(wide))])  # (T-12, 12, 6, N)"
                   },
                   {
                     "t": "p",
@@ -22464,7 +22970,7 @@
                   },
                   {
                     "t": "p",
-                    "s": "The output, (batch, N, 3), is logits: apply a sigmoid and the calibration of lesson 11 before treating them as probabilities. To train it you need a target of the same shape. Pivot the three labels exactly as you pivoted the channels, `Y = df.pivot(index=\"timestamp\", columns=\"station_id\", values=[\"y_15\", \"y_30\", \"y_60\"]).to_numpy(np.float32).reshape(len(wide), 3, N).transpose(0, 2, 1)`, then take `Y[11:len(wide)-1]` so that window `t-12`, whose last row is `t-1`, is scored against the labels at `t-1`. Split the windows by timestamp, never at random. Fill NaNs in the channels with `np.nan_to_num`, since one missing occupancy makes the whole loss NaN. Then the loop of lesson 9.4 applies with the squeeze dropped: `lossf(net(xb, A_up, A_down), yb)` with `pos_weight` a length-3 tensor, one per horizon."
+                    "s": "In `forward`, `x` arrives as (batch, 12, 6, N). `permute(0, 3, 1, 2)` reorders the axes to (batch, N, 12, 6) and `reshape(B * N, T, C)` treats every station in every batch item as its own sequence, which is what a GRU wants. `self.gru(seq)[1][0]` is the final hidden state of each sequence; `reshape(B, N, -1)` puts the stations back together (−1 means 'work this dimension out'). Then two rounds of neighbor mixing with the adjacency matrices from step 3, and the head. The output, (batch, N, 3), is logits: apply a sigmoid and the calibration of lesson 11 before treating them as probabilities. Train it with the same loop as lesson 9.4."
                   },
                   {
                     "t": "p",
@@ -22474,7 +22980,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "A_up_t = torch.as_tensor(A_up, device=dev); A_down_t = torch.as_tensor(A_down, device=dev)   # numpy @ tensor is a TypeError\n\nclass STNet(nn.Module):\n    def __init__(self, C=6, H=64):\n        super().__init__(); self.gru = nn.GRU(C, H, batch_first=True); self.mix1 = Mix(H); self.mix2 = Mix(H); self.head = nn.Linear(H, 3)\n    def forward(self, x, A_up, A_down):                     # x: (B, 12, C, N); A_*: (N, N) tensors on the same device\n        B, T, C, N = x.shape\n        seq = x.permute(0, 3, 1, 2).reshape(B * N, T, C)     # every station is its own sequence\n        h = self.gru(seq)[1][0].reshape(B, N, -1)\n        h = self.mix2(self.mix1(h, A_up, A_down), A_up, A_down)\n        return self.head(h)                                  # (B, N, 3) logits for 15/30/60"
+                    "s": "class STNet(nn.Module):\n    def __init__(self, C=6, H=64):\n        super().__init__(); self.gru = nn.GRU(C, H, batch_first=True); self.mix1 = Mix(H); self.mix2 = Mix(H); self.head = nn.Linear(H, 3)\n    def forward(self, x, A_up, A_down):                     # x: (B, 12, C, N)\n        B, T, C, N = x.shape\n        seq = x.permute(0, 3, 1, 2).reshape(B * N, T, C)     # every station is its own sequence\n        h = self.gru(seq)[1][0].reshape(B, N, -1)\n        h = self.mix2(self.mix1(h, A_up, A_down), A_up, A_down)\n        return self.head(h)                                  # (B, N, 3) logits for 15/30/60"
                   },
                   {
                     "t": "p",
@@ -22797,7 +23303,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "from sklearn.isotonic import IsotonicRegression\nva = va.sort_values(\"timestamp\")\ncut = va.timestamp.quantile(0.5)                       # fit the calibrator on the first half, judge it on the second\nfit, held = va[va.timestamp <= cut], va[va.timestamp > cut]\niso = IsotonicRegression(out_of_bounds=\"clip\").fit(fit.p_30, fit.y_30)\nva[\"q_30\"] = iso.predict(va.p_30)\nprint(\"held-out Brier raw\", np.mean((held.p_30 - held.y_30) ** 2),\n      \"held-out Brier calibrated\", np.mean((iso.predict(held.p_30) - held.y_30) ** 2))   # on the fitted rows it can only fall, which proves nothing"
+                    "s": "from sklearn.isotonic import IsotonicRegression\niso = IsotonicRegression(out_of_bounds=\"clip\").fit(va.p_30, va.y_30)\nva[\"q_30\"] = iso.predict(va.p_30)\nprint(\"Brier raw\", np.mean((va.p_30 - va.y_30) ** 2), \"Brier calibrated\", np.mean((va.q_30 - va.y_30) ** 2))"
                   },
                   {
                     "t": "p",
@@ -22821,7 +23327,7 @@
                   {
                     "t": "p",
                     "lead": "Before you do this",
-                    "s": "p, r, thr = precision_recall_curve(va.y_30, va.q_30)\nok = np.where(p[:-1] >= 0.5)[0]\nif not len(ok):\n    raise SystemExit(\"no threshold reaches 50% precision; lower the requirement or improve the model\")\ni = ok[int(np.argmax(r[ok]))]                       # highest recall among thresholds that meet the precision floor\ntau = float(thr[i]); print(\"tau_30\", tau, \"recall\", float(r[i]))\nimport json, joblib, os\nos.makedirs(\"models\", exist_ok=True)\njoblib.dump(iso, \"models/iso_h30.joblib\")            # lesson 12's predictor loads this\ncal = json.load(open(\"models/calibration.json\")) if os.path.exists(\"models/calibration.json\") else {}\ncal[\"30\"] = {\"tau\": tau, \"precision_target\": 0.5}\njson.dump(cal, open(\"models/calibration.json\", \"w\"))"
+                    "s": "The same threshold search as lesson 6.3, now on the calibrated scores `q_30`, and now written to be saved: `float(...)` turns numpy numbers into plain Python floats so they can go into a JSON file. The requirement is unchanged: at least half of alarms must be correct. Save `tau` per horizon into `models/calibration.json`; the live predictor in lesson 12 reads it. Changing the required precision later means rerunning only this step, not retraining."
                   },
                   {
                     "t": "p",
@@ -22902,7 +23408,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "te[\"p_30\"] = m.predict(te[feats], num_iteration=m.best_iteration)   # the test split was never scored before now\nte[\"alert\"] = (iso.predict(te.p_30) >= tau).astype(int)\nleads = []\nfor sid, g in te.groupby(\"station_id\", observed=True):\n    g = g.reset_index(drop=True); on = g.index[g.onset == 1]\n    for i in on:\n        w = g.loc[max(0, i - 24):i - 1]\n        hit = w.index[w.alert == 1]\n        leads.append((i - hit[0]) * 5 if len(hit) else np.nan)\nleads = pd.Series(leads); print(\"episodes\", len(leads), \"caught\", leads.notna().mean(), \"median lead min\", leads.median())"
+                    "s": "te[\"alert\"] = (iso.predict(te.p_30) >= tau).astype(int)\nleads = []\nfor sid, g in te.groupby(\"station_id\"):\n    g = g.reset_index(drop=True); on = g.index[g.onset == 1]\n    for i in on:\n        w = g.loc[max(0, i - 24):i - 1]\n        hit = w.index[w.alert == 1]\n        leads.append((i - hit[0]) * 5 if len(hit) else np.nan)\nleads = pd.Series(leads); print(\"episodes\", len(leads), \"caught\", leads.notna().mean(), \"median lead min\", leads.median())"
                   },
                   {
                     "t": "p",
@@ -22928,7 +23434,7 @@
                   {
                     "t": "p",
                     "lead": "Before you do this",
-                    "s": "A false alarm is an alert with no slow episode in the next hour. `fut` marks whether any of the next twelve rows is slow: reversing the label series with `s[::-1]`, shifting by one so the current row is excluded, taking a rolling maximum over twelve rows, and reversing back turns a backward-looking window into a forward-looking one; `min_periods=1` lets it work near the end, and `fillna(0)` handles the last row of each station. This is one of the rare legitimate uses of future information, because it is evaluation, not a model input."
+                    "s": "A false alarm is an alert with no slow episode in the next hour. `fut` marks whether any of the next twelve rows (an hour) is slow: reversing the label series with `s[::-1]`, taking a rolling maximum over twelve rows, and reversing back turns a backward-looking window into a forward-looking one; `min_periods=1` lets it work near the end. This is one of the rare legitimate uses of future information, because it is evaluation, not a model input."
                   },
                   {
                     "t": "p",
@@ -22942,7 +23448,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "te[\"fut\"] = te.groupby(\"station_id\", observed=True).label.transform(lambda s: s[::-1].shift(1).rolling(12, min_periods=1).max()[::-1]).fillna(0)\nte[\"fa_row\"] = ((te.alert == 1) & (te.fut == 0)).astype(int)\n# collapse consecutive false-alarm rows into one episode per station: a new run starts where fa_row rises 0 -> 1\nnew_run = te.groupby(\"station_id\", observed=True).fa_row.transform(lambda s: (s.diff().fillna(s) == 1).astype(int))\nstation_days = te.groupby([te.station_id, te.timestamp.dt.floor(\"D\")], observed=True).ngroups\nprint(\"false alarms per station-day\", new_run.sum() / station_days)"
+                    "s": "te[\"fut\"] = te.groupby(\"station_id\").label.transform(lambda s: s[::-1].rolling(12, min_periods=1).max()[::-1])\nfa = te[(te.alert == 1) & (te.fut == 0)].groupby([te.station_id, te.timestamp.dt.floor(\"D\")]).size()\nprint(\"false alarms per station-day\", fa.sum() / (te.station_id.nunique() * te.timestamp.dt.floor(\"D\").nunique()))"
                   },
                   {
                     "t": "p",
@@ -24313,7 +24819,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "def L(X, y): p = np.clip(forward(X)[2], 1e-7, 1 - 1e-7); return -np.mean(y * np.log(p) + (1 - y) * np.log(1 - p))\nW1, w2 = W1.astype(np.float64), w2.astype(np.float64)          # float32 noise swamps a finite difference; check in float64\nX0, y0 = Xtr[:64].astype(np.float64), ytr[:64].astype(np.float64); gW1, gb1, gw2, gb2 = backward(X0, y0)\neps = 1e-4; i, j = 3, 5\nW1[i, j] += eps; lp = L(X0, y0); W1[i, j] -= 2 * eps; lm = L(X0, y0); W1[i, j] += eps\nprint(abs((lp - lm) / (2 * eps) - gW1[i, j]))     # ~1e-11; anything above 1e-6 is a real bug\nW1, w2 = W1.astype(np.float32), w2.astype(np.float32)          # back to float32 for training"
+                    "s": "def L(X, y): p = np.clip(forward(X)[2], 1e-7, 1 - 1e-7); return -np.mean(y * np.log(p) + (1 - y) * np.log(1 - p))\nX0, y0 = Xtr[:64], ytr[:64]; gW1, gb1, gw2, gb2 = backward(X0, y0)\neps = 1e-4; i, j = 3, 5\nW1[i, j] += eps; lp = L(X0, y0); W1[i, j] -= 2 * eps; lm = L(X0, y0); W1[i, j] += eps\nprint(abs((lp - lm) / (2 * eps) - gW1[i, j]))     # ~1e-6"
                   },
                   {
                     "t": "p",
@@ -24392,7 +24898,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "Xv = torch.tensor(Xva, device=dev)                  # upload validation once, not every epoch\nbest, patience = 0, 0\nfor epoch in range(30):\n    net.train(); perm = torch.randperm(len(yt), device=dev)\n    for i in range(0, len(perm), 2048):\n        j = perm[i:i + 2048]; opt.zero_grad(); lossf(net(Xt[j]).squeeze(1), yt[j]).backward(); opt.step()\n    net.eval()\n    with torch.no_grad(): pv = torch.sigmoid(net(Xv).squeeze(1)).cpu().numpy()\n    score = ap(yva, pv); print(epoch, score)\n    if score > best: best, patience = score, 0; torch.save(net.state_dict(), \"models/mlp_h30.pt\")\n    elif (patience := patience + 1) >= 5: break\nnet.load_state_dict(torch.load(\"models/mlp_h30.pt\"))   # put the best weights back; the loop left the last ones in memory\nprint(\"best validation AP\", best)"
+                    "s": "best, patience = 0, 0\nfor epoch in range(30):\n    net.train(); perm = torch.randperm(len(yt), device=dev)\n    for i in range(0, len(perm), 2048):\n        j = perm[i:i + 2048]; opt.zero_grad(); lossf(net(Xt[j]).squeeze(1), yt[j]).backward(); opt.step()\n    net.eval()\n    with torch.no_grad(): pv = torch.sigmoid(net(torch.tensor(Xva, device=dev)).squeeze(1)).cpu().numpy()\n    score = ap(yva, pv); print(epoch, score)\n    if score > best: best, patience = score, 0; torch.save(net.state_dict(), \"models/mlp_h30.pt\")\n    elif (patience := patience + 1) >= 5: break"
                   },
                   {
                     "t": "p",
@@ -27485,7 +27991,7 @@
               "embedding",
               "vector",
               "vector-index",
-              "chunking",
+              "chunking-2",
               "byte",
               "incident",
               "transformer",
@@ -30612,7 +31118,7 @@
                   },
                   {
                     "t": "p",
-                    "s": "Operational mechanics: idempotent jobs, atomic model swaps (write to a temporary name, rename), predictions logged with the newest input timestamp they used, and delayed scoring once labels arrive a day later. Drift: PSI = Σ (p_i − q_i) ln(p_i / q_i) over bins; with ten quantile bins, a shift of half a standard deviation in a normal feature gives PSI near 0.25, right at the alarm, and a full standard deviation gives about 0.9, far past it."
+                    "s": "Operational mechanics: idempotent jobs, atomic model swaps (write to a temporary name, rename), predictions logged with the newest input timestamp they used, and delayed scoring once labels arrive a day later. Drift: PSI = Σ (p_i − q_i) ln(p_i / q_i) over bins; a shift of one standard deviation in a normal feature gives PSI near 0.5, well past the 0.2 alarm."
                   },
                   {
                     "t": "p",
@@ -30701,7 +31207,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "from features import build_features           # the same module 13_feature_engineering.py uses\nimport json, os, lightgbm as lgb, joblib, pandas as pd\nfeats = json.load(open(\"models/gbt_h30_features.json\"))\nctype = joblib.load(\"models/categorical_dtypes.joblib\")   # the ctype dict from lesson 8; serving must reuse it\nmodels = {h: lgb.Booster(model_file=f\"models/gbt_h{h}_thresh0.6_win3.txt\") for h in (15, 30, 60)}\ncal = json.load(open(\"models/calibration.json\")); isos = {h: joblib.load(f\"models/iso_h{h}.joblib\") for h in (15, 30, 60)}\nbuf = load_last_13_steps()                       # replay mode: slice yesterday's Parquet at the wall-clock slot\nX = build_features(buf).sort_values(\"timestamp\").groupby(\"station_id\").tail(1).astype(ctype)   # newest row per station\nout = {\"generated_at\": pd.Timestamp.now(\"UTC\").isoformat(), \"input_ts\": str(buf.timestamp.max()), \"rows\": []}\nfor h, m in models.items():\n    q = isos[h].predict(m.predict(X[feats]))\n    for sid, p in zip(X.station_id, q):\n        out[\"rows\"].append({\"station_id\": int(sid), \"h\": h, \"p\": float(p), \"alert\": bool(p >= cal[str(h)][\"tau\"])})\nwith open(\"output/predictions_latest.json.tmp\", \"w\") as f:\n    json.dump(out, f); f.flush(); os.fsync(f.fileno())   # a half-written file the reader picks up is worse than a stale one\nos.replace(\"output/predictions_latest.json.tmp\", \"output/predictions_latest.json\")"
+                    "s": "from features import build_features           # the same module 13_feature_engineering.py uses\nimport json, lightgbm as lgb, joblib\nmodels = {h: lgb.Booster(model_file=f\"models/gbt_h{h}_thresh0.6_win3.txt\") for h in (15, 30, 60)}\ncal = json.load(open(\"models/calibration.json\")); isos = {h: joblib.load(f\"models/iso_h{h}.joblib\") for h in (15, 30, 60)}\nbuf = load_last_13_steps()                       # replay mode: slice yesterday's Parquet at the wall-clock slot\nX = build_features(buf).iloc[-1 * N:]            # the newest row per station\nout = {\"generated_at\": pd.Timestamp.utcnow().isoformat(), \"input_ts\": str(buf.timestamp.max()), \"rows\": []}\nfor h, m in models.items():\n    q = isos[h].predict(m.predict(X[feats]))\n    for sid, p in zip(X.station_id, q):\n        out[\"rows\"].append({\"station_id\": int(sid), \"h\": h, \"p\": float(p), \"alert\": bool(p >= cal[str(h)][\"tau\"])})\njson.dump(out, open(\"output/predictions_latest.json.tmp\", \"w\")); os.replace(\"output/predictions_latest.json.tmp\", \"output/predictions_latest.json\")"
                   },
                   {
                     "t": "p",
@@ -30744,7 +31250,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "def psi(train_col, live_col, bins=10):\n    tr, lv = train_col.dropna(), live_col.dropna()\n    if tr.nunique() <= bins:                                   # binary or low-cardinality: bin by value, not by quantile\n        cats = sorted(set(tr.unique()) | set(lv.unique()))\n        p = np.array([(tr == c).mean() for c in cats]) + 1e-6\n        q = np.array([(lv == c).mean() for c in cats]) + 1e-6\n        return float(np.sum((p - q) * np.log(p / q)))\n    edges = np.unique(np.quantile(tr, np.linspace(0, 1, bins + 1)))   # unique(): tied quantiles collapse bins silently\n    edges[0], edges[-1] = -np.inf, np.inf\n    p = np.histogram(tr, edges)[0] / len(tr) + 1e-6\n    q = np.histogram(lv, edges)[0] / len(lv) + 1e-6\n    return float(np.sum((p - q) * np.log(p / q)))"
+                    "s": "def psi(train_col, live_col, bins=10):\n    edges = np.quantile(train_col.dropna(), np.linspace(0, 1, bins + 1)); edges[0], edges[-1] = -np.inf, np.inf\n    p = np.histogram(train_col.dropna(), edges)[0] / train_col.notna().sum() + 1e-6\n    q = np.histogram(live_col.dropna(), edges)[0] / live_col.notna().sum() + 1e-6\n    return float(np.sum((p - q) * np.log(p / q)))"
                   },
                   {
                     "t": "p",
@@ -30772,7 +31278,7 @@
                   },
                   {
                     "t": "p",
-                    "s": "The merge matches station and target moment against the labelled table's `label` at that moment. `groupby(\"h\").apply(lambda g: ap(g.label, g.p))` computes average precision per horizon on real live predictions, the number that finally answers 'is the model still good'. Read it next to that period's own prevalence, never on its own: average precision's floor is the positive rate, so a quiet month with fewer jams lowers AP even when nothing about the model has changed. A steady fall in AP *at unchanged prevalence*, or a fall in the gap between the model and persistence over the same rows, means retrain."
+                    "s": "The merge matches station and target moment against the cleaned table's `label` at that moment. `groupby(\"h\").apply(lambda g: ap(g.label, g.p))` computes average precision per horizon on real live predictions, the number that finally answers 'is the model still good'. Compare it with the validation and test numbers from training; a steady fall means retrain."
                   },
                   {
                     "t": "p",
@@ -30782,7 +31288,7 @@
                   {
                     "t": "code",
                     "lang": "python",
-                    "s": "log = pd.read_parquet(\"output/predictions_log.parquet\")\ntruth = pd.read_parquet(\"data/labels/2026-11.parquet\")[[\"station_id\", \"timestamp\", \"label\"]]   # 11_build_labels.py writes this; the cleaned parquet has no label column\nlog[\"target_ts\"] = log.input_ts + pd.to_timedelta(log.h, \"min\")\nscored = log.merge(truth, left_on=[\"station_id\", \"target_ts\"], right_on=[\"station_id\", \"timestamp\"])\nprint(scored.groupby(\"h\").apply(lambda g: ap(g.label, g.p)))\nprint(\"prevalence per horizon\", scored.groupby(\"h\").label.mean())   # AP's floor moves with prevalence; read them together"
+                    "s": "log = pd.read_parquet(\"output/predictions_log.parquet\"); truth = pd.read_parquet(\"data/pems_processed/2026-11.parquet\")[[\"station_id\", \"timestamp\", \"label\"]]\nlog[\"target_ts\"] = log.input_ts + pd.to_timedelta(log.h, \"min\")\nscored = log.merge(truth, left_on=[\"station_id\", \"target_ts\"], right_on=[\"station_id\", \"timestamp\"])\nprint(scored.groupby(\"h\").apply(lambda g: ap(g.label, g.p)))"
                   },
                   {
                     "t": "p",
@@ -30807,7 +31313,7 @@
                   {
                     "t": "p",
                     "lead": "Before you do this",
-                    "s": "launchd is macOS's built-in scheduler, the thing that runs programs at boot and on timers; it is how you run the predictor every five minutes on a Mac mini you are not sitting at. A job is described by a plist, an XML file of keys and values. Where you put it decides when it runs: a LaunchAgent in `~/Library/LaunchAgents/com.traffic1.predict.plist` runs inside your login session, so it only fires while you are logged in — fine if you enable automatic login on the mini, and the simplest thing to start with. For a machine that must keep predicting across reboots with nobody logged in, the same plist belongs in `/Library/LaunchDaemons/` owned by root instead. Load it once with `sudo launchctl bootstrap system /Library/LaunchDaemons/com.traffic1.predict.plist` (or `launchctl bootstrap gui/$UID ~/Library/LaunchAgents/...` for the agent); the older `launchctl load` still works but is deprecated."
+                    "s": "launchd is macOS's built-in scheduler, the thing that runs programs at boot and on timers; it is the right way to run the predictor every five minutes on a Mac mini with no one logged in at the keyboard. A job is described by a plist, an XML file of keys and values, saved as `~/Library/LaunchAgents/com.traffic1.predict.plist` and loaded once with `launchctl load` on that path."
                   },
                   {
                     "t": "p",
@@ -34853,7 +35359,7 @@
                   {
                     "t": "p",
                     "lead": "Try this",
-                    "s": "Rank ten stations by predicted probability of a slow episode. If only three actually became slow, how many of those three landed in your top three? Divide that count by three: that fraction is precision at 3."
+                    "s": "Rank ten stations by predicted probability of a slow episode. If only three actually became slow, how many were in your top three? That is precision at 3."
                   }
                 ],
                 "name": "Middle school"
@@ -37645,7 +38151,7 @@
                   {
                     "t": "p",
                     "lead": "Try this",
-                    "s": "For ten past predictions on rows the model never fitted, compute the absolute errors, sort them, and take the largest one as a plus-or-minus width: with ten calibration points that is the quantile split conformal needs for 90 percent coverage. Now check on ten *fresh* predictions how many the range covers."
+                    "s": "For ten past predictions, compute the errors, find the ninth largest, and use it as a plus-or-minus width. Check how many of the ten it covers."
                   }
                 ],
                 "name": "Middle school"
@@ -41861,8 +42367,8 @@
         "id": "postmile",
         "levels": [
           "Every station on the freeway has a number that says how far along the road it is, like mile markers on a long hiking trail. If you line the stations up by that number, you know which one comes right before or after another as you drive.",
-          "Postmile is the distance, in miles, from the start of a freeway to a given detector station. PeMS stores this as a column called `Abs_PM` in its station metadata. Caltrans measures it from the south end of a north-south route and the west end of an east-west one, so postmile grows in the direction of travel on the N and E sides of a freeway and shrinks on the S and W sides. Sorting by postmile puts the northbound and eastbound stations in the order a car passes them and the southbound and westbound ones in exactly the reverse order, so upstream and downstream have to be read against the direction, not off the raw sort.",
-          "To build a station's neighbors, you filter the station table to the same freeway and direction, put the rows in driving order, and take the row immediately before, upstream, and after, downstream. Driving order is a sort on `Abs_PM` for `N` and `E` and a sort on `-Abs_PM` for `S` and `W`; the usual way to get both at once is a signed column, `Abs_PM` times +1 or −1 by direction, sorted ascending. Skip the sign and the southbound and westbound halves of the corridor come out with upstream and downstream swapped, which is a silent error: the join still succeeds and the model still trains, it has just learned from the wrong neighbor. Two stations can share a freeway number but be on opposite directions, `N` versus `S`, so direction has to match before postmile comparisons mean anything. A gap in postmile between neighbors, say five miles instead of half a mile, is a sign that a station is missing or was decommissioned, not that the freeway physically jumped.",
+          "Postmile is the distance, in miles, from the start of a freeway to a given detector station. PeMS stores this as a column called `Abs_PM` in its station metadata. Because postmile increases along the direction of travel, sorting stations by postmile within the same freeway and direction puts them in the order a car would actually pass them, which is how you figure out which station is upstream or downstream of another.",
+          "To build a station's neighbors, you filter the station table to the same freeway and direction, sort by `Abs_PM`, and take the row immediately before, upstream, and after, downstream, in that sorted order. Two stations can share a freeway number but be on opposite directions, `N` versus `S`, so direction has to match before postmile comparisons mean anything. A gap in postmile between neighbors, say five miles instead of half a mile, is a sign that a station is missing or was decommissioned, not that the freeway physically jumped.",
           "Postmile is a 1-D coordinate along a specific freeway-and-direction, computed from Caltrans's official mile markers, and it is what makes upstream and downstream well-defined without needing real latitude and longitude geometry. Building the neighbor graph reduces to a groupby-sort-shift: group by freeway and direction, sort by postmile, and the row above and below each station in that ordering are its neighbors. It fails at freeway interchanges, where a driver can physically move between two different postmile sequences, transitioning from one freeway to another, so a purely postmile-based neighbor graph misses those connections. It also assumes postmile is monotonic along physical distance, which mostly holds but has known discontinuities where Caltrans re-surveyed a route.",
           "Postmile order is a reasonable proxy for the next station a car reaches, but it silently drops the graph structure at freeway junctions, on-ramps, and off-ramps, which is exactly where traffic often actually originates, so lag and neighbor features built purely from postmile can miss the true causal upstream stations near an interchange. A subtler issue is that postmile resets or has small overlaps at some county or route boundaries in the raw Caltrans data, so blindly sorting the full statewide table by postmile without first grouping by freeway and direction produces nonsense neighbors. Distance in postmile also is not travel time: a mile of stop-and-go surface street feels different from a mile of open freeway, so treating postmile gaps as exchangeable across corridors is an approximation practitioners should sanity check against typical speeds on that stretch.",
           "Real traffic systems eventually replace a 1-D postmile ordering with an actual road network graph, nodes and edges with real connectivity, including ramps and merges, because that is what graph neural network approaches to traffic forecasting need and what interchange effects require. The open modeling question this course's later graph-model lessons approach is how much predictive value that fuller graph adds over the cheap postmile-neighbor approximation, and for the Fremont corridor specifically, whether the added complexity earns its keep given how sparse true interchange effects are in the data."
@@ -42380,9 +42886,7 @@
         "group": "Tables and code words",
         "names": [
           "Chunking",
-          "streaming",
-          "document chunking",
-          "text chunking"
+          "streaming"
         ],
         "term": "Chunking / streaming",
         "id": "chunking",
@@ -42879,7 +43383,7 @@
         "levels": [
           "The onset is the exact moment traffic starts getting slow, like the very first raindrop before a whole rainstorm. Lead time is how much warning you got, like hearing thunder five minutes before the rain actually starts. A false alarm is like someone yelling 'it's raining!' when really the sky stays dry the whole time.",
           "The onset of a slow episode is its very first five-minute row, the moment the slowdown officially begins. Lead time is how many minutes passed between when a warning was first raised and when the onset actually happened; more lead time means more useful advance warning. A false alarm is a warning that was raised but no slow episode actually followed within the next hour, which wastes the warning's credibility. A good early-warning system wants long lead times and few false alarms, and there is usually a tradeoff between the two.",
-          "Given a slow episode's onset time (the first of its three defining rows), lead time is computed as `onset_time - first_alert_time` for whichever alert preceded that onset, measured in minutes; a model that only ever fires exactly at onset has zero lead time, while one that fires reliably 20 minutes early is far more operationally useful even at the same raw accuracy. A false alarm is counted when an alert fires but no slow episode's onset occurs within some following window, typically the next hour in this course's setup. How you normalise those counts is a real choice: dividing by the number of alerts gives a false-alarm *ratio*, while this course divides by the number of station-days, giving the rate a driver actually feels, and it collapses a run of consecutive alerts into a single false alarm so that one bad hour counts once rather than twelve times. Reporting lead time and false alarm rate together, rather than a single aggregate metric like accuracy, is standard practice for any early-warning system, from weather to traffic to seismic alerts, because those two numbers directly describe the tradeoff an operator actually experiences.",
+          "Given a slow episode's onset time (the first of its three defining rows), lead time is computed as `onset_time - first_alert_time` for whichever alert preceded that onset, measured in minutes; a model that only ever fires exactly at onset has zero lead time, while one that fires reliably 20 minutes early is far more operationally useful even at the same raw accuracy. A false alarm is counted when an alert fires but no slow episode's onset occurs within some following window, typically the next hour in this course's setup; the false alarm rate is the fraction of alerts that were false alarms, not the fraction of all time periods that were false alarms, which is an important distinction when the underlying event is rare. Reporting lead time and false alarm rate together, rather than a single aggregate metric like accuracy, is standard practice for any early-warning system, from weather to traffic to seismic alerts, because those two numbers directly describe the tradeoff an operator actually experiences.",
           "Lead time and false alarm rate are two coordinates of the same underlying tradeoff a model's decision threshold controls: lowering the alert threshold raises average lead time (the model fires earlier, more often, catching onsets sooner) but also raises the false alarm rate, and raising the threshold does the reverse, so there is no single 'best' operating point without a stated preference between the two costs. Because onset is itself defined by a labeling rule (three consecutive rows below a relative speed threshold) that has its own detection latency, a model's theoretical maximum lead time is bounded by how far in advance the true underlying slowdown, as opposed to the label's confirmed onset, actually begins, which is a ceiling no amount of modeling can push past. Aggregating lead time across many alerts requires care: reporting only the mean can be misleading if the distribution is bimodal (many alerts fire right at onset with zero lead time, some fire much earlier), so reporting a distribution or percentiles of lead time is more honest than a single average. A false alarm 'within the next hour' window is itself a modeling choice with the same sensitivity issues as any other threshold: a longer window makes false alarms rarer by construction, not because the model actually improved.",
           "The precision-recall framing that underlies false alarm rate has a well-known asymmetry practitioners often mishandle: minimizing false alarms alone drives a system toward never alerting, and maximizing lead time alone drives it toward always alerting far in advance, so any single operating point implicitly encodes an assumed cost ratio between a missed slowdown and a false alarm that should be stated explicitly, ideally set by whoever actually acts on the alerts rather than defaulted to a metric-optimal but operationally meaningless threshold. A subtler issue is that lead time, computed only for correctly detected onsets, silently ignores missed onsets (recall failures), so a system can show an impressively long average lead time purely by only ever alerting on the easiest, most gradual slowdowns and missing the sudden ones entirely; lead time should always be read alongside recall, not in isolation. In practice, false alarms are rarely uniform in cost — a false alarm during an already-known incident, or one that clusters right after a true alarm as the model 'chatters' near the threshold, is less costly to an operator than an isolated, surprising false alarm, and raw false alarm counts do not distinguish these, which is a common gap between an evaluation metric and what actually erodes operator trust.",
           "Production early-warning systems, whether for traffic, network outages, or hardware failures, generally do not ship a single fixed alert threshold at all; they tune per-context operating points (different lead time and false-alarm tradeoffs for a highway known for sudden incidents versus one with mostly predictable rush-hour congestion) and continuously monitor whether the deployed threshold's realized false alarm rate matches what was validated offline, since data drift silently moves that rate over time. At Apple's scale, alerting systems for operational metrics generally add alert suppression and deduplication logic on top of the raw model output specifically to address the false-alarm-clustering problem, because operators who receive many correlated alerts for what is really one event learn to ignore the alerting channel entirely, which defeats the system's purpose regardless of what the offline lead time and false alarm numbers say. An open problem in this space is jointly optimizing lead time and false alarm rate against the real, and usually asymmetric and context-dependent, cost of a miss versus a false alarm, rather than against a fixed, symmetric proxy metric chosen mostly because it is easy to compute offline."
@@ -43089,7 +43593,7 @@
         "levels": [
           "A gradient check is like double-checking your math homework by trying a slightly different number and seeing if the answer moves the way you expected.",
           "A gradient check compares the gradient formula you derived on paper with a brute-force estimate: nudge one weight up a tiny bit, measure how the loss changes, nudge it down the same tiny bit, measure again, and see if the difference matches your formula. It catches sign errors and other bugs in a hand-derived gradient before you trust it to train a model. You do this once when you write new gradient math, not every time you train.",
-          "The numerical gradient check nudges one parameter by a small `eps`, say 1e-5, computes the loss before and after, and estimates the slope as the loss at w plus eps minus the loss at w minus eps, divided by 2·eps, the same idea as a derivative from calculus. This numerical estimate is compared against the formula's gradient at that same parameter; in float64 a correct implementation agrees to about 1e-10, and anything above roughly 1e-6 is a real bug. The check runs at one fixed set of weights, so nothing about the optimizer, the learning rate or how long you have trained can change its answer. Two things other than a genuine bug do inflate the disagreement: doing the arithmetic in float32, where cancellation in the loss difference leaves errors near 1e-4, and choosing an `eps` so small that the same cancellation dominates.",
+          "The numerical gradient check nudges one parameter by a small `eps`, say 1e-5, computes the loss before and after, and estimates the slope as the loss at w plus eps minus the loss at w minus eps, divided by 2·eps, the same idea as a derivative from calculus. This numerical estimate is compared against the formula's gradient at that same parameter, and the two should agree to a couple of decimal places once rounded with `np.round(x, 3)`. If they do not agree, the usual cause is a genuine bug in the formula, though too few training epochs or too large a learning rate can also make gradients look inconsistent for unrelated reasons.",
           "A gradient derived by hand can be wrong by a sign, a missing factor, or a transposed matrix and still let training run, only badly or slowly, which is what makes gradient checking essential rather than optional: bad gradients degrade performance in ways easy to misattribute to the model, the data, or the learning rate instead of to the bug that is actually there. The check works because the two-sided finite-difference estimate has error of order eps², much more accurate than a one-sided estimate, so with a well-chosen eps, small enough to be accurate, large enough to avoid floating-point cancellation, the numerical and analytic gradients should match to several significant figures for a correct implementation. Gradient checks are run on a handful of parameters and rows, not the full model, since finite differences require one full forward pass per parameter checked and would be prohibitively slow at full scale.",
           "In practice the check is run once, right after deriving new gradient math by hand, and then relied upon: once verified, the analytic gradient is what trains the model going forward, so the check functions like a unit test for calculus rather than a runtime safeguard. A common mistake is checking gradients on a model in an unusual numerical regime, all-zero weights, or with a learning rate or loss scale that masks a real bug, which is why the check is typically done at random, nonzero initial weights. When automatic differentiation frameworks like PyTorch are used instead of hand-derived formulas, gradient checking mostly disappears for standard operations, since the framework's own autograd is tested far more thoroughly than any individual researcher's from-scratch derivation, but it reappears for custom, non-standard operations where autograd cannot be trusted blindly either.",
           "At scale, exhaustive finite-difference checking of every parameter in a billion-parameter model is computationally infeasible, so production and research teams instead check gradients on small unit-test-sized components in isolation, a single custom layer, a new loss function, before it is composed into a much larger model where a bug would be far harder to localize. The broader lesson gradient checking teaches generalizes past this one technique: verifying a complex numerical system against a slower, simpler, independently-derived version of the same computation is a general debugging strategy, and teams that skip this step for new model components are disproportionately represented among the debugging sessions that eat days instead of hours."
@@ -43157,7 +43661,7 @@
         "levels": [
           "Early stopping is like knowing when to stop practicing your spelling words for the night, right when you are doing your best, instead of studying so long you get tired and start making new mistakes. You keep checking yourself with a little quiz, and the moment your quiz score stops getting better, you put the book down. You keep the version of yourself from your best quiz, not whichever one you ended on.",
           "Early stopping means watching how well a model does on a separate validation set while it trains, and stopping training once that validation score stops improving, instead of training for a fixed number of rounds no matter what. If a model keeps getting better on validation, training continues; if it stalls or starts getting worse for a while, training stops and the version from the best-scoring point is kept, not the final one. This prevents a model from overfitting, meaning memorizing quirks of the training data that do not generalize. It is a simple, cheap technique used across almost every kind of model that trains iteratively, from logistic regression to neural networks.",
-          "Early stopping works by evaluating a validation metric (like validation loss or AP) after every training epoch or boosting round, and stopping once that metric has not improved for a set number of rounds, called patience; in LightGBM you pass `callbacks=[lgb.early_stopping(50)]` to `lgb.train`, which stops training if the validation metric has not improved in the last 50 rounds (the older `early_stopping_rounds=50` keyword was removed in LightGBM 4.0). The model or weights from the best-scoring round, not the last one, are what gets saved and used, which requires checkpointing the model state at each evaluation. A typical curve shows training loss decreasing steadily throughout training while validation loss decreases at first and then starts rising again; early stopping catches the model right around where validation loss bottoms out, before it climbs back up. This is distinct from just training for fewer total epochs by a fixed number, since the right stopping point is discovered from the validation curve itself rather than guessed in advance.",
+          "Early stopping works by evaluating a validation metric (like validation loss or AP) after every training epoch or boosting round, and stopping once that metric has not improved for a set number of rounds, called patience; in LightGBM, `early_stopping_rounds=50` stops training if the validation metric has not improved in the last 50 rounds. The model or weights from the best-scoring round, not the last one, are what gets saved and used, which requires checkpointing the model state at each evaluation. A typical curve shows training loss decreasing steadily throughout training while validation loss decreases at first and then starts rising again; early stopping catches the model right around where validation loss bottoms out, before it climbs back up. This is distinct from just training for fewer total epochs by a fixed number, since the right stopping point is discovered from the validation curve itself rather than guessed in advance.",
           "Early stopping is a form of regularization that controls model complexity through the optimization trajectory rather than through an explicit penalty term added to the loss: stopping before convergence keeps the model's weights closer to their initialization, which for many model families is equivalent, at least approximately, to an explicit L2 penalty of a particular strength, so the number of training rounds functions as a de facto hyperparameter controlling the bias-variance tradeoff. The patience parameter itself trades off risk in both directions: too little patience stops training on a temporary dip in validation performance before genuine improvement resumes, while too much patience wastes computation and risks the same overfitting early stopping exists to prevent, so patience needs tuning like any other hyperparameter, typically by inspecting a handful of training runs' validation curves. Using the same validation set both to pick the early-stopping point and to report a final performance number is a subtle form of leakage: the stopping decision is itself informed by the validation data, so the resulting validation score is a slightly optimistic estimate of true out-of-sample performance, which is why a fully separate held-out test set, untouched during any tuning decision including early stopping, is needed for an honest final number. Early stopping requires a validation set large and representative enough that its metric is not too noisy round to round, or the stopping decision itself becomes unreliable, chasing noise rather than a genuine trend.",
           "The theoretical connection between early stopping and explicit regularization is precise for some model families and only approximate for others: for linear models trained with gradient descent on a convex loss, early stopping is provably closely related to ridge regression along the optimization path, but for deep neural networks the relationship is much less clean, and empirically, early stopping's effect can differ meaningfully from any single explicit penalty, particularly interacting with learning rate schedules and batch size in ways still not fully characterized theoretically. A commonly overlooked failure mode is 'double descent': for some model classes and data regimes, validation loss can improve, get temporarily worse, and then improve again well past the point a naive early-stopping rule would have already halted training, so blind reliance on 'stop at the first sustained validation degradation' can leave real performance on the table in those regimes, though this is more often a concern for very large, overparameterized models than for the tree ensembles and small models used early in this course. Early stopping interacts with cross-validation in a way practitioners often get wrong: if a stopping round is chosen independently on each cross-validation fold, the final production model's stopping round should be re-derived from a proper held-out validation split, not simply averaged or copied from the folds, since each fold saw different data and would legitimately want to stop at different points. In time-dependent data, like this course's traffic panel, the validation set used for early stopping must respect chronological order (validation strictly after training in time), or the stopping decision itself is contaminated by a leak identical in spirit to a leaky train-test split.",
           "In production training pipelines at scale, early stopping is implemented as one policy among several for controlling training cost and generalization, and it interacts directly with infrastructure concerns: checkpointing the best model state requires storage and I/O that becomes non-trivial for large models, and distributed training runs often use asynchronous or staggered validation to avoid the cost of a full validation pass after every single step. Some large-scale training regimes deliberately avoid classic early stopping in favor of a fixed, generously long training schedule combined with other regularizers (data augmentation, weight decay, dropout), because for very large models trained on very large datasets, the risk of overfitting that early stopping guards against is often smaller than the risk of stopping too early and leaving performance on the table, especially given phenomena like the grokking and double-descent effects observed in some large-model training runs. An open engineering question is how to make early-stopping decisions robust to noisy or non-monotonic validation curves without either stopping prematurely on noise or wasting substantial compute waiting out normal fluctuations, and most production systems address this with smoothed or windowed validation metrics rather than the raw per-round number, an engineering patch around a genuinely unresolved statistical question."
@@ -43334,7 +43838,7 @@
         "levels": [
           "Imagine reading a story one word at a time, and after every word you update a little note to yourself about what's happened so far, so you don't have to remember every single word. A recurrent network reads data the same way, one step at a time, keeping a running note called its hidden state.",
           "A recurrent network reads a sequence, like a station's speed readings over the last hour, one 5-minute reading at a time, and after each step it updates an internal \"memory,\" called the hidden state, that summarizes everything it's seen so far. A GRU (gated recurrent unit) is a specific, popular kind of recurrent network that has small gates deciding how much of the old memory to keep and how much of the new information to let in. This lets it handle sequences where recent events usually matter more, but something from a while ago can still matter too.",
-          "A basic recurrent network updates its hidden state at each time step as a function of the current input and the previous hidden state: ht = f(Wx·xt + Wh·ht-1 + b), and its final hidden state, or its state at each step, can be fed to an output layer to make a prediction. A plain recurrent network struggles to remember information from many steps back, because the same weight matrix is applied repeatedly and gradients tend to vanish over long sequences; a GRU fixes this with an update gate and a reset gate, learned functions that control how much of the previous state to keep versus overwrite at each step. In code, PyTorch's `nn.GRU(input_size, hidden_size)` expects a sequence of shape `(time, batch, features)` by default; pass `batch_first=True`, as this course does, to give it `(batch, time, features)` instead, and it returns a hidden state you can use to predict, for example, whether a station will be slow 30 minutes from now.",
+          "A basic recurrent network updates its hidden state at each time step as a function of the current input and the previous hidden state: ht = f(Wx·xt + Wh·ht-1 + b), and its final hidden state, or its state at each step, can be fed to an output layer to make a prediction. A plain recurrent network struggles to remember information from many steps back, because the same weight matrix is applied repeatedly and gradients tend to vanish over long sequences; a GRU fixes this with an update gate and a reset gate, learned functions that control how much of the previous state to keep versus overwrite at each step. In code, PyTorch's `nn.GRU(input_size, hidden_size)` takes a sequence of shape `(batch, time, features)` and returns a hidden state sequence you can use to predict, for example, whether a station will be slow 30 minutes from now.",
           "Understanding ARIMA-style time series models first clarifies why lag features work in the simpler logistic regression and LightGBM models in this course, and what a recurrent network adds beyond them: nonlinearity in how past values combine, the ability to take exogenous inputs, like occupancy and flow alongside speed, naturally within the same sequence, and parameters shared across every time step and, if trained that way, across every station, rather than a fixed, hand-chosen set of lag features. A GRU's gates are themselves small learned neural network layers, a sigmoid over a linear combination of the current input and previous hidden state, which is why a GRU has more parameters and requires more data to train well than a plain recurrent unit, but converges more reliably because the gating mitigates the vanishing gradient problem that plain RNNs suffer over long sequences. Recurrent networks fail, or need care, when sequences are very long, since gates alone don't fully solve vanishing gradients at hundreds or thousands of steps, which is part of why attention-based architectures largely replaced RNNs for very long sequences, when data is irregularly sampled, since recurrent networks implicitly assume a fixed step size, or when there's too little training data relative to the model's parameter count, which favors the simpler logistic regression or LightGBM baselines in this course instead. Training is done via backpropagation through time, unrolling the recurrence across all time steps and applying the chain rule backward through the whole unrolled graph, which is more expensive and more prone to instability than training a non-sequential model.",
           "The GRU versus LSTM choice is a real but often overstated tradeoff in practice: GRUs have fewer parameters, since they merge the LSTM's separate forget and input gates and drop its distinct cell state, train slightly faster, and empirically perform comparably to LSTMs on most tasks, so the choice is usually more about engineering convenience than a principled difference in modeling power for a given problem. A subtlety practitioners get wrong is assuming a recurrent network will automatically discover the right lag structure without help, since in practice feeding it well-chosen engineered features, rolling means, lags, alongside raw values often still improves performance over raw sequences alone, because gradient-based training doesn't always find every useful nonlinear combination on its own within a practical training budget. Recurrent architectures for spatiotemporal data like PeMS also face a genuine architectural choice about how to handle multiple correlated stations: running one shared GRU per station independently ignores spatial correlation entirely, while naively concatenating all stations into one input vector treats the network's fixed topology as arbitrary feature order, which is exactly the gap that graph-based architectures (DCRNN, STGCN, Graph WaveNet) exist to fill by combining a recurrent or convolutional temporal component with an explicit graph structure over stations. Vanishing and exploding gradients, gradient clipping, and the choice of sequence length to backpropagate through, truncated versus full backpropagation through time, remain real, hands-on tuning decisions rather than settled defaults, especially as sequence length grows.",
           "At production scale, plain recurrent networks including GRUs have been substantially displaced in much of the sequence-modeling literature by attention-based and transformer architectures, which parallelize across the sequence dimension far better on modern accelerator hardware and handle long-range dependencies more directly, though GRUs remain attractive in latency- and memory-constrained settings, on-device or low-power inference, precisely because their step-by-step, constant-memory computation is cheap compared to attention's full-sequence cost. For spatiotemporal traffic forecasting specifically, the state of the art has moved toward graph neural networks that combine a recurrent or convolutional temporal component with learned or physical graph structure over the road network (Graph WaveNet, DCRNN, and their successors), treating a plain per-station GRU as a reasonable, well-understood baseline rather than a frontier method. An open research question is how to combine the efficiency and simplicity of gated recurrence with the long-range and multi-entity reasoning that attention and graph structure provide, without paying the full computational cost of either at inference time."
@@ -43353,7 +43857,7 @@
           "A hidden state is a list of numbers that a recurrent neural network keeps and updates as it reads through a sequence, step by step, like a running summary of everything it has seen so far. After reading the last five-minute speed reading in a sequence, the final hidden state is meant to capture what matters about that station's recent history. The network uses this summary, not the raw sequence, to make its next prediction.",
           "In a recurrent network (like an RNN, LSTM, or GRU), the hidden state hₜ is a vector updated at each time step from the current input xₜ and the previous hidden state hₜ₋₁: hₜ = f(xₜ, hₜ₋₁), where f is the network's learned update function. This lets the network process a sequence of any length while carrying forward a fixed-size summary of everything seen so far, rather than needing the whole sequence at once. In code, `self.gru(seq)[1][0]` extracts the final hidden state after reading a whole sequence, which is then used as the input to a prediction layer — one number capturing 'what this station's recent speed history implies about the next 30 minutes.'",
           "The hidden state is the mechanism that gives recurrent networks their sequence-modeling ability: rather than a fixed window of past values like a lag feature, hₜ is a learned, compressed summary whose content the network itself decides during training, in principle capturing long-range dependencies that a fixed set of lag features would miss. In practice, plain RNNs struggle to carry information across many time steps because of vanishing gradients during backpropagation through time, which is why gated architectures (LSTM, GRU) were introduced: they add learned gates that control how much of the previous hidden state to keep versus overwrite at each step, making it easier to preserve relevant information over longer sequences. The hidden state's dimensionality is a hyperparameter and a real capacity tradeoff: too small and it cannot represent everything relevant about the sequence so far, too large and the model has more parameters to overfit with, especially with limited training sequences. For the traffic project's spatiotemporal models, a hidden state is computed per station (each station's speed sequence is read independently by the recurrent unit), and the reshape step (`reshape(B, N, -1)`) puts each station's hidden state back into its place in the full network of stations before any graph-based mixing across stations happens.",
-          "Even with gating, hidden states in practice tend to be dominated by recent time steps rather than genuinely capturing arbitrary long-range dependencies, an empirical limitation that motivated attention mechanisms and transformers, which let a model look back directly at any past step rather than relying on everything relevant being compressed into a single fixed-size vector passed forward. A subtlety often missed: the hidden state's meaning is entirely learned and not directly interpretable — there is no guarantee that any individual dimension corresponds to something a person would recognize (like 'is this rush hour'), which makes debugging a poorly-performing recurrent model harder than debugging a tree model with named, interpretable features. Initialization of the hidden state at the start of a sequence (usually zeros, sometimes learned) is a small design choice with a real effect, particularly for short sequences where the model has little chance to 'warm up' before the initial state's influence fades. This course's own spatio-temporal net keeps the two stages separate: a shared GRU produces each station's hidden state from its own twelve steps, and neighbour mixing is applied afterwards to those final states. The full DCRNN it is stripped down from goes further and folds diffusion convolution into the recurrence itself, so the update at every step already sees the neighbours — a meaningfully different inductive bias, since it builds spatial structure into the dynamics rather than bolting it on at the end.",
+          "Even with gating, hidden states in practice tend to be dominated by recent time steps rather than genuinely capturing arbitrary long-range dependencies, an empirical limitation that motivated attention mechanisms and transformers, which let a model look back directly at any past step rather than relying on everything relevant being compressed into a single fixed-size vector passed forward. A subtlety often missed: the hidden state's meaning is entirely learned and not directly interpretable — there is no guarantee that any individual dimension corresponds to something a person would recognize (like 'is this rush hour'), which makes debugging a poorly-performing recurrent model harder than debugging a tree model with named, interpretable features. Initialization of the hidden state at the start of a sequence (usually zeros, sometimes learned) is a small design choice with a real effect, particularly for short sequences where the model has little chance to 'warm up' before the initial state's influence fades. In the graph-recurrent hybrid used later in this course (DCGRU), the hidden state update itself is modified to mix information from a station's own history and its graph neighbors' hidden states at each step, via diffusion convolutions rather than a plain dense matrix multiply — which is a meaningfully different inductive bias than a standard GRU, since it builds spatial structure directly into the recurrence rather than leaving the network to discover it from data alone.",
           "At production scale, maintaining and updating hidden state for many entities (thousands of stations, each with their own recurrent state) in a low-latency serving system is a real infrastructure problem, not just a modeling one — stateful serving (keeping each station's hidden state warm between requests) trades memory and complexity for avoiding a full sequence recompute on every prediction, and getting this wrong is a common source of production latency or staleness bugs. The broader research trajectory has moved away from recurrent hidden states toward attention-based architectures for exactly the long-range-dependency limitation described above, though recurrent and state-space models (a newer line of work, including S4 and Mamba) have seen a research resurgence specifically because they can process very long sequences with better computational efficiency than full attention, while still keeping some of the sequential hidden-state idea — an active, unresolved area of debate is which inductive bias wins for which class of problems, spatiotemporal forecasting included."
         ]
       },
@@ -43473,7 +43977,7 @@
           "Tree-based models like LightGBM produce scores that rank things correctly, since higher score really does mean more likely, but the actual numbers aren't trustworthy as real probabilities. Isotonic regression fixes this: it fits a step function, one that's only allowed to go up (or stay flat) as the raw score increases, so that within each step the model's stated probability actually matches how often things were true in that group. It's the calibration method this course uses to turn a raw LightGBM score into a number you can genuinely read as \"this is a 73% chance of slow traffic.\"",
           "Isotonic regression fits a non-decreasing step function g(score) → probability by minimizing squared error subject to the constraint that the function never decreases as the raw score increases; in scikit-learn this is `IsotonicRegression().fit(raw_scores, true_labels)` on a held-out calibration set, separate from the data used to train the original model. The result is applied after the model: `calibrated_prob = iso.predict(model.predict_proba(X)[:, 1])`. A reliability diagram, predicted probability on one axis, observed frequency on the other, shows the fix directly: before calibration the points often sit off the diagonal, and after fitting isotonic regression, they should sit close to it.",
           "Isotonic regression solves a constrained least-squares problem (via the pool-adjacent-violators algorithm) to find the best-fitting monotonic step function mapping raw scores to calibrated probabilities, and because it makes no assumption about the shape of the miscalibration beyond monotonicity, it can fix arbitrarily shaped calibration curves that a simpler parametric method like Platt scaling, which fits a sigmoid, cannot. This flexibility is also its weakness: with limited calibration data, isotonic regression can overfit, producing a jagged step function that memorizes noise in the calibration set rather than a smooth true relationship, which is why Platt scaling is often preferred with small calibration sets and isotonic regression with larger ones. Calibration must be fit on data the original model never trained on, since using the training set itself for calibration would just reproduce the model's own overconfidence rather than correct it, so this course reserves a separate calibration split distinct from both the training and final test data. Isotonic regression only reorders and remaps scores monotonically; it cannot fix a model whose ranking is wrong to begin with, since a monotonic transformation preserves rank order exactly, so calibration is strictly a probability-accuracy fix, not a discrimination-quality fix.",
-          "A subtlety practitioners routinely miss is that calibration is dataset- and time-window-specific: a calibration map fit on one period's data assumes the relationship between raw score and true frequency is stable, and under prevalence drift, which this course expects, given seasonal traffic patterns, that assumption breaks, so a calibration map needs periodic refitting, not a one-time fix. Isotonic regression's flexibility becomes a real liability with small calibration sets or with scores that have many ties, common with tree ensembles, which produce a limited number of distinct leaf-combination scores, since the fitted step function can end up with very wide, coarse steps that lose most of the score's resolution; some practitioners smooth or bin the isotonic fit as a compromise. The choice of calibration metric to evaluate afterward matters too, since expected calibration error, binned average gap between predicted and observed frequency, and the Brier score capture different aspects of calibration quality, and a model can look well-calibrated on one while being poorly calibrated on the other, particularly in the sparse, low-prevalence tail this course's slow-traffic problem lives in. Calibration is also not free with respect to ranking-sensitive metrics: isotonic regression is monotone and so never reverses two rows' order, but it is non-decreasing rather than strictly increasing, so it collapses many distinct scores into a handful of tied values, which moves average precision slightly and, more importantly, leaves only a few dozen distinct thresholds to choose an operating point from.",
+          "A subtlety practitioners routinely miss is that calibration is dataset- and time-window-specific: a calibration map fit on one period's data assumes the relationship between raw score and true frequency is stable, and under prevalence drift, which this course expects, given seasonal traffic patterns, that assumption breaks, so a calibration map needs periodic refitting, not a one-time fix. Isotonic regression's flexibility becomes a real liability with small calibration sets or with scores that have many ties, common with tree ensembles, which produce a limited number of distinct leaf-combination scores, since the fitted step function can end up with very wide, coarse steps that lose most of the score's resolution; some practitioners smooth or bin the isotonic fit as a compromise. The choice of calibration metric to evaluate afterward matters too, since expected calibration error, binned average gap between predicted and observed frequency, and the Brier score capture different aspects of calibration quality, and a model can look well-calibrated on one while being poorly calibrated on the other, particularly in the sparse, low-prevalence tail this course's slow-traffic problem lives in. Calibration is also not free with respect to ranking-sensitive metrics: isotonic regression preserves rank exactly by construction, so it never changes average precision, but downstream systems that threshold on the calibrated probability rather than the raw score are implicitly relying on both the ranking and the calibration being good simultaneously.",
           "At production scale, calibration has to be monitored and refreshed continuously rather than fit once, since prevalence and score distributions drift, and a stale calibration map can silently make a model's probabilities misleading even while its underlying ranking quality, average precision, stays perfectly fine, which is exactly the kind of failure that a metric dashboard tracking only ranking metrics would miss entirely. Multi-model and multi-population systems raise a further calibration question: whether to fit one global calibration map or many population-specific ones, per station, per time-of-day regime, trading statistical efficiency, more data per map, against fidelity to genuinely different subpopulations whose true score-to-frequency relationship may differ. An open research question is how to calibrate scores from models that themselves change frequently, since a model retrained weekly needs its calibration map refit in lockstep, and doing that reliably and automatically, without a human in the loop each time, is still mostly solved by careful pipeline engineering rather than a general algorithmic answer."
         ]
       },
@@ -44126,7 +44630,7 @@
         "id": "dropout",
         "levels": [
           "Dropout is a training trick where a neural network randomly closes its eyes to some of its own inner parts while it is learning, so it cannot lean too hard on any one part. It is a bit like practicing a relay race sometimes with one runner missing, so the whole team learns to work well no matter who shows up. That way, when it is time for the real race, the team does not fall apart if one runner has an off day.",
-          "Dropout is a training technique for neural networks where, during each training step, a random fraction of neurons are temporarily turned off (set to zero) and ignored, forcing the rest of the network to not rely too heavily on any single neuron. A typical dropout rate might be 0.2, meaning 20 percent of neurons are randomly dropped at each step. This helps prevent overfitting, because the network cannot memorize the training data by depending on one very specific pathway through it; it has to learn patterns that work even when parts of it are missing. Dropout is only applied during training; at prediction time every neuron is used and nothing is scaled, because the scaling has already been done during training on whichever neurons stayed active.",
+          "Dropout is a training technique for neural networks where, during each training step, a random fraction of neurons are temporarily turned off (set to zero) and ignored, forcing the rest of the network to not rely too heavily on any single neuron. A typical dropout rate might be 0.2, meaning 20 percent of neurons are randomly dropped at each step. This helps prevent overfitting, because the network cannot memorize the training data by depending on one very specific pathway through it; it has to learn patterns that work even when parts of it are missing. Dropout is only applied during training; at prediction time, the full network is used, usually with its outputs scaled to account for the fact that more neurons are now active.",
           "In PyTorch, `nn.Dropout(p=0.5)` added as a layer randomly zeroes out each input to it with probability p during training, and during evaluation (`model.eval()`), dropout does nothing and passes every value through unchanged, which is why toggling between `model.train()` and `model.eval()` mode matters and is a common source of bugs when forgotten. The remaining active neurons' outputs are scaled up by 1/(1−p) during training (inverted dropout), so the expected total signal stays roughly consistent between training and evaluation without needing any adjustment at inference time. Dropout rates commonly range from 0.1 to 0.5 depending on the layer and how prone the network is to overfitting; higher dropout means stronger regularization but slower, noisier training. Dropout is typically applied to fully connected layers and less often, or with smaller rates, to convolutional layers, where the redundancy between neighboring pixels already provides some natural regularization.",
           "Dropout can be understood as an efficient approximation to training an enormous ensemble of thinner sub-networks (one for each possible pattern of dropped neurons) and then, at test time, approximately averaging their predictions in a single forward pass through the full network, which is why it produces an effect similar to model averaging without literally needing to train or store many separate models. It works particularly well in large, overparameterized networks where individual neurons or small groups of neurons can otherwise co-adapt to detect very specific, narrow patterns in the training data that do not generalize; dropout breaks up this co-adaptation by making any single neuron's presence unreliable during training. Dropout interacts with batch normalization in ways that are not always beneficial: applying both together, especially in certain orderings, can sometimes hurt rather than help performance, because batch normalization's own statistics (computed per mini-batch) get disrupted by dropout's added randomness, which is why many modern architectures use one or the other in a given block rather than stacking them by default. Dropout adds real training-time noise to the optimization process, effectively acting as a form of stochastic regularization on top of whatever noise mini-batch gradient descent itself already introduces, which is why dropout networks sometimes need more training epochs to converge to their best validation performance than an equivalent non-dropout network.",
           "Whether dropout helps or hurts depends heavily on the amount of available training data relative to model capacity: on small datasets with a large network, dropout is often essential to avoid catastrophic overfitting, but on very large datasets, where the network barely has time to overfit before training ends, dropout can slow convergence and slightly hurt final performance relative to other regularizers, which is a large part of why very large modern language and vision models trained on massive datasets frequently use little or no dropout, relying instead on the sheer scale of data and other regularization (weight decay, data augmentation) for generalization. Monte Carlo dropout, a technique that keeps dropout active at inference time and runs multiple stochastic forward passes, repurposes dropout's randomness as an approximate Bayesian uncertainty estimate, giving a cheap way to get a predictive distribution rather than a single point estimate, though the theoretical justification for treating this as a proper Bayesian posterior approximation is debated and its calibration quality varies considerably across architectures and tasks. A subtlety practitioners get wrong is applying dropout inconsistently between where it was used during training and how the model is deployed, especially with model export or quantization tooling that does not always handle dropout layers correctly by default, silently leaving dropout active (or with mismatched scaling) in a supposedly deterministic deployed model. The specific dropout rate and which layers it is applied to interact nontrivially with other hyperparameters (learning rate, weight decay strength, network depth), so tuning dropout in isolation from the rest of the training recipe often gives misleading conclusions about whether it is actually helping.",
@@ -44434,7 +44938,7 @@
         "levels": [
           "If a merry-go-round always spins the exact same way no matter what day it is, that's stationary, always the same. But if it goes faster every morning at 8am and slower at night, every single day, that repeating pattern is seasonality.",
           "A time series is stationary if its average, its spread, and its overall pattern stay the same no matter which stretch of time you look at. Traffic speed is not stationary in that strict sense, because it has seasonality, a repeating daily pattern, slow during rush hour and fast late at night, that happens over and over on a predictable schedule. Seasonality is actually useful, not a problem, since because the pattern repeats, you can use \"what usually happens at this time of day\" as a strong, free prediction to compare any new reading against.",
-          "Formally, a series is (weakly) stationary if its mean and variance don't depend on time and its autocorrelation depends only on the lag between two points, not on when those points occur, a condition that traffic speed clearly violates, since its mean at 8am rush hour is very different from its mean at 3am. Seasonality is a specific, regular repeating component of a time series, and this course handles it by computing a per-station median speed for each day-type and each five-minute slot of the day, the `profile_speed` baseline, then working with `speed_ratio`, speed divided by that baseline, rather than raw speed, which effectively removes the daily and weekly seasonal pattern and leaves a series closer to stationary for modeling. (`ratio_ff`, speed over a single per-station free-flow speed, is a different, non-seasonal normalisation.) Statistical tests like the augmented Dickey-Fuller test can formally check a series for stationarity, and models like ARIMA explicitly require or model a stationary series, often achieved by differencing, before their assumptions hold.",
+          "Formally, a series is (weakly) stationary if its mean and variance don't depend on time and its autocorrelation depends only on the lag between two points, not on when those points occur, a condition that traffic speed clearly violates, since its mean at 8am rush hour is very different from its mean at 3am. Seasonality is a specific, regular repeating component of a time series, and this course handles it by computing a time-of-day, and sometimes day-of-week, baseline speed per station, then working with speed relative to that baseline (`ratio_ff`, speed relative to free flow) rather than raw speed, which effectively removes the daily seasonal pattern and leaves a series closer to stationary for modeling. Statistical tests like the augmented Dickey-Fuller test can formally check a series for stationarity, and models like ARIMA explicitly require or model a stationary series, often achieved by differencing, before their assumptions hold.",
           "Stationarity matters because most classical time series theory, autocorrelation structure, standard confidence intervals, ARIMA's own assumptions, is derived under it, and applying those tools to a genuinely non-stationary series without first removing trend and seasonality, through differencing, or through seasonal decomposition, can produce badly miscalibrated inference, even though the resulting point predictions might look reasonable by coincidence. Seasonality can be modeled in multiple ways: explicitly, with dummy variables or Fourier terms for time of day and day of week; implicitly, by using a station's own historical baseline, a time-of-day profile, as a normalizing reference the way this course does; or left to a flexible model like a recurrent or graph network to discover from raw timestamps and recent history, at the cost of needing more data and offering less interpretability about what pattern it actually learned. Traffic data specifically has both daily and weekly seasonality, weekday commute patterns differ substantially from weekend patterns, plus irregular, non-seasonal effects, weather, incidents, holidays, that seasonality models don't capture and that a good pipeline has to handle separately, often as a \"detect the anomaly relative to the seasonal baseline\" step rather than folding it into the seasonal model itself. A common failure is fitting a strong seasonal model on a limited history and then extrapolating it confidently through a holiday or an unusual event, where the learned seasonal pattern simply doesn't apply.",
           "A more general and honest treatment moves from strict stationarity, which almost no real process satisfies exactly, to characterizing the series' dependence structure directly, autocorrelation, effective sample size given that structure, and how estimator variance behaves under dependent rather than independent data, since even a series that looks \"stationary enough\" by eye can have long-range dependence that standard error estimates and cross-validation schemes assuming independence badly understate. A subtlety practitioners get wrong is treating seasonality removal as a solved preprocessing step rather than something whose own estimation error propagates downstream, since a time-of-day baseline estimated from a limited or unrepresentative training window, say, a period without much roadwork, carries its own uncertainty that a model trained on the resulting \"deseasonalized\" ratio inherits, often silently. Traffic seasonality also isn't fixed forever, since it drifts slowly with changing commute patterns, remote work trends, or new infrastructure, which means a \"stationary after removing seasonality\" assumption itself has a shelf life, and this is one of the concrete reasons the course monitors feature and prediction distributions over time, via the population stability index, rather than assuming the seasonal correction, once fit, stays valid indefinitely. The interaction between seasonality and rare events is also easy to get backward, since because slow-traffic events cluster at predictable seasonal times, rush hour, a model can appear to perform well largely by having learned the seasonal baseline rather than genuinely predicting the excess, harder-to-forecast deviation from it; separating \"predicting the known seasonal pattern\" from \"predicting the surprise on top of it\" is where the real modeling difficulty, and the real value, actually lives.",
           "At production scale, seasonality and its slow drift are treated as a first-class, continuously re-estimated component of the pipeline rather than a one-time preprocessing choice, since holidays, daylight saving transitions, school calendars and long-term commute-pattern shifts, like post-pandemic hybrid work, all change the seasonal baseline in ways that need to be tracked and periodically refit, not assumed fixed at training time. Modern spatiotemporal forecasting architectures, graph neural networks, temporal transformers, increasingly learn seasonal structure implicitly from raw timestamps and history rather than relying on hand-specified Fourier or dummy-variable seasonal terms, trading interpretability of the seasonal component for flexibility and reduced manual feature engineering. An open research question is how to build models that adapt smoothly to genuine, slow, non-seasonal drift in what looks like a seasonal pattern, distinguishing \"this is an unusual Tuesday\" from \"Tuesdays have permanently changed,\" without either overreacting to every anomaly or underreacting to real, lasting shifts."
@@ -46613,6 +47117,28 @@
           "Approximate nearest-neighbor search over embeddings has several dominant index families: inverted-file indexes that cluster the embedding space and search only nearby clusters, hierarchical navigable small world (HNSW) graphs that build a multi-layer graph and search by traversal, and product quantization, which compresses each vector into a compact code trading accuracy for much lower memory. The choice trades recall (how often the true nearest neighbors are returned), query latency, memory footprint and build time against each other, and no single index dominates on all four, which is why production systems benchmark on their own data rather than assume a default is correct. Embedding dimension and distance metric, cosine similarity versus Euclidean, equivalent for normalized vectors but not otherwise, must match what the embedding model was actually trained to optimize; using the wrong metric silently degrades retrieval without any error. For a small local project, an exact brute-force search over a few thousand document embeddings is often fast enough that a real approximate index is unnecessary and adds complexity without a measurable benefit.",
           "Index quality interacts subtly with the embedding model itself: an index tuned for one model's geometry doesn't transfer if the embedding model is later swapped, since the whole index has to be rebuilt from scratch, a nontrivial operational cost for a large collection. Filtered vector search, retrieving nearest neighbors subject to metadata constraints like a date range, is harder than plain nearest-neighbor search and is where production vector databases differ most in implementation quality, since naively combining a filter with an approximate index can silently return far fewer or worse results than expected. A practitioner mistake specific to retrieval-augmented generation is treating the vector index as the only retrieval signal; hybrid search, combining a vector index's semantic similarity with traditional keyword matching, consistently outperforms either alone for queries involving specific names, numbers or codes, like route numbers in incident headlines, that an embedding model may not represent distinctively. Index staleness, documents changed after the index was built but before it's refreshed, is a genuine production correctness issue distinct from the index algorithm itself.",
           "At production scale, vector indexes serve billions of embeddings with strict latency budgets, driving sharded and distributed indexes across many machines, hardware-accelerated distance computation, and careful memory layout, since a naive implementation of even a good algorithm does not scale to that volume. On-device retrieval, searching a local index on a phone or laptop rather than calling a server, is constrained by memory and compute in ways that push toward smaller embedding dimensions, quantized vectors and more aggressive approximation than a server-side system would accept. An open question is how to keep a vector index fresh under continuous updates at scale, since most efficient index structures assume a mostly-static collection, and supporting fast inserts and deletes without periodically rebuilding remains active systems work. The practical lesson for a project like this one is that a vector index is infrastructure in service of retrieval quality, not a source of it by itself: an index over poorly-chunked or poorly-embedded documents retrieves fast, unhelpful results just as reliably as fast, good ones."
+        ]
+      },
+      {
+        "def": "Splitting a long document into smaller pieces before turning each into an embedding, so retrieval can find and return just the relevant part.",
+        "group": "Model words",
+        "names": [
+          "chunking",
+          "document chunking",
+          "text chunking"
+        ],
+        "phases": [
+          8
+        ],
+        "term": "Chunking (for retrieval)",
+        "id": "chunking-2",
+        "levels": [
+          "If you tore a whole storybook into one page per card instead of keeping it as one giant scroll, it would be much easier to find just the one page that answers your question. Chunking a document for a language model works the same way: cutting it into smaller pieces so the right piece can be found and handed over instead of the whole book.",
+          "When building a system that lets a language model search your own documents, chunking means splitting each document into smaller pieces, maybe a paragraph or a few sentences at a time, before turning each piece into its own embedding. This matters because an embedding for an entire long document blurs everything in it into one vector, making it hard to tell whether a search question matches one small relevant part or nothing at all; embedding smaller chunks keeps each vector focused on one idea. When a question comes in, the system finds the chunks whose embeddings are closest to the question's embedding, and hands just those chunks, not the whole document, to the language model to answer from. Chunk size is a real design choice: too small and a chunk loses context that spanned it; too large and it's back to the original blurring problem.",
+          "A simple chunking strategy splits text every fixed number of tokens or characters, but this can cut a sentence or an idea in half right at the boundary, so most practical chunkers split on natural boundaries, paragraphs or sentences, and often overlap consecutive chunks by a sentence or two so an idea spanning a boundary still appears whole in at least one chunk. Chunk size trades two failure modes against each other: chunks too small lose surrounding context a question needs, while chunks too large dilute the embedding, mixing several topics into one vector that matches poorly against any specific question. For this phase's exercises, a 511 headline is already short enough to embed whole, one headline as one chunk, while a longer document like this repository's own documentation needs deliberate chunking first. There is no universal best chunk size; it depends on the embedding model, the typical length of a self-contained idea in the documents, and the kinds of questions the system needs to answer.",
+          "Chunking strategy measurably affects retrieval-augmented generation quality, and naive fixed-size chunking is a known source of silent quality loss: a chunk boundary landing mid-sentence or mid-table produces an embedding for a fragment that represents neither surrounding idea well, and a question whose answer straddles two chunks may retrieve neither confidently. More structure-aware chunking, splitting along a document's own headings or semantic shifts detected by comparing consecutive sentence embeddings, generally retrieves better than fixed-size splitting, at the cost of more preprocessing complexity. Overlap between consecutive chunks trades redundancy, storing and searching more, mostly duplicate, chunks, against boundary robustness; typical overlaps of 10 to 20 percent of chunk length are a common starting point, tuned empirically. Chunk metadata, remembering which document and what surrounding context a chunk came from, matters as much as the chunking boundary itself, since a retrieved chunk with no traceable source is far less useful.",
+          "Chunking interacts with the embedding model's own effective context length and training distribution: a model trained mostly on short passages produces less reliable embeddings for unusually long chunks, regardless of how much context that chunk contains, meaning the right chunk size is partly a property of the embedding model, not just the documents. Hierarchical or multi-granularity retrieval, indexing both small chunks and larger sections and combining evidence from multiple levels, is a more recent response to the single-chunk-size tradeoff, retrieving a small chunk for precision and expanding to its surrounding context before handing it to the model. A subtlety practitioners get wrong is chunking once and treating the result as fixed infrastructure; when the embedding model changes, or the kinds of questions shift, the optimal chunking strategy can shift too, and re-chunking a whole document collection is a real, often underestimated, operational cost. Evaluating chunking in isolation from the rest of the pipeline is also a common mistake, since a good chunking strategy paired with a weak embedding model, or vice versa, can each mask or compound the other's effect.",
+          "At production scale, chunking is rarely a one-time preprocessing step; document collections change continuously, and a production system needs an incremental chunking and re-indexing pipeline that handles updates, deletions and format changes without a full rebuild every time. Domain-specific chunking, respecting the structure of code, tables, legal documents or incident reports rather than treating all text as prose, measurably improves retrieval quality and is where much real engineering effort goes, well past what a generic text-splitting library provides. On-device retrieval faces an added constraint: both the chunked document store and its vector index need to fit a tight memory budget, pushing toward smaller chunks, more aggressive deduplication, and sometimes toward a server for anything beyond a small personal document set. An open question is how to chunk and index multimodal documents, mixing text, tables and images, like a real incident report, so retrieval works across all of it rather than only the text a naive chunker can see."
         ]
       },
       {

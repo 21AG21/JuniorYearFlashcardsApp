@@ -1,0 +1,254 @@
+[
+ {
+  "where": "p0-t1",
+  "level": "Middle school",
+  "old": "[Try this] Make a folder, put a text file in it, run `git init`, `git add .`, `git commit -m 'first'`. Change the file and run `git diff`. Read what it shows you.",
+  "new": "[Try this] Make a folder, put a text file in it. Run `git init` (tells git to start watching this folder), then `git add .` (marks every file in it for the next snapshot), then `git commit -m 'first'` (takes the snapshot). Change the file and run `git diff`. Read what it shows you.",
+  "src": "find-a.json"
+ },
+ {
+  "where": "p0-t1",
+  "level": "High school",
+  "old": "[Try this] Run the collector once with `python 02_collect_events.py`, then `git status`. The `data/` folder should not appear as untracked. If it does, fix `.gitignore` before anything else.",
+  "new": "[Try this] Run the collector once with `python 02_collect_events.py`, then `git status`. The `data/` folder should not appear as untracked. If it does, fix `.gitignore`: open it in your editor (create the file in the Traffic1 folder if it doesn't exist yet), add a line that just says `data/`, save it, and run `git status` again to confirm `data/` disappears from the list.",
+  "src": "find-a.json"
+ },
+ {
+  "where": "p0-l1",
+  "level": "build",
+  "old": "- Clone Traffic1, create the venv, install the requirements, get a 511 key, run `02_collect_events.py` and open the CSV.",
+  "new": "- Clone Traffic1 from its GitHub page (click the green Code button for the URL, then run `git clone` with that URL from the terminal), create the venv, install the requirements with `pip install -r requirements.txt`, sign up for a free 511 key at 511.org's open-data page (it's emailed to you) and save it in `.env`, run `02_collect_events.py` and open the CSV.",
+  "src": "find-a.json"
+ },
+ {
+  "where": "p0-l1",
+  "level": "build",
+  "old": "- Add `data/` and `.env` to `.gitignore`, commit, push. Start `notebook/2026-W37.md` with what you did and what confused you.",
+  "new": "- Add `data/` and `.env` to `.gitignore`, commit, push. Start a weekly notebook file, `notebook/2026-W37.md` (the `Wnn` is the year's week number — 'W37' means the 37th week; any calendar app can tell you this week's number), with what you did and what confused you.",
+  "src": "find-a.json"
+ },
+ {
+  "where": "p0-l1",
+  "level": "Stanford undergrad",
+  "old": "Formally this is supervised binary classification on a panel indexed by (station s, time t). The feature vector x_{s,t} is a function of the information available at t, written F_t; the target is y^{(h)}_{s,t} = 1[label(s, t+h) = 1]. We fit f_h(x) ≈ P(y^{(h)} = 1 | x) for each horizon, a direct multi-horizon strategy rather than a recursive one.",
+  "new": "Formally this is supervised binary classification (fitting a model to labeled examples so it learns to sort new cases into one of two classes) on a panel indexed by (station s, time t). The feature vector x_{s,t} is a function of the information available at t, written F_t; the superscript in y^{(h)}_{s,t} just marks which horizon h the target belongs to, and 1[label(s, t+h) = 1] is an indicator, equal to 1 when the bracketed statement is true and 0 when it is false. We fit f_h(x) ≈ P(y^{(h)} = 1 | x), read 'the probability that y^{(h)} is 1, given x,' for each horizon, a direct multi-horizon strategy rather than a recursive one.",
+  "src": "find-a.json"
+ },
+ {
+  "where": "p1-l2",
+  "level": "Stanford undergrad",
+  "old": "The 511 feed is an event stream sampled every 15 minutes, so incident start and end times are interval-censored. `created` is when CHP logged the report, which lags the physical event by an unknown, skewed delay.",
+  "new": "The 511 feed is an event stream sampled every 15 minutes, so incident start and end times are interval-censored: we only know an incident started somewhere between two 15-minute polls, never the exact minute. `created` is when CHP (the California Highway Patrol) logged the report, which lags the physical event by an unknown, skewed delay.",
+  "src": "find-a.json"
+ },
+ {
+  "where": "p2-t1",
+  "level": "High school",
+  "old": "The dot product equals |x||w|cos θ, so it measures alignment. The set of points where w·x + b = 0 is a line or a plane, which is the decision boundary of a linear model.",
+  "new": "The dot product also equals |x||w|cos θ, where |x| and |w| are the two vectors' lengths and θ is the angle between them, so it measures alignment: largest when two vectors point the same way, near zero when they meet at a right angle, negative when they point opposite ways. The set of points where w·x + b = 0 is a line or a plane, which is the decision boundary of a linear model.",
+  "src": "find-b.json"
+ },
+ {
+  "where": "p2-t1",
+  "level": "High school",
+  "old": "In numpy: `@` for products, `.T` for transpose, and broadcasting for adding a bias to every row.",
+  "new": "In numpy: `@` for products, `.T` for transpose, and broadcasting, numpy automatically repeating a smaller array (like one bias number) across every row of a bigger one, for adding a bias to every row.",
+  "src": "find-b.json"
+ },
+ {
+  "where": "p2-t2",
+  "level": "High school",
+  "old": "Rules: power, product, chain. Derivatives of eˣ and ln x, and the sigmoid's own derivative σ′ = σ(1 − σ). Partial derivatives when there are several inputs, and the gradient as the vector of them; it points uphill.",
+  "new": "Rules: power, product, chain. Derivatives of eˣ and ln x, and the sigmoid's own derivative, written σ′ (the prime mark means 'the derivative of'), which works out to σ′ = σ(1 − σ). Partial derivatives when there are several inputs, and the gradient as the vector of them; it points uphill.",
+  "src": "find-b.json"
+ },
+ {
+  "where": "p2-t3",
+  "level": "Middle school",
+  "old": "Random variables and distributions: a coin has two outcomes, a die six, and speeds spread out in a bell-like shape. Mean, median and mode are three kinds of 'typical'; the median resists outliers.",
+  "new": "Random variables and distributions: a coin has two outcomes, a die six, and speeds spread out in a bell-like shape. Mean, median and mode are three kinds of 'typical': the mean is the average, the median is the middle value once everything is sorted, and the mode is whichever value shows up most often. The median resists outliers, a few numbers far bigger or smaller than the rest.",
+  "src": "find-b.json"
+ },
+ {
+  "where": "p2-t3",
+  "level": "High school",
+  "old": "Bernoulli, binomial and normal distributions; expectation and variance and their rules; independence. Bayes' rule with a traffic example: P(crash | slow) is not P(slow | crash).",
+  "new": "Bernoulli, binomial (repeated yes/no trials counted up, like how many of the last ten five-minute windows were slow) and normal distributions; expectation and variance and their rules; independence. Bayes' rule with a traffic example: P(crash | slow) is not P(slow | crash).",
+  "src": "find-b.json"
+ },
+ {
+  "where": "p3-l3",
+  "level": "words linked",
+  "old": "words this page links: Mean (average), SQL / SELECT / WHERE / GROUP BY, PeMS, Station (detector), Time zone / UTC, Timezone, UTC, DST, Speed, for / while / if / else / break, Five-minute row / slot, Parquet, format, Registry, Postmile, Upstream / downstream, gzip (.gz), sorted / len / sum / map / filter, Timestamp, apply, Occupancy, Flow, % Observed (pct_obs), nn.Module / forward / backward, Grid, float32 / int8, Precision / recall, shift(k), yield (generator), Chunking / streaming, dtype, Split (train / validation / test), assert, Schema, zip / enumerate / range, NaN / NaT, Forward fill, station_id, pytest / unit test, groupby, Imputation, Linear, Inputs (features), Target (label), Model, Bayesian / prior / posterior, Prevalence, Profile, Metric, Command, read_csv / to_parquet, pandas, Mainline (ML), DataFrame / Series, def / return / None, Path, .loc / .iloc, pct_obs, datetime / timedelta / zoneinfo, Index, Python, Script, CSV",
+  "new": "words this page links: Mean (average), SQL / SELECT / WHERE / GROUP BY, PeMS, Station (detector), Time zone / UTC, Timezone, UTC, DST, Speed, for / while / if / else / break, Five-minute row / slot, Parquet, format, Registry, Postmile, Upstream / downstream, gzip (.gz), sorted / len / sum / map / filter, Timestamp, apply, Occupancy, Flow, % Observed (pct_obs), nn.Module / forward / backward, Grid, float32 / int8, Precision / recall, shift(k), yield (generator), Chunking / streaming, dtype, Split (train / validation / test), assert, Schema, zip / enumerate / range, NaN / NaT, Forward fill, station_id, pytest / unit test, groupby, Imputation, Linear, Inputs (features), Target (label), Model, Bayesian / prior / posterior, Prevalence, Profile, Metric, Command, read_csv / to_parquet, pandas, Mainline (ML), DataFrame / Series, def / return / None, Path, .loc / .iloc, pct_obs, datetime / timedelta / zoneinfo, Index, Python, Script, CSV, Boolean mask, numpy",
+  "src": "find-c.json"
+ },
+ {
+  "where": "p3-l3",
+  "level": "High school",
+  "old": "[Try this] Compute the bytes for 10 million rows × 5 columns at float64 and at float32. Then look up how much memory your machine has and see how many years of each would fit.",
+  "new": "[Try this] Compute the bytes for 10 million rows × 5 columns at float64 and at float32 (10 million rows is roughly a year of Fremont data: about 100 stations × 288 five-minute slots a day × 365 days). Then look up how much memory your machine has and see how many years of each would fit.",
+  "src": "find-c.json"
+ },
+ {
+  "where": "p3-t2",
+  "level": "High school",
+  "old": "Schemas and keys: a primary key identifies a row, a foreign key links tables, an index makes lookups fast. Types matter: store timestamps as timestamps, not text.",
+  "new": "Schemas and keys: a primary key is a column, like `station_id`, whose value is unique for every row, so it identifies exactly one row; a foreign key is a column in one table that stores another table's primary key value, which is what `JOIN` matches on. A database index is a lookup structure built on a column so the database can jump straight to matching rows instead of scanning every one, a different thing from a pandas DataFrame's index (its row labels) despite the shared name. Types matter: store timestamps as timestamps, not text.",
+  "src": "find-c.json"
+ },
+ {
+  "where": "p3-t2",
+  "level": "Stanford undergrad",
+  "old": "Query execution: how a planner turns SQL into scans, joins and aggregates, why indexes help lookups but not scans, and how to read an `EXPLAIN` plan. Transactions and ACID guarantees; concurrency and isolation levels in one paragraph.",
+  "new": "Query execution: how a planner turns SQL into scans, joins and aggregates, why indexes help lookups but not scans, and how to read an `EXPLAIN` plan, which prints the plan's steps without running the query. A transaction groups several reads and writes into one all-or-nothing unit; ACID names what it guarantees, atomic (all or nothing), consistent (never leaves the data breaking its own schema), isolated (concurrent transactions don't see each other's half-finished work), and durable (once committed, a crash can't undo it). An isolation level controls how strictly 'isolated' is enforced, trading correctness against speed; DuckDB and this course's file-based pipeline mostly sidestep the question, since one program reading files nobody else is writing to at the same time has nothing to isolate.",
+  "src": "find-c.json"
+ },
+ {
+  "where": "p3-t2",
+  "level": "Middle school",
+  "old": "[Try this] Load `fremont_events_log.csv` into DuckDB and run: `SELECT road_names, COUNT(*) AS n FROM events GROUP BY road_names ORDER BY n DESC LIMIT 5`.",
+  "new": "[Try this] In Python: `import duckdb` then `duckdb.sql(\"SELECT road_names, COUNT(*) AS n FROM 'fremont_events_log.csv' GROUP BY road_names ORDER BY n DESC LIMIT 5\")`. DuckDB can query a CSV file directly by putting its filename in quotes wherever a table name would go, so there's no separate 'loading' step first.",
+  "src": "find-c.json"
+ },
+ {
+  "where": "p3-r12",
+  "level": "Middle school",
+  "old": "Kaggle's SQL courses run against real public datasets in BigQuery from the browser. Intro to SQL covers select, where, group by, order by, and joins; Advanced SQL covers joins in depth, analytic (window) functions and nested data. An afternoon each.",
+  "new": "Kaggle's SQL courses run against real public datasets in BigQuery, Google's cloud database service, from the browser, so there's nothing to install. Intro to SQL covers select, where, group by, order by, and joins; Advanced SQL covers joins in depth, analytic (window) functions and nested data. An afternoon each.",
+  "src": "find-c.json"
+ },
+ {
+  "where": "p4-l5",
+  "level": "Step 3",
+  "old": "The trick is a self-join: the same table of (station, timestamp, speed, occ) is merged back onto `df` under a different name. First `df` is merged with the registry to gain the neighbor id column; then `nb`, a renamed copy of the current readings, is merged on (neighbor id, timestamp), so each row picks up its neighbor's reading at the same moment. The `rename(columns=...)` calls give the new columns names such as `down1_speed` (first downstream neighbor's speed) and `up1_occ`; the odd slicing expression inside just shortens 'upstream' to 'up' and 'downstream' to 'down'. Same timestamp, so nothing from the future is used.",
+  "new": "The trick is a self-join: the same table of (station, timestamp, speed, occ) is merged back onto `df` under a different name. First `df` is merged with the registry to gain the neighbor id column; then `nb`, a renamed copy of the current readings, is merged on (neighbor id, timestamp), so each row picks up its neighbor's reading at the same moment. The `rename(columns=...)` calls give the new columns names such as `down1_speed` (first downstream neighbor's speed) and `up1_occ`. Inside that rename, `side[:2 if side=='upstream' else 4]` is a conditional expression tucked inside a slice: Python first works out `2 if side=='upstream' else 4`, which is `2` when `side` is `'upstream'` and `4` otherwise, and only then applies `side[:that number]` to cut the word short, giving `'up'` or `'down'`. Same timestamp, so nothing from the future is used. After running this, check `df.down1_speed.isna().mean()` and `df.up1_speed.isna().mean()`: most rows should have a real number, since most stations have a neighbor; a value near 1.0 means the merge keys do not match, usually a wrong id type or a registry that failed to load.",
+  "src": "find-d.json"
+ },
+ {
+  "where": "p4-l4",
+  "level": "Stanford grad",
+  "old": "Alternatives keep more information: regress the speed ratio with a pinball loss and derive probabilities from quantiles; or model episode onset as a point process with covariates and predict hazard. Both avoid the brittle 3-step run and make horizon coherence natural.",
+  "new": "Alternatives keep more information: regress the speed ratio with a pinball loss and derive probabilities from quantiles; or model episode onset as a point process, a model of when events happen along a timeline, with covariates, the input features that shift how likely an event is, and predict hazard, the instantaneous risk of an episode starting right now given none has started yet. Both avoid the brittle 3-step run, and both make horizon coherence natural: a single underlying model of the continuous process, rather than three separately-trained 15/30/60-minute classifiers, cannot contradict itself across horizons the way three independent binary models sometimes do.",
+  "src": "find-d.json"
+ },
+ {
+  "where": "p4-l4",
+  "level": "Step 3",
+  "old": "The ratio `speed / profile_speed` says how the current speed compares with typical: 1.0 is normal, 0.5 is half speed. `is_slow` is 1 where the ratio is below 0.6, stored as `float32` so that NaN can survive in it. Then the run rule: a slow episode needs three consecutive slow rows, so that one noisy reading does not count. `rolling(3).sum()` adds each row's value to the two before it within each station (`groupby(\"station_id\")` keeps the window from crossing stations); a sum of 3 means three slow rows in a row. `reset_index(level=0, drop=True)` strips the extra group level that rolling adds so the result lines up with `df` again; `== 3` makes the boolean; `astype(\"int8\")` stores it as a one-byte integer. The sort before rolling matters: rolling reads rows in table order, so the table must be in time order within each station.",
+  "new": "The ratio `speed / profile_speed` says how the current speed compares with typical: 1.0 is normal, 0.5 is half speed. `is_slow` is 1 where the ratio is below 0.6, and 0 otherwise (a row whose profile is missing also lands on 0, since a comparison against a missing value is never true); it is stored as `float32`, a number rather than a plain true/false, because the next line sums three of these values together, and summing needs numbers, not booleans. Then the run rule: a slow episode needs three consecutive slow rows, so that one noisy reading does not count. `rolling(3).sum()` adds each row's value to the two before it within each station (`groupby(\"station_id\")` keeps the window from crossing stations); a sum of 3 means three slow rows in a row. `reset_index(level=0, drop=True)` strips the extra group level that rolling adds so the result lines up with `df` again; `== 3` makes the boolean; `astype(\"int8\")` stores it as a one-byte integer. The sort before rolling matters: rolling reads rows in table order, so the table must be in time order within each station.",
+  "src": "find-d.json"
+ },
+ {
+  "where": "p4-l8",
+  "level": "Step 4",
+  "old": "Install with `pip install shap`; it can take a few minutes on the M1, which is why a sample is used.",
+  "new": "Install it with `pip install shap` in the venv, the same one every other library in this course goes into; it can take a few minutes on the M1, which is why a sample is used.",
+  "src": "find-d.json"
+ },
+ {
+  "where": "p5-t1",
+  "level": "High school",
+  "old": "Linear regression minimizes the sum of squared errors; with several clues it is y ≈ w·x + b, fit by least squares. Metrics: MAE (robust, in mph), RMSE (sensitive to outliers), MAPE (percent, undefined at zero), R² (fraction of variance explained). Residual plots show where the model fails.",
+  "new": "Linear regression minimizes the sum of squared errors. With one clue it's the familiar y ≈ a + bx; with several clues at once, each one gets its own weight, and the prediction is y ≈ w₁x₁ + w₂x₂ + ... + b, written compactly as y ≈ w·x + b, where w·x (a dot product) just means multiply each weight by its matching clue and add up all those products. Fitting the line means choosing every weight and b by least squares, the same idea as before, just with more numbers to choose at once. Metrics: MAE (robust, in mph), RMSE (sensitive to outliers), MAPE (percent, undefined at zero), R² (fraction of variance explained). Residual plots show where the model fails.",
+  "src": "find-e.json"
+ },
+ {
+  "where": "p5-t3",
+  "level": "Stanford undergrad",
+  "old": "Clustering as optimization (k-means as coordinate descent on within-cluster variance; Gaussian mixtures and EM as its probabilistic version), the meaning of a 'good' clustering (no ground truth; stability and downstream utility), and the curse of dimensionality for distances. PCA as the best low-rank approximation (Eckart-Young), its relation to the SVD, and its limits (linear, variance is not always signal). Nonlinear reduction (t-SNE, UMAP) for visualization only.",
+  "new": "Clustering as optimization: k-means turns out to be a form of coordinate descent that minimizes within-cluster variance, and a Gaussian mixture fit with EM is its probabilistic, soft-assignment version. There is no ground truth to check a clustering against, so a 'good' clustering is judged by stability across reruns and by whether it helps a downstream task instead. Distance-based methods like k-means also run into the curse of dimensionality: with enough features, every pair of points ends up looking almost equally far apart, which weakens what 'nearest' even means. PCA is the best possible low-rank approximation of the data in a precise sense (the Eckart-Young theorem), it is closely related to the singular value decomposition (SVD), and its real limit is that it only ever looks for linear structure, so variance along a curved or nonlinear pattern is not something PCA can see as signal. Nonlinear techniques like t-SNE and UMAP exist for exactly that gap, but only for visualization: they preserve which points were close neighbors well enough to plot, not the kind of well-defined axes PCA produces, so their output should never be fed into another model as a feature.",
+  "src": "find-e.json"
+ },
+ {
+  "where": "p7-l9",
+  "level": "High school",
+  "old": "Forward pass: h = ReLU(W₁x + b₁), p = σ(w₂·h + b₂). Loss: cross-entropy. Backward pass: ∂L/∂w₂ = (p − y) h; ∂L/∂h = (p − y) w₂; through ReLU multiply by 1 where the pre-activation was positive and 0 elsewhere; ∂L/∂W₁ = δ₁ xᵀ.",
+  "new": "Forward pass: h = ReLU(W₁x + b₁), p = σ(w₂·h + b₂). Loss: cross-entropy. Backward pass: ∂L/∂w₂ means how the loss L changes for a tiny nudge to w₂ alone, everything else held fixed, the same idea as dy/dx but for a function of many weights at once. ∂L/∂w₂ = (p − y) h; ∂L/∂h = (p − y) w₂; through ReLU multiply by 1 where the pre-activation was positive and 0 elsewhere, giving δ₁, the hidden layer's own error; ∂L/∂W₁ = δ₁ xᵀ.",
+  "src": "find-f.json"
+ },
+ {
+  "where": "p8-t1",
+  "level": "High school",
+  "old": "Layers: convolution (filters, stride, padding), nonlinearity, pooling, batch normalization, then fully connected layers or global pooling. Why convolutions: weight sharing and locality make them data-efficient and translation-equivariant. Classic architectures (LeNet, AlexNet, VGG, ResNet with skip connections) and what each added.",
+  "new": "Layers: convolution (filters, stride, padding), nonlinearity, pooling, batch normalization, then fully connected layers or global pooling. Why convolutions: weight sharing (the same filter is reused at every position) and locality make them data-efficient and translation-equivariant, meaning a pattern learned in one part of the image is recognized anywhere else it appears, without learning it separately for each spot. Classic architectures (LeNet, AlexNet, VGG, ResNet with skip connections) and what each added.",
+  "src": "find-f.json"
+ },
+ {
+  "where": "p8-t3",
+  "level": "High school",
+  "old": "The training pipeline: pretraining on web-scale text, supervised fine-tuning on demonstrations, preference tuning (reinforcement learning from human feedback or direct preference optimization). Scaling laws: loss falls predictably with model size, data and compute. Inference: sampling, temperature, context windows, cost per token.",
+  "new": "The training pipeline: pretraining on web-scale text, supervised fine-tuning on demonstrations people wrote, and preference tuning, adjusting the model using which of two answers people preferred (reinforcement learning from human feedback and direct preference optimization are two ways to do this). Scaling laws: loss falls predictably with model size, data and compute. Inference: sampling (picking words from the model's predicted probabilities rather than always the top one), temperature (a knob for how much randomness that sampling uses), context windows (how much text the model can read at once), and cost per token.",
+  "src": "find-f.json"
+ },
+ {
+  "where": "p8-t3",
+  "level": "High school",
+  "old": "Adaptation: prompting (instructions, few-shot examples, structured output), parameter-efficient fine-tuning (LoRA), retrieval (embeddings, a vector index, chunking), and tool use. Evaluation: held-out benchmarks, task-specific test sets, and human review. On a 16 GB Mac mini, a quantized 3 to 8 billion-parameter model runs locally but competes with training for memory.",
+  "new": "Adaptation: prompting (instructions, few-shot examples, structured output), parameter-efficient fine-tuning (LoRA), retrieval (embeddings, a vector index, chunking), and tool use. Evaluation: held-out benchmarks, task-specific test sets, and human review. On a 16 GB Mac mini, a quantized model, one whose weights are stored in fewer bits than usual (say 4 or 8 instead of 32) specifically to shrink it enough to fit in memory, runs locally at 3 to 8 billion parameters but competes with training for memory.",
+  "src": "find-f.json"
+ },
+ {
+  "where": "p8-t5",
+  "level": "High school",
+  "old": "Feature extraction versus fine-tuning; learning rates for pretrained layers; catastrophic forgetting. Self-supervised objectives: masked prediction, contrastive learning (pull similar views together), next-step prediction. Foundation models in vision, language and now time series; zero-shot and few-shot use.",
+  "new": "Feature extraction versus fine-tuning; learning rates for pretrained layers; catastrophic forgetting, losing an old skill while learning a new one because the same weights get overwritten. Self-supervised objectives: masked prediction, contrastive learning (pull similar views together), next-step prediction. Foundation models in vision, language and now time series; zero-shot use (doing the new task with no examples of it) and few-shot use (with just a handful).",
+  "src": "find-f.json"
+ },
+ {
+  "where": "p9-t2",
+  "level": "High school",
+  "old": "FastAPI: define request and response models, add an endpoint, run with a server, read the auto-generated docs. Docker: a Dockerfile lists the base image and install steps, `docker build` and `docker run` package and run it, `.dockerignore` keeps data out. Cloud basics: a virtual machine, object storage for files, a scheduler, secrets management, and logs. Batch versus online serving: this project's 5-minute batch writes a file; an online service answers on demand.",
+  "new": "FastAPI: define request and response models, add an endpoint (one URL the server answers, like `/predict`), run with a server (a program that stays running and listens for requests instead of exiting after one command), read the auto-generated docs. Docker: a Dockerfile lists the base image and install steps, `docker build` and `docker run` package and run it, `.dockerignore` keeps data out. Cloud basics: a virtual machine (a rented computer you set up yourself), object storage for files (a shared drive in the cloud that many machines can read and write), a scheduler (something that starts a job on a timer, the way launchd does), secrets management (a safe place to keep passwords and keys instead of writing them into the code), and logs. Batch versus online serving: this project's 5-minute batch writes a file; an online service answers on demand.",
+  "src": "find-g.json"
+ },
+ {
+  "where": "p9-l12",
+  "level": "High school",
+  "old": "Memory rules: float32, categorical ids, monthly Parquet parts, one heavy job at a time, three gigabytes kept free. Scheduling rules: launchd plists with `StartInterval`, Energy settings set to never sleep, `caffeinate` around the long download.",
+  "new": "Memory rules: float32, categorical ids, monthly Parquet parts, one heavy job at a time, three gigabytes kept free. Scheduling rules: launchd plists with `StartInterval`, Energy settings set to never sleep (in System Settings, under Battery or Energy Saver, turn off 'put hard disks to sleep' and set the machine to never sleep on power), `caffeinate` around the long download (run `caffeinate long_running_command`, which keeps the Mac awake only until that one command finishes).",
+  "src": "find-g.json"
+ },
+ {
+  "where": "p10-t1",
+  "level": "High school",
+  "old": "Markov decision processes: states, actions, transitions, rewards, discounting. Value functions and the Bellman equation; Q-learning and policy gradients as the two families; exploration versus exploitation; deep RL (a network for the value or policy). Bandits: epsilon-greedy, upper confidence bound, Thompson sampling. Simulators are usually required because trying actions in the real world is expensive or unsafe.",
+  "new": "A Markov decision process names the pieces: states (the situation right now), actions (what the agent can do), transitions (how the state changes after an action), rewards, and discounting (caring a little less about reward that arrives later). A value function estimates the total future reward available from a state, and the Bellman equation is the rule that a value equals the reward right now plus the discounted value of whatever comes next; Q-learning learns those values directly and picks the action with the highest one, while policy gradients instead adjust the policy itself to get more reward, the two main families. Exploration versus exploitation is trying something new against using what already works; deep RL just means a neural network stands in for the value function or the policy once there are too many states to write down. Bandits, the one-decision case, choose when to keep exploring with epsilon-greedy (mostly pick the best-known option, occasionally pick at random), upper confidence bound (favor options you are still unsure about), or Thompson sampling (pick each option in proportion to how likely it is to be the best one). Simulators are usually required because trying actions in the real world is expensive or unsafe.",
+  "src": "find-g.json"
+ },
+ {
+  "where": "p10-t3",
+  "level": "High school",
+  "old": "Fairness definitions and why they conflict: equal error rates across groups, calibration within groups, demographic parity; you cannot have all at once. Measuring: slice every metric by area and time. Privacy: anonymization fails against linkage; differential privacy adds calibrated noise with a provable guarantee; aggregation thresholds and k-anonymity are weaker but common. Ethics in practice: documentation (datasheets, model cards), stating limits, and a person accountable for decisions.",
+  "new": "Fairness definitions and why they conflict: equal error rates across groups, calibration within groups, demographic parity (the model alerts the same share of people in every group); you cannot have all at once. Measuring: slice every metric by area and time. Privacy: anonymization fails against linkage, where someone combines an 'anonymous' record with outside information to identify a person; differential privacy adds calibrated noise with a provable guarantee (a mathematical limit on how much any one person's data could have changed the released numbers); aggregation thresholds (never publishing a count below some minimum) and k-anonymity (making sure every published row looks like at least k others) are weaker but common. Ethics in practice: documentation (datasheets, model cards, short standard write-ups of what a dataset or model is and is not good for), stating limits, and a person accountable for decisions.",
+  "src": "find-g.json"
+ },
+ {
+  "where": "p10-t4",
+  "level": "High school",
+  "old": "Matrix factorization with implicit feedback, nearest-neighbor methods, and modern two-tower models that embed users and items; candidate generation then ranking; ranking losses (pointwise, pairwise, listwise). Metrics: precision at k, recall at k, mean average precision, NDCG. Offline evaluation is biased by what was shown (exposure), which is the central difficulty.",
+  "new": "Matrix factorization with implicit feedback (clicks and views instead of star ratings), nearest-neighbor methods, and modern two-tower models that embed users and items so a good match ends up a short distance apart; candidate generation (cheaply shortlisting a few hundred possible items out of millions) then ranking (scoring that short list carefully); ranking losses (pointwise: score each item alone, pairwise: get one pair in the right order, listwise: get the whole list in the right order). Metrics: precision at k, recall at k, mean average precision, NDCG (normalized discounted cumulative gain, which rewards good items for being near the top of the list, not just present in it). Offline evaluation is biased by exposure, since the log only shows what the old system already chose to show, so items it never showed have no data to judge.",
+  "src": "find-g.json"
+ },
+ {
+  "where": "p11-t3",
+  "level": "High school",
+  "old": "Three passes: title, abstract, figures and conclusion; then method and experiments with attention to baselines and datasets; then re-derive the key equations and read the code. For traffic, METR-LA and PEMS-BAY are the standard datasets, PEMS-BAY being Bay Area PeMS with 325 sensors, and the metrics are MAE, RMSE and MAPE at 15, 30 and 60 minutes. On the M1, reduce epochs, hidden size and batch, but keep the evaluation protocol identical.",
+  "new": "Three passes: title, abstract, figures and conclusion; then method and experiments with attention to baselines and datasets; then re-derive the key equations and read the code. For traffic, METR-LA and PEMS-BAY are the standard datasets, METR-LA being 207 loop detectors in Los Angeles and PEMS-BAY being Bay Area PeMS with 325 sensors, and the metrics are MAE, RMSE and MAPE at 15, 30 and 60 minutes. On the M1, reduce epochs, hidden size and batch, but keep the evaluation protocol identical.",
+  "src": "find-g.json"
+ },
+ {
+  "where": "hessian",
+  "level": "High school",
+  "old": "The Hessian H of a function f(w) is the matrix of its second partial derivatives, Hᵢⱼ = ∂²f/∂wᵢ∂wⱼ, capturing how the slope changes in every direction at once. If H is positive semidefinite everywhere (vᵀHv ≥ 0 for every vector v), the function is convex, meaning it has a single bowl shape with no separate local dips to get stuck in. Newton's method updates parameters using both the gradient and the Hessian, w ← w − H⁻¹∇f(w), which accounts for curvature and can converge in far fewer steps than gradient descent on well-behaved (locally quadratic) functions. For logistic regression, the loss's Hessian is Xᵀ diag(p(1−p)) X, which is positive semidefinite, proving the loss is convex and gradient descent is guaranteed to find the global minimum.",
+  "new": "The Hessian H of a function f(w) is the matrix of its second partial derivatives, Hᵢⱼ = ∂²f/∂wᵢ∂wⱼ, capturing how the slope changes in every direction at once. If H is positive semidefinite everywhere, meaning it never curves downward no matter which direction v you check (vᵀHv ≥ 0, where vᵀ just means v written as a row instead of a column so the multiplication lines up), the function is convex, meaning it has a single bowl shape with no separate local dips to get stuck in. Newton's method updates parameters using both the gradient and the Hessian, w ← w − H⁻¹∇f(w), where H⁻¹ is the Hessian's matrix inverse, undoing what multiplying by H does, the way dividing by a number undoes multiplying by it, which accounts for curvature and can converge in far fewer steps than gradient descent on well-behaved (locally quadratic) functions. For logistic regression, the loss's Hessian is Xᵀ diag(p(1−p)) X, which is positive semidefinite, proving the loss is convex and gradient descent is guaranteed to find the global minimum.",
+  "src": "find-h.json"
+ },
+ {
+  "where": "optimizer",
+  "level": "High school",
+  "old": "Plain gradient descent updates each parameter as w ← w − η∇L, where η is the learning rate; Adam instead keeps a running average of the gradient, momentum, and of the squared gradient for every parameter, and updates using both: θ_t = θ_{t−1} − α·m̂_t/(√v̂_t + ε), where the hats denote bias-corrected averages. This gives each parameter effectively its own adaptive step size, parameters with noisy, small gradients get relatively bigger steps than under plain gradient descent. AdamW adds weight decay as a separate term subtracted directly from the weights each step, rather than folding it into the gradient the way old-style L2 regularization did, which matters for how well the regularization actually works.",
+  "new": "Plain gradient descent updates each parameter as w ← w − η∇L, where η is the learning rate; Adam instead keeps a running average of the gradient itself, call it m, and of the squared gradient, call it v, for every parameter, and updates using both: θ_t = θ_{t−1} − α·m̂_t/(√v̂_t + ε), where θ_t is the parameter after step t, α is the learning rate (the same idea as η above, just a different letter), m̂_t and v̂_t are those two running averages with a small correction for the fact that they both start at zero, and ε is a tiny number added only so the division never blows up if v̂_t happens to be zero. This gives each parameter effectively its own adaptive step size, parameters with noisy, small gradients get relatively bigger steps than under plain gradient descent. AdamW adds weight decay as a separate term subtracted directly from the weights each step, rather than folding it into the gradient the way old-style L2 regularization did, which matters for how well the regularization actually works.",
+  "src": "find-h.json"
+ }
+]

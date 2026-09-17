@@ -1,0 +1,1718 @@
+[
+ {
+  "term": "Mean (average)",
+  "names": [
+   "mean",
+   "average"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Median",
+  "names": [
+   "median"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Quantile / percentile",
+  "names": [
+   "quantile",
+   "percentile"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Variance / standard deviation",
+  "names": [
+   "variance",
+   "standard deviation"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Probability",
+  "names": [
+   "probability"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Distribution",
+  "names": [
+   "distribution"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Normal (Gaussian) distribution",
+  "names": [
+   "normal distribution",
+   "Gaussian"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Bernoulli / Poisson",
+  "names": [
+   "Bernoulli",
+   "Poisson"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Likelihood",
+  "names": [
+   "likelihood"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Bayesian / prior / posterior",
+  "names": [
+   "Bayesian",
+   "Bayes",
+   "prior",
+   "posterior"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Vector",
+  "names": [
+   "vector"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Dot product",
+  "names": [
+   "dot product"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Derivative",
+  "names": [
+   "derivative"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Chain rule",
+  "names": [
+   "chain rule"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Hessian / Newton's method",
+  "names": [
+   "Hessian",
+   "Newton"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Laplace",
+  "names": [
+   "Laplace"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Entropy",
+  "names": [
+   "entropy"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "KL divergence",
+  "names": [
+   "KL divergence",
+   "KL"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Mutual information",
+  "names": [
+   "mutual information"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Monte Carlo",
+  "names": [
+   "Monte Carlo"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Markov / hidden Markov model",
+  "names": [
+   "Markov",
+   "hidden Markov"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Rademacher complexity",
+  "names": [
+   "Rademacher"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Softmax",
+  "names": [
+   "softmax"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Sigmoid",
+  "names": [
+   "sigmoid"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Hyperparameter",
+  "names": [
+   "hyperparameter"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Cross-validation",
+  "names": [
+   "cross-validation",
+   "TimeSeriesSplit"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Grid search",
+  "names": [
+   "grid search"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Random forest",
+  "names": [
+   "random forest"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Boosting / bagging / ensemble",
+  "names": [
+   "boosting",
+   "bagging",
+   "ensemble"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "XGBoost",
+  "names": [
+   "XGBoost"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "LightGBM leaf and depth settings",
+  "names": [
+   "num_leaves",
+   "min_data_in_leaf",
+   "max_depth",
+   "max_bin",
+   "feature_fraction",
+   "bagging_fraction",
+   "learning_rate"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "SVM (support vector machine)",
+  "names": [
+   "SVM",
+   "support vector machine"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "PCA (principal components)",
+  "names": [
+   "PCA",
+   "principal component"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "SGD (stochastic gradient descent)",
+  "names": [
+   "SGD",
+   "stochastic gradient descent"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Adam / momentum / weight decay",
+  "names": [
+   "Adam",
+   "momentum",
+   "weight decay"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Dropout",
+  "names": [
+   "dropout"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Batch normalization",
+  "names": [
+   "batch normalization",
+   "BatchNorm"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Batch size",
+  "names": [
+   "batch size"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Residual connection / ResNet",
+  "names": [
+   "residual",
+   "ResNet"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Convolution",
+  "names": [
+   "convolution",
+   "convolutional"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "RNN / LSTM",
+  "names": [
+   "RNN",
+   "LSTM",
+   "recurrent"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Embedding",
+  "names": [
+   "embedding"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Attention",
+  "names": [
+   "attention"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Transformer",
+  "names": [
+   "transformer"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Tokenizer",
+  "names": [
+   "tokenizer",
+   "token"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "LLM / GPT",
+  "names": [
+   "LLM",
+   "GPT",
+   "large language model"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "GAN / VAE",
+  "names": [
+   "GAN",
+   "VAE",
+   "autoencoder"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "GCN / STGCN / DCRNN",
+  "names": [
+   "GCN",
+   "STGCN",
+   "DCRNN"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Q-learning",
+  "names": [
+   "Q-learning",
+   "reinforcement learning"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Gaussian process",
+  "names": [
+   "Gaussian process"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Conformal prediction",
+  "names": [
+   "conformal prediction",
+   "conformal"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "Underfitting",
+  "names": [
+   "underfitting",
+   "underfit"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "ARIMA / exponential smoothing",
+  "names": [
+   "ARIMA",
+   "exponential smoothing"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Stationarity / seasonality",
+  "names": [
+   "stationarity",
+   "stationary",
+   "seasonality",
+   "seasonal"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Persistence forecast",
+  "names": [
+   "persistence"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "ROC / AUC",
+  "names": [
+   "ROC",
+   "AUC"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "F1 score",
+  "names": [
+   "F1"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Confusion matrix",
+  "names": [
+   "confusion matrix"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Reliability diagram",
+  "names": [
+   "reliability diagram"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "MAE / RMSE / MAPE",
+  "names": [
+   "MAE",
+   "RMSE",
+   "MAPE"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Pinball / Huber loss",
+  "names": [
+   "pinball loss",
+   "pinball",
+   "Huber"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Free flow",
+  "names": [
+   "free flow",
+   "free-flow"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Retraining",
+  "names": [
+   "retraining",
+   "retrain"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Feature store",
+  "names": [
+   "feature store"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Latency / throughput",
+  "names": [
+   "latency",
+   "throughput"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "Categorical / one-hot / ordinal",
+  "names": [
+   "categorical",
+   "one-hot",
+   "ordinal"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "dtype",
+  "names": [
+   "dtype"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "Time zone / UTC",
+  "names": [
+   "time zone",
+   "timezone",
+   "UTC",
+   "tz_localize",
+   "tz_convert"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "Partition",
+  "names": [
+   "partition"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "PEMS-BAY",
+  "names": [
+   "PEMS-BAY"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "Kaggle",
+  "names": [
+   "Kaggle"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "SQL / SELECT / WHERE / GROUP BY",
+  "names": [
+   "SQL",
+   "SELECT",
+   "WHERE",
+   "GROUP BY",
+   "ORDER BY"
+  ],
+  "group": "Tables and code words"
+ },
+ {
+  "term": "Window function",
+  "names": [
+   "window function"
+  ],
+  "group": "Tables and code words"
+ },
+ {
+  "term": "DuckDB / SQLite",
+  "names": [
+   "DuckDB",
+   "SQLite"
+  ],
+  "group": "Tables and code words"
+ },
+ {
+  "term": "scikit-learn",
+  "names": [
+   "scikit-learn",
+   "sklearn"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "pytest / unit test",
+  "names": [
+   "pytest",
+   "unit test"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "Sanity check",
+  "names": [
+   "sanity check"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "Exception / traceback / try-except",
+  "names": [
+   "exception",
+   "traceback",
+   "try",
+   "except"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "Type hint",
+  "names": [
+   "type hint"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "Container / Docker",
+  "names": [
+   "container",
+   "Docker"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "cron / launchd",
+  "names": [
+   "cron",
+   "launchd",
+   "StartInterval"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "conda / miniforge",
+  "names": [
+   "conda",
+   "miniforge"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "GPU / CPU",
+  "names": [
+   "GPU",
+   "CPU"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": ".gitignore",
+  "names": [
+   ".gitignore"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "git status / add / commit / log / diff",
+  "names": [
+   "git status",
+   "git add",
+   "git log",
+   "git diff",
+   "git init"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "cd / ls",
+  "names": [
+   "cd",
+   "ls"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "station_id",
+  "names": [
+   "station_id"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "y_30 (the thirty-minute target)",
+  "names": [
+   "y_30"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "speed_lag_0",
+  "names": [
+   "speed_lag_0",
+   "speed_lag"
+  ],
+  "group": "Prediction words"
+ },
+ {
+  "term": "% Observed (pct_obs)",
+  "names": [
+   "% Observed"
+  ],
+  "group": "Data words"
+ },
+ {
+  "term": "datetime / timedelta / zoneinfo",
+  "names": [
+   "datetime",
+   "timedelta",
+   "zoneinfo",
+   "tzdata",
+   "pd.to_datetime"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "read_csv / to_parquet",
+  "names": [
+   "read_csv",
+   "to_parquet",
+   "read_parquet"
+  ],
+  "group": "Tables and code words"
+ },
+ {
+  "term": "apply",
+  "names": [
+   "apply"
+  ],
+  "group": "Tables and code words"
+ },
+ {
+  "term": "min_periods",
+  "names": [
+   "min_periods"
+  ],
+  "group": "Tables and code words"
+ },
+ {
+  "term": "X @ w (matrix multiply)",
+  "names": [
+   "X @ w",
+   "matrix multiply",
+   "matmul"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "nn.Module / forward / backward",
+  "names": [
+   "nn.Module",
+   "forward",
+   "backward"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "DataLoader",
+  "names": [
+   "DataLoader"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "model.eval()",
+  "names": [
+   "model.eval()",
+   "eval mode"
+  ],
+  "group": "Model words"
+ },
+ {
+  "term": "argparse",
+  "names": [
+   "argparse"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "pathlib",
+  "names": [
+   "pathlib"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "dataclasses",
+  "names": [
+   "dataclasses",
+   "dataclass"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "for / while / if / else / break",
+  "names": [
+   "for",
+   "while",
+   "if",
+   "else",
+   "break"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "def / return / None",
+  "names": [
+   "def",
+   "return",
+   "None"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "yield (generator)",
+  "names": [
+   "yield",
+   "generator"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "zip / enumerate / range",
+  "names": [
+   "zip",
+   "enumerate",
+   "range"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "sorted / len / sum / map / filter",
+  "names": [
+   "sorted",
+   "len",
+   "sum",
+   "map",
+   "filter"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "*args / **kwargs",
+  "names": [
+   "*args",
+   "**kwargs"
+  ],
+  "group": "Python words",
+  "def": "`*args` collects extra positional arguments into a tuple and `**kwargs` collects extra keyword arguments into a dictionary, letting a function take a flexible number of inputs."
+ },
+ {
+  "term": "__init__ (class constructor)",
+  "names": [
+   "__init__",
+   "class"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "format",
+  "names": [
+   "format"
+  ],
+  "group": "Python words"
+ },
+ {
+  "term": "ISLP (the book)",
+  "names": [
+   "ISLP"
+  ],
+  "group": "Tools and files"
+ },
+ {
+  "term": "PDF (probability density)",
+  "names": [
+   "PDF",
+   "density"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "Linear",
+  "names": [
+   "linear"
+  ],
+  "group": "Math words"
+ },
+ {
+  "term": "README",
+  "names": [
+   "README",
+   "README.md"
+  ],
+  "group": "Tools and files",
+  "def": "A text file (usually `README.md`) at the top of a repository that explains what the project is and how to use it."
+ },
+ {
+  "term": "Pull request",
+  "names": [
+   "pull request",
+   "PR"
+  ],
+  "group": "Tools and files",
+  "def": "A request on GitHub to merge one branch's commits into another, reviewed (even by yourself) before it merges."
+ },
+ {
+  "term": "Makefile / make",
+  "names": [
+   "Makefile",
+   "make"
+  ],
+  "group": "Tools and files",
+  "def": "A file named `Makefile` listing named targets and the shell commands each one runs; `make target` runs them, skipping work that is already up to date."
+ },
+ {
+  "term": "Stage (pipeline stage number)",
+  "names": [
+   "stage",
+   "stage 2",
+   "stage 5"
+  ],
+  "group": "Tools and files",
+  "def": "One numbered step of the project's own pipeline plan (stage 1, stage 2, ...); each stage corresponds to one or more of the numbered scripts."
+ },
+ {
+  "term": "Supervised learning / classification",
+  "names": [
+   "supervised learning",
+   "classification",
+   "binary classification"
+  ],
+  "group": "Prediction words",
+  "def": "Training a model on examples that already have the right answer attached; classification is supervised learning where the answer is one of a fixed set of categories."
+ },
+ {
+  "term": "Loop detector",
+  "names": [
+   "loop detector",
+   "loop",
+   "double-loop",
+   "single-loop"
+  ],
+  "group": "Data words",
+  "def": "A wire coil buried in the pavement that senses a vehicle passing over it by the change it causes in a magnetic field; most PeMS stations use a pair of these."
+ },
+ {
+  "term": "Time series",
+  "names": [
+   "time series"
+  ],
+  "group": "Data words",
+  "def": "A sequence of values for the same thing, in time order, one entry per time step, like one station's speed reading every five minutes for a month."
+ },
+ {
+  "term": "Regular expression (regex)",
+  "names": [
+   "regular expression",
+   "regex",
+   "re.search"
+  ],
+  "group": "Python words",
+  "def": "A pattern written in a small symbolic language for matching and pulling text out of a string, like finding \"I-880\" inside \"Collision on I-880 N\"."
+ },
+ {
+  "term": "HTTP / URL",
+  "names": [
+   "HTTP",
+   "URL",
+   "HTTP request",
+   "status code"
+  ],
+  "group": "Tools and files",
+  "def": "HTTP is the request-and-response language a program uses to talk to a web server; a URL is the address of what you're asking for, like `https://511.org/traffic`."
+ },
+ {
+  "term": "Bounding box",
+  "names": [
+   "bounding box"
+  ],
+  "group": "Data words",
+  "def": "A rectangle described by its min and max latitude and longitude, used to test whether a point (like an incident) falls inside an area (like Fremont)."
+ },
+ {
+  "term": "Wildcard / glob (*)",
+  "names": [
+   "wildcard",
+   "glob"
+  ],
+  "group": "Tools and files",
+  "def": "A pattern like `*.csv` that the shell expands into every matching filename before running the command, so `*` stands for \"anything.\""
+ },
+ {
+  "term": "with / context manager",
+  "names": [
+   "with statement",
+   "context manager",
+   "with open"
+  ],
+  "group": "Python words",
+  "def": "`with expr as name:` runs setup before the indented block and guaranteed cleanup after it, even if the block raises an error; `with open(path) as f:` is the common example."
+ },
+ {
+  "term": "Logarithm (log, ln)",
+  "names": [
+   "ln",
+   "logarithm",
+   "natural log",
+   "natural logarithm",
+   "log base e"
+  ],
+  "group": "Math words",
+  "def": "The power you'd raise a fixed base to, to get a number; ln is log base e, and it turns multiplying into adding."
+ },
+ {
+  "term": "Sigma (Σ, σ)",
+  "names": [
+   "sigma",
+   "Σ",
+   "σ",
+   "summation notation",
+   "sigma notation"
+  ],
+  "group": "Math words",
+  "def": "Two unrelated uses of the same Greek letter: capital Σ means \"add up a list\"; lowercase σ usually means standard deviation, but inside σ(z) it means the sigmoid function instead."
+ },
+ {
+  "term": "Partial derivative (∂)",
+  "names": [
+   "partial derivative",
+   "∂",
+   "del"
+  ],
+  "group": "Math words",
+  "def": "∂f/∂x is the derivative of f with respect to x alone, treating every other input as if it were frozen; the gradient collects one per input."
+ },
+ {
+  "term": "Convex / convexity",
+  "names": [
+   "convex",
+   "convexity",
+   "convex function",
+   "convex loss"
+  ],
+  "group": "Math words",
+  "def": "A function shaped like a single bowl, with no separate dips; every local minimum is also the global minimum, so gradient descent can't get stuck."
+ },
+ {
+  "term": "Broadcasting (numpy)",
+  "names": [
+   "broadcasting",
+   "broadcast"
+  ],
+  "group": "Tables and code words",
+  "def": "numpy's rule for combining arrays of different shapes by automatically stretching the smaller one, so `X @ w + b` can add one bias number to every row of X without a loop."
+ },
+ {
+  "term": "Scientific notation (1e-6)",
+  "names": [
+   "scientific notation",
+   "1e-6",
+   "1e6",
+   "e notation",
+   "float literal"
+  ],
+  "group": "Tables and code words",
+  "def": "`1e-6` means 1 × 10⁻⁶, or 0.000001; the `e` here means \"times ten to the power of,\" not Euler's number."
+ },
+ {
+  "term": "Expectation (expected value), E[X]",
+  "names": [
+   "expectation",
+   "expected value",
+   "E[X]"
+  ],
+  "group": "Math words",
+  "def": "The long-run average outcome of a random quantity, weighting each possible value by how likely it is; written E[X]."
+ },
+ {
+  "term": "Correlation",
+  "names": [
+   "correlation",
+   "Pearson correlation",
+   "correlate"
+  ],
+  "group": "Math words",
+  "def": "A number from −1 to 1 measuring how closely two quantities move together in a straight-line way; it does not mean one causes the other."
+ },
+ {
+  "term": "p-value / hypothesis test",
+  "names": [
+   "p-value",
+   "hypothesis test",
+   "null hypothesis",
+   "statistical significance"
+  ],
+  "group": "Math words",
+  "def": "The probability of seeing a result at least this extreme if nothing real were going on; small does not mean \"true,\" and large does not mean \"false.\""
+ },
+ {
+  "term": "Subscript (index notation)",
+  "names": [
+   "subscript",
+   "index notation",
+   "xi",
+   "x_1"
+  ],
+  "group": "Math words",
+  "def": "A small number or letter written after a variable, like x₁ or wᵢ, that says which item in a list you mean; x₁ is the first item, x₂ the second, xᵢ a generic, unspecified one."
+ },
+ {
+  "term": "Law of large numbers / Central limit theorem",
+  "names": [
+   "law of large numbers",
+   "central limit theorem",
+   "LLN",
+   "CLT"
+  ],
+  "group": "Math words",
+  "def": "The law of large numbers says an average settles down toward the true value as you collect more data; the central limit theorem says that average's own error shrinks and starts looking normally distributed as it does."
+ },
+ {
+  "term": "Byte, KB, MB, GB",
+  "names": [
+   "byte",
+   "kilobyte",
+   "megabyte",
+   "gigabyte",
+   "KB",
+   "MB",
+   "GB"
+  ],
+  "group": "Tools and files",
+  "def": "The units a file or a computer's memory is measured in. A byte is about one letter of storage; kilo-, mega- and giga- each multiply it by roughly a thousand."
+ },
+ {
+  "term": "Primary key / foreign key / database index",
+  "names": [
+   "primary key",
+   "foreign key",
+   "database index"
+  ],
+  "group": "Tables and code words",
+  "def": "A primary key is a column that uniquely identifies each row; a foreign key is a column that points to another table's primary key; an index is a lookup structure built on a column so a database can find matching rows fast."
+ },
+ {
+  "term": "resample",
+  "names": [
+   "resample",
+   "resampling",
+   "downsample",
+   "upsample"
+  ],
+  "group": "Tables and code words",
+  "def": "Change a pandas time series to a coarser or finer regular interval: `resample('1h').mean()` groups five-minute rows into hourly ones."
+ },
+ {
+  "term": "Query plan / EXPLAIN",
+  "names": [
+   "query plan",
+   "EXPLAIN"
+  ],
+  "group": "Tables and code words",
+  "def": "The step-by-step plan a database will actually use to run a query. `EXPLAIN` prints it before running, so you can see whether it will scan everything or use a shortcut."
+ },
+ {
+  "term": "Transaction / ACID",
+  "names": [
+   "transaction",
+   "ACID",
+   "isolation level"
+  ],
+  "group": "Tables and code words",
+  "def": "A transaction is a group of database reads and writes treated as one all-or-nothing unit. ACID names the guarantees it gets: atomic, consistent, isolated, durable."
+ },
+ {
+  "term": "Breakdown point",
+  "names": [
+   "breakdown point"
+  ],
+  "group": "Math words",
+  "def": "The fraction of a dataset that can be replaced with extreme values before a statistic gets dragged arbitrarily far from the truth; higher means harder to fool."
+ },
+ {
+  "term": "Standard error (of an estimate)",
+  "names": [
+   "standard error",
+   "SE"
+  ],
+  "group": "Math words",
+  "def": "How much a number computed from a sample, like a median or mean, would wobble if recomputed from a different sample of the same size; smaller means more trustworthy."
+ },
+ {
+  "term": "Summation (Σ) and product (Π) notation",
+  "names": [
+   "sigma notation",
+   "Σ",
+   "Π",
+   "summation notation",
+   "product notation"
+  ],
+  "group": "Math words",
+  "def": "Σ means 'add up whatever follows, once for each value of the index shown below and above it'; Π does the same but multiplies. Both are compact ways to write a loop."
+ },
+ {
+  "term": "Heteroscedastic / homoscedastic",
+  "names": [
+   "heteroscedastic",
+   "homoscedastic",
+   "heteroscedasticity"
+  ],
+  "group": "Math words",
+  "def": "Heteroscedastic means how noisy or spread-out the data is changes depending on where you look; homoscedastic means the spread stays about the same everywhere."
+ },
+ {
+  "term": "Skill score",
+  "names": [
+   "skill score",
+   "Brier skill score",
+   "forecast skill"
+  ],
+  "group": "Prediction words",
+  "def": "A score reporting how much better a forecast is than a simple reference forecast, scaled so 0 means 'no better than the reference' and 1 means 'perfect.'"
+ },
+ {
+  "term": "Taylor expansion",
+  "names": [
+   "Taylor expansion",
+   "Taylor series",
+   "second-order expansion"
+  ],
+  "group": "Math words",
+  "def": "A way to approximate a curvy function near one point using a straight line, or a slightly bent curve, built from the function's value and its derivatives there."
+ },
+ {
+  "term": "Conditional expression (ternary)",
+  "names": [
+   "conditional expression",
+   "ternary",
+   "x if condition else y"
+  ],
+  "group": "Python words",
+  "def": "A compact if/else that produces a value: `a if condition else b` evaluates to `a` when the condition is true and `b` otherwise, all on one line."
+ },
+ {
+  "term": "Semicolon in Python (;)",
+  "names": [
+   "semicolon",
+   ";"
+  ],
+  "group": "Python words",
+  "def": "Lets you put two complete statements on one physical line, `x = 1; y = 2`, exactly as if they had been written on two separate lines."
+ },
+ {
+  "term": "Focal loss",
+  "names": [
+   "focal loss"
+  ],
+  "group": "Model words",
+  "def": "A loss function that automatically down-weights examples the model already gets right and confident, so training spends its effort on the hard, still-wrong ones; used to fight severe class imbalance."
+ },
+ {
+  "term": "R² (coefficient of determination)",
+  "names": [
+   "R²",
+   "R-squared",
+   "coefficient of determination"
+  ],
+  "group": "Prediction words",
+  "def": "The fraction of the target's variance a regression model explains; 1 is a perfect fit, 0 is no better than guessing the mean, and it can go negative."
+ },
+ {
+  "term": "Elastic net",
+  "names": [
+   "elastic net"
+  ],
+  "group": "Model words",
+  "def": "A regularized linear model that mixes ridge's L2 penalty and lasso's L1 penalty, controlled by a knob that slides between them."
+ },
+ {
+  "term": "Macro / micro average",
+  "names": [
+   "macro average",
+   "micro average",
+   "macro F1",
+   "micro F1"
+  ],
+  "group": "Prediction words",
+  "def": "Two ways to combine a per-class metric like precision or recall into one number: macro treats every class equally, micro treats every row equally."
+ },
+ {
+  "term": "Curse of dimensionality",
+  "names": [
+   "curse of dimensionality"
+  ],
+  "group": "Model words",
+  "def": "As the number of features grows, points spread out and distances between them stop being meaningful, which breaks any method that relies on 'nearby' points being similar."
+ },
+ {
+  "term": "Elbow method / silhouette score",
+  "names": [
+   "elbow method",
+   "silhouette score",
+   "silhouette"
+  ],
+  "group": "Model words",
+  "def": "Two ways to pick k, the number of clusters: the elbow method looks for diminishing returns; the silhouette score measures how well-separated the clusters actually are."
+ },
+ {
+  "term": "DBSCAN / hierarchical clustering",
+  "names": [
+   "DBSCAN",
+   "hierarchical clustering",
+   "dendrogram",
+   "agglomerative clustering"
+  ],
+  "group": "Model words",
+  "def": "Two clustering methods needing no k ahead of time: DBSCAN groups by density, marking sparse points noise; hierarchical clustering builds a tree of merges, cuttable anywhere."
+ },
+ {
+  "term": "Isolation forest",
+  "names": [
+   "isolation forest",
+   "IsolationForest"
+  ],
+  "group": "Model words",
+  "def": "An anomaly detector that builds random decision trees and flags a point as unusual if it takes very few splits to isolate it from everything else."
+ },
+ {
+  "term": "Eigenvector / eigenvalue",
+  "names": [
+   "eigenvector",
+   "eigenvalue"
+  ],
+  "group": "Math words",
+  "def": "A direction that a matrix only stretches, never rotates (the eigenvector), and the amount it stretches by (the eigenvalue); PCA's principal components are the eigenvectors of the data's covariance matrix."
+ },
+ {
+  "term": "t-SNE / UMAP",
+  "names": [
+   "t-SNE",
+   "UMAP"
+  ],
+  "group": "Model words",
+  "def": "Two techniques that squeeze high-dimensional data down to two or three dimensions for a plot, preserving which points were close neighbors rather than the overall geometry PCA preserves."
+ },
+ {
+  "term": "EM (expectation-maximization)",
+  "names": [
+   "EM",
+   "expectation-maximization"
+  ],
+  "group": "Model words",
+  "def": "An algorithm for fitting a model with hidden, unobserved structure by alternating between guessing the hidden values and refitting the model, until it stops improving."
+ },
+ {
+  "term": "VAR (vector autoregression)",
+  "names": [
+   "VAR",
+   "vector autoregression"
+  ],
+  "group": "Prediction words",
+  "def": "ARIMA extended to several time series at once, where each series is predicted from its own recent past and every other series' recent past together."
+ },
+ {
+  "term": "STL decomposition",
+  "names": [
+   "STL",
+   "STL decomposition",
+   "seasonal-trend decomposition"
+  ],
+  "group": "Prediction words",
+  "def": "A way to split a time series into trend, seasonal and leftover pieces, robust to outliers and able to handle more than one seasonal cycle at once."
+ },
+ {
+  "term": "Direct vs recursive forecasting",
+  "names": [
+   "direct forecasting",
+   "recursive forecasting",
+   "DirRec",
+   "multistep forecasting strategy"
+  ],
+  "group": "Prediction words",
+  "def": "Two ways to predict several steps ahead: direct trains a separate model per horizon; recursive trains one model and feeds its own prediction back in for the next step."
+ },
+ {
+  "term": "Successive halving / Hyperband",
+  "names": [
+   "successive halving",
+   "Hyperband"
+  ],
+  "group": "Model words",
+  "def": "Hyperparameter-search methods that run many trials with a small budget each, then keep only the best-performing ones and give them a bigger budget, repeating until one trial wins."
+ },
+ {
+  "term": "Kalman filter",
+  "names": [
+   "Kalman filter"
+  ],
+  "group": "Prediction words",
+  "def": "A method for tracking a hidden, changing quantity over time from noisy measurements, blending a prediction of where it should be with each new noisy reading."
+ },
+ {
+  "term": "Ordinal classification",
+  "names": [
+   "ordinal classification",
+   "ordinal loss",
+   "ordinal regression"
+  ],
+  "group": "Model words",
+  "def": "Classifying into categories that have a real order (light < moderate < heavy), penalizing being off by one category less than being off by two, unlike ordinary multiclass loss."
+ },
+ {
+  "term": "Rolling-origin evaluation",
+  "names": [
+   "rolling-origin evaluation",
+   "rolling-origin backtest",
+   "backtesting"
+  ],
+  "group": "Prediction words",
+  "def": "Testing a forecasting model by repeatedly moving the train/test split forward in time, so every fold trains only on the past and tests only on what comes after it."
+ },
+ {
+  "term": "MASE / RMSSE (scaled forecast error)",
+  "names": [
+   "MASE",
+   "RMSSE",
+   "mean absolute scaled error",
+   "scaled error"
+  ],
+  "group": "Prediction words",
+  "def": "Forecast-error metrics divided by a naive baseline's error, so a score below 1 means the model beats naive guessing and scores are comparable across very different series."
+ },
+ {
+  "term": "Initialization (He / Xavier / Kaiming / LeCun)",
+  "names": [
+   "initialization",
+   "weight initialization",
+   "He initialization",
+   "Xavier initialization",
+   "Kaiming initialization",
+   "LeCun initialization"
+  ],
+  "group": "Model words",
+  "def": "The rule for picking a network's very first, random weights, scaled so early activations and gradients stay neither tiny nor huge."
+ },
+ {
+  "term": "LoRA (low-rank adaptation)",
+  "names": [
+   "LoRA",
+   "low-rank adaptation",
+   "QLoRA"
+  ],
+  "group": "Model words",
+  "def": "A way to fine-tune a huge pretrained model cheaply by training only a small pair of add-on matrices instead of all its weights."
+ },
+ {
+  "term": "Normalizing flow (generative model)",
+  "names": [
+   "normalizing flow",
+   "normalizing flows",
+   "flow-based model"
+  ],
+  "group": "Model words",
+  "def": "A generative model built from a chain of invertible transformations, turning noise into data (and back) while computing an exact likelihood."
+ },
+ {
+  "term": "Perplexity",
+  "names": [
+   "perplexity"
+  ],
+  "group": "Prediction words",
+  "def": "A language model's evaluation score: roughly, how surprised the model is by held-out text, on average, per token. Lower is better."
+ },
+ {
+  "term": "RLHF / preference tuning",
+  "names": [
+   "RLHF",
+   "reinforcement learning from human feedback",
+   "preference tuning",
+   "DPO",
+   "direct preference optimization"
+  ],
+  "group": "Model words",
+  "def": "A further training step that adjusts a language model using people's judgments of which of two answers is better, rather than one correct answer."
+ },
+ {
+  "term": "Catastrophic forgetting",
+  "names": [
+   "catastrophic forgetting"
+  ],
+  "group": "Model words",
+  "def": "When fine-tuning a model on a new task overwrites what it previously learned, so its performance on the old task collapses."
+ },
+ {
+  "term": "Vector index (retrieval)",
+  "names": [
+   "vector index",
+   "nearest-neighbor index",
+   "ANN index",
+   "FAISS"
+  ],
+  "group": "Model words",
+  "def": "A data structure built over embedding vectors that quickly finds the ones most similar to a query, used to fetch relevant documents for retrieval-augmented generation."
+ },
+ {
+  "term": "Chunking (for retrieval)",
+  "names": [
+   "chunking",
+   "document chunking",
+   "text chunking"
+  ],
+  "group": "Model words",
+  "def": "Splitting a long document into smaller pieces before turning each into an embedding, so retrieval can find and return just the relevant part.",
+  "phases": [
+   8
+  ]
+ },
+ {
+  "term": "Logarithm (log, ln)",
+  "names": [
+   "logarithm",
+   "ln",
+   "natural log"
+  ],
+  "group": "Math words",
+  "def": "The power you would raise a fixed base to in order to get a number; ln uses base e (about 2.718), and log(...) in this course's formulas usually means ln too."
+ },
+ {
+  "term": "Summation (Σ) / subscript",
+  "names": [
+   "Σ",
+   "sigma notation",
+   "subscript",
+   "summation"
+  ],
+  "group": "Math words",
+  "def": "Σ means 'add up everything that follows, once for each value of an index'; a subscript like xᵢ or pᵢ just numbers which item in a list is meant."
+ },
+ {
+  "term": "Server / Endpoint",
+  "names": [
+   "server",
+   "endpoint",
+   "web server"
+  ],
+  "group": "Tools and files",
+  "def": "A server is a program that stays running and waits for requests instead of exiting after one command; an endpoint is one specific URL on that server that answers a specific kind of request."
+ },
+ {
+  "term": "Port",
+  "names": [
+   "port",
+   "network port",
+   "localhost:8000"
+  ],
+  "group": "Tools and files",
+  "def": "A number, 0 to 65535, that identifies which program on a machine a network connection is for, the way an apartment number identifies which door at one street address."
+ },
+ {
+  "term": "Process",
+  "names": [
+   "process",
+   "OS process",
+   "worker process"
+  ],
+  "group": "Tools and files",
+  "def": "One running instance of a program, with its own memory and its own place in line for the computer's attention; the operating system can run many processes at once."
+ },
+ {
+  "term": "Virtual machine",
+  "names": [
+   "virtual machine",
+   "VM"
+  ],
+  "group": "Tools and files",
+  "def": "A whole simulated computer, with its own operating system, running inside a real one; renting one by the hour is the basic building block of 'the cloud.'"
+ },
+ {
+  "term": "Object storage",
+  "names": [
+   "object storage",
+   "cloud storage",
+   "S3",
+   "bucket"
+  ],
+  "group": "Tools and files",
+  "def": "A cloud service that stores files, called objects, under simple names, reachable by any number of machines over the network, instead of living on one machine's disk."
+ },
+ {
+  "term": "Model registry",
+  "names": [
+   "model registry",
+   "model version",
+   "champion model",
+   "challenger model"
+  ],
+  "group": "Prediction words",
+  "def": "A tracked, versioned store of trained models, the files plus metadata about how each was made and how it scored, so a service can point at 'the current one' and roll back to an older one on demand; not the same as this course's own PeMS station Registry."
+ },
+ {
+  "term": "Model card / Datasheet",
+  "names": [
+   "model card",
+   "datasheet",
+   "datasheet for datasets"
+  ],
+  "group": "Prediction words",
+  "def": "Two short standard documents: a model card describes what a model is for, how it was evaluated and where it fails; a datasheet describes how a dataset was collected, what it contains, and how it should and should not be used."
+ },
+ {
+  "term": "curl",
+  "names": [
+   "curl"
+  ],
+  "group": "Tools and files",
+  "def": "A command-line tool that sends a request to a URL and prints back what the server answers, the terminal equivalent of typing an address into a browser."
+ },
+ {
+  "term": "Swap (virtual memory)",
+  "names": [
+   "swap",
+   "virtual memory",
+   "swapping"
+  ],
+  "group": "Tools and files",
+  "def": "Disk space the operating system uses as overflow memory when RAM fills up; using it makes a program dramatically slower because disk is much slower than RAM."
+ },
+ {
+  "term": "Confounder",
+  "names": [
+   "confounder",
+   "confounding"
+  ],
+  "group": "Math words",
+  "def": "A hidden variable that causes both the thing you're calling the treatment and the thing you're calling the outcome, making them look related even if one doesn't actually cause the other."
+ },
+ {
+  "term": "Causal diagram (DAG) / collider",
+  "names": [
+   "DAG",
+   "causal diagram",
+   "collider",
+   "directed acyclic graph"
+  ],
+  "group": "Math words",
+  "def": "A causal diagram, or DAG, draws an arrow from every cause to its direct effects; a collider is a variable that two arrows point into, and conditioning on one creates a fake association between its causes."
+ },
+ {
+  "term": "Bandit / UCB / Thompson sampling",
+  "names": [
+   "bandit",
+   "multi-armed bandit",
+   "Thompson sampling",
+   "upper confidence bound",
+   "UCB"
+  ],
+  "group": "Model words",
+  "def": "A multi-armed bandit is the simplest reinforcement-learning setup, repeatedly choosing among a fixed set of options with unknown payoffs; UCB and Thompson sampling are two strategies for deciding when to keep trying an option versus switch to a better-looking one."
+ },
+ {
+  "term": "Differential privacy",
+  "names": [
+   "differential privacy",
+   "DP",
+   "privacy budget",
+   "epsilon (privacy)"
+  ],
+  "group": "Math words",
+  "def": "A mathematical guarantee that a released statistic would look almost the same whether or not any one specific person's data was included, controlled by a number epsilon: smaller epsilon means stronger privacy and more noise."
+ },
+ {
+  "term": "NDCG (normalized discounted cumulative gain)",
+  "names": [
+   "NDCG",
+   "normalized discounted cumulative gain",
+   "discounted cumulative gain"
+  ],
+  "group": "Prediction words",
+  "def": "A ranking metric that rewards putting the most relevant items near the top of a list, discounting items further down, and normalizing so a perfect ranking always scores 1."
+ },
+ {
+  "term": "Demographic parity / equalized odds",
+  "names": [
+   "demographic parity",
+   "equalized odds",
+   "equal error rates",
+   "fairness criterion"
+  ],
+  "group": "Prediction words",
+  "def": "Different mathematical definitions of a 'fair' model that generally cannot all hold at once: demographic parity means every group gets flagged at the same rate; equalized odds, or equal error rates, means every group has the same true- and false-positive rate; calibration means a score means the same real chance of the outcome in every group."
+ },
+ {
+  "term": "API",
+  "names": [
+   "API",
+   "application programming interface"
+  ],
+  "group": "Tools and files",
+  "def": "A fixed set of requests one program is allowed to send another and the answers it will get back, so two programs can talk without either seeing the other's code."
+ },
+ {
+  "term": "Sine / cosine",
+  "names": [
+   "Sine",
+   "cosine",
+   "sin",
+   "cos"
+  ],
+  "group": "Math words",
+  "def": "Two functions that read off the horizontal and vertical position of a point walking around a circle, used whenever something repeats in a cycle, like the hours in a day."
+ }
+]

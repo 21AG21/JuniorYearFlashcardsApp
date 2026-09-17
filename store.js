@@ -342,6 +342,31 @@
       });
     return loading[id];
   }
+  /* A new service worker just took control. The index it precached may list a
+     deck this page never saw — the shelf was painted from the old worker's copy,
+     and a deck added last week stayed invisible until the NEXT visit. Fetch the
+     index again through the new worker, re-shelve, load what is new or changed,
+     and tell the app. Nothing happens when nothing changed. */
+  function refreshIndex() {
+    if (global.__DECKS && global.__DECKS.index) return Promise.resolve(false);
+    var fp = function (ix) { return ((ix && ix.courses) || []).map(function (c) { return c.id + ':' + c.count; }); };
+    return fetch('data/index.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('index ' + r.status); return r.json(); })
+      .then(function (j) {
+        var before = fp(index);
+        rawIndex = j; index = shelf(rawIndex, ownerHex);
+        var after = fp(index);
+        if (before.join(',') === after.join(',')) return false;
+        // a deck whose count moved was cached under the old version: drop it so it is fetched fresh
+        after.forEach(function (k) { if (before.indexOf(k) < 0) delete decks[k.split(':')[0]]; });
+        return loadAll().catch(function () {}).then(function () {
+          try { window.dispatchEvent(new CustomEvent('apdecks-sync', { detail: { changed: true, shelf: true } })); } catch (e) {}
+          return true;
+        });
+      })
+      .catch(function () { return false; });
+  }
+
   /* One unreachable deck must not blank the library. Promise.all rejected the
      whole boot on the first failure, so a Ladders user whose private deck was
      not in the offline cache lost all five public decks with it. Every deck is
@@ -692,7 +717,7 @@
   global.Store = {
     restore: restore,
     dayNum: dayNum, dayKey: dayKey,
-    loadIndex: loadIndex, loadDeck: loadDeck, loadAll: loadAll,
+    loadIndex: loadIndex, loadDeck: loadDeck, loadAll: loadAll, refreshIndex: refreshIndex,
     /* An index that has not landed used to be null, and every one of the two
        dozen `S.getIndex().courses` calls threw on it — tapping a tab in the
        first second of a cold start raised "Cannot read properties of null".

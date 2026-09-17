@@ -870,6 +870,12 @@
     var pl = paceLine(d);
     var cl = coverLine(deckId);
     var dealNow = buildDaily({ deck: d }).length;
+    // a course that carries its book has pages before its first unit: the
+    // rules, the project laid out file by file, how to study
+    var about = aboutPages(d).map(function (a) {
+      return '<li><button class="ledger mid" data-go="#/d/' + deckId + '/a/' + esc(a.id) + '">' +
+        '<span class="lname">' + esc(a.title) + '</span></button></li>';
+    }).join('');
 
     // the name is the way back; the number is a fact, not a hidden link
     mount(
@@ -896,6 +902,7 @@
         (window.Games && window.Games.linksFor(deckId).length
           ? '<button class="textbtn" data-go="#/games">Games</button>' : '') +
       '</div>' +
+      (about ? '<ul class="list" style="margin-top:var(--s-4);gap:0"><li><div class="ulabel">Before you start</div></li>' + about + '</ul>' : '') +
       '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
     );
   }
@@ -1098,6 +1105,10 @@
       if (b.t === 'qa') return '<details><summary>' + md(b.q) + '</summary><div class="a">' + bookBlocks(b.a) + '</div></details>';
       if (b.t === 'h3' || b.t === 'h4') return '<div class="gk">' + md(b.s) + '</div>';
       if (b.t === 'meta') return '<p class="note">' + md(b.s) + '</p>';
+      // a file's contract on a Build page: its path, what kind of file it is,
+      // and everything the reader must put in it
+      if (b.t === 'file') return '<div class="fb"><div class="fbh"><code class="fn">' + esc(b.name) + '</code>' +
+        (b.tag ? '<span class="ft">' + esc(b.tag) + '</span>' : '') + '</div>' + bookBlocks(b.b) + '</div>';
       return '';
     }).join('');
   }
@@ -1265,6 +1276,27 @@
       '<div class="row"><h3>Lessons and topics</h3>' + lessons + '</div>' +
       (res ? '<div class="row"><h3>Read and watch</h3><p class="note">Every one explained at every level, with a study guide.</p>' + res + '</div>' : '') +
       after + '</section>';
+    endTerms();
+    bookMount(html);
+  }
+
+  /* the pages before Phase 0: the rules, the project laid out file by file, how
+     to study. They belong to the course, not to a unit, so they hang off the
+     course page. */
+  function aboutPages(d) { return (d && d.book && d.book.about) || []; }
+  function viewAbout(deckId, key) {
+    var d = S.getDeck(deckId), bk = bookOf(deckId), a = null;
+    aboutPages(d).forEach(function (x) { if (x.id === key) a = x; });
+    if (!bk || !a) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
+    beginTerms(bk, a.terms);
+    var html = toplineHTML('#/d/' + deckId, nice(d) + ' · Before you start') +
+      '<section class="page phase stack-l"><div class="stack"><div class="eyebrow">Before you start</div>' +
+      '<h2>' + esc(a.title) + '</h2>' + wordsHTML(bk, a.terms) + '</div>' +
+      (a.sections || []).map(function (s) {
+        if (s.k === 'h3') return '<div class="row"><h3>' + mdT(s.title || '') + '</h3>' + bookBlocks(s.b) + '</div>';
+        return '<div class="stack">' + bookBlocks(s.b).replace(/^<p>/, '<p class="lede">') + '</div>';
+      }).join('') + '</section>';
     endTerms();
     bookMount(html);
   }
@@ -3312,10 +3344,14 @@
     else apply();
   }
 
+  var swRefreshDue = false;              // a new worker arrived mid-session
   function route() {
     var h = location.hash.replace(/^#/, '') || '/';
     var p = h.split('/').filter(Boolean);
     var root = '/' + (p[0] || '');
+    if (swRefreshDue && !(p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' || p[0] === 'ten')) {
+      swRefreshDue = false; S.refreshIndex();
+    }
     syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root
       : (p[0] === 'weak' || p[0] === 'stuck') ? '/stats' : '/');   // starred hangs off the deck list
     sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' ||
@@ -3346,6 +3382,7 @@
         (S.getIndex().courses || []).some(function (c) { return c.id === p[1]; })) {
       return mount('<div class="head"><span class="k">' + esc(nice(p[1])) + '</span><h1>Loading</h1></div>');
     }
+    if (p[0] === 'd' && p[1] && p[2] === 'a' && p[3]) return viewAbout(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'b' && p[3]) return viewPhase(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
@@ -3531,6 +3568,14 @@
     route();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(function () {});
+      // A version bump lands while the page is open: the new worker claims it
+      // and its precached index may carry a deck this shelf has never listed.
+      // Re-shelve now, not on the next visit — unless a session is running,
+      // in which case it waits for the screen to change.
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (sess) { swRefreshDue = true; return; }
+        S.refreshIndex();
+      });
     }
     return S.loadAll();
   }).then(function () {
