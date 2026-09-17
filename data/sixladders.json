@@ -5512,7 +5512,7 @@
               },
               {
                 "t": "file",
-                "name": ".env` and `.env.example",
+                "name": ".env and .env.example",
                 "tag": "phase 0 · repo root",
                 "b": [
                   {
@@ -8142,10 +8142,533 @@
             "k": "build",
             "b": [
               {
-                "t": "ul",
-                "items": [
-                  "Clone Traffic1 from its GitHub page (click the green Code button for the URL, then run `git clone` with that URL from the terminal), create the venv, install the requirements with `pip install -r requirements.txt`, sign up for a free 511 key at 511.org's open-data page (it's emailed to you) and save it in `.env`, run `02_collect_events.py` and open the CSV.",
-                  "Add `data/` and `.env` to `.gitignore`, commit, push. Start a weekly notebook file, `notebook/2026-W37.md` (the `Wnn` is the year's week number — 'W37' means the 37th week; any calendar app can tell you this week's number), with what you did and what confused you."
+                "t": "p",
+                "s": "Phase 0 builds nothing that predicts anything. It builds the machine, the folder and the habit, and it proves each with a command. The order is the walkthrough's order, and it matters: `requirements.txt` first, because everything after it needs the packages; `.vscode/settings.json` and `.gitignore` next, before the first commit, because git history is permanent and a `.env` committed once is a token you must throw away; then `.env.example` and `.env` with the 511 token; then `02_collect_events.py` as one file, the walkthrough's step 11, so that a real poll lands on disk before anything is abstracted; then `common.py`, which nothing calls yet but which every later file imports, written now so the numbers that define the problem exist in one place from the first commit; then the `Makefile` with three targets, the `README.md`, `requirements.lock.txt` frozen from the install that worked, and `notebook/2026-W37.md`. The four documents that are already in the clone get a short block each saying what to read now. Every command below is typed from the repository root with the venv active, which is the walkthrough's step 15."
+              },
+              {
+                "t": "file",
+                "name": "21_PLAN_M1_TRAFFIC_MODEL.md",
+                "tag": "doc · you find it",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The plan this course builds. Thirteen stages with inputs, outputs, column lists, memory and time on the M1, house rules, the model and the bar it must clear. Every Build page in this course is a contract for one or more of its stages."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "Read the bold line at the top and the section 'Stages, in order' down to the end of stage 3. You should be able to say what `02_collect_events.py` reads, what it writes, and which two columns the plan's stage 2 adds that the phase 0 collector does not yet have (`first_seen_at`, `last_seen_at`). Come back to stage 2 in phase 1 and to stage 5 in phase 3."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "22_LEARNING_PATH_ML.md",
+                "tag": "doc · you find it",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The first draft of this course, superseded by `24_APPRENTICESHIP_SIX_LEVELS.md`. It is kept because the repository never deletes a document, and because its reading list overlaps with the resources on each phase page."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "Read its first screen only, enough to say in one sentence why it was replaced. Do not follow its instructions; where it disagrees with 24, 24 wins."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "23_LESSONS_SIX_LEVELS.md",
+                "tag": "doc · you find it",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The second draft, also superseded. It introduced the six-level ladder that every topic on this course uses (age 5 to PhD at Apple) without the project spine."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "Open it, find the six level names, close it. That is the whole reason to look at it now."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "24_APPRENTICESHIP_SIX_LEVELS.md",
+                "tag": "doc · you find it",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "This course, in one file: the twelve phases, their lessons and topics, the walkthroughs, and the Build pages you are reading rendered from it. It is the source; the reader you are looking at is generated from it."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`grep -c '^### Build' 24_APPRENTICESHIP_SIX_LEVELS.md` prints `12`, one per phase. Find phase 0's Build section in the file and confirm it is this page."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "requirements.txt",
+                "tag": "config · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The packages the project needs, one per line, with the lowest version that will do. This is the file the walkthrough's step 6 writes with `cat > requirements.txt`; its full text is on the page The project, laid out, under 'The requirements'. Phase 0 writes the 18 package lines in four groups; later phases append their own lines under a `# phase N` comment."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "Nothing on disk beyond itself; `pip install -r requirements.txt` fills `.venv/lib/python3.*/site-packages/`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python -m pip install --upgrade pip` then `pip install -r requirements.txt`, exactly as the walkthrough's step 7 does, with the venv active."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "The `# data` group: `pandas>=2.2`, `numpy>=1.26`, `pyarrow>=15.0`.",
+                      "The `# getting the data` group: `requests>=2.31`, `python-dotenv>=1.0`.",
+                      "The `# models` group: `scikit-learn>=1.4`, `lightgbm>=4.3`, `torch>=2.2`, `shap>=0.45`.",
+                      "The `# looking at things` group: `matplotlib>=3.8`, `jupyterlab>=4.1`.",
+                      "The `# the rest` group: `pytest>=8.0`, `holidays>=0.45`, `psutil>=5.9`, `duckdb>=0.10`, `tqdm>=4.66`.",
+                      "Each line's trailing comment, as the layout page shows it, so a stranger knows what each package is for without a search."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`pip install -r requirements.txt` finishes without a red line, and the walkthrough's step 7 import block prints `machine arm64` and one version per package. `wc -l requirements.txt` prints `25`: 18 package lines, 5 group comments and 4 blank lines, which is the layout page's text line for line. If `import lightgbm` fails naming `libomp`, run `brew install libomp` and open a new terminal."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": ".vscode/settings.json",
+                "tag": "config · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Makes VS Code use the project's venv without asking, activates it in the editor's terminal, trims trailing whitespace on save and draws a ruler at 100 columns. Written exactly as the walkthrough's step 8 writes it; the full text is on the page The project, laid out."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`mkdir -p .vscode` then the `cat > .vscode/settings.json` block from step 8, then `code .`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`python.defaultInterpreterPath` set to `${workspaceFolder}/.venv/bin/python`.",
+                      "`python.terminal.activateEnvironment` set to `true`.",
+                      "`files.trimTrailingWhitespace` set to `true`.",
+                      "`editor.rulers` set to `[100]`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -c \"import json; print(sorted(json.load(open('.vscode/settings.json'))))\"` prints the four keys. In VS Code, the interpreter shown in the status bar ends in `.venv/bin/python`, and a new editor terminal shows `(.venv)` at the prompt without you typing `source`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": ".gitignore",
+                "tag": "config · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "What git must never record: the secret, the data, everything rebuildable, editor and system litter. It is written in the walkthrough's step 9, before the first commit, because history is permanent. The full text is on the page The project, laid out."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "The `cat > .gitignore` block from step 9, then `git status --short`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "Under `# secrets`: `.env` and the exception `!.env.example`.",
+                      "Under `# data and anything rebuilt from it`: `data/`, `models/`, `output/`, `logs/`.",
+                      "Under `# the environment`: `.venv/`, `__pycache__/`, `*.pyc`.",
+                      "Under `# notebooks and macOS litter`: `.ipynb_checkpoints/`, `.DS_Store`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "After the first poll has created `data/`, `git status --short` does not list `data/`, `.venv/` or `.env`. `git check-ignore -v .env data/x logs/x models/x output/x` prints one matching line per path. `git ls-files | grep -c -E '^\\.env$|^data/'` prints `0`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": ".env.example",
+                "tag": "config · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The list of secrets the project needs, with empty values, committed so a newcomer knows what to supply without being shown anything. Phase 0 writes one line; phase 3 adds the two PeMS lines and phase 9 the three serving lines. The finished text is on the page The project, laid out."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "The second `cat` block of the walkthrough's step 10."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "The comment line `# copy this file to .env and fill in your own values`.",
+                      "`TOKEN_511=` with nothing after the equals sign."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`git ls-files | grep -c 'env.example'` prints `1` after the commit, and `python -c \"print(all(l.rstrip().endswith('=') for l in open('.env.example') if l.strip() and not l.startswith('#')))\"` prints `True`: every key present, every value empty."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": ".env",
+                "tag": "config · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The values. One `NAME=value` per line, no quotes, no spaces around the equals sign; `load_dotenv()` reads it into `os.environ`. It is never committed. Get the token first: request it at [511.org/open-data/token](https://511.org/open-data/token); it arrives by email, usually within minutes, sometimes a day."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "The first `cat` block of the walkthrough's step 10, with your token pasted over `paste-your-token-here`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`TOKEN_511=<the token from the email>`, and nothing else in phase 0."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -c \"from dotenv import load_dotenv; import os; load_dotenv(); print(bool(os.environ.get('TOKEN_511')))\"` prints `True`. `git check-ignore .env` prints `.env`. `git ls-files | grep -c '^\\.env$'` prints `0`, now and after every commit you ever make."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "A token pasted with a trailing space or a quote is a different token. If the collector prints `0 events came back` or a 401, run `python -c \"import os; from dotenv import load_dotenv; load_dotenv(); print(repr(os.environ['TOKEN_511']))\"` and look at the ends of the string."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "02_collect_events.py",
+                "tag": "runner · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The plan's stage 2, in its first form: one HTTPS call to the 511 Open511 events feed (stage 1), one CSV row per event per poll. In phase 0 it is a single file, the walkthrough's step 11, and it is written exactly as shown there: no filter, no dedupe, no command line flags. Phase 1 splits it into `collector.py` and a thin runner and brings the columns to the plan's layout. Do not add to it now; run it, read it, commit it."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`TOKEN_511` from `.env` through `load_dotenv()`. The feed at `https://api.511.org/traffic/events` with `api_key` and `format=json`, whose response is a JSON object with an `events` list; each event has `id`, `event_type`, `severity`, `status`, `headline`, `created`, `updated`, `roads` (a list of objects with `name`) and `geography`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`data/fremont_events_log.csv`, appended on every run, header written once. Every column is text, because a CSV has no types: `pulled_at` (ISO 8601 UTC with offset, the moment of the poll), `id` (the feed's event id), `event_type`, `severity`, `headline` (newlines replaced by spaces), `roads` (the road names joined with `; `), `created` and `updated` (ISO 8601 strings copied from the feed). Phase 1 renames `id` to `event_id` and `roads` to `road_names` and adds seven columns."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python 02_collect_events.py`. No flags in phase 0; `--help` arrives in phase 1 with `argparse`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`URL = \"https://api.511.org/traffic/events\"`, `OUT = Path(\"data/fremont_events_log.csv\")`, `FIELDS = [\"pulled_at\", \"id\", \"event_type\", \"severity\", \"headline\", \"roads\", \"created\", \"updated\"]`. These three live in the runner only in phase 0; phase 1 moves `URL` and `FIELDS` into `collector.py` and builds `OUT` from `common.DATA`.",
+                      "`fetch_events(token)` · GETs `URL` with `api_key` and `format=json`, a 30 second timeout, `raise_for_status()`, and returns the parsed JSON; when the body starts with the UTF-8 byte order mark `\\xef\\xbb\\xbf` it decodes with `utf-8-sig` first, because the 511 feed sometimes sends one and `json.loads` refuses it.",
+                      "`flatten(event, pulled_at)` · turns one event into a dict with the eight `FIELDS` keys; every field is read with `.get()` so a missing key becomes `None`, the headline has its newlines replaced, the roads become one string.",
+                      "`main()` · loads `.env`, exits with a one-line message when `TOKEN_511` is missing, fetches, prints how many events came back and the sorted field names of the first one, creates `data/`, appends one row per event with the header on a new file, prints `wrote N rows to data/fremont_events_log.csv`.",
+                      "The `if __name__ == \"__main__\": main()` guard, so phase 1 can import the pieces from a test."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": "The walkthrough's step 11 is the whole file; put it in unchanged. The signatures it defines are:"
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "# 02_collect_events.py (phase 0: the walkthrough's step 11, verbatim)\nimport csv, os, sys\nfrom datetime import datetime, timezone\nfrom pathlib import Path\n\nimport requests\nfrom dotenv import load_dotenv\n\nURL = \"https://api.511.org/traffic/events\"\nOUT = Path(\"data/fremont_events_log.csv\")\nFIELDS = [\"pulled_at\", \"id\", \"event_type\", \"severity\", \"headline\", \"roads\", \"created\", \"updated\"]\n\n\ndef fetch_events(token):\n    \"\"\"GET the events feed as JSON, stripping a byte order mark if the feed sends one.\"\"\"\n    ...\n\n\ndef flatten(event, pulled_at):\n    \"\"\"One event to one dict with FIELDS as keys; missing fields become None, roads join with '; '.\"\"\"\n    ...\n\n\ndef main():\n    \"\"\"Load .env, fetch once, append one row per event to OUT, print the counts.\"\"\"\n    ...\n\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python 02_collect_events.py` prints `N events came back`, a line starting `fields on the first one:` and `wrote N rows to data/fremont_events_log.csv`. `head -1 data/fremont_events_log.csv` prints exactly `pulled_at,id,event_type,severity,headline,roads,created,updated`. `wc -l data/fremont_events_log.csv` prints N + 1. Run it a second time and the count grows by the new N and the header is not repeated: `grep -c '^pulled_at,' data/fremont_events_log.csv` prints `1`. Write N and the field names the feed returned into the notebook page; phase 1 needs them."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "N can be 0 at a quiet hour and that is not an error: the CSV then has a header and no rows. If N is 0 three polls in a row, the token is the first suspect, then `pwd`, because `OUT` is relative and a run from another folder writes a different `data/`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "common.py",
+                "tag": "module · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The one module every other module imports: the paths, the constants that define the problem, and three helpers. Nothing in it does any work on data, and nothing in phase 0 calls it yet; it exists from the first commit so that no later file ever writes `0.6` or `305` by hand. Its contract is on the page The project, laid out, under 'The numbers the whole project shares'; the constants below are that list, with those exact names."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`.env` through `load_dotenv()`, once, inside `env()`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`logs/pipeline.log`, one line per call to `log_stage()`, appended. `atomic_write()` writes whatever path it is given, first as `path.with_suffix(path.suffix + '.tmp')`, then renamed into place with `os.replace`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "Not run; imported. `python -c \"import common\"` from the repository root is the only way to load it, because `ROOT` is the folder the file is in."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`ROOT = Path(__file__).resolve().parent`; `DATA = ROOT / \"data\"`, `MODELS = ROOT / \"models\"`, `OUTPUT = ROOT / \"output\"`, `LOGS = ROOT / \"logs\"`. Every other file builds paths from these, never from a string.",
+                      "`FREMONT_BOX = (37.447, 37.612, -122.075, -121.888)` as south, north, west, east; `ROUTES = {880, 680, 84}`; `LANE_TYPE = \"ML\"`.",
+                      "`FREMONT_ROADS`, a tuple of the road-name fragments the 511 filter accepts: `I-880`, `I-680`, `SR-84`, `CA-84`, `Mission Blvd`, `Fremont Blvd`, `Auto Mall Pkwy`, `Dumbarton`.",
+                      "`TZ = \"America/Los_Angeles\"`, `STEP = \"5min\"`, `STEPS_PER_DAY = 288`.",
+                      "`MIN_OBSERVED = 50`, `MAX_FFILL = 3`, `SPEED_RANGE = (0, 100)`, `OCC_RANGE = (0, 100)`, `FLOW_PER_LANE_MAX = 3000`.",
+                      "`PROFILE_SMOOTH = 7`, `PROFILE_MIN_N = 20`, `SLOW_RATIO = 0.6`, `SLOW_WINDOW = 3`, `SLOW_ABS_MPH = 35`, `FREE_FLOW_Q = 0.85`.",
+                      "`HORIZONS = {15: 3, 30: 6, 60: 12}`, `LAGS = (0, 1, 2, 3, 6, 12)`, `ROLL_STEPS = {30: 6, 60: 12}`, `SPLIT_GAP_DAYS = 1`.",
+                      "`INCIDENT_MILES = 1.0`, `INCIDENT_MIN_MINUTES = 20`, `NO_INCIDENT_MILES = 99`, `SEVERITY = {\"Unknown\": 1, \"Minor\": 1, \"Moderate\": 2, \"Major\": 3}`.",
+                      "`LGBM_PARAMS` as the dict on the layout page, `LGBM_ROUNDS = 3000`, `LGBM_PATIENCE = 100`, `CATEGORICALS = [\"station_id\", \"fwy\", \"dir\", \"daytype\"]`.",
+                      "`ALERT_PRECISION = 0.5`, `CHALLENGER_MARGIN = 0.02`, `PSI_ALERT = 0.2`, `RETRAIN_DROP = 0.2`, `RETRAIN_WEEKS = 2`.",
+                      "`POLL_SECONDS = 900`, `PEMS_GAP_SECONDS = 305`, `PREDICT_SECONDS = 300`.",
+                      "`log_stage(name: str, t0: float, rows: int | None = None, **extra) -> str` · builds the line `stage=<name> seconds=<n> rss_gb=<n> rows=<n>` followed by any extra pairs as `key=value`, with seconds as `round(time.time() - t0, 1)` and memory as `round(psutil.Process().memory_info().rss / 1e9, 2)`; prints it, creates `LOGS` if missing, appends it to `LOGS / \"pipeline.log\"`, returns it.",
+                      "`atomic_write(obj, path: Path) -> Path` · a `pandas.DataFrame` goes to Parquet with `to_parquet(tmp, index=False)`, a `dict` or `list` to JSON with `indent=2`, a `str` as text; always to the `.tmp` path first, then `os.replace(tmp, path)`; creates the parent folder; returns `path`. Importing pandas inside the function keeps `import common` fast for scripts that never touch a table.",
+                      "`env(name: str, default: str | None = None, required: bool = False) -> str | None` · calls `load_dotenv()` the first time it runs, returns `os.environ.get(name, default)`, and when `required` is true and the value is missing or empty, `sys.exit(f\"{name} is not set; add it to .env (see .env.example)\")`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import json, os, sys, time\nfrom pathlib import Path\nimport psutil\nfrom dotenv import load_dotenv\n\nROOT = Path(__file__).resolve().parent\nDATA, MODELS, OUTPUT, LOGS = ROOT / \"data\", ROOT / \"models\", ROOT / \"output\", ROOT / \"logs\"\n\nFREMONT_BOX = (37.447, 37.612, -122.075, -121.888)          # south, north, west, east\nROUTES, LANE_TYPE = {880, 680, 84}, \"ML\"\nFREMONT_ROADS = (\"I-880\", \"I-680\", \"SR-84\", \"CA-84\", \"Mission Blvd\", \"Fremont Blvd\",\n                 \"Auto Mall Pkwy\", \"Dumbarton\")\nTZ, STEP, STEPS_PER_DAY = \"America/Los_Angeles\", \"5min\", 288\nMIN_OBSERVED, MAX_FFILL = 50, 3\nSPEED_RANGE, OCC_RANGE, FLOW_PER_LANE_MAX = (0, 100), (0, 100), 3000\nPROFILE_SMOOTH, PROFILE_MIN_N = 7, 20\nSLOW_RATIO, SLOW_WINDOW, SLOW_ABS_MPH, FREE_FLOW_Q = 0.6, 3, 35, 0.85\nHORIZONS, LAGS, ROLL_STEPS = {15: 3, 30: 6, 60: 12}, (0, 1, 2, 3, 6, 12), {30: 6, 60: 12}\nSPLIT_GAP_DAYS = 1\nINCIDENT_MILES, INCIDENT_MIN_MINUTES, NO_INCIDENT_MILES = 1.0, 20, 99\nSEVERITY = {\"Unknown\": 1, \"Minor\": 1, \"Moderate\": 2, \"Major\": 3}\nLGBM_PARAMS = dict(objective=\"binary\", is_unbalance=True, num_leaves=63, min_data_in_leaf=200,\n                   learning_rate=0.05, feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1,\n                   lambda_l2=1.0, max_bin=255, num_threads=8, metric=\"average_precision\", verbose=-1)\nLGBM_ROUNDS, LGBM_PATIENCE = 3000, 100\nCATEGORICALS = [\"station_id\", \"fwy\", \"dir\", \"daytype\"]\nALERT_PRECISION, CHALLENGER_MARGIN = 0.5, 0.02\nPSI_ALERT, RETRAIN_DROP, RETRAIN_WEEKS = 0.2, 0.2, 2\nPOLL_SECONDS, PEMS_GAP_SECONDS, PREDICT_SECONDS = 900, 305, 300\n\n\ndef log_stage(name: str, t0: float, rows: int | None = None, **extra) -> str:\n    \"\"\"Print and append to logs/pipeline.log: stage=<name> seconds=<n> rss_gb=<n> rows=<n> k=v ...\"\"\"\n    ...\n\n\ndef atomic_write(obj, path: Path) -> Path:\n    \"\"\"DataFrame to Parquet, dict or list to JSON, str to text; write path.tmp, then os.replace into place.\"\"\"\n    ...\n\n\ndef env(name: str, default: str | None = None, required: bool = False) -> str | None:\n    \"\"\"load_dotenv() once, return os.environ[name]; sys.exit with a one-line message if required and missing.\"\"\"\n    ..."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -c \"import common; print(common.SLOW_RATIO, common.SLOW_WINDOW, common.POLL_SECONDS, common.DATA)\"` prints `0.6 3 900` and an absolute path ending in `Traffic1/data`. `python -c \"import common, time; common.log_stage('smoke', time.time(), rows=0, note='phase0')\"` prints one line starting `stage=smoke seconds=0.0 rss_gb=` and ending `rows=0 note=phase0`, and `tail -1 logs/pipeline.log` prints the same line. `python -c \"import common; p = common.DATA / 'smoke.json'; common.atomic_write({'ok': 1}, p); print(p.read_text()); import os; print(os.path.exists(str(p) + '.tmp'))\"` prints the JSON and `False`; delete `data/smoke.json` afterwards. `python -c \"import common; common.env('NOPE', required=True)\"` exits with the one-line message naming `NOPE`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "The tuple packing lines are a way to fit the skeleton in 45 lines, not a style to copy elsewhere; one constant per line with a comment is easier to read and to diff, and that is how the real file should look. What must not change is the names and the values."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "Makefile",
+                "tag": "config · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "One word per job. Phase 0 writes three targets: `setup`, `check` and `test`, where `test` depends on `setup` as the topic's Try this asks. Phase 9 adds the rest; the finished target list is on the page The project, laid out. Recipes are indented with a tab, never spaces; that is the only trap in a Makefile."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`make setup`, `make check`, `make test`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`PY := .venv/bin/python` at the top, so every recipe uses the venv's interpreter whether or not the shell has it active.",
+                      "`setup` · creates `.venv` if it is missing, upgrades pip, installs `requirements.txt`, and runs `brew install libomp` when `brew` exists and libomp is not installed.",
+                      "`check` · the walkthrough's step 7 import block as a `python -c` one-liner: prints the machine type, one version per package, and whether MPS is available.",
+                      "`test` · depends on `setup`; runs `$(PY) -m pytest -q`. The `-m` form puts the repository root on `sys.path`, which is what lets `tests/` import `collector` and `common` in phase 1.",
+                      "`.PHONY: setup check test`, because none of the three names is a file."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": "The real content; the recipe lines begin with a tab."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "make",
+                    "s": ".PHONY: setup check test\n\nPY := .venv/bin/python\n\nsetup:\n\ttest -d .venv || python -m venv .venv\n\t$(PY) -m pip install --upgrade pip\n\t$(PY) -m pip install -r requirements.txt\n\t@if command -v brew >/dev/null 2>&1 && ! brew list libomp >/dev/null 2>&1; then brew install libomp; fi\n\ncheck:\n\t$(PY) -c \"import platform, pandas, numpy, sklearn, lightgbm, torch; \\\n\tprint('machine      ', platform.machine()); \\\n\tprint('pandas       ', pandas.__version__); \\\n\tprint('numpy        ', numpy.__version__); \\\n\tprint('scikit-learn ', sklearn.__version__); \\\n\tprint('lightgbm     ', lightgbm.__version__); \\\n\tprint('torch        ', torch.__version__); \\\n\tprint('GPU (mps)    ', torch.backends.mps.is_available())\"\n\ntest: setup\n\t$(PY) -m pytest -q"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`make check` prints `machine       arm64`, six version lines and `GPU (mps)     True` (`False` on an Intel Mac; anything else is a problem). `make setup` run a second time finishes in seconds and prints `Requirement already satisfied` lines, which proves it is idempotent. `cat -A Makefile | grep -c '^\\^I'` prints the number of recipe lines, all of them, and none starts with spaces."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "Until phase 1 writes the first test file, `make test` prints `no tests ran` and exits with status 5, which make reports as `Error 5`. That is pytest saying it found nothing, not a failure; from phase 1 on it must print a count of passed tests."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "README.md",
+                "tag": "doc · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The page a stranger reads first. Phase 0 writes the first four parts of the contract on the page The project, laid out: what the project predicts, the data sources and their keys, setup in four commands, and how to run one poll. Later phases add their line to the run section; phase 9 finishes it. Keep it under 120 lines for its whole life."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "A first line that is the plan's bold sentence: slowdowns on I-880, I-680 and SR-84, called 15 to 60 minutes ahead, from one 16 GB M1 Mac mini.",
+                      "'Data' · the three sources, one line each: PeMS five-minute detector files (account from phase 3), the 511.org incident feed (token from 511.org/open-data/token, into `.env` as `TOKEN_511`), Open-Meteo hourly rain (no key, phase 6).",
+                      "'Setup' · four commands in order: `git clone`, `python -m venv .venv && source .venv/bin/activate`, `pip install -r requirements.txt`, `cp .env.example .env` and fill it in; then `make check`.",
+                      "'Run' · `python 02_collect_events.py` for one poll, and a sentence saying `make all` arrives in phase 9. Each later phase appends its runner here.",
+                      "'Layout' · the tree from the layout page, abridged to the folders, with one line per file in the repository root, which is what the first Done when item asks you to be able to say aloud.",
+                      "'Conventions' · runners are numbered and never imported; modules are imported and tested; `data/`, `models/`, `output/` and `logs/` are never committed."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`wc -l README.md` prints a number under 120. `grep -c '^## ' README.md` prints `5`. Someone who has never seen the repository can follow the Setup section on a second machine and reach `make check` printing `arm64`; if you have no second machine, a fresh clone in `/tmp` and a new venv is the same test."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "requirements.lock.txt",
+                "tag": "config · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The exact versions that worked, so a new machine can install precisely what this one ran. `requirements.txt` is what you edit; this file is generated from it after a clean install and committed beside it."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`pip freeze > requirements.lock.txt`, once `make check` is clean. Regenerate whenever `requirements.txt` changes."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`grep -c '==' requirements.lock.txt` prints a number well above 18, because it includes every dependency of a dependency; `grep -i '^lightgbm==' requirements.lock.txt` prints the version `make check` showed."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "notebook/2026-W37.md",
+                "tag": "notebook · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The first page of the lab notebook, one per ISO week, written in the walkthrough's step 14. It is where the numbers from this week's runs and the things that confused you are written down, because in phase 1 you will need N and the field list the feed returned and you will not remember them."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "The heading `# Week 37`, then three sections: `## Did`, `## Confused by`, `## Next`.",
+                      "Under Did: the step 14 lines, plus the number of events the first poll returned, the sorted field names it printed, and the date and hour of the poll.",
+                      "Under Confused by: at least one line. An empty section means you did not look hard enough.",
+                      "Under Next: 'Phase 1: read the collector line by line and write tests for it.'"
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`grep -c '^## ' notebook/2026-W37.md` prints `3`, and `git ls-files notebook/` lists the page after the commit. The week number is the ISO week: `python -c \"import datetime; print(datetime.date.today().isocalendar().week)\"` printed `37` when the page was made; next week's page is `2026-W38.md`."
+                  }
                 ]
               }
             ]
@@ -8156,8 +8679,14 @@
               {
                 "t": "ul",
                 "items": [
-                  "You can say in one sentence what each file in the repo root is for.",
-                  "One commit of yours is on GitHub, and `.env` is not in it."
+                  "`python -c \"import platform, sys; print(platform.machine(), sys.version.split()[0])\"` prints `arm64` and a version of 3.11 or newer, and `which python` prints a path ending in `Traffic1/.venv/bin/python`. Both must hold in a new terminal without you typing `source`, from inside VS Code's terminal.",
+                  "`make check` prints `machine       arm64`, a version line for pandas, numpy, scikit-learn, lightgbm and torch, and `GPU (mps)     True` on Apple silicon.",
+                  "`python 02_collect_events.py` prints `N events came back` and `wrote N rows to data/fremont_events_log.csv`; `head -1 data/fremont_events_log.csv` prints exactly `pulled_at,id,event_type,severity,headline,roads,created,updated`; a second run makes `wc -l` grow and `grep -c '^pulled_at,'` still prints `1`.",
+                  "One commit of yours is on GitHub and `.env` is not in it: `git log --oneline -1` shows your message, `git status -sb` prints `## main...origin/main` with no `ahead` in it, `git ls-files | grep -c -E '^\\.env$|^data/'` prints `0`, and the file list on the GitHub page shows `.env.example` and no `.env`.",
+                  "`python -c \"import common; print(common.SLOW_RATIO, common.POLL_SECONDS, common.FREMONT_BOX)\"` prints `0.6 900 (37.447, 37.612, -122.075, -121.888)`, and the `log_stage` smoke line from the `common.py` block is the last line of `logs/pipeline.log`.",
+                  "You can say in one sentence what each file in the repository root is for: run `ls -A` and say it aloud for every entry; the Layout section of `README.md` is that list written down, and it has one line per entry that `ls -A` prints, `.venv`, `data` and `.env` included.",
+                  "`git ls-files` prints exactly these: the four documents, `README.md`, `requirements.txt`, `requirements.lock.txt`, `.env.example`, `.gitignore`, `.vscode/settings.json`, `Makefile`, `common.py`, `02_collect_events.py`, `notebook/2026-W37.md`. Nothing more, nothing less.",
+                  "`notebook/2026-W37.md` has its three sections, the poll's N and field list under Did, and at least one line under Confused by."
                 ]
               }
             ]
@@ -8168,14 +8697,21 @@
               {
                 "t": "ul",
                 "items": [
-                  "Rosetta Python, which runs at half speed and breaks some wheels.",
-                  "Reading about tools instead of typing the commands."
+                  "`platform.machine()` prints `x86_64` on an M1. That is Rosetta Python: it runs at half speed and some wheels will not install. Quit Terminal, make sure Terminal itself is not set to 'Open using Rosetta' in Get Info, install the arm64 miniforge from the walkthrough's step 3, and create the venv again with that interpreter; a venv remembers the Python it was made from.",
+                  "You read about a tool for an hour and typed nothing. The commands on this page are the lesson; reading about them is not. Every walkthrough step ends with a command whose output you can check, so type it, read the output, and only then read on.",
+                  "`make: *** missing separator. Stop.` The recipe lines are indented with spaces. Open the Makefile, replace the leading spaces of every recipe line with one tab, and prove it with `cat -A Makefile`, which shows tabs as `^I`.",
+                  "`import lightgbm` fails with a message naming `libomp.dylib`. LightGBM needs the OpenMP runtime, which pip cannot ship. Run `brew install libomp`, open a new terminal, and run `make check` again; `make setup` does this for you on a machine that has Homebrew.",
+                  "`git status` shows `data/` or `.env` as untracked, or worse, `git add -A` staged them. `.gitignore` was written after the files or with a typo. Fix `.gitignore`, run `git rm --cached -r data .env` to unstage without deleting, and check with `git check-ignore -v .env`. If `.env` was ever pushed, the token is public: request a new one at 511.org, put it in `.env`, and treat the old one as gone, because rewriting history does not un-scan a public push.",
+                  "`json.decoder.JSONDecodeError: Expecting value: line 1 column 1` from the collector. The 511 feed sent a UTF-8 byte order mark before the JSON. The walkthrough's `fetch_events()` handles it by decoding with `utf-8-sig`; if you retyped the function, put that branch back.",
+                  "`0 events came back` on every run, or a 401. The token is wrong, has whitespace around it, or `.env` is not in the folder you ran from. Print `repr(os.environ['TOKEN_511'])` after `load_dotenv()`, and run `pwd` to confirm you are in the repository root; `OUT` and `.env` are both relative to it.",
+                  "`ModuleNotFoundError: No module named 'common'` from a `python -c` check. You ran it from another folder. Every command in the course runs from the repository root with the venv active: `cd ~/code/Traffic1 && source .venv/bin/activate`.",
+                  "`git push` is rejected or says there is no upstream. You started with `git init` and never added the remote, or the branch is called `master`. Run `git remote add origin https://github.com/YOURNAME/Traffic1.git`, then `git branch -M main` and `git push -u origin main`, as the walkthrough's step 13 comments say."
                 ]
               }
             ]
           }
         ],
-        "lives": "Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new.",
+        "lives": "Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new.",
         "u": "u1",
         "terms": [
           "terminal",
@@ -8196,10 +8732,56 @@
           "shape",
           "script",
           "model",
+          "command",
+          "library",
+          "api-key",
           "511",
+          "sorted",
+          "makefile",
+          "target",
+          "stage",
+          "inputs",
+          "for",
+          "format",
+          "def",
+          "pandas",
+          "numpy",
+          "scikit-learn",
+          "gradient-boosting",
+          "matplotlib",
+          "pytest",
+          "duckdb",
+          "index",
+          "git-status",
+          "exception",
+          "path",
+          "pems",
           "csv",
+          "split",
+          "json",
+          "timezone",
+          "argparse",
+          "http",
+          "byte",
+          "datetime",
+          "pathlib",
+          "merge",
+          "mainline",
+          "horizon",
+          "categorical",
+          "station-id",
+          "parquet",
+          "read-csv",
+          "num-leaves",
+          "metric",
+          "dataframe",
+          "shell",
+          "pytorch",
+          "gpu",
+          "station",
+          "incident",
           "speed",
-          "command"
+          "upstream"
         ]
       },
       {
@@ -10469,12 +11051,370 @@
             "k": "build",
             "b": [
               {
-                "t": "ul",
-                "items": [
-                  "Read `02_collect_events.py` top to bottom and write one comment above each function saying what it does and why.",
-                  "Rewrite `event_touches_fremont()` from its description without looking, then test it with pytest on five hand-made events.",
-                  "Write a script that prints events per road per day from the CSV, using only the standard library.",
-                  "Make the stage 2 change from the plan: record `first_seen_at` and `last_seen_at` per event id, and write each poll's raw JSON to `data/events_raw/`."
+                "t": "p",
+                "s": "Phase 1 turns the one-file collector of phase 0 into the plan's stage 2: a module that does the work, a thin runner that parses flags and calls it, tests that run offline, the raw JSON log, the two seen-at columns and the `--bootstrap` mode. Start by reading `02_collect_events.py` as you left it, top to bottom, and writing one comment above each of its three functions saying what it does and why; those comments become the docstrings in `collector.py`, and writing them first is how you find out whether you understood the file. Then write `collector.py`, because tests import a module and nothing can import a runner. Write `tests/test_collector.py` right after it and before the runner, and write `event_touches_fremont()` from the plan's one-line description and the contract below, with its five hand-made events already in the test file, so the first time it runs it is being checked. Then rewrite the runner around the module, run it once so it migrates the phase 0 CSV to the new columns and starts `data/events_raw/`, and run `--bootstrap` once. `tests/test_timezones.py` comes next, because the study after it converts `pulled_at` to a Fremont date and you should have proved you can do that first. `studies/events_per_road_day.py` reads the CSV with the standard library and is the first script that consumes what the collector writes. `docs/stages/02_collect_events.md` is written last, with the numbers from a real run, and `README.md` gets its run line. Keep one notebook page per week, `notebook/2026-W38.md` through `notebook/2026-W42.md`, with the same three headings as week 37; phase 1 is five weeks and the Confused by section is where its questions go."
+              },
+              {
+                "t": "file",
+                "name": "collector.py",
+                "tag": "module · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The plan's stage 2 functions, importable and testable: fetch, filter, flatten, dedupe, append, log raw, migrate. This is the module the runner calls, the tests import, and phase 4's `incidents.py` reads the columns of. `URL` and `FIELDS` move here from the phase 0 runner; `FREMONT_BOX`, `FREMONT_ROADS`, `DATA` and `atomic_write` come from `common.py` and are never redefined."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "The 511 feed at `URL` with `api_key`, `format=json` and `status` (`active` for a poll, `archived` for the bootstrap); each event's `id`, `event_type`, `severity`, `status`, `headline`, `created`, `updated`, `roads[]` (objects with `name` and `direction`) and `geography` (GeoJSON, whose `coordinates` are `[lon, lat]`). `data/fremont_events_log.csv`, header and the `event_id` and `first_seen_at` columns, in `load_existing_ids()`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`data/fremont_events_log.csv` through `append_rows()`, with the fifteen columns listed under the runner below, and `data/events_raw/YYYY-MM-DD.jsonl` through `write_raw()`: one JSON object per line, the event exactly as the feed sent it plus one key `pulled_at`, every event of every poll whether or not it touches Fremont, because the filter is one of the join rules the raw log exists to let you change."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`URL = \"https://api.511.org/traffic/events\"`.",
+                      "`FIELDS`, the fifteen column names in this order: `event_id, event_type, severity, status, headline, created, updated, road_names, directions, lat, lon, geo_missing, first_seen_at, last_seen_at, pulled_at`.",
+                      "`PHASE0_FIELDS = [\"pulled_at\", \"id\", \"event_type\", \"severity\", \"headline\", \"roads\", \"created\", \"updated\"]`, the header the phase 0 runner wrote, kept so `migrate_csv()` can recognise it.",
+                      "`RAW_DIR = DATA / \"events_raw\"`.",
+                      "`fetch_events(token: str, status: str = \"active\") -> list[dict]` · the walkthrough's step 11 function with `status` added to the query; 30 second timeout, `raise_for_status()`, the `utf-8-sig` decode when the body starts with the byte order mark; returns `payload.get(\"events\", [])`, never the payload. The feed returns at most 1000 archived events; that cap is the feed's, not yours, so log how many came back.",
+                      "`event_point(event: dict) -> tuple[float, float] | None` · reads `event.get(\"geography\")`; for a `Point` returns `(coordinates[1], coordinates[0])`, for a `LineString` or `MultiLineString` the first coordinate pair in the same order, for anything else or nothing `None`. Latitude first, longitude second, always.",
+                      "`event_touches_fremont(event: dict) -> bool` · True when any road's `name` contains one of `FREMONT_ROADS` (case-insensitive substring), else True when `event_point()` gives a point with `FREMONT_BOX[0] <= lat <= FREMONT_BOX[1]` and `FREMONT_BOX[2] <= lon <= FREMONT_BOX[3]`, else False. Names are tested first so an event on I-880 with no geography is kept, as the plan's stage 2 says, with `geo_missing` set to 1 by `flatten_event()`.",
+                      "`flatten_event(event: dict, pulled_at: str | None = None) -> dict` · the walkthrough's step 2 function, extended to `FIELDS`: `event_id` from `id`; `status` with `.get()`; `road_names` as the road names joined with `; `; `directions` as each road's `direction` joined the same way, empty strings for roads without one; `lat` and `lon` from `event_point()`, `None` when absent; `geo_missing` 1 when `event_point()` is `None`, else 0; `first_seen_at` and `last_seen_at` both set to `pulled_at`, which `append_rows()` corrects for known ids; `pulled_at` defaulting to `datetime.now(timezone.utc).isoformat()` when not given.",
+                      "`load_existing_ids(path: Path) -> dict[str, str]` · reads the CSV once with `csv.DictReader` and returns `{event_id: first_seen_at}` keeping the earliest `first_seen_at` per id; returns `{}` when the file does not exist; exits with a one-line message when the header is neither `FIELDS` nor `PHASE0_FIELDS`, because a file of unknown shape is never appended to.",
+                      "`append_rows(rows: list[dict], path: Path, existing: dict[str, str], skip_known: bool = False) -> int` · for each row, if `row[\"event_id\"]` is in `existing` then set `row[\"first_seen_at\"]` to the stored value, and skip the row entirely when `skip_known` is true; `last_seen_at` stays the poll's `pulled_at`; opens the file in append mode with `newline=\"\"`, writes the header when the file is new, writes the rows in `FIELDS` order, returns how many were written. The log is one row per event per poll; the per-event view is a group by `event_id` with the minimum `first_seen_at` and the maximum `last_seen_at`, and `first_seen_at` is copied onto every row of an id so that any single row tells you when the event was first seen.",
+                      "`write_raw(events: list[dict], pulled_at: str, raw_dir: Path = RAW_DIR) -> Path` · creates `raw_dir`, appends `json.dumps(dict(event, pulled_at=pulled_at))` plus a newline for every event to `raw_dir / (pulled_at[:10] + \".jsonl\")`, returns that path. `json.dumps` escapes newlines inside strings, so one event is always one line.",
+                      "`migrate_csv(path: Path) -> int` · reads a file whose header is `PHASE0_FIELDS`, maps `id` to `event_id` and `roads` to `road_names`, sets `status`, `directions`, `lat` and `lon` to empty, `geo_missing` to 1 because the phase 0 rows kept no geography, `first_seen_at` to the earliest `pulled_at` of that id anywhere in the file, `last_seen_at` to the row's `pulled_at`, keeps every row in its original order, writes the result as text through `common.atomic_write()`, and returns the row count, which must equal the count read. Every row is kept, including the non-Fremont ones the phase 0 collector logged; they are history, and phase 4's join filters by route anyway."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "import csv, io, json\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nimport requests\nfrom common import DATA, FREMONT_BOX, FREMONT_ROADS, atomic_write\n\nURL = \"https://api.511.org/traffic/events\"\nFIELDS = [\"event_id\", \"event_type\", \"severity\", \"status\", \"headline\", \"created\", \"updated\", \"road_names\",\n          \"directions\", \"lat\", \"lon\", \"geo_missing\", \"first_seen_at\", \"last_seen_at\", \"pulled_at\"]\nPHASE0_FIELDS = [\"pulled_at\", \"id\", \"event_type\", \"severity\", \"headline\", \"roads\", \"created\", \"updated\"]\nRAW_DIR = DATA / \"events_raw\"\n\n\ndef fetch_events(token: str, status: str = \"active\") -> list[dict]:\n    \"\"\"GET URL with api_key, format=json and status; strip a byte order mark; return payload['events'] or [].\"\"\"\n    ...\n\ndef event_point(event: dict) -> tuple[float, float] | None:\n    \"\"\"(lat, lon) from event['geography']; GeoJSON stores [lon, lat]; None when there is no geography.\"\"\"\n    ...\n\ndef event_touches_fremont(event: dict) -> bool:\n    \"\"\"True when any road name contains a FREMONT_ROADS fragment, or the point lies inside FREMONT_BOX.\"\"\"\n    ...\n\ndef flatten_event(event: dict, pulled_at: str | None = None) -> dict:\n    \"\"\"One event to one dict keyed by FIELDS; missing fields None; roads and directions joined with '; '.\"\"\"\n    ...\n\ndef load_existing_ids(path: Path) -> dict[str, str]:\n    \"\"\"{event_id: earliest first_seen_at} for every id in the CSV; {} when the file does not exist.\"\"\"\n    ...\n\ndef append_rows(rows: list[dict], path: Path, existing: dict[str, str], skip_known: bool = False) -> int:\n    \"\"\"Carry first_seen_at forward from existing, append rows (header on a new file), return the count.\"\"\"\n    ...\n\ndef write_raw(events: list[dict], pulled_at: str, raw_dir: Path = RAW_DIR) -> Path:\n    \"\"\"Append one JSON line per event with pulled_at added to raw_dir/<pulled_at[:10]>.jsonl; return it.\"\"\"\n    ...\n\ndef migrate_csv(path: Path) -> int:\n    \"\"\"Rewrite a PHASE0_FIELDS file as a FIELDS file through atomic_write; return the unchanged row count.\"\"\"\n    ..."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -c \"import collector; print(len(collector.FIELDS), collector.FIELDS[0], collector.FIELDS[-1])\"` prints `15 event_id pulled_at`. `python -c \"from collector import flatten_event; print(flatten_event({'id': 'x', 'roads': [{'name': 'I-880 N', 'direction': 'N'}]}, 't'))\"` prints a dict with `road_names` `I-880 N`, `directions` `N`, `lat` and `lon` `None`, `geo_missing` `1`. Then `python -m pytest -q tests/test_collector.py` passes every test in the block below. The module is right when the runner is a page long and every line of logic lives here."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "The step 2 walkthrough function returned `roads` and `id`; this phase renames them to `road_names` and `event_id` because that is what the plan's stage 7 reads. Rename in `flatten_event()`, in the tests and in `FIELDS` at the same time, and nowhere keep the old name, or one poll will write a row whose keys do not match the header and `csv.DictWriter` will raise `ValueError: dict contains fields not in fieldnames`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "tests/test_collector.py",
+                "tag": "test · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The first test file of the project, and the reason `collector.py` is a module. It holds the walkthrough's flatten tests from the topic's steps 1 and 2 (the walkthrough calls the file `tests/test_flatten.py`; name it `test_collector.py` so that there is one test file per module), the five hand-made events for `event_touches_fremont()`, and one test per remaining function. Every test runs offline in under a second and touches only `tmp_path`; a test that reads `data/` or the network is wrong."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "Nothing on disk. Fake events built in the file; `tmp_path` for the functions that write."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python -m pytest -q tests/test_collector.py`, or `python -m pytest -q tests/test_collector.py -k touches` for the filter alone."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "Five module-level events, each a dict the feed could have sent: `ON_880_NO_GEO` (a road named `I-880 N`, no `geography`); `IN_BOX_UNNAMED` (`roads` empty, a `Point` at lon −121.98, lat 37.53, inside the box); `OUTSIDE_BOTH` (road `US-101 N`, a `Point` at lon −121.89, lat 37.34, in San Jose); `MISSION_BLVD_POINT_OUTSIDE` (road `Mission Blvd`, a `Point` at lon −122.20, lat 37.70, outside the box, so the name must win); `FREMONT_ST_SF` (road `Fremont St`, a `Point` at lon −122.40, lat 37.79, so the word Fremont alone must not match).",
+                      "`test_event_touches_fremont(event, expected)` · parametrized over the five: True, True, False, True, False.",
+                      "`test_flattens_roads_into_one_string()`, `test_missing_fields_become_none()`, `test_headline_never_contains_a_newline()` · the walkthrough's step 1 tests, with `row[\"roads\"]` changed to `row[\"road_names\"]`.",
+                      "`test_roads_column(event, expected)` · the walkthrough's step 2 parametrized test, five cases, on `road_names`.",
+                      "`test_point_is_lat_then_lon()` · `flatten_event()` of a `Point` with coordinates `[-121.98, 37.53]` gives `lat == 37.53` and `lon == -121.98` and `geo_missing == 0`.",
+                      "`test_geo_missing_is_1_without_geography()` · `flatten_event(ON_880_NO_GEO, \"t\")` gives `lat is None`, `lon is None`, `geo_missing == 1`.",
+                      "`test_load_existing_ids_empty_when_missing(tmp_path)` · `load_existing_ids(tmp_path / \"none.csv\") == {}`.",
+                      "`test_append_rows_carries_first_seen_at(tmp_path)` · append the same event at `pulled_at` `t1` then `t2`, calling `load_existing_ids()` between; the file has three lines (header and two rows), both rows have `first_seen_at == t1`, the second has `last_seen_at == t2`.",
+                      "`test_bootstrap_skips_known_ids(tmp_path)` · with `skip_known=True`, an id already in `existing` is not written and the return value counts only the new ones.",
+                      "`test_write_raw_one_line_per_event(tmp_path)` · `write_raw()` of three events at `pulled_at` `2026-09-03T18:00:00+00:00` creates `2026-09-03.jsonl` with three lines, each parsing back with `json.loads` to the event plus `pulled_at`; one event has a headline containing a newline.",
+                      "`test_migrate_keeps_every_row(tmp_path)` · write a four-row `PHASE0_FIELDS` file where one id appears twice with different `pulled_at`; after `migrate_csv()` the header is `FIELDS`, the row count is four, `event_id` and `road_names` hold the old `id` and `roads`, `geo_missing` is `1` everywhere, and both rows of the repeated id have `first_seen_at` equal to the earlier `pulled_at`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": "One complete test and the names of the rest."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "# tests/test_collector.py\nimport csv, json\nimport pytest\nfrom collector import (FIELDS, PHASE0_FIELDS, append_rows, event_touches_fremont, flatten_event,\n                       load_existing_ids, migrate_csv, write_raw)\n\nT = \"2026-09-03T18:00:00+00:00\"\nON_880_NO_GEO = {\"id\": \"e1\", \"roads\": [{\"name\": \"I-880 N\"}]}\nIN_BOX_UNNAMED = {\"id\": \"e2\", \"roads\": [], \"geography\": {\"type\": \"Point\", \"coordinates\": [-121.98, 37.53]}}\nOUTSIDE_BOTH = {\"id\": \"e3\", \"roads\": [{\"name\": \"US-101 N\"}],\n                \"geography\": {\"type\": \"Point\", \"coordinates\": [-121.89, 37.34]}}\nMISSION_BLVD_POINT_OUTSIDE = {\"id\": \"e4\", \"roads\": [{\"name\": \"Mission Blvd\"}],\n                              \"geography\": {\"type\": \"Point\", \"coordinates\": [-122.20, 37.70]}}\nFREMONT_ST_SF = {\"id\": \"e5\", \"roads\": [{\"name\": \"Fremont St\"}],\n                 \"geography\": {\"type\": \"Point\", \"coordinates\": [-122.40, 37.79]}}\n\n\n@pytest.mark.parametrize(\"event, expected\", [\n    (ON_880_NO_GEO, True), (IN_BOX_UNNAMED, True), (OUTSIDE_BOTH, False),\n    (MISSION_BLVD_POINT_OUTSIDE, True), (FREMONT_ST_SF, False),\n])\ndef test_event_touches_fremont(event, expected):\n    assert event_touches_fremont(event) is expected\n\n\ndef test_flattens_roads_into_one_string(): ...\ndef test_missing_fields_become_none(): ...\ndef test_headline_never_contains_a_newline(): ...\ndef test_roads_column(): ...                     # parametrized, the walkthrough's five cases\ndef test_point_is_lat_then_lon(): ...\ndef test_geo_missing_is_1_without_geography(): ...\ndef test_load_existing_ids_empty_when_missing(tmp_path): ...\ndef test_append_rows_carries_first_seen_at(tmp_path): ...\ndef test_bootstrap_skips_known_ids(tmp_path): ...\ndef test_write_raw_one_line_per_event(tmp_path): ...\ndef test_migrate_keeps_every_row(tmp_path): ..."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -m pytest -q tests/test_collector.py` prints `20 passed`: five cases for the filter, three flatten tests, five road cases, two geography tests and five with `tmp_path`. `python -m pytest -q tests/test_collector.py -k touches` prints `5 passed`. Break `event_point()` on purpose by returning the coordinates in the feed's order, run again, and watch `test_point_is_lat_then_lon` and two of the five filter cases fail; then put it back."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "02_collect_events.py",
+                "tag": "runner · changed",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Still the plan's stage 2, now a thin runner: it parses the command line, configures logging, migrates an old CSV once, and calls `collector.py` for one poll or for a poll every `--interval` seconds. What changes from phase 0: `URL`, `FIELDS`, `fetch_events()` and `flatten()` leave the file for `collector.py` (`flatten()` becomes `flatten_event()`); `OUT` becomes the `--out` flag built from `common.DATA`; `load_dotenv()` becomes `common.env(\"TOKEN_511\", required=True)`; the Fremont filter, the raw log, the seen-at columns and the bootstrap arrive; the last line of every poll is `common.log_stage()`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`TOKEN_511` through `common.env()`. The feed through `collector.fetch_events()`. The header of `--out` to decide whether `migrate_csv()` must run."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`data/fremont_events_log.csv` (or `--out`), one row per event per poll, every value text because it is a CSV; the columns in `FIELDS` order and what each will become when read: `event_id` (the feed's id; stays text), `event_type`, `severity`, `status` (text; `severity` maps to `common.SEVERITY` in phase 4), `headline` (text, newlines removed), `created`, `updated` (ISO 8601 text as the feed sends it; a UTC datetime in phase 4), `road_names`, `directions` (text, `; `-joined), `lat`, `lon` (decimal text or empty; float32 in phase 4), `geo_missing` (`0` or `1`; int8 in phase 4), `first_seen_at`, `last_seen_at`, `pulled_at` (ISO 8601 UTC with `+00:00`; UTC datetimes in phase 4). `data/events_raw/YYYY-MM-DD.jsonl` through `write_raw()`, before the filter. `logs/collect.log` through `logging`, one `INFO` line per poll with the fetched count, a `WARNING` on an empty response, an `ERROR` on a failed request. `logs/pipeline.log` through `log_stage()`: `stage=collect seconds=<n> rss_gb=<n> rows=<appended> fetched=<n> kept=<n>`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python 02_collect_events.py` polls once and exits; that is what launchd will call every fifteen minutes in phase 9. `python 02_collect_events.py --bootstrap` fetches `status=archived` once, appends only ids the log does not already hold, and ignores `--interval`. `--out PATH` (default `data/fremont_events_log.csv`). `--limit N` (default `0`, all) keeps only the first N events of the response, for trying things. `--dry-run` fetches and filters, prints how many came back and how many touch Fremont and the first flattened row, and writes nothing, not even the raw log. `--interval SECONDS` (default `0`, once) keeps polling in the foreground until Control-C, starting a poll every SECONDS; use `--interval 900`, which is `common.POLL_SECONDS`, to keep the log growing during phase 1 before there is a scheduler. `--help` prints all of this."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`parse_args(argv=None) -> argparse.Namespace` · the walkthrough's step 4 parser with `--bootstrap` and `--interval` added and the defaults above.",
+                      "`poll(args: argparse.Namespace, token: str) -> int` · `t0 = time.time()`; `pulled_at = datetime.now(timezone.utc).isoformat()`; `events = fetch_events(token, \"archived\" if args.bootstrap else \"active\")`, cut to `--limit`; log the count and warn when empty; unless dry run, `write_raw(events, pulled_at)`; `kept = [e for e in events if event_touches_fremont(e)]`; `rows = [flatten_event(e, pulled_at) for e in kept]`; on a dry run print the three numbers and `rows[:1]` and return 0; else `existing = load_existing_ids(args.out)`, `n = append_rows(rows, args.out, existing, skip_known=args.bootstrap)`, `log_stage(\"collect\", t0, rows=n, fetched=len(events), kept=len(kept))`, return `n`.",
+                      "`main(argv=None) -> None` · `common.LOGS.mkdir(parents=True, exist_ok=True)` then `logging.basicConfig()` exactly as the walkthrough's step 3 shows, with `filename=common.LOGS / \"collect.log\"`; `token = common.env(\"TOKEN_511\", required=True)`; if `args.out` exists and its header is `PHASE0_FIELDS`, call `migrate_csv(args.out)` and log `migrated N rows`; then a loop that calls `poll()` inside `try` / `except requests.RequestException` (log it at `ERROR`, do not exit), breaks when `--interval` is 0 or `--bootstrap` is set, and otherwise sleeps `max(0, args.interval - (time.time() - started))` so polls start on the interval rather than drift.",
+                      "The `if __name__ == \"__main__\": main()` guard. No function in this file does anything a test would want to import; if one appears, it belongs in `collector.py`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "# 02_collect_events.py — parse flags, poll once or every --interval seconds, call collector, log one line.\nimport argparse, logging, time\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nimport requests\nimport common\nfrom collector import (PHASE0_FIELDS, append_rows, event_touches_fremont, fetch_events,\n                       flatten_event, load_existing_ids, migrate_csv, write_raw)\n\n\ndef parse_args(argv=None) -> argparse.Namespace:\n    \"\"\"--bootstrap, --out, --limit, --dry-run, --interval, with the defaults on the Build page.\"\"\"\n    p = argparse.ArgumentParser(description=\"Collect 511 traffic events into a CSV.\")\n    p.add_argument(\"--bootstrap\", action=\"store_true\", help=\"fetch status=archived once; skip ids already logged\")\n    p.add_argument(\"--out\", type=Path, default=common.DATA / \"fremont_events_log.csv\", help=\"where to append rows\")\n    p.add_argument(\"--limit\", type=int, default=0, help=\"stop after N events (0 = all)\")\n    p.add_argument(\"--dry-run\", action=\"store_true\", help=\"fetch, filter and print; write nothing\")\n    p.add_argument(\"--interval\", type=int, default=0, help=\"seconds between polls; 0 = poll once and exit\")\n    return p.parse_args(argv)\n\n\ndef poll(args: argparse.Namespace, token: str) -> int:\n    \"\"\"One poll: fetch, write raw, filter, flatten, carry first_seen_at, append, log_stage; return rows appended.\"\"\"\n    ...\n\n\ndef main(argv=None) -> None:\n    \"\"\"Logging to logs/collect.log, migrate a phase 0 CSV if found, then poll once or on --interval.\"\"\"\n    ...\n\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python 02_collect_events.py --help` lists the five flags with their defaults. `python 02_collect_events.py --dry-run` prints three numbers and one row and changes nothing: `wc -l data/fremont_events_log.csv` and `ls data/events_raw/` are the same before and after. The first real run on a phase 0 file logs `migrated N rows` where N is the old `wc -l` minus one, and `head -1 data/fremont_events_log.csv` then prints `event_id,event_type,severity,status,headline,created,updated,road_names,directions,lat,lon,geo_missing,first_seen_at,last_seen_at,pulled_at`. After one poll, `tail -1 logs/pipeline.log` prints `stage=collect seconds=<n> rss_gb=<n> rows=<n> fetched=<n> kept=<n>` with `kept` at most `fetched` and `rows` equal to `kept`, `tail -1 logs/collect.log` prints `fetched <n> events`, and `wc -l` of today's file in `data/events_raw/` has grown by `fetched`. `python 02_collect_events.py --bootstrap` prints how many archived events came (at most 1000) and appends only the unknown ones; run it again and `rows=0`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "Make a copy before the first phase 1 run, `cp data/fremont_events_log.csv data/fremont_events_log.phase0.csv`, and delete it once the migration check has passed and the study's counts look right. `data/` is not in git, so this copy is the only undo you have."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "tests/test_timezones.py",
+                "tag": "test · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The walkthrough's step 4 tests, in a file of their own because they test the clock, not the collector: that UTC round-trips, that the repeated November hour must be dealt with explicitly, and two more that the collector's own timestamps and the March gap behave. Phase 3 leans on these when `10_clean_pems.py` localizes a whole file."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python -m pytest -q tests/test_timezones.py`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`LA = ZoneInfo(\"America/Los_Angeles\")` at module level; a test may also assert `common.TZ == \"America/Los_Angeles\"` so the two never drift apart.",
+                      "`test_utc_round_trip()` · the walkthrough's: 18:00 UTC on 2026-09-03 is 11 in Los Angeles and converts back unchanged.",
+                      "`test_november_hour_is_ambiguous()` · the walkthrough's: `tz_localize` of `2026-11-01 01:30:00` raises without `ambiguous`, and with `ambiguous=\"NaT\"` the value is `NaT`, which is the plan's choice.",
+                      "`test_march_hour_is_shifted_forward()` · `2026-03-08 02:30:00` does not exist in Los Angeles; `tz_localize(..., nonexistent=\"shift_forward\")` gives `03:30` with offset −07:00, and `tz_convert(\"UTC\")` gives `10:30` UTC.",
+                      "`test_pulled_at_is_utc_iso()` · `flatten_event({\"id\": \"x\"})` with no `pulled_at` produces a `pulled_at` that `datetime.fromisoformat()` parses to an aware datetime with `utcoffset()` of zero and the string ends in `+00:00`, which is what `datetime.utcnow()` would not have given."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": "The walkthrough's two tests verbatim, and the names of the other two."
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "# tests/test_timezones.py\nfrom datetime import datetime, timezone\nfrom zoneinfo import ZoneInfo\nimport pandas as pd\nimport pytest\nfrom collector import flatten_event\n\nLA = ZoneInfo(\"America/Los_Angeles\")\n\n\ndef test_utc_round_trip():\n    t = datetime(2026, 9, 3, 18, 0, tzinfo=timezone.utc)\n    assert t.astimezone(LA).hour == 11          # UTC-7 in September\n    assert t.astimezone(LA).astimezone(timezone.utc) == t\n\n\ndef test_november_hour_is_ambiguous():\n    s = pd.Series(pd.to_datetime([\"2026-11-01 01:30:00\"]))\n    with pytest.raises(Exception):\n        s.dt.tz_localize(\"America/Los_Angeles\")            # refuses to guess\n    out = s.dt.tz_localize(\"America/Los_Angeles\", ambiguous=\"NaT\")\n    assert out.isna().all()                                # we chose to drop it\n\n\ndef test_march_hour_is_shifted_forward(): ...\ndef test_pulled_at_is_utc_iso(): ..."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -m pytest -q tests/test_timezones.py` prints `4 passed`. Change `ambiguous=\"NaT\"` to `ambiguous=True` in the second test and it fails, because `True` picks the first of the two 01:30s and pandas returns a value instead of `NaT`; put it back. Together with the collector file, `python -m pytest -q` prints `24 passed`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "studies/events_per_road_day.py",
+                "tag": "study · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The current Build's third bullet: events per road per day from the CSV, using only the standard library for the work (`csv`, `collections.Counter`, `datetime`, `zoneinfo`, `json`, `argparse`). The one project import is `common`, for `TZ`, `DATA` and `OUTPUT`, so the zone name and the paths are not typed a second time. It is the first script that consumes what the collector writes, and it is where you notice that `pulled_at` is text and that a Fremont day is not a UTC day."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`data/fremont_events_log.csv` (or `--csv`), the columns `event_id`, `road_names`, `pulled_at`. It asserts that the header is exactly `collector.FIELDS`; on any other header it exits with one line saying to run `02_collect_events.py` once, which migrates."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`output/studies/events_per_road_day.json` with keys `generated_at` (ISO 8601 UTC), `csv` (the path read), `rows` (CSV rows read), `events` (distinct `event_id`), `days` (distinct local days), `per_road_day` (a list of `{\"day\": \"YYYY-MM-DD\", \"road\": ..., \"events\": n}` sorted by day then by count descending), `per_road` (a dict road to distinct events over the whole file). It prints `per_road_day` as aligned columns and the totals as the last line."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python studies/events_per_road_day.py`, with `--csv PATH` (default `data/fremont_events_log.csv`) and `--days N` (default `0`, every day; otherwise only the last N local days are printed, the JSON always holds all)."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`sys.path.insert(0, str(Path(__file__).resolve().parents[1]))` before `import common`, because the script lives in `studies/` and Python looks beside the script, not in the repository root. Every study repeats these two lines.",
+                      "`local_day(pulled_at: str) -> str` · `datetime.fromisoformat(pulled_at).astimezone(ZoneInfo(TZ)).date().isoformat()`.",
+                      "`read_rows(path: Path) -> list[dict]` · `csv.DictReader` after the header assertion; `sys.exit` with a one-line message otherwise.",
+                      "`count_events(rows: list[dict]) -> dict[tuple[str, str], set[str]]` · for each row, for each road in `row[\"road_names\"].split(\"; \")` that is not empty, add `row[\"event_id\"]` to the set at `(local_day(row[\"pulled_at\"]), road)`; an event on two roads counts once on each; a row with an empty `road_names` counts under the road `(none)`.",
+                      "`main(argv=None) -> None` · parse, read, count, print, and `common.atomic_write(result, common.OUTPUT / \"studies\" / \"events_per_road_day.json\")`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "# studies/events_per_road_day.py — distinct events per road per Fremont day, standard library only.\nimport argparse, csv, json, sys\nfrom collections import defaultdict\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nfrom zoneinfo import ZoneInfo\n\nsys.path.insert(0, str(Path(__file__).resolve().parents[1]))\nimport common\nfrom collector import FIELDS\n\n\ndef local_day(pulled_at: str) -> str:\n    \"\"\"ISO UTC string to the YYYY-MM-DD it fell on in common.TZ.\"\"\"\n    ...\n\n\ndef read_rows(path: Path) -> list[dict]:\n    \"\"\"DictReader rows; sys.exit with one line unless the header is exactly FIELDS.\"\"\"\n    ...\n\n\ndef count_events(rows: list[dict]) -> dict[tuple[str, str], set[str]]:\n    \"\"\"(day, road) -> set of event_id; one event counts once per road it names.\"\"\"\n    ...\n\n\ndef main(argv=None) -> None:\n    \"\"\"--csv, --days; print the table and write output/studies/events_per_road_day.json.\"\"\"\n    ...\n\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python studies/events_per_road_day.py` prints a table whose last line is the totals, and `python -c \"import json; d = json.load(open('output/studies/events_per_road_day.json')); print(d['rows'], d['events'], d['days'])\"` prints three numbers where `rows` equals `wc -l` of the CSV minus one and `events` equals `cut -d, -f1 data/fremont_events_log.csv | tail -n +2 | sort -u | wc -l`. Point it at a CSV with the phase 0 header and it exits with the one-line message instead of a traceback. Write the three numbers and the top three roads into the stage page."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "Rows logged before this phase are unfiltered: the phase 0 collector kept every Bay Area event, so the table's first days list US-101 and I-80 beside I-880. That is history, not a bug. Note the date the filter started in the stage page so the drop in roads per day is explained."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "docs/stages/02_collect_events.md",
+                "tag": "doc · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The stage page for runner 02, the first of the pages `make all` will insist on in phase 9: what it reads, what it writes with the column list, how to run it, the numbers from the last run and what surprised you. It is also where the answer to the second Done when item is written down."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`## Reads` · the feed URL and its parameters, the token's name and where it comes from, the raw event fields the code depends on.",
+                      "`## Writes` · the CSV path; the fifteen columns, one line each with what the value is and what it becomes downstream; the per-event view (`first_seen_at` minimum, `last_seen_at` maximum, by `event_id`); the raw log path and its one-line-per-event shape; the two log files.",
+                      "`## Run` · the five flags with defaults, the `--bootstrap` once, the `--interval 900` foreground loop, and the sentence that launchd takes over in phase 9.",
+                      "`## Numbers from the last run` · the date, `fetched`, `kept`, `rows` and `seconds` from the last `stage=collect` line; the CSV row count and distinct event count; the number of files in `data/events_raw/`; how many rows the migration carried over and the date the filter started; the study's top three roads.",
+                      "`## Surprised by` · at least three lines, and these two must be among them: why `created` is a string in the CSV (a CSV holds text and nothing else; the feed sends ISO 8601 text and the collector copies it) and where it becomes a datetime (in phase 4's `incidents.py`, with `pd.to_datetime(..., utc=True)`, the first place arithmetic on it is needed; the walkthrough's `parse_dates` in the data lesson is the same conversion, done by hand); and that `pulled_at` and `last_seen_at` are equal on a row and only differ as a per-event summary."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "text",
+                    "s": "# 02_collect_events.py\n\n## Reads\n## Writes\n## Run\n## Numbers from the last run\n## Surprised by"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`grep -c '^## ' docs/stages/02_collect_events.md` prints `5`. `grep -n 'created' docs/stages/02_collect_events.md` prints the line that says why it is a string and where it becomes a datetime. Every number under Numbers from the last run can be found again in `logs/pipeline.log` or reproduced by a command on this page."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "README.md",
+                "tag": "doc · changed",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Adds this phase's lines to the Run section, as every phase does. Nothing else on the page changes."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "Under Run: `python 02_collect_events.py --bootstrap` once, `python 02_collect_events.py --interval 900` to keep polling, and `make test` to run the tests.",
+                      "Under Layout: `collector.py`, `tests/`, `studies/` and `docs/stages/` on the one-line-per-entry list."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`wc -l README.md` still prints a number under 120, and `grep -c 'collect_events' README.md` prints at least `2`."
+                  }
                 ]
               }
             ]
@@ -10485,8 +11425,15 @@
               {
                 "t": "ul",
                 "items": [
-                  "Your filter passes your tests and the repo's behaviour is unchanged for real events.",
-                  "You can explain why `created` is a string in the CSV and where it must become a datetime."
+                  "`python -m pytest -q` prints `24 passed`: 20 in `tests/test_collector.py` (five filter cases, three flatten tests, five road cases, two geography tests, five with `tmp_path`) and 4 in `tests/test_timezones.py`. `make test` prints the same.",
+                  "Your filter passes its tests: `python -m pytest -q tests/test_collector.py -k touches` prints `5 passed`, and `python -c \"from collector import event_touches_fremont as f; print(f({'roads': [{'name': 'I-880 N'}]}), f({'roads': [{'name': 'Fremont St'}]}))\"` prints `True False`.",
+                  "The repository's behaviour is unchanged for real events: pick one day's file in `data/events_raw/`, run `python -c \"import json, collector; ev = [json.loads(l) for l in open('data/events_raw/<day>.jsonl')]; keep = [e for e in ev if collector.event_touches_fremont(e)]; print(len(ev), len(keep)); [print('KEEP', e.get('headline')) for e in keep]; [print('DROP', e.get('headline')) for e in ev if e not in keep and 'Fremont' in json.dumps(e)]\"`, read every line, and confirm by eye that every KEEP names I-880, I-680, SR-84 or a Fremont street or lies in the box, and that no DROP is a Fremont freeway event. Write the two counts into the stage page.",
+                  "`python 02_collect_events.py --help` lists `--bootstrap`, `--out`, `--limit`, `--dry-run` and `--interval` with their defaults, and `--dry-run` leaves `wc -l data/fremont_events_log.csv` and `ls data/events_raw/` unchanged.",
+                  "The migration kept every row: the phase 0 row count, `wc -l` minus one on the copy, equals the count the runner logged as `migrated N rows` and the `rows` the study reports for the same file; `head -1` prints the fifteen-column header; `python -c \"import csv; rows = list(csv.DictReader(open('data/fremont_events_log.csv'))); print(sum(r['geo_missing'] != '1' for r in rows))\"` prints `0` if you run it before the first new poll, because every migrated row has `geo_missing` set to 1.",
+                  "One real poll after the split writes everything: `tail -1 logs/pipeline.log` prints `stage=collect` with `rows`, `fetched` and `kept`; `tail -1 logs/collect.log` prints `fetched <n> events`; `ls data/events_raw/` shows today's UTC date as a `.jsonl`; and a row from that poll has `first_seen_at` equal to `pulled_at` for a new id and earlier than `pulled_at` for an id seen before.",
+                  "`--bootstrap` has run once and is idempotent: the first run logs `fetched <n>` with n at most 1000 and `rows` equal to the number of archived Fremont events the log did not already hold; the second run logs `rows=0`.",
+                  "`python studies/events_per_road_day.py` prints the table and writes `output/studies/events_per_road_day.json`, whose `events` equals the distinct `event_id` count from `cut -d, -f1 data/fremont_events_log.csv | tail -n +2 | sort -u | wc -l`.",
+                  "You can explain why `created` is a string in the CSV and where it must become a datetime: the sentence is under Surprised by in `docs/stages/02_collect_events.md`, and `python -c \"import csv; r = next(csv.DictReader(open('data/fremont_events_log.csv'))); print(type(r['created']).__name__)\"` prints `str` while `python -c \"import pandas as pd; print(pd.read_csv('data/fremont_events_log.csv', parse_dates=['created']).created.dtype)\"` prints a datetime dtype, which is the conversion phase 4 does with `utc=True`."
                 ]
               }
             ]
@@ -10497,14 +11444,25 @@
               {
                 "t": "ul",
                 "items": [
-                  "Tutorial hell: watching without typing. Every chapter ends with you closing the book and writing the code.",
-                  "Skipping tests because the script 'obviously works'."
+                  "You watched the chapter and typed nothing, and the next day the collector looks like someone else's code. Tutorial hell is reading without a keyboard. Every chapter ends with you closing the book and writing the code; every function in `collector.py` is written by you from its one-line contract, and only then compared with the walkthrough.",
+                  "The script obviously works, so the tests can wait. It obviously worked in phase 0 too, and it swapped nothing because nothing asked it to. `tests/test_collector.py` is written before the runner is rewritten, and `make test` runs before every commit; a function without a test is a function you have not finished.",
+                  "`ModuleNotFoundError: No module named 'collector'` when you run `pytest`. Bare `pytest` puts `tests/` on `sys.path`, not the repository root. Run `python -m pytest -q`, which is what `make test` does; the `-m` form adds the folder you are in.",
+                  "Every event is 'outside the box', even the ones on Fremont Blvd with a point in the middle of town. GeoJSON coordinates are `[lon, lat]` and `event_point()` returned them in that order. Return `(coordinates[1], coordinates[0])`; `test_point_is_lat_then_lon` exists to catch exactly this.",
+                  "An event on I-880 with no `geography` is dropped. `event_touches_fremont()` tested the box first and returned False when `event_point()` was `None`. Test the road names first, then the point; keep the event and let `flatten_event()` set `geo_missing` to 1, which is what the plan's stage 2 says to do.",
+                  "`ValueError: dict contains fields not in fieldnames` or `KeyError: 'event_id'` on the first poll after the split. The file still has the phase 0 header and the new rows have the new keys. `main()` must call `migrate_csv()` when the header is `PHASE0_FIELDS`; check with `head -1 data/fremont_events_log.csv`, and if you pointed `--out` somewhere new, the old file is untouched and needs the runner run once without `--out`.",
+                  "`FileNotFoundError: logs/collect.log`. `logging.basicConfig()` opens the file and does not create folders; `logs/` is not in git and does not exist on a fresh clone. `common.LOGS.mkdir(parents=True, exist_ok=True)` before `basicConfig()`, in `main()`.",
+                  "The `--interval` loop died overnight with a `ConnectionError` traceback. One failed request inside the loop must not end the loop. Wrap `poll()` in `try` / `except requests.RequestException`, log it at `ERROR` in `logs/collect.log`, and go round again; only a missing token exits.",
+                  "Polls start later every cycle and by evening they are minutes off. `time.sleep(args.interval)` after a poll that itself took several seconds. Sleep `max(0, args.interval - (time.time() - started))` so the start times stay on the interval.",
+                  "`pulled_at` has no `+00:00` on the end and `test_pulled_at_is_utc_iso` fails. `datetime.utcnow()` returns a naive datetime whose `isoformat()` carries no offset, and a naive string is a guess for everyone who reads it later. Use `datetime.now(timezone.utc)` everywhere; there is no other allowed way to ask for the time in this project.",
+                  "`first_seen_at` differs between two rows of the same event. `load_existing_ids()` was called after `append_rows()`, on a different path than `--out`, or not at all. Call it on `args.out` immediately before appending; `test_append_rows_carries_first_seen_at` fails when the order is wrong.",
+                  "A test wrote into the real `data/fremont_events_log.csv`. A function took a default path and the test did not override it. Every function that writes takes `path` or `raw_dir` as an argument, and every test passes `tmp_path`; if a test cannot be written without touching `data/`, the function's signature is wrong.",
+                  "The study shows US-101 and I-80 for the first weeks and only Fremont roads after a date. That is the phase 0 collector, which kept every Bay Area event; the filter started with this phase. Note the date in the stage page and leave the rows; phase 4 joins by route and ignores them."
                 ]
               }
             ]
           }
         ],
-        "lives": "Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new.",
+        "lives": "Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new.",
         "u": "u1",
         "terms": [
           "for",
@@ -10518,14 +11476,43 @@
           "f-string",
           "timezone",
           "datetime",
+          "format",
           "pytest",
           "pems",
           "511",
-          "library",
-          "makefile",
           "stage",
+          "bootstrap",
+          "def",
+          "library",
+          "readme",
+          "incident",
+          "http",
+          "sorted",
+          "merge",
+          "api-key",
+          "byte",
+          "path",
+          "shape",
+          "pathlib",
+          "nn-module",
+          "python",
+          "assert",
+          "command",
+          "float32",
+          "launchd",
+          "polling",
+          "loop-detector",
+          "drift",
+          "cd",
+          "makefile",
+          "timestamp",
+          "nan",
+          "pandas",
           "repository",
-          "python"
+          "parameters",
+          "upstream",
+          "dtype",
+          "commit"
         ]
       },
       {
