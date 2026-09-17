@@ -17467,13 +17467,625 @@
             "k": "build",
             "b": [
               {
-                "t": "ul",
-                "items": [
-                  "Run stage 4 for a few days of files. Open one, confirm the column layout, and write it into the stage 5 README.",
-                  "Write `10_clean_pems.py`: chunked reading, the Fremont filter, DST-safe UTC conversion, bounds, `% Observed`, forward fill, the full grid, float32, monthly Parquet.",
-                  "Build the station registry with upstream and downstream neighbors from postmiles.",
-                  "Rewrite the profile computation and one lag feature as DuckDB SQL and check them against pandas.",
-                  "Plot one station for a day and a week; write `tests/test_clean_pems.py` on a 100-row fixture including the November repeated hour."
+                "t": "p",
+                "s": "This phase builds stages 4 and 5 of the plan for real: the PeMS download, the cleaning that turns 200 MB of headerless text a day into a gap-free monthly Parquet inside 2 GB, the station registry with its neighbours, the SQL twins of the profile and one lag, two studies and two stage pages. Order matters here more than anywhere, because the download runs at one file per 305 seconds and a year takes 31 hours: start it first and write everything else while it runs. Write the top of `pems.py` first, only the paths, the filename patterns and the `cols` list, five lines the downloader imports. Then `09_collect_pems_selenium.py`, and start it on the newest month with `--meta` under `caffeinate`. While it runs, open the first file that lands and confirm the column layout with `pems.check_layout`, which you write next, and put what you find into `docs/stages/10_clean_pems.md` before the parser exists. Then the rest of `pems.py` (`build_registry`, `read_day`, `clean_day`, `finalize`, `validate`), then the two fixtures and `tests/test_clean_pems.py`, then `10_clean_pems.py`, then `sql/profile.sql` and `sql/lag.sql`, then `studies/plot_station.py` and `studies/pandas_vs_polars.py`, then the two stage pages. Add the three `# phase 3` lines from the layout page to `requirements.txt` (`selenium>=4.18`, `polars>=0.20`, `joblib>=1.3`; the last is phase 4's and is listed here so the block is added once), regenerate `requirements.lock.txt`, and add `PEMS_USERNAME=` and `PEMS_PASSWORD=` to `.env.example`, with the values in `.env`."
+              },
+              {
+                "t": "p",
+                "s": "Two rules from the plan run through every file below. Never load a whole district-day: every read goes through `pems.read_day` in chunks or `pems.check_layout` on a thousand rows. And never run the downloader while anything trains: Chrome and LightGBM want the same 16 GB, and `09` refuses to start if a training runner is alive."
+              },
+              {
+                "t": "file",
+                "name": "pems.py",
+                "tag": "module · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Stage 5's module: the station registry from the meta file, the parsing of one `station_5min` file in chunks, and lesson 3's cleaning steps, so that `10_clean_pems.py`, the tests, the studies and later phase 9's replay mode share one implementation. It also owns the paths and filename patterns of the raw folder, which `09_collect_pems_selenium.py` imports; write those lines first and the functions after the first file has landed."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`data/pems_meta/d04_text_meta_YYYY_MM_DD.txt`, tab-separated with a header, of which nine columns are used: `ID`, `Fwy`, `Dir`, `Abs_PM`, `Latitude`, `Longitude`, `Length`, `Type`, `Lanes`. `data/pems_raw/d04_text_station_5min_YYYY_MM_DD.txt.gz`, no header, the plan's documented layout: Timestamp, Station, District, Freeway, Direction, Lane Type, Station Length, Samples, % Observed, Total Flow, Avg Occupancy, Avg Speed, then five columns per lane. The layout is unverified until `check_layout` has run on a real file."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "Nothing itself; the runner writes."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`RAW = common.DATA / \"pems_raw\"`, `META = common.DATA / \"pems_meta\"`, `PROCESSED = common.DATA / \"pems_processed\"`, `MANIFEST = RAW / \"manifest.json\"`, `CLOCK = RAW / \"pems_last_request.json\"`, `REGISTRY = META / \"fremont_stations.parquet\"`.",
+                      "`FILE_RE = re.compile(r\"d04_text_station_5min_(\\d{4})_(\\d{2})_(\\d{2})\\.txt\\.gz\")` and `META_RE = re.compile(r\"d04_text_meta_(\\d{4})_(\\d{2})_(\\d{2})\\.txt\")`, both used with `.fullmatch(name)` so a `.crdownload` twin never matches.",
+                      "`COLS = [\"ts\", \"station\", \"district\", \"fwy\", \"dir\", \"lane_type\", \"length\", \"samples\", \"pct_obs\", \"flow\", \"occ\", \"speed\"]`, lesson 2's `cols` list, the twelve documented names in file order; `OUT_COLS = [\"station_id\", \"timestamp\", \"speed\", \"occ\", \"flow\", \"observed_frac\", \"samples\"]`, the plan's stage 5 columns; `TS_FORMAT = \"%m/%d/%Y %H:%M:%S\"`; `LANE_BLOCK = 5`; `CHUNKSIZE = 200_000`; `OCC_SCALE = 1.0`, set to `0.01` only if the layout check shows occupancy above 1, and then recorded on the stage page.",
+                      "`newest_meta(meta_dir: Path = META) -> Path` · the `META_RE` file with the latest date in its name, or `FileNotFoundError` telling you to run `09` with `--meta`.",
+                      "`build_registry(meta_path: Path) -> pd.DataFrame` · the walkthrough's step 1 unchanged except that the literals come from `common`: `Fwy.isin(common.ROUTES)`, `Latitude.between(FREMONT_BOX[0], FREMONT_BOX[1])`, `Longitude.between(FREMONT_BOX[2], FREMONT_BOX[3])`, `Type == common.LANE_TYPE`; `drive_pm = Abs_PM` times `+1` for N and E and `−1` for S and W; sorted by `Fwy`, `Dir`, `drive_pm`; `upstream_id = groupby([\"Fwy\", \"Dir\"]).ID.shift(1)` and `downstream_id` with `shift(-1)`, both cast to nullable `Int64` so the ends are `<NA>` and the ids stay integers. It asserts the nine header names are present and that the result has between 50 and 200 rows, and it keeps the meta file's own column names plus `drive_pm`, `upstream_id`, `downstream_id`. Phase 4 reads `ID`, `upstream_id`, `downstream_id`, `Fwy`, `Dir`, `Abs_PM`, `Lanes`, `Length`.",
+                      "`check_layout(path: Path, nrows: int = 1000) -> int` · the confirmation the plan asks for, run on every file before it is parsed: counts the columns of the first line (`gzip.open` for `.gz`, plain `open` for `.txt`) and asserts `ncols >= 12` and `(ncols − 12) % LANE_BLOCK == 0`; reads `nrows` rows with `read_day`'s call and asserts `ts` parses with `TS_FORMAT`, `district` is 4 everywhere, `dir` is inside {N, S, E, W}, `lane_type` is text, `pct_obs` lies in 0 to 100, `speed` where present lies in `common.SPEED_RANGE`, `occ` where present in `common.OCC_RANGE`. Returns `ncols`; fails naming the column and the bad value.",
+                      "`read_day(path: Path, keep: set[int] | None, chunksize: int = CHUNKSIZE) -> pd.DataFrame` · the walkthrough's step 2: `pd.read_csv(path, header=None, usecols=range(12), names=COLS, chunksize=chunksize)`, `chunk[chunk.station.isin(keep)]` per chunk (`keep=None` keeps every row, for the tests), `pd.concat(parts, ignore_index=True)`. Never the whole file.",
+                      "`localize(ts: pd.Series) -> pd.Series` · the walkthrough's step 3, first line: `pd.to_datetime(ts, format=TS_FORMAT).dt.tz_localize(common.TZ, ambiguous=\"NaT\", nonexistent=\"shift_forward\").dt.tz_convert(\"UTC\")`. The only place in the project that turns local text into UTC.",
+                      "`day_slots(start_local: pd.Timestamp) -> pd.DatetimeIndex` · the walkthrough's step 4 `slots`: from a local midnight to the next, `freq=common.STEP`, `inclusive=\"left\"`, converted to UTC; 288 slots on a normal day, 276 on the March day, 300 on the November day.",
+                      "`month_slots(month: str) -> pd.DatetimeIndex` · the same from the first local midnight of `YYYY-MM` to the first local midnight of the month after.",
+                      "`clean_day(day: pd.DataFrame, registry: pd.DataFrame) -> pd.DataFrame` · the walkthrough's steps 3 to 5 in order: `timestamp = localize(day.ts)`; drop rows whose `timestamp` is NaT (the November hour) and count them; merge `Lanes` from `registry` on `station = ID`; `speed` outside `common.SPEED_RANGE`, `occ` outside `common.OCC_RANGE`, `flow` outside 0 to `common.FLOW_PER_LANE_MAX × Lanes` become NaN; rows with `pct_obs < common.MIN_OBSERVED` get `speed`, `occ`, `flow` set to NaN while `pct_obs` and `samples` are kept; drop duplicate `(station, timestamp)` pairs keeping the first (the shifted spring hour can land on a real row) and count them; the grid `day_slots × sorted(registry.ID)`, `set_index([...]).reindex(grid)`; `groupby(level=\"station_id\")[[\"speed\", \"occ\", \"flow\"]].ffill(limit=common.MAX_FFILL)`; then `finalize`. Returns one row per station per slot, and stores the two counts on `df.attrs[\"nat_rows\"]` and `df.attrs[\"dup_rows\"]` for the runner's log line.",
+                      "`finalize(df: pd.DataFrame, station_ids: list[int]) -> pd.DataFrame` · the plan's columns and dtypes: `station_id` as `pd.CategoricalDtype(station_ids)`, `timestamp` datetime64[ns, UTC], `speed`, `occ` (times `OCC_SCALE`), `flow`, `observed_frac` (`pct_obs / 100`) as float32, `samples` as int16 with 0 where the grid row had no data; columns in `OUT_COLS` order, sorted by `station_id`, `timestamp`, index reset.",
+                      "`validate(df: pd.DataFrame, slots: pd.DatetimeIndex, station_ids: list[int]) -> None` · the walkthrough's step 5 assert, generalized: `len(df) == len(slots) × len(station_ids)`, exactly `len(slots)` rows per station, no duplicate keys, the dtypes of `OUT_COLS` exactly, `speed` inside `SPEED_RANGE` or NaN, `observed_frac` inside 0 to 1 or NaN, `samples >= 0`. Raises `AssertionError` naming the check and the number that failed."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "\"\"\"Station registry, PeMS station_5min parsing and the stage 5 cleaning steps.\"\"\"\nimport gzip, re\nfrom pathlib import Path\nimport numpy as np\nimport pandas as pd\nimport common\nRAW, META, PROCESSED = common.DATA / \"pems_raw\", common.DATA / \"pems_meta\", common.DATA / \"pems_processed\"\nMANIFEST, CLOCK, REGISTRY = RAW / \"manifest.json\", RAW / \"pems_last_request.json\", META / \"fremont_stations.parquet\"\nFILE_RE = re.compile(r\"d04_text_station_5min_(\\d{4})_(\\d{2})_(\\d{2})\\.txt\\.gz\")\nMETA_RE = re.compile(r\"d04_text_meta_(\\d{4})_(\\d{2})_(\\d{2})\\.txt\")\nCOLS = [\"ts\", \"station\", \"district\", \"fwy\", \"dir\", \"lane_type\", \"length\", \"samples\", \"pct_obs\", \"flow\", \"occ\", \"speed\"]\nOUT_COLS = [\"station_id\", \"timestamp\", \"speed\", \"occ\", \"flow\", \"observed_frac\", \"samples\"]\nTS_FORMAT, LANE_BLOCK, CHUNKSIZE, OCC_SCALE = \"%m/%d/%Y %H:%M:%S\", 5, 200_000, 1.0\n\ndef newest_meta(meta_dir: Path = META) -> Path:\n    \"\"\"The d04_text_meta file with the latest date in its name.\"\"\"\n    ...\ndef build_registry(meta_path: Path) -> pd.DataFrame:\n    \"\"\"Lesson 3 step 1 with common's box, routes and lane type; adds drive_pm, upstream_id, downstream_id.\"\"\"\n    ...\ndef check_layout(path: Path, nrows: int = 1000) -> int:\n    \"\"\"Assert the documented layout on the first rows of one file; return the column count.\"\"\"\n    ...\ndef read_day(path: Path, keep: set[int] | None, chunksize: int = CHUNKSIZE) -> pd.DataFrame:\n    \"\"\"Lesson 3 step 2: the first twelve columns, in chunks, registry stations only.\"\"\"\n    ...\ndef localize(ts: pd.Series) -> pd.Series:\n    \"\"\"Local text to UTC with ambiguous='NaT' and nonexistent='shift_forward'; the only such line.\"\"\"\n    ...\ndef day_slots(start_local: pd.Timestamp) -> pd.DatetimeIndex:\n    \"\"\"Every 5-minute slot of one local day, in UTC: 288, or 276 in March, or 300 in November.\"\"\"\n    ...\ndef month_slots(month: str) -> pd.DatetimeIndex:\n    \"\"\"Every 5-minute slot of one local month, in UTC.\"\"\"\n    ...\ndef clean_day(day: pd.DataFrame, registry: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"Lesson 3 steps 3 to 5: UTC, bounds, % Observed, the grid, ffill within station, then finalize.\"\"\"\n    ...\ndef finalize(df: pd.DataFrame, station_ids: list[int]) -> pd.DataFrame:\n    \"\"\"OUT_COLS in the plan's dtypes, sorted by station_id and timestamp.\"\"\"\n    ...\ndef validate(df: pd.DataFrame, slots: pd.DatetimeIndex, station_ids: list[int]) -> None:\n    \"\"\"One row per station per slot, the dtypes, the ranges; raise naming the number that failed.\"\"\"\n    ..."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -c \"import pems; r = pems.build_registry(pems.newest_meta()); print(len(r), r.upstream_id.isna().sum(), sorted(r.Fwy.unique()))\"` prints a count near 100, the number of route ends (six if all three routes run both ways through the box) and `[84, 680, 880]`; write the real count on the stage page. `python -c \"import pems; print(pems.check_layout(sorted(pems.RAW.glob('*.txt.gz'))[0]))\"` prints the column count, 12 plus a multiple of 5; write it on the stage page. `python -c \"import pandas as pd, pems; tz = pems.common.TZ; print(len(pems.day_slots(pd.Timestamp('2026-11-01', tz=tz))), len(pems.day_slots(pd.Timestamp('2026-03-08', tz=tz))), len(pems.month_slots('2026-08')))\"` prints `300 276 8928`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "`reindex` needs a unique index, and the spring `shift_forward` can move a `02:00` row onto a real `03:00` row; `clean_day` drops the duplicate and counts it, and the count belongs on the stage page. `date_range` between two tz-aware midnights steps in absolute time, which is why the November day has 300 slots and not 288; do not build the grid from a naive `date_range` and localize it afterwards, the ambiguous hour breaks that."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "09_collect_pems_selenium.py",
+                "tag": "runner · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Stage 4 of the plan: Selenium drives a real Chrome, logs in to PeMS with `PEMS_USERNAME` and `PEMS_PASSWORD` from `.env`, walks the Clearinghouse listing for district 4, and downloads every `d04_text_station_5min_YYYY_MM_DD.txt.gz` it does not have yet, one per `common.PEMS_GAP_SECONDS`, newest month first, with a manifest so reruns skip finished days and truncated files are caught. Add `selenium>=4.18` to `requirements.txt` under `# phase 3`, and `PEMS_USERNAME=` and `PEMS_PASSWORD=` to `.env.example`. Selenium 4.6 and later fetches the matching chromedriver itself; install Chrome the normal way and nothing else."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`.env` through `common.env(\"PEMS_USERNAME\", required=True)` and `common.env(\"PEMS_PASSWORD\", required=True)`; `data/pems_raw/manifest.json` and `data/pems_raw/pems_last_request.json` when present; the PeMS login page and the Clearinghouse listings."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`data/pems_raw/d04_text_station_5min_YYYY_MM_DD.txt.gz`, one per district-day, about 45 MB each; measure the first one. `data/pems_raw/manifest.json`, a JSON object keyed by filename, each value `{\"filename\", \"bytes\", \"sha256\", \"downloaded_at\"}` with `downloaded_at` in UTC ISO 8601, rewritten through `common.atomic_write` after every file. `data/pems_raw/pems_last_request.json`, `{\"last_request_at\": <UTC ISO 8601>, \"filename\": <the file it was for>}`, the 305-second clock that survives restarts. `data/pems_meta/d04_text_meta_YYYY_MM_DD.txt`, moved out of the download folder as soon as it lands and recorded in the manifest too. One log line per run: `stage=collect_pems seconds=<n> rss_gb=<n> rows=<files downloaded> months=<n>`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`caffeinate -i python 09_collect_pems_selenium.py [--month 2026-08 ...] [--meta] [--dry-run] [--limit 0] [--headless]`. `--month` repeats; the default is the twelve most recent complete months, newest first. `--meta` also fetches the newest meta file; do this on the first run and once a quarter. `--dry-run` logs in, lists, and downloads nothing. `--limit N` stops after N files (0 is all). `--headless` runs Chrome without a window; try it only once the windowed walk works."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`LOGIN_URL = \"https://pems.dot.ca.gov/\"`, `CLEARINGHOUSE_URL = LOGIN_URL + \"?dnode=Clearinghouse\"`, `DATA_KIND = \"station_5min\"`, `META_KIND = \"meta\"`, `DISTRICT = 4`, `DOWNLOAD_TIMEOUT_S = 900`. The addresses, the form's field names and the listing's HTML are not verified by this course and change without notice; the stage page's walk section records what you saw in Chrome's inspector and on which day.",
+                      "`refuse_if_training() -> None` · exits with one line if any running Python's command line contains `_train_` (`psutil.process_iter([\"cmdline\"])`), the plan's rule that Chrome and LightGBM never share the 16 GB.",
+                      "`make_driver(download_dir: Path, headless: bool) -> webdriver.Chrome` · Chrome options with `download.default_directory` set to the absolute `download_dir`, `download.prompt_for_download` false, `safebrowsing.enabled` true, and `--headless=new` when asked.",
+                      "`login(driver, username: str, password: str) -> None` · opens `LOGIN_URL`, fills the username and password fields, submits, and raises `RuntimeError(\"login failed\")` if the page after submit still has a password field.",
+                      "`list_links(driver, kind: str, month: str) -> list[tuple[str, str]]` · opens the Clearinghouse listing for district 4, `kind` and the month, and returns `(filename, href)` for every anchor whose text matches `pems.FILE_RE` (or `pems.META_RE` for the meta kind), sorted by filename descending so the newest day is first.",
+                      "`wait_for_slot(clock: Path) -> None` · reads `last_request_at` from the clock file if it exists, sleeps until `common.PEMS_GAP_SECONDS` have passed since it, then writes now. Called before every download and never skipped, so the limit holds across runs and crashes.",
+                      "`download(driver, href: str, filename: str, raw_dir: Path) -> Path` · navigates to `href`, then polls `raw_dir` every two seconds until `filename` exists with no `filename.crdownload` beside it, up to `DOWNLOAD_TIMEOUT_S`; returns the path. On timeout it deletes the partial file, prints the folder listing, and raises.",
+                      "`verify(path: Path) -> tuple[int, str]` · the byte count and the sha256 of the file, after reading the gzip to its end in 1 MB blocks so a truncated download raises `EOFError` here and not in stage 5.",
+                      "`record(manifest: dict, path: Path, nbytes: int, sha: str) -> None` · adds the entry and writes `pems.MANIFEST` atomically.",
+                      "`verify_raw(raw_dir: Path, manifest: dict) -> list[str]` · at start: every `.txt.gz` in `raw_dir` that is not in the manifest, or whose size differs from its entry, is deleted and its name returned so it is fetched again; a `.crdownload` left by a crash is deleted too.",
+                      "`default_months(n: int = 12) -> list[str]` · the `n` complete months before the current one, newest first.",
+                      "`main(argv=None)` · argparse; `refuse_if_training()`; load or create the manifest; `verify_raw`; the driver in a `try` with `driver.quit()` in `finally`; `login`; with `--meta`, list and download the newest meta file and move it to `pems.META`; for each month, `list_links`, drop names already in the manifest, and for each remaining name `wait_for_slot`, `download`, `verify`, `record`, print `<name> <bytes> <seconds>`; honour `--limit`; `common.log_stage(\"collect_pems\", t0, rows=downloaded, months=len(months))`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "\"\"\"Stage 4: download district-4 station_5min files from the PeMS Clearinghouse, one per 305 s.\"\"\"\nimport argparse, gzip, hashlib, json, time\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nimport psutil\nfrom selenium import webdriver\nimport common, pems\nLOGIN_URL, CLEARINGHOUSE_URL = \"https://pems.dot.ca.gov/\", \"https://pems.dot.ca.gov/?dnode=Clearinghouse\"\nDATA_KIND, META_KIND, DISTRICT, DOWNLOAD_TIMEOUT_S = \"station_5min\", \"meta\", 4, 900\n\ndef refuse_if_training() -> None:\n    \"\"\"Exit if any running python's command line contains '_train_'.\"\"\"\n    ...\ndef make_driver(download_dir: Path, headless: bool) -> webdriver.Chrome:\n    \"\"\"Chrome that saves into download_dir without asking.\"\"\"\n    ...\ndef login(driver, username: str, password: str) -> None:\n    \"\"\"Fill the login form; raise RuntimeError if a password field is still shown afterwards.\"\"\"\n    ...\ndef list_links(driver, kind: str, month: str) -> list[tuple[str, str]]:\n    \"\"\"(filename, href) for every link on the district-4 listing matching pems.FILE_RE or META_RE.\"\"\"\n    ...\ndef wait_for_slot(clock: Path) -> None:\n    \"\"\"Sleep until PEMS_GAP_SECONDS have passed since the stamp in clock, then stamp now.\"\"\"\n    ...\ndef download(driver, href: str, filename: str, raw_dir: Path) -> Path:\n    \"\"\"Open href; wait until filename exists with no .crdownload twin; return its path.\"\"\"\n    ...\ndef verify(path: Path) -> tuple[int, str]:\n    \"\"\"Bytes and sha256, after reading the gzip to its end so truncation raises here.\"\"\"\n    ...\ndef main(argv=None) -> None:\n    p = argparse.ArgumentParser(description=\"Download PeMS district 4 station_5min files.\")\n    p.add_argument(\"--month\", action=\"append\", help=\"YYYY-MM, repeatable; default: last 12, newest first\")\n    p.add_argument(\"--meta\", action=\"store_true\", help=\"also fetch the newest meta file into data/pems_meta\")\n    p.add_argument(\"--dry-run\", action=\"store_true\", help=\"log in and list; download nothing\")\n    p.add_argument(\"--limit\", type=int, default=0, help=\"stop after N files (0 = all)\")\n    p.add_argument(\"--headless\", action=\"store_true\", help=\"Chrome without a window\")\n    args = p.parse_args(argv)\n    ...   # refuse_if_training, manifest, verify_raw, driver, login, meta, months, files, log_stage\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python 09_collect_pems_selenium.py --dry-run --month 2026-08` logs in and prints 31 filenames for August, newest first, and downloads nothing; zero names means the listing is not what `list_links` expects, and the inspector is the next step. `python 09_collect_pems_selenium.py --month 2026-08 --limit 1 --meta` lands one `.txt.gz` and one meta file in `data/pems_meta/`; `python -c \"import json; m = json.load(open('data/pems_raw/manifest.json')); print(len(m), sorted(next(iter(m.values()))))\"` prints `2 ['bytes', 'downloaded_at', 'filename', 'sha256']`, and `data/pems_raw/pems_last_request.json` holds a time a few minutes old. Run the same command again: it skips the finished day and waits out the rest of the 305 seconds before the next one."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "PeMS serves each file through a redirect, and Chrome saves it under the name in the link, not the URL; if files land under another name, `download` never sees them finish and times out. The folder listing it prints on timeout is where to look. The plan's numbers, Chrome near 1 GB, 45 MB per file, 31 hours a year, 16 GB on disk a year, are estimates: measure the first file and the first hour and write both on the stage page."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "tests/fixtures/meta_10rows.txt",
+                "tag": "fixture · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "A ten-row meta file in the real layout, tab-separated with the header, that `build_registry` turns into a registry of eight stations, so the neighbour rule can be checked against numbers you chose yourself."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "The header line with the real file's columns in the real file's order; copy it from the first line of the real meta file once `09 --meta` has run. At least `ID`, `Fwy`, `Dir`, `District`, `County`, `City`, `State_PM`, `Abs_PM`, `Latitude`, `Longitude`, `Length`, `Type`, `Lanes`, `Name`.",
+                      "Four stations on `Fwy` 880, `Dir` N, `Type` ML, inside `common.FREMONT_BOX`, ids 400001 to 400004 with `Abs_PM` 10.0, 10.5, 11.2, 12.0 and `Lanes` 4, 4, 5, 4.",
+                      "Two stations on 880 S, ML, inside the box, ids 400011 and 400012 with `Abs_PM` 10.5 and 11.2, `Lanes` 4.",
+                      "One station on 680 N, ML, inside the box, id 400021; one on 84 E, ML, inside the box, id 400031; `Lanes` 3 each.",
+                      "One station on 880 N with `Type` OR (an on-ramp), id 400041, inside the box, to be excluded by `common.LANE_TYPE`.",
+                      "One station on 880 N, ML, `Latitude` 37.70, id 400051, outside the box, to be excluded by `common.FREMONT_BOX`.",
+                      "`District` 4 and a plausible `Length` (0.3 to 0.6) on every row."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python -c \"import pems, pathlib; r = pems.build_registry(pathlib.Path('tests/fixtures/meta_10rows.txt')).set_index('ID'); print(len(r), r.loc[400002, 'upstream_id'], r.loc[400011, 'upstream_id'], r.loc[400001, 'upstream_id'])\"` prints `8 400001 400012 <NA>`: northbound the postmile rises with travel, so 400001 sits upstream of 400002; southbound it falls, so 400012 sits upstream of 400011."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "tests/fixtures/pems_100rows.txt",
+                "tag": "fixture · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "One hundred rows of the raw `station_5min` layout, uncompressed, all on the fall-back day 2026-11-01, with every trap lesson 3 names planted where a test can point at it: the repeated hour, a `% Observed` failure, a speed out of bounds, a flow out of bounds, a gap of three steps, a gap of four, a station boundary and a station the registry does not know."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "Exactly 100 lines, no header, comma-separated, 22 columns per line: the twelve of `pems.COLS` then two lane blocks of five, which may be blank, so that `(ncols − 12) % LANE_BLOCK == 0` holds.",
+                      "`ts` in `TS_FORMAT` on `11/01/2026`; `district` 4; `fwy`, `dir`, `lane_type`, `length` copied from the meta fixture for the station; `samples` 40 and `pct_obs` 100 unless a row says otherwise; `occ` 0.15; `flow` 300.",
+                      "Station 400001: 00:00 to 00:55 (12 rows) at speed 65, except 00:30 with `pct_obs` 40 and speed 30; 01:00 to 01:55 (12 rows, the ambiguous hour, which must vanish); 02:00 to 02:15 (4 rows) at speed 65; 23:45 to 23:55 (3 rows) at speed 66.",
+                      "Station 400002: 03:00 at speed 60, then 03:20, 03:25 and 03:30 at 61 (a gap of three steps at 03:05 to 03:15, to be filled with 60); 04:00 at speed 58 and 04:25 at 59 (a gap of four steps at 04:05 to 04:20, whose 04:20 must stay NaN); nothing at 00:00 to 00:15 and nothing at 23:45 to 23:55, the station boundary against 400001.",
+                      "Station 400003: 05:00 to 05:35 (8 rows) at speed 62, except speed 250 at 05:10 (outside `SPEED_RANGE`) and flow 20000 at 05:20 (above `FLOW_PER_LANE_MAX` times its 5 lanes).",
+                      "Station 400004: 12:00 to 15:20 (41 rows) at speed 62, a clean stretch for the schema test.",
+                      "Stations 400011, 400012, 400021 and 400031: one row each at 12:00 with ordinary values, so every registry station appears.",
+                      "Station 999999, absent from the meta fixture: 06:00 to 06:45 (10 rows), to be dropped by `read_day`'s filter."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`wc -l tests/fixtures/pems_100rows.txt` prints `100`, and `python -c \"import pems, pathlib; print(pems.check_layout(pathlib.Path('tests/fixtures/pems_100rows.txt'), nrows=100))\"` prints `22`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "tests/test_clean_pems.py",
+                "tag": "test · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The tests lesson 3 calls for, on the two fixtures: the layout, the registry's neighbours, the November hour, the March hour, `% Observed`, the bounds, the two gaps, the station boundary and the output schema. If these pass, a whole year is likely right; if one fails, you saved a day."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`tests/fixtures/pems_100rows.txt`, `tests/fixtures/meta_10rows.txt`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "Module-level `FIX = Path(__file__).parent / \"fixtures\"`, `REG = pems.build_registry(FIX / \"meta_10rows.txt\")`, `DAY = pems.read_day(FIX / \"pems_100rows.txt\", set(REG.ID))`, `OUT = pems.clean_day(DAY, REG).set_index([\"station_id\", \"timestamp\"])`, and `at(station: int, utc: str) -> pd.Series`, the cleaned row of one station at one UTC time.",
+                      "`test_layout_has_twelve_named_columns` · `check_layout(FIX / \"pems_100rows.txt\", nrows=100)` returns 22; `read_day(..., None)` has 100 rows and `list(columns) == pems.COLS`.",
+                      "`test_registry_neighbors_follow_postmile_order` · `len(REG) == 8`; 400002's `upstream_id` is 400001 and its `downstream_id` 400003; 400001's `upstream_id` is `<NA>`; 400011's `upstream_id` is 400012; 400041 and 400051 are absent.",
+                      "`test_unknown_station_is_dropped` · 999999 is not in `DAY.station` and `len(DAY) == 90`.",
+                      "`test_november_repeated_hour_is_dropped` · every station has 300 rows; for 400001 the slot 07:55 UTC (00:55 PDT) holds 65, every slot from 08:15 to 09:55 UTC (both one o'clocks, after the three filled steps) is NaN, and 10:00 UTC (02:00 PST) holds 65 again.",
+                      "`test_march_missing_hour_shifts_forward` · a two-row frame built in the test for 400001 at `03/08/2026 01:55:00` and `03/08/2026 02:00:00` through `clean_day` with `REG`: 276 rows per station, a value at 09:55 UTC, and the `02:00` row's value at 10:00 UTC (03:00 PDT).",
+                      "`test_low_observed_rows_are_nulled` · 400001 at 07:30 UTC: `speed`, `occ` and `flow` NaN, `observed_frac` 0.4 as float32, `samples` 40.",
+                      "`test_bounds_null_out_of_range` · 400003 at 05:10 local: `speed` NaN and `occ` 0.15; at 05:20 local: `flow` NaN and `speed` 62; the row before each untouched.",
+                      "`test_ffill_fills_three_steps_not_four` · 400002 at 03:05, 03:10 and 03:15 local all 60; at 04:05, 04:10 and 04:15 all 58; at 04:20 NaN.",
+                      "`test_ffill_does_not_cross_station_boundary` · 400002 at 00:00 to 00:15 local is NaN in `speed` although 400001's rows directly before it in the sorted frame hold 66. Lesson 3's Try this: remove the `groupby` from `clean_day` and this test fails.",
+                      "`test_output_schema` · `list(OUT.reset_index().columns) == pems.OUT_COLS`; dtypes `category`, `datetime64[ns, UTC]`, four `float32`, `int16`; the categories equal `sorted(REG.ID)`; `pems.validate(OUT.reset_index(), pems.day_slots(pd.Timestamp(\"2026-11-01\", tz=common.TZ)), sorted(REG.ID))` raises nothing; the frame is sorted by `station_id`, `timestamp`; `samples` is 0 on a grid row that had no data."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "from pathlib import Path\nimport numpy as np\nimport pandas as pd\nimport common, pems\n\nFIX = Path(__file__).parent / \"fixtures\"\nREG = pems.build_registry(FIX / \"meta_10rows.txt\")\nDAY = pems.read_day(FIX / \"pems_100rows.txt\", set(REG.ID))\nOUT = pems.clean_day(DAY, REG).set_index([\"station_id\", \"timestamp\"])\n\n\ndef at(station: int, utc: str) -> pd.Series:\n    \"\"\"The cleaned row of one station at one UTC time such as '2026-11-01 08:15'.\"\"\"\n    return OUT.loc[(station, pd.Timestamp(utc, tz=\"UTC\"))]\n\n\ndef test_november_repeated_hour_is_dropped():\n    assert OUT.groupby(level=\"station_id\", observed=True).size().eq(300).all()   # 25 local hours\n    assert at(400001, \"2026-11-01 07:55\").speed == np.float32(65)                # 00:55 PDT, kept\n    for slot in pd.date_range(\"2026-11-01 08:15\", \"2026-11-01 09:55\", freq=\"5min\", tz=\"UTC\"):\n        assert np.isnan(OUT.loc[(400001, slot), \"speed\"])                         # both 1 am hours\n    assert at(400001, \"2026-11-01 10:00\").speed == np.float32(65)                # 02:00 PST, kept\n\n\ndef test_layout_has_twelve_named_columns(): ...\ndef test_registry_neighbors_follow_postmile_order(): ...\ndef test_unknown_station_is_dropped(): ...\ndef test_march_missing_hour_shifts_forward(): ...\ndef test_low_observed_rows_are_nulled(): ...\ndef test_bounds_null_out_of_range(): ...\ndef test_ffill_fills_three_steps_not_four(): ...\ndef test_ffill_does_not_cross_station_boundary(): ...\ndef test_output_schema(): ..."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`pytest -q tests/test_clean_pems.py` prints `10 passed`. Remove the `groupby(level=\"station_id\")` from the `ffill` in `clean_day` and run again: `test_ffill_does_not_cross_station_boundary` fails. Put it back. Change `ambiguous=\"NaT\"` to `ambiguous=True` in `localize`: `test_november_repeated_hour_is_dropped` fails. Put it back."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "10_clean_pems.py",
+                "tag": "runner · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Stage 5's runner: the registry once, then one Parquet per month on the full grid, every day streamed through `pems.read_day` and `pems.clean_day`, under 2 GB, ending with the log line the plan's memory budget is checked against."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`data/pems_raw/d04_text_station_5min_YYYY_MM_DD.txt.gz` for each month; `data/pems_raw/manifest.json`, each file's `bytes`, to refuse a file that is missing from the manifest or whose size differs; `data/pems_meta/fremont_stations.parquet`, or with `--registry` the newest meta file (or `--meta PATH`) to rebuild it."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "With `--registry`, `data/pems_meta/fremont_stations.parquet`: the meta file's columns plus `drive_pm` float64, `upstream_id` and `downstream_id` Int64, about 100 rows. `data/pems_processed/YYYY-MM.parquet`, the plan's stage 5 table: `station_id` category from the registry; `timestamp` datetime64[ns, UTC] on the 5-minute grid with no gaps; `speed` float32 mph, NaN where unobserved; `occ` float32 0 to 1, the mean across lanes; `flow` float32 vehicles per 5 minutes, the sum across lanes; `observed_frac` float32, `% Observed / 100`; `samples` int16, raw detector samples. One row per registry station per slot of the local month, sorted by `station_id`, `timestamp`, written through `common.atomic_write`. A month is a local month: its first timestamp is 07:00 UTC in summer and 08:00 UTC in winter. Per month, on the screen and in `logs/pipeline.log`: `stage=clean_pems seconds=<n> rss_gb=<n> rows=<n> month=YYYY-MM days=<n> stations=<n> missing_days=<n> nat_rows=<n> dup_rows=<n>`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python 10_clean_pems.py [--month 2026-08 ...] [--registry] [--meta PATH] [--chunksize 200000] [--force]`. `--month` repeats; the default is every month with at least one raw file, oldest first. `--registry` rebuilds the registry before cleaning, from `--meta` or the newest meta file; without it the existing registry is read, and the runner exits naming `--registry` if there is none. `--chunksize` defaults to `pems.CHUNKSIZE`. `--force` rewrites a month whose Parquet exists; by default finished months are skipped, since the output is the same."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`months_present() -> list[str]` · the distinct `YYYY-MM` of the `pems.FILE_RE` matches in `pems.RAW`, sorted.",
+                      "`files_for(month: str) -> list[Path]` · that month's raw files sorted by day, and the list of days of the month with no file.",
+                      "`check_manifest(path: Path, manifest: dict) -> None` · exits if `path.name` is not in the manifest or `path.stat().st_size` differs from its `bytes`; a truncated file is never cleaned.",
+                      "`clean_month(month: str, registry: pd.DataFrame, chunksize: int) -> tuple[pd.DataFrame, dict]` · for each file: `check_manifest`, `pems.check_layout`, `pems.read_day(path, keep, chunksize)`, `pems.clean_day`, then `del` the day frame; `pd.concat` of the days; `reindex` onto `pems.month_slots(month) × stations` so a missing day is a block of NaN rows and never a missing row; `pems.finalize`; `pems.validate`. Returns the frame and `{\"days\", \"stations\", \"missing_days\", \"nat_rows\", \"dup_rows\"}`, the last two summed from `df.attrs` over the days.",
+                      "`main(argv=None)` · argparse; the registry, built and written with `common.atomic_write` or read from `pems.REGISTRY`; for each month: skip if done and not `--force`, `clean_month`, `common.atomic_write(df, pems.PROCESSED / f\"{month}.parquet\")`, print the missing days if any, `common.log_stage(\"clean_pems\", t0, rows=len(df), month=month, ...)` with the five counts as extra key=value pairs, `del df` and `gc.collect()` before the next month, the plan's house rule."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "\"\"\"Stage 5: the station registry, then one cleaned Parquet per month on the full 5-minute grid.\"\"\"\nimport argparse, gc, json, time\nfrom pathlib import Path\nimport pandas as pd\nimport common, pems\n\ndef months_present() -> list[str]:\n    \"\"\"Distinct YYYY-MM of the raw files in pems.RAW, sorted.\"\"\"\n    ...\ndef files_for(month: str) -> tuple[list[Path], list[str]]:\n    \"\"\"That month's raw files sorted by day, and the days that have no file.\"\"\"\n    ...\ndef check_manifest(path: Path, manifest: dict) -> None:\n    \"\"\"Exit if path is not in the manifest or its size differs from the entry's bytes.\"\"\"\n    ...\ndef clean_month(month: str, registry: pd.DataFrame, chunksize: int) -> tuple[pd.DataFrame, dict]:\n    \"\"\"Every day through read_day and clean_day, concatenated, reindexed onto month_slots, validated.\"\"\"\n    ...\ndef main(argv=None) -> None:\n    p = argparse.ArgumentParser(description=\"Stage 5: clean PeMS station_5min files into monthly Parquet.\")\n    p.add_argument(\"--month\", action=\"append\", help=\"YYYY-MM, repeatable; default: every month present\")\n    p.add_argument(\"--registry\", action=\"store_true\", help=\"rebuild fremont_stations.parquet from --meta first\")\n    p.add_argument(\"--meta\", type=Path, default=None, help=\"meta file; default: the newest in data/pems_meta\")\n    p.add_argument(\"--chunksize\", type=int, default=pems.CHUNKSIZE)\n    p.add_argument(\"--force\", action=\"store_true\", help=\"rewrite months whose Parquet exists\")\n    args = p.parse_args(argv)\n    registry = ...   # build_registry and atomic_write with --registry, else read pems.REGISTRY or exit\n    for month in args.month or months_present():\n        t0 = time.time()\n        out = pems.PROCESSED / f\"{month}.parquet\"\n        if out.exists() and not args.force:\n            continue\n        df, counts = clean_month(month, registry, args.chunksize)\n        common.atomic_write(df, out)\n        common.log_stage(\"clean_pems\", t0, rows=len(df), month=month, **counts)\n        del df\n        gc.collect()\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`python 10_clean_pems.py --registry --month 2026-08` ends with `stage=clean_pems ... rows=<stations × 8928> month=2026-08 days=31 stations=<n> missing_days=0 ...` with `rss_gb` below 2. Then `python -c \"import pandas as pd; d = pd.read_parquet('data/pems_processed/2026-08.parquet'); print(d.dtypes.to_dict()); print(len(d), d.station_id.nunique(), round(d.speed.isna().mean(), 3))\"` prints the seven dtypes of the plan, the row count above, the station count and the share of NaN speed, which goes on the stage page. Run the first command again without `--registry`: it skips the month in under a second; with `--force` it rewrites a table for which `pd.read_parquet(new).equals(pd.read_parquet(old))` is `True`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "`pd.concat` of thirty-one days each carrying `station_id` as a category keeps the dtype only if every day has the same categories; one day with a different set turns the column into `object` silently and the Parquet doubles in size. `finalize` sets the categories from the registry on every day, and `validate` fails on the dtype if anything slipped."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "sql/profile.sql",
+                "tag": "sql · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The stage 6 profile in DuckDB: the median speed per station, 5-minute slot and day type over training rows only, which is the SQL topic's Try this and phase 4's lesson 4 step 2 in another language. Phase 3 writes the raw cell median and its count. The centred 7-slot smoothing (`common.PROFILE_SMOOTH`) and the `common.PROFILE_MIN_N` fallback belong to phase 4's `labels.py`; when that exists, this file grows a second query to match, and the check below is rerun."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`data/pems_processed/*.parquet`, the columns `station_id`, `timestamp`, `speed`; one positional parameter `?`, the training cutoff as a UTC timestamp, bound by the caller. The train-only rule is the `WHERE`; a profile over all rows leaks the test period into every training label."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "A result set with `station_id`, `daytype` (`wd`, `sat`, `sun`, phase 4's `daytype()` values), `slot` (0 to 287), `profile_speed` (`median(speed)`, nulls ignored) and `n` (`count(speed)`), ordered by the three keys."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python -c \"import duckdb; q = open('sql/profile.sql').read(); print(duckdb.execute(q, ['2026-08-31 23:59:59+00']).df().head())\"`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "A comment at the top naming the parameter and the pandas lines the result must agree with.",
+                      "A CTE `local_rows` selecting `station_id`, `speed` and `timezone('America/Los_Angeles', timestamp) AS lt` for rows with `timestamp <= ?`; `timezone` with a text zone and a `TIMESTAMPTZ` returns the local wall-clock time, which is the walkthrough's step 2 expression.",
+                      "A CTE `keyed` with `slot = hour(lt) * 12 + minute(lt) // 5` and `daytype = CASE WHEN isodow(lt) = 6 THEN 'sat' WHEN isodow(lt) = 7 THEN 'sun' ELSE 'wd' END`. `isodow` is Monday 1 to Sunday 7 and pandas `dayofweek` is Monday 0 to Sunday 6; the check proves the two agree.",
+                      "The final `SELECT station_id, daytype, slot, median(speed) AS profile_speed, count(speed) AS n FROM keyed GROUP BY 1, 2, 3 ORDER BY 1, 2, 3`."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "text",
+                    "s": "-- sql/profile.sql · the stage 6 cell median on training rows; ? is the training cutoff (UTC)\n-- must agree row for row with phase 4's tr.groupby(['station_id', 'daytype', 'slot']).speed.median()\nWITH local_rows AS (\n    SELECT station_id, speed, timezone('America/Los_Angeles', timestamp) AS lt\n    FROM 'data/pems_processed/*.parquet'\n    WHERE timestamp <= ?\n),\nkeyed AS (\n    SELECT station_id, speed,\n           hour(lt) * 12 + minute(lt) // 5 AS slot,\n           CASE WHEN isodow(lt) = 6 THEN 'sat' WHEN isodow(lt) = 7 THEN 'sun' ELSE 'wd' END AS daytype\n    FROM local_rows\n)\nSELECT station_id, daytype, slot, median(speed) AS profile_speed, count(speed) AS n\nFROM keyed\nGROUP BY 1, 2, 3\nORDER BY 1, 2, 3"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "Row for row against pandas, in a Python session: `pdf = pd.read_parquet('data/pems_processed')` (the folder reads every month), cut at the same timestamp, `slot` and `daytype` from phase 4's lesson 4 step 2 lines, `pdf.groupby(['station_id', 'daytype', 'slot'], observed=True).speed.agg(profile_speed='median', n='count').reset_index()`, `station_id` cast to `int` on both sides, merged with the SQL frame on the three keys with suffixes `_sql` and `_pd`; print `len(merged)`, `(~np.isclose(merged.profile_speed_sql, merged.profile_speed_pd, atol=1e-3, equal_nan=True)).sum()` and `(merged.n_sql != merged.n_pd).sum()`. The last two print `0`, and `len(merged)` equals both frames' lengths. Time both with `time.time()` and read `rss_gb` from `psutil`, the topic's Try this, and write the four numbers in the week's notebook page."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Watch for",
+                    "s": "DuckDB reads a pandas category as its underlying integers, and pandas reads it back as a category; merging the two on `station_id` without the cast gives zero rows and no error. NaN and NULL are different things in DuckDB: `median` ignores NULL and counts NaN as a value larger than every number. pyarrow writes pandas NaN as NULL, so the Parquet is right, but `SELECT count(*) FROM 'data/pems_processed/*.parquet' WHERE isnan(speed)` must print `0` before the comparison means anything."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "sql/lag.sql",
+                "tag": "sql · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The SQL topic's walkthrough step 4 as a file: `speed_lag_3` with `LAG` and `roll_30` with a window frame, so one lag of stage 8 exists in a second language and the two can be held against each other row for row. The lag of three steps is one of `common.LAGS` and the six-row frame is `common.ROLL_STEPS[30]`; a SQL file imports nothing, so the two numbers are written here once and the check passes the same ones to pandas."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`data/pems_processed/*.parquet`: `station_id`, `timestamp`, `speed`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "A result set with `station_id`, `timestamp`, `speed`, `speed_lag_3`, `roll_30`, ordered by `station_id`, `timestamp`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python -c \"import duckdb; print(duckdb.sql(open('sql/lag.sql').read()).df().head(8))\"`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "The walkthrough's query unchanged except that the glob replaces the single month: `LAG(speed, 3) OVER w AS speed_lag_3`; `avg(speed) OVER (PARTITION BY station_id ORDER BY timestamp ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) AS roll_30`; `WINDOW w AS (PARTITION BY station_id ORDER BY timestamp)`; `ORDER BY station_id, timestamp`.",
+                      "A comment saying the frame ignores nulls and shrinks at the start of each station, so the pandas twin is `rolling(6, min_periods=1).mean()`, and that phase 4's `speed_roll_mean_30` uses `min_periods=3` and differs on the first two rows of every station by design."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "text",
+                    "s": "-- sql/lag.sql · one stage 8 lag and one rolling mean in DuckDB, the SQL topic's step 4\n-- the frame ignores nulls and shrinks at the start of each station: the pandas twin is\n-- rolling(6, min_periods=1).mean(); phase 4's speed_roll_mean_30 uses min_periods=3 on purpose\nSELECT station_id, timestamp, speed,\n       LAG(speed, 3) OVER w                                        AS speed_lag_3,\n       avg(speed) OVER (PARTITION BY station_id ORDER BY timestamp\n                        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW)  AS roll_30\nFROM 'data/pems_processed/*.parquet'\nWINDOW w AS (PARTITION BY station_id ORDER BY timestamp)\nORDER BY station_id, timestamp"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "The walkthrough's comparison with both columns: `pdf = pd.read_parquet('data/pems_processed').sort_values(['station_id', 'timestamp'])`, `g = pdf.groupby('station_id', observed=True).speed`, `pdf['speed_lag_3'] = g.shift(3)`, `pdf['roll_30'] = g.transform(lambda s: s.rolling(6, min_periods=1).mean())`, `station_id` cast to `int` on both sides, merge on the two keys, then print `rows compared` and, for each column, `(~np.isclose(sql_col, pd_col, equal_nan=True)).sum()`: `mismatches: 0 0`. A single missing grid row would show here as thousands of mismatches from that row onward, which is why stage 5 reindexes."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "studies/plot_station.py",
+                "tag": "study · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "Reading a plot before trusting a number: one station's speed for one day and for one week, so the two weekday rush hours and the flat Sunday are seen before any label is computed. The Done when's 'the plot shows rush hours' is this file, and the four means in its JSON are the same fact as numbers."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "`data/pems_processed/YYYY-MM.parquet` for `--month`: `station_id`, `timestamp`, `speed`, `observed_frac`. `data/pems_meta/fremont_stations.parquet` for the title: `Fwy`, `Dir`, `Abs_PM` of the station."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`output/studies/plot_station.png`, two panels: the day above (local time on the x axis, speed in mph on the y axis, 288 points, gaps left as gaps), the week below (Monday to Sunday, each local midnight marked, the weekday name under each day). `output/studies/plot_station.json` with `station_id`, `fwy`, `dir`, `day`, `week_start`, `nan_share_day`, and four means over local hours, `am_peak` (07:00 to 08:55) and `midday` (11:00 to 12:55) and `pm_peak` (16:00 to 18:55) over the five weekdays, and `sunday_pm` for the same evening hours on the Sunday."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python studies/plot_station.py [--month 2026-08] [--station 400001] [--day 2026-08-11]`. Defaults: the newest month in `data/pems_processed`; the station with the most non-null speed in that month; the first Tuesday of the month, and the week is the Monday to Sunday around it."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`OUT = common.OUTPUT / \"studies\"` and `WINDOWS = {\"am_peak\": (7, 9), \"midday\": (11, 13), \"pm_peak\": (16, 19)}`, local hours with the end exclusive.",
+                      "`pick_station(df: pd.DataFrame) -> int` · the station with the most non-null `speed` in the month.",
+                      "`pick_day(month: str) -> pd.Timestamp` · the first Tuesday of the month at local midnight.",
+                      "`slice_local(df: pd.DataFrame, station: int, start_local: pd.Timestamp, days: int) -> pd.DataFrame` · the rows of one station between `start_local` and `start_local + days`, with a `local` column, `timestamp.dt.tz_convert(common.TZ)`, for the x axis. Never plot UTC: the rush hours land at 15:00 and 00:00.",
+                      "`peaks(week: pd.DataFrame) -> dict` · the mean `speed` in each `WINDOWS` range over the weekdays and `sunday_pm`, rounded to one decimal.",
+                      "`main(argv=None)` · argparse; read the month; pick; slice a day and a week; the two panels into the PNG with the `Agg` backend and the station's freeway, direction and postmile in the title; the JSON; one printed line with the four means."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "\"\"\"One station for a day and a week: two rush hours on weekdays, none on Sunday.\"\"\"\nimport argparse, json\nfrom pathlib import Path\nimport matplotlib\nmatplotlib.use(\"Agg\")\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport common, pems\n\nOUT = common.OUTPUT / \"studies\"\nWINDOWS = {\"am_peak\": (7, 9), \"midday\": (11, 13), \"pm_peak\": (16, 19)}   # local hours, end exclusive\n\ndef pick_station(df: pd.DataFrame) -> int:\n    \"\"\"The station with the most non-null speed in the month.\"\"\"\n    ...\ndef pick_day(month: str) -> pd.Timestamp:\n    \"\"\"The first Tuesday of the month, local midnight.\"\"\"\n    ...\ndef slice_local(df: pd.DataFrame, station: int, start_local: pd.Timestamp, days: int) -> pd.DataFrame:\n    \"\"\"Rows of one station in a local window, with a 'local' column for the x axis.\"\"\"\n    ...\ndef peaks(week: pd.DataFrame) -> dict:\n    \"\"\"Mean speed in each WINDOWS range over the weekdays, and sunday_pm.\"\"\"\n    ...\ndef main(argv=None) -> None:\n    p = argparse.ArgumentParser(description=\"Plot one station for a day and a week.\")\n    p.add_argument(\"--month\", default=None, help=\"YYYY-MM; default: the newest in data/pems_processed\")\n    p.add_argument(\"--station\", type=int, default=None, help=\"default: the station with the most data\")\n    p.add_argument(\"--day\", default=None, help=\"YYYY-MM-DD local; default: the first Tuesday\")\n    args = p.parse_args(argv)\n    ...   # read the month, pick, slice, two panels to OUT / 'plot_station.png', the means to the JSON\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "The PNG's day panel dips twice on a weekday, morning and evening, and the week panel shows five double-dip days followed by a flatter Saturday and a flat Sunday. In the JSON, `am_peak` and `pm_peak` are both below `midday`, and `sunday_pm` is near `midday`. If the day is flat, try another station; a station that is flat at every hour of every day is a detector to look at in `observed_frac`, not a quiet road."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "studies/pandas_vs_polars.py",
+                "tag": "study · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The plan's '5 to 20 s per file in pandas, 2 to 5 s with polars', measured instead of believed: one raw file read and filtered to registry stations both ways, with seconds and peak resident memory for each, so stage 5's engine is a decision with numbers behind it. Add `polars>=0.20` to `requirements.txt` under `# phase 3`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Reads",
+                    "s": "One `data/pems_raw/*.txt.gz` (`--file`, default the newest) and `data/pems_meta/fremont_stations.parquet` for the station ids."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Writes",
+                    "s": "`output/studies/pandas_vs_polars.json`: `{\"file\", \"bytes\", \"rows_kept\", \"pandas\": {\"seconds\", \"peak_rss_gb\"}, \"polars\": {\"seconds\", \"peak_rss_gb\"}}`."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Run",
+                    "s": "`python studies/pandas_vs_polars.py [--file data/pems_raw/d04_text_station_5min_2026_08_01.txt.gz]`. It runs itself twice as child processes, `--engine pandas` and `--engine polars`, so each engine's peak memory is its own."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`OUT = common.OUTPUT / \"studies\" / \"pandas_vs_polars.json\"`.",
+                      "`run_pandas(path: Path, keep: set[int]) -> int` · `len(pems.read_day(path, keep))`.",
+                      "`run_polars(path: Path, keep: set[int]) -> int` · `pl.read_csv(path, has_header=False, columns=list(range(12)))`, the twelve columns renamed to `pems.COLS`, `.filter(pl.col(\"station\").is_in(list(keep)))`, its height. polars decompresses a gzip whole in memory before parsing, which is why its peak is measured and not assumed.",
+                      "`measure(engine: str, path: Path, keep: set[int]) -> dict` · seconds around the call, `peak_rss_gb` from `resource.getrusage(resource.RUSAGE_SELF).ru_maxrss` after it (bytes on macOS, kilobytes on Linux; divide by `1e9` or `1e6` after checking `sys.platform`), and `rows_kept`; printed as one JSON line for the parent.",
+                      "`main(argv=None)` · in child mode, `measure` and print; otherwise `subprocess.run([sys.executable, __file__, \"--engine\", e, \"--file\", str(f)], capture_output=True, text=True)` for both engines, parse the two lines, assert the two `rows_kept` agree, write the JSON, print one line per engine."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Skeleton",
+                    "s": ""
+                  },
+                  {
+                    "t": "code",
+                    "lang": "python",
+                    "s": "\"\"\"Seconds and peak memory for reading one raw file down to Fremont rows, in pandas and in polars.\"\"\"\nimport argparse, json, resource, subprocess, sys, time\nfrom pathlib import Path\nimport pandas as pd\nimport common, pems\n\nOUT = common.OUTPUT / \"studies\" / \"pandas_vs_polars.json\"\n\ndef run_pandas(path: Path, keep: set[int]) -> int:\n    \"\"\"pems.read_day; returns rows kept.\"\"\"\n    ...\ndef run_polars(path: Path, keep: set[int]) -> int:\n    \"\"\"pl.read_csv of the first twelve columns, renamed to pems.COLS, filtered; returns rows kept.\"\"\"\n    ...\ndef measure(engine: str, path: Path, keep: set[int]) -> dict:\n    \"\"\"seconds, peak_rss_gb from ru_maxrss (bytes on macOS, kB on Linux) and rows_kept.\"\"\"\n    ...\ndef main(argv=None) -> None:\n    p = argparse.ArgumentParser(description=\"pandas versus polars on one raw PeMS file.\")\n    p.add_argument(\"--file\", type=Path, default=None, help=\"default: the newest raw file\")\n    p.add_argument(\"--engine\", choices=[\"pandas\", \"polars\"], default=None, help=\"child mode\")\n    args = p.parse_args(argv)\n    keep = set(pd.read_parquet(pems.REGISTRY).ID)\n    if args.engine:\n        print(json.dumps(measure(args.engine, args.file, keep)))\n        return\n    ...   # run both engines as children of sys.executable, compare rows_kept, write OUT, print two lines\n\nif __name__ == \"__main__\":\n    main()"
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "The JSON has both engines with the same `rows_kept`, about `stations × 288`, and two pairs of numbers. If pandas takes more than 20 s or polars more than 2 GB, that is the number to write down, not to hide. Both lines go on `docs/stages/10_clean_pems.md`."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "docs/stages/09_collect_pems_selenium.md",
+                "tag": "doc · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The stage page for runner 09 in the layout page's shape, plus the one section this stage needs that no other does: what the PeMS pages looked like when the walk was written, because the plan says any change to them breaks the walk silently."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`## Reads` · the two secrets by name, never by value; the login page and the Clearinghouse listings; the manifest and the clock.",
+                      "`## Writes` · the raw files and their naming; the manifest's four keys; the clock's two keys; where the meta file goes.",
+                      "`## Run` · the command with every flag and its default, under `caffeinate -i`, and the rule that it never runs while anything trains.",
+                      "`## The walk` · what you saw in Chrome's inspector and on which date: the login form's field names, the Clearinghouse address for district 4 and `station_5min`, how the listing shows a month, the shape of one file link. When `--dry-run` prints zero names, this section is the first thing to reread.",
+                      "`## Last run` · the date; months requested; files downloaded; bytes of one file; seconds per file; Chrome's memory from Activity Monitor; how each compares with the plan's 45 MB, 305 s, 1 GB and 31 hours a year.",
+                      "`## Surprised by` · at least one line."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "`ls docs/stages/09_collect_pems_selenium.md` finds it, and every number under `## Last run` can be pointed at in the manifest or the terminal."
+                  }
+                ]
+              },
+              {
+                "t": "file",
+                "name": "docs/stages/10_clean_pems.md",
+                "tag": "doc · new",
+                "b": [
+                  {
+                    "t": "p",
+                    "lead": "Purpose",
+                    "s": "The stage page for runner 10, and the place the plan's 'confirm the column layout on one real file before writing the parser' is recorded. Its layout section is written before `pems.read_day` exists and is what `pems.check_layout` asserts."
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Must contain",
+                    "s": ""
+                  },
+                  {
+                    "t": "ul",
+                    "items": [
+                      "`## Reads` · the raw files and the manifest check; the meta file and its nine columns.",
+                      "`## Writes` · the registry's columns; the Parquet's seven columns with dtypes in the plan's words (`station_id` category, `timestamp` UTC, `speed`, `occ`, `flow`, `observed_frac` float32, `samples` int16); the month rule, a file is the local month and its first timestamp is 07:00 or 08:00 UTC.",
+                      "`## Run` · the command with every flag and its default.",
+                      "`## The column layout, verified` · the file you opened and the date; the total column count from `check_layout`; the twelve names of `pems.COLS` against their positions with one real row copied under them; the units of occupancy as seen, 0 to 1 or 0 to 100, and the `OCC_SCALE` chosen; whether Avg Speed equals the flow-weighted mean of the per-lane speeds on a hundred rows, computed once from the lane blocks with the largest difference written down, the plan's step 4; how many rows per station the November file has with `01:` timestamps, 12 or 24, and how many the March file has with `02:`, which should be none; the `nat_rows` and `dup_rows` from the log line for those two months.",
+                      "`## Last run` · per month: rows, stations, days, missing days, `seconds`, `rss_gb`, the share of NaN speed, the share of rows nulled by `% Observed`; the pandas and polars lines from the study.",
+                      "`## Surprised by` · at least one line."
+                    ]
+                  },
+                  {
+                    "t": "p",
+                    "lead": "Check",
+                    "s": "The layout section holds a real column count and a real row, and `pems.check_layout` on the same file returns that count. `grep -c 'stage=clean_pems' logs/pipeline.log` is at least the number of months listed under `## Last run`."
+                  }
                 ]
               }
             ]
@@ -17484,8 +18096,15 @@
               {
                 "t": "ul",
                 "items": [
-                  "One month of Fremont Parquet exists with the plan's schema and the plot shows rush hours.",
-                  "The DST test passes, the script stays under 2 GB, and the SQL version agrees row for row."
+                  "One month of Fremont Parquet exists with the plan's schema: `python -c \"import pandas as pd; d = pd.read_parquet('data/pems_processed/2026-08.parquet'); print(d.dtypes.to_dict()); print(len(d) == d.station_id.nunique() * 8928)\"` prints the seven dtypes (`category`, `datetime64[ns, UTC]`, four `float32`, `int16`) in the order `station_id, timestamp, speed, occ, flow, observed_frac, samples`, and `True`.",
+                  "The plot shows rush hours: `python studies/plot_station.py --month 2026-08` writes a PNG with two dips on the weekday panel and none on Sunday, and its JSON has `am_peak` and `pm_peak` below `midday`.",
+                  "The DST test passes: `pytest -q tests/test_clean_pems.py` prints `10 passed`, and `test_november_repeated_hour_is_dropped` and `test_march_missing_hour_shifts_forward` are among them.",
+                  "The script stays under 2 GB: `grep 'stage=clean_pems' logs/pipeline.log | tail -3` shows `rss_gb=` below `2.0` on every line and `seconds=` under 600 for a month, which is the plan's hour per year.",
+                  "The SQL version agrees row for row: the checks under `sql/profile.sql` and `sql/lag.sql`, run on the same months, print `0 0` and `mismatches: 0 0`.",
+                  "The registry exists with neighbours: `python -c \"import pandas as pd; r = pd.read_parquet('data/pems_meta/fremont_stations.parquet'); print(len(r), r.upstream_id.isna().sum(), sorted(r.Fwy.unique()))\"` prints a count near 100 (the real one goes on the stage page), a handful of route ends, and `[84, 680, 880]`.",
+                  "The download runs unattended and resumes: `data/pems_raw/manifest.json` has one entry per day of the newest month, every entry's `bytes` equals the file's size on disk, and `python 09_collect_pems_selenium.py --month <that month>` skips all of them and exits.",
+                  "`docs/stages/10_clean_pems.md` has the layout section filled with a real column count, a real row and the occupancy units, and `pems.check_layout` on that file returns the count written there.",
+                  "`pip freeze | grep -i -E '^(selenium|polars)='` prints both, and `requirements.lock.txt` has been regenerated and committed with the three `# phase 3` lines in `requirements.txt`."
                 ]
               }
             ]
@@ -17496,15 +18115,23 @@
               {
                 "t": "ul",
                 "items": [
-                  "Loading a whole district-day at once.",
-                  "`object` dtypes and naive timestamps.",
-                  "Forward-filling across a station boundary, which invents data."
+                  "The machine swaps and the terminal freezes during cleaning. Loading a whole district-day at once: a `pd.read_csv` without `chunksize` holds 1.3 million rows of every column. `pems.read_day` filters inside each chunk and `pems.check_layout` reads a thousand rows; nothing else in the project reads a raw file.",
+                  "The Parquet is ten times bigger than the plan says, or phase 4's `merge` fails on a type. `object` dtypes and naive timestamps: a `station_id` that became text, a `timestamp` that lost its zone. `pems.finalize` sets every dtype and `pems.validate` fails on any other; `test_output_schema` is the same check on the fixture.",
+                  "A station shows a smooth speed for fifteen minutes just after midnight where its detector was dead. Forward-filling across a station boundary invents data, which happens when `ffill` is called on the frame instead of on `groupby(level=\"station_id\")`. `clean_day` fills within station only, and `test_ffill_does_not_cross_station_boundary` fails the moment the groupby goes.",
+                  "November 1 has 288 rows per station and every lag on that day is an hour wrong. The repeated hour was resolved by a guess, `ambiguous=True` or `\"infer\"`, instead of dropped. `pems.localize` is the only conversion in the project and uses `ambiguous=\"NaT\"`; the fixture's ambiguous rows must vanish, and the November file's `nat_rows` count belongs on the stage page.",
+                  "`validate` fails with `len(df) != slots × stations` on the first day of a month. Either a day file is missing, which `clean_month` reports under `missing_days`, or the grid was anchored on the UTC day instead of the local one. `day_slots` and `month_slots` start at local midnight, and a missing day becomes a block of NaN rows, never a shorter month.",
+                  "`--dry-run` prints zero filenames. PeMS changed the login page or the listing, or the login failed silently. `login` raises if a password field is still there after submit; otherwise open the inspector, fix `list_links`, and record the new layout in the stage page's walk section with the date.",
+                  "The downloader stops after the first file with a timeout. Chrome saved the file under another name, or asked where to save it. `make_driver` sets `download.default_directory` and `download.prompt_for_download`; the folder listing that `download` prints on timeout shows what actually landed.",
+                  "Training slows tenfold while a download runs. Chrome and LightGBM share the same 16 GB. `refuse_if_training` stops the downloader from starting; do the same by hand the other way and never start `16_train_lgbm.py` while `09` is running.",
+                  "SQL and pandas disagree on `daytype` for every Sunday and Saturday. `isodow` is Monday 1 to Sunday 7 and pandas `dayofweek` is Monday 0 to Sunday 6, so the same number names different days. `sql/profile.sql` uses `isodow` with 6 and 7; the pandas twin uses `dayofweek` with 5 and 6.",
+                  "The lag comparison shows mismatches at the start of every station. `roll_30` was compared against `rolling(6)` with its default `min_periods`. The SQL frame shrinks at the start of each partition; the twin is `min_periods=1`, and phase 4's `min_periods=3` is a different feature by design.",
+                  "`10_clean_pems.py` refuses a file that is on disk. It is not in the manifest or its size differs, which means an interrupted download. Delete it and rerun `09` for that month; it fetches only what is missing."
                 ]
               }
             ]
           }
         ],
-        "lives": "Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new.",
+        "lives": "Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new.",
         "u": "u1",
         "terms": [
           "stage",
@@ -17532,19 +18159,59 @@
           "duckdb",
           "matplotlib",
           "511",
-          "readme",
-          "forward-fill",
-          "nn-module",
-          "grid",
           "station",
           "registry",
-          "upstream",
-          "postmile",
           "profile",
+          "path",
           "split",
+          "semicolon",
+          "def",
+          "zip",
+          "format",
+          "gradient-boosting",
+          "sorted",
+          "timestamp",
+          "flow",
+          "occupancy",
+          "speed",
+          "gzip",
+          "pct-obs",
+          "station-id",
+          "for",
+          "exception",
+          "assert",
+          "datetime",
+          "nan",
+          "five-minute-row",
+          "grid",
+          "pathlib",
+          "python",
+          "json",
+          "command",
+          "argparse",
+          "http",
+          "mainline",
+          "postmile",
+          "upstream",
           "schema",
+          "pytest",
+          "partial-derivative",
+          "median",
+          "target",
+          "wildcard",
+          "partition",
+          "min-periods",
+          "lambda",
+          "resident-memory",
+          "process",
+          "scientific-notation",
+          "shape",
+          "cd",
+          "terminal",
           "script",
-          "timestamp"
+          "pip",
+          "swap",
+          "nn-module"
         ]
       },
       {
