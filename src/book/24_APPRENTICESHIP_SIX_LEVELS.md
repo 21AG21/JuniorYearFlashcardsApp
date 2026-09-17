@@ -4125,21 +4125,374 @@ logit(p) = β₀ + β₁x₁ + … ;  odds ratio = e^{β}
 
 ### Build
 
-_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new._
+_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new._
 
-- Derive the logistic regression gradient on paper, then check it numerically with finite differences against the repo's update.
-- Write the training loop from a blank file and match the repo's weights to four decimals.
-- Compute the median and the 85th percentile of a real speed column with numpy, by hand and with the library, and write a notebook page titled 'why the median' for stage 6.
+
+This phase builds stage 3 of the plan, the incidents-only baseline: a 3 × 24 × 2 grid of road, hour and weekend from the 511 log, a logistic regression fitted by hand, and a script that scores the current hour beside the incidents that are live right now. The maths comes first and the files come last. Derive the gradient on paper before you write a line, then write the files in the order below. `logreg.py` comes first because it holds lesson 7's `sigmoid`, `loss` and `grad`, the finite-difference check, the mini-batch loop and the grid encoding; the training runner, the serving runner and the test all import that one implementation and nothing is copied. `tests/test_gradient.py` comes second so the gradient is proved before any run depends on it. Then `03_train_from_scratch.py`, written from a blank file, which builds the grid, checks the gradient, fits and saves `models/bottleneck_weights.npz`. Then `04_predict_live.py`, which reads the file back. Then `studies/sigmoid_and_loss.py`, the notebook page 'why the median' and the stage page.
+
+One note on names. The layout page lists no module for this phase because the plan wrote the maths inside the runner. This page adds `logreg.py`: a numbered runner cannot be imported, and the test and the serving script both need the real `grad` and the real encoding, not a copy. Phase 4's `15_train_logreg.py` reuses it on the real feature table.
+
+#### `logreg.py` · module · new
+
+_Purpose._ Stage 3's model in one importable file: the logistic regression of lesson 7 (sigmoid, cross-entropy, gradient, finite-difference check, mini-batch descent), plus the two things stage 3 needs around it, the road × hour × weekend grid built from the 511 log and the one-hot encoding that training and serving must share. Nothing in it touches the disk except `load_weights`.
+
+_Reads._ Nothing from disk. `events_to_grid` takes the DataFrame that `03_train_from_scratch.py` loads from `data/fremont_events_log.csv` and uses the columns `event_id`, `road_names` and `created`.
+
+_Must contain._
+- `ROAD_LABELS = {880: "I-880", 680: "I-680", 84: "SR-84"}` and `ROADS = ("I-880", "I-680", "SR-84")`; the keys must equal `common.ROUTES`, and the module asserts it at import so the three roads are the plan's three routes.
+- `ETA = 0.5`, `EPOCHS = 3000`, `BATCH = 4096`, `SEED = 0`, `L2 = 0.01`, `EPS = 1e-4`, `CLIP = 1e-7`. These are stage 3's own knobs, not plan numbers, which is why they live here and not in `common.py`. `BATCH` is the walkthrough's 4096; with 144 rows every epoch is one full-batch step, so the loop is plain gradient descent, deterministic, and `SEED` changes nothing until phase 4 runs the same loop on millions of rows.
+- `sigmoid(z: np.ndarray) -> np.ndarray` · the walkthrough's step 2, unchanged: `1 / (1 + np.exp(-z))`.
+- `loss(w: np.ndarray, b: float, X: np.ndarray, y: np.ndarray, lam: float = 0.0) -> float` · the walkthrough's step 2 with `p` clipped to `[CLIP, 1 - CLIP]`, plus `lam / 2 * (w @ w)`. With `lam = 0` it is the walkthrough's line exactly.
+- `grad(w, b, X, y, lam: float = 0.0) -> tuple[np.ndarray, float]` · the walkthrough's step 2: `e = p - y`; returns `X.T @ e / len(y) + lam * w` and `e.mean()`. The bias is never penalized.
+- `numerical_grad(w, b, X, y, eps: float = EPS, lam: float = 0.0) -> tuple[np.ndarray, float]` · the walkthrough's step 3 as a function: central differences of `loss` on every weight and on the bias, returned in the same shapes as `grad`.
+- `fit(X, y, eta=ETA, epochs=EPOCHS, batch=BATCH, seed=SEED, lam=L2, log_every=100) -> tuple[np.ndarray, float, list[dict]]` · the walkthrough's step 4: `w` starts at `np.zeros(X.shape[1], np.float32)`, `b` at `0.0`; each epoch permutes the rows with `np.random.default_rng(seed)` and steps through them in slices of `batch`, `w -= eta * gw`, `b -= eta * gb`; every `log_every` epochs it appends `{"epoch", "loss", "ap"}` to the history, where `ap` is `sklearn.metrics.average_precision_score` on the rows it trains on. Returns `w`, `b`, `history`.
+- `road_of(road_names: str) -> str | None` · the label of the first route number that appears as a whole number in `road_names` (`re.findall(r"\d+", road_names)`, each token looked up in `ROAD_LABELS`), so `"I-880 N; Mowry Ave"` gives `"I-880"`, `"CA-84 W"` gives `"SR-84"` and `"Fremont Blvd"` gives `None`. Whole tokens, so `84` never matches inside `1840`.
+- `events_to_grid(events: pd.DataFrame) -> pd.DataFrame` · one row per event id (`drop_duplicates("event_id")`, because the log has one row per event per poll), `created` parsed with `pd.to_datetime(utc=True)` and converted to `common.TZ`, `road = road_names.map(road_of)`, rows with no road dropped; then the full product of `road` in `ROADS`, `hour` 0 to 23 and `weekend` 0 or 1 (`dayofweek >= 5`) with `n_events` (distinct event ids whose `created` falls in the cell, 0 where none) and `y = (n_events > 0)` as float32. Always 144 rows, sorted by `road`, `weekend`, `hour`, whatever the log holds.
+- `encode(cells: pd.DataFrame, feature_names: list[str] | None = None) -> tuple[np.ndarray, list[str]]` · the design matrix, reference-level one-hot so the optimum is unique: columns `road=I-680`, `road=SR-84` (I-880 is the reference), `hour=01` to `hour=23` (hour 0 is the reference), `weekend`; 26 columns, float32. With `feature_names` given (from the saved file) the columns are built in that order, and the list derived from `cells` must equal it or a `ValueError` says which name differs. This one function is the whole of train-serve agreement for stage 3.
+- `load_weights(path) -> tuple[np.ndarray, float, list[str]]` · `np.load` of the npz: `weights` as float32, `bias` as a Python float, `feature_names` as a list of str.
+
+_Skeleton._
+
+```python
+"""Stage 3's model: sigmoid, cross-entropy, its gradient, the check, the loop, the grid and its encoding."""
+import numpy as np
+import pandas as pd
+import common
+
+ROAD_LABELS = {880: "I-880", 680: "I-680", 84: "SR-84"}   # keys must equal common.ROUTES
+ROADS = ("I-880", "I-680", "SR-84")
+ETA, EPOCHS, BATCH, SEED, L2 = 0.5, 3000, 4096, 0, 0.01
+EPS, CLIP = 1e-4, 1e-7
+
+def sigmoid(z: np.ndarray) -> np.ndarray:
+    """1 / (1 + e^-z), the walkthrough's step 2."""
+    return 1 / (1 + np.exp(-z))
+
+def loss(w: np.ndarray, b: float, X: np.ndarray, y: np.ndarray, lam: float = 0.0) -> float:
+    """Mean cross-entropy with p clipped to [CLIP, 1 - CLIP], plus lam / 2 * w.w."""
+    ...
+
+def grad(w: np.ndarray, b: float, X: np.ndarray, y: np.ndarray, lam: float = 0.0) -> tuple[np.ndarray, float]:
+    """(X.T @ (p - y) / n + lam * w, mean(p - y)); the bias is not penalized."""
+    ...
+
+def numerical_grad(w, b, X, y, eps: float = EPS, lam: float = 0.0) -> tuple[np.ndarray, float]:
+    """Central differences of loss() on every weight and on the bias, the walkthrough's step 3."""
+    ...
+
+def fit(X, y, eta=ETA, epochs=EPOCHS, batch=BATCH, seed=SEED, lam=L2, log_every=100):
+    """Mini-batch descent from zeros, the walkthrough's step 4; returns (w, b, history)."""
+    ...
+
+def road_of(road_names: str) -> str | None:
+    """Label of the first route number that appears as a whole number in road_names, else None."""
+    ...
+
+def events_to_grid(events: pd.DataFrame) -> pd.DataFrame:
+    """The 144 cells road x hour x weekend with n_events and y, from distinct event ids."""
+    ...
+
+def encode(cells: pd.DataFrame, feature_names: list[str] | None = None) -> tuple[np.ndarray, list[str]]:
+    """Reference-level one-hot design matrix (float32) and its 26 column names, in a fixed order."""
+    ...
+
+def load_weights(path) -> tuple[np.ndarray, float, list[str]]:
+    """weights, bias, feature_names from the npz."""
+    ...
+```
+
+_Check._ `python -c "import logreg, numpy as np; print(logreg.sigmoid(np.array([0.0, 10.0, -10.0])))"` prints `0.5`, a value just under `1` and a value near `4.5e-05`. `python -c "import logreg; print(logreg.road_of('I-880 N; Mowry Ave'), logreg.road_of('CA-84 W'), logreg.road_of('Mission Blvd'))"` prints `I-880 SR-84 None`.
+
+_Watch for._ `np.exp(-z)` overflows and warns for `z` below about −88 in float32; the clip in `loss` keeps the logarithm finite, but the warning is real and means a weight has run away. Keep `X` and `w` in float32 as the walkthrough does, and use float64 in the test, where `eps` is small.
+
+#### `tests/test_gradient.py` · test · new
+
+_Purpose._ Proves lesson 7's gradient against finite differences on a tiny matrix before any run relies on it, and pins the small contracts around it: the encoding, the road parser, the 144-cell grid. Runs offline in under a second.
+
+_Reads._ Nothing. Every matrix is built in the test with `np.random.default_rng(1)`.
+
+_Must contain._
+- `tiny()` · a helper returning `X` of shape (20, 4), float64, from a normal draw, and `y` of 20 zeros and ones with about 40 % ones.
+- `test_grad_matches_finite_differences` · `w = np.full(4, 0.3)`, `b = -0.2`; `grad` and `numerical_grad` with `eps=1e-5` agree to `1e-6` on every weight and on the bias, once with `lam=0.0` and once with `lam=0.1`.
+- `test_sigmoid_endpoints` · `sigmoid(0.0) == 0.5`, `sigmoid(40.0) > 1 - 1e-12`, `sigmoid(-40.0) < 1e-12`, and `sigmoid(0.7) * (1 - sigmoid(0.7))` equals the central-difference derivative of `sigmoid` at 0.7 to `1e-6`, which is the σ′ = σ(1 − σ) line of the calculus topic.
+- `test_loss_is_lower_when_right` · one row `x = [1, 0.5]`, `y = 1`: `loss` with `w = [2, 2]` is below `loss` with `w = [-2, -2]`, and `loss` at zero weights equals `ln 2` to `1e-6`.
+- `test_one_row_gradient_is_error_times_input` · lesson 7's Try this: `x = (1, 0.5)`, `y = 1`, `w = (0, 0)`, `b = 0`: `grad` returns `(-0.5, -0.25)` and `-0.5`; after one step at `eta = 0.1`, `sigmoid(x @ w + b)` is above 0.5.
+- `test_fit_lowers_loss` · on `tiny()`, `fit(X, y, epochs=200, lam=0.0)` ends with a loss below `ln 2`, and calling it twice gives identical weights.
+- `test_encode_round_trips_feature_names` · `encode` on `events_to_grid` of an empty events frame gives shape (144, 26) and 26 names starting `road=I-680`; `encode(cells, names[::-1])` raises `ValueError`; `encode` of a three-row frame for one hour with the 26 names gives shape (3, 26).
+- `test_road_of` · `"I-880 N; Mowry Ave"` → `"I-880"`, `"I-680 S"` → `"I-680"`, `"CA-84 W"` → `"SR-84"`, `"Mission Blvd"` → `None`, `"1840 Auto Mall Pkwy"` → `None`.
+- `test_events_to_grid_has_144_cells` · a five-row events frame with two rows sharing an `event_id` and one arterial-only event gives 144 rows, `n_events` summing to 3, `y` in {0, 1} and `y.sum() <= 3`.
+
+_Skeleton._
+
+```python
+import numpy as np
+import pandas as pd
+
+import logreg
+
+
+def tiny():
+    """20 x 4 float64 rows and a 0/1 target, the same every run."""
+    rng = np.random.default_rng(1)
+    X = rng.normal(size=(20, 4))
+    y = (rng.random(20) < 0.4).astype(np.float64)
+    return X, y
+
+
+def test_grad_matches_finite_differences():
+    X, y = tiny()
+    w, b = np.full(4, 0.3), -0.2
+    for lam in (0.0, 0.1):
+        gw, gb = logreg.grad(w, b, X, y, lam=lam)
+        nw, nb = logreg.numerical_grad(w, b, X, y, eps=1e-5, lam=lam)
+        assert np.max(np.abs(nw - gw)) < 1e-6
+        assert abs(nb - gb) < 1e-6
+
+
+def test_sigmoid_endpoints(): ...
+def test_loss_is_lower_when_right(): ...
+def test_one_row_gradient_is_error_times_input(): ...
+def test_fit_lowers_loss(): ...
+def test_encode_round_trips_feature_names(): ...
+def test_road_of(): ...
+def test_events_to_grid_has_144_cells(): ...
+```
+
+_Check._ `pytest -q tests/test_gradient.py` prints `8 passed`. Delete the `/ len(y)` from `logreg.grad` and run again: the first test fails with a difference near 19, which is the bug lesson 7 says you would otherwise never see. Put it back.
+
+#### `03_train_from_scratch.py` · runner · new
+
+_Purpose._ Stage 3 of the plan, the training half: the 3 × 24 × 2 grid from the 511 log, the gradient check, the loop, the saved weights. It is the file the phase is named after. Write it after the module and the test, from a blank file, and open the walkthrough only when it runs.
+
+_Reads._ `data/fremont_events_log.csv` from runner 02, in the phase 1 layout: `event_id`, `road_names`, `created`, and `pulled_at` for the polling span it reports. It asserts the four columns exist and exits with one line naming phase 1's rename if it finds `id` or `roads` instead.
+
+_Writes._ `models/bottleneck_weights.npz` with three keys: `weights` (float32, shape (26,)), `bias` (float32 scalar), `feature_names` (str array, shape (26,), in the order of `weights`). Written into `models/bottleneck_weights.npz.tmp` through an open file handle, then `os.replace` into place. One log line to `logs/pipeline.log`.
+
+_Run._ `python 03_train_from_scratch.py [--events data/fremont_events_log.csv] [--out models/bottleneck_weights.npz] [--epochs 3000] [--eta 0.5] [--l2 0.01] [--seed 0]`. The defaults are `logreg`'s constants.
+
+_Must contain._
+- `EVENTS = common.DATA / "fremont_events_log.csv"`, `OUT = common.MODELS / "bottleneck_weights.npz"`, `NEEDED = {"event_id", "road_names", "created", "pulled_at"}`.
+- `load_events(path: Path) -> pd.DataFrame` · `pd.read_csv` of those columns; the assert; prints rows, distinct event ids, first and last `pulled_at`.
+- `report(grid: pd.DataFrame, p: np.ndarray) -> None` · prints the 144 cells as three blocks of 24 lines, one per road: hour, weekday `y` and `p`, weekend `y` and `p`, `n_events`. This is the lookup table the plan describes; look at it.
+- `explain(w: np.ndarray, b: float, feature_names: list[str]) -> None` · prints every weight beside its name, then the three largest positive and the three largest negative with the sentence each one means (a log-odds difference against I-880 at hour 0 on a weekday), then `sigmoid(b)` as the reference cell's probability.
+- `save(w: np.ndarray, b: float, feature_names: list[str], out: Path) -> None` · the npz write through the temporary file.
+- `main(argv=None)` · argparse; `grid = logreg.events_to_grid(load_events(...))`; `X, names = logreg.encode(grid)`; `y = grid.y.to_numpy(np.float32)`; the gradient check at zero weights on the whole matrix, printing `grad check max|num - analytic| = <n>` and exiting nonzero if `n > 1e-4`; `w, b, hist = logreg.fit(X, y, eta=..., epochs=..., seed=..., lam=...)`, printing the history; the walkthrough's step 5 on the same matrix, `LogisticRegression(C=1 / (l2 * len(y)), max_iter=5000, tol=1e-8)`, printing the largest absolute difference between its `coef_[0]` and `w`; `report`; `explain`; `save`; `common.log_stage("train_from_scratch", t0, rows=len(grid), positives=int(y.sum()), loss=round(final_loss, 4), ap=round(final_ap, 4))`.
+
+_Skeleton._
+
+```python
+"""Stage 3: the road x hour x weekend grid from the 511 log, fitted by hand, saved as bottleneck_weights.npz."""
+import argparse, os, time
+from pathlib import Path
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import common, logreg
+
+EVENTS = common.DATA / "fremont_events_log.csv"
+OUT = common.MODELS / "bottleneck_weights.npz"
+NEEDED = {"event_id", "road_names", "created", "pulled_at"}
+
+def load_events(path: Path) -> pd.DataFrame:
+    """Read the CSV; exit naming phase 1's rename if event_id or road_names is missing."""
+    ...
+
+def report(grid: pd.DataFrame, p: np.ndarray) -> None:
+    """Print the 144 cells: road, hour, weekday y and p, weekend y and p, n_events."""
+    ...
+
+def explain(w: np.ndarray, b: float, feature_names: list[str]) -> None:
+    """Print every weight beside its name, the six that matter most, and sigmoid(b)."""
+    ...
+
+def save(w: np.ndarray, b: float, feature_names: list[str], out: Path) -> None:
+    """np.savez into an open .tmp file handle, then os.replace into place."""
+    ...
+
+def main(argv=None) -> None:
+    p = argparse.ArgumentParser(description="Stage 3: fit the incidents-only baseline by hand.")
+    p.add_argument("--events", type=Path, default=EVENTS)
+    p.add_argument("--out", type=Path, default=OUT)
+    p.add_argument("--epochs", type=int, default=logreg.EPOCHS)
+    p.add_argument("--eta", type=float, default=logreg.ETA)
+    p.add_argument("--l2", type=float, default=logreg.L2)
+    p.add_argument("--seed", type=int, default=logreg.SEED)
+    args = p.parse_args(argv)
+    t0 = time.time()
+    grid = logreg.events_to_grid(load_events(args.events))
+    X, names = logreg.encode(grid)
+    y = grid.y.to_numpy(np.float32)
+    ...   # gradient check at zeros, fit, the sklearn comparison, report, explain, save, log_stage
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 03_train_from_scratch.py` prints the grad check below `1e-5`, thirty history lines with the loss falling, the table, the weights, a sklearn difference below `1e-3`, and ends with `stage=train_from_scratch seconds=<n> rss_gb=<n> rows=144 positives=<n> loss=<n> ap=<n>`. Then `python -c "import numpy as np; z = np.load('models/bottleneck_weights.npz'); print(z['weights'].shape, float(z['bias']), list(z['feature_names'][:3]))"` prints `(26,) <a number> ['road=I-680', 'road=SR-84', 'hour=01']`.
+
+_Watch for._ `np.savez("x.npz.tmp", ...)` appends a second `.npz` because the name does not end in `.npz`; pass an open file object and the name is left alone. If the table shows `y = 1` in every cell, the log already covers every hour on every road and the grid is saturated: scikit-learn refuses a one-class target, so skip that comparison, and the baseline is a constant, which is exactly what the plan means by a lookup table dressed as a model.
+
+#### `04_predict_live.py` · runner · new
+
+_Purpose._ Stage 3, the serving half: score the current hour for the three roads with the saved weights and print the probabilities beside the incidents that are live right now, so the lookup table can be held against the road. The three rows are built by the same `logreg.encode` that training used, with the saved `feature_names`, so nothing can drift.
+
+_Reads._ `models/bottleneck_weights.npz`, the three keys above. `data/fremont_events_log.csv` (`pulled_at`, `event_id`, `road_names`, `headline`, `severity`, `created`) for the newest poll; or, with `--fetch`, the 511 feed itself through phase 1's `collector.fetch_events`, `collector.event_touches_fremont` and `collector.flatten_event`.
+
+_Writes._ Nothing but the screen. No log line: it is not a pipeline stage.
+
+_Run._ `python 04_predict_live.py [--at "2026-09-17 17:05"] [--fetch] [--weights models/bottleneck_weights.npz] [--events data/fremont_events_log.csv]`. `--at` is local wall-clock time, default now. `--fetch` polls 511 instead of reading the newest poll from the CSV.
+
+_Must contain._
+- `WEIGHTS = common.MODELS / "bottleneck_weights.npz"`, `EVENTS = common.DATA / "fremont_events_log.csv"`.
+- `now_local(at: str | None) -> pd.Timestamp` · now in `common.TZ`, or the given `"YYYY-MM-DD HH:MM"` localized to it.
+- `cells_for(t: pd.Timestamp) -> pd.DataFrame` · three rows, one per road in `logreg.ROADS`, with `hour = t.hour` and `weekend = int(t.dayofweek >= 5)`.
+- `live_incidents(events: Path, fetch: bool) -> pd.DataFrame` · without `--fetch`, the rows of the CSV whose `pulled_at` equals the newest `pulled_at`; with it, one poll through the collector, flattened, `pulled_at` set to now. Either way it adds `road = road_names.map(logreg.road_of)` and drops nothing, so an arterial incident still prints, under `no freeway`.
+- `main(argv=None)` · loads the weights; `X, _ = logreg.encode(cells_for(t), feature_names)`; `p = logreg.sigmoid(X @ w + b)`; prints one header line with the local time, the weekday name and `weekend=0/1` and the poll's `pulled_at`; then per road one line `I-880  P(incident this hour)=0.xx  live=<n>` followed by that road's incidents as `  <created, local HH:MM>  <severity>  <headline>`; then the incidents with no road under `no freeway`.
+
+_Skeleton._
+
+```python
+"""Stage 3, serving: score this hour for the three roads and print it beside the live incidents."""
+import argparse
+from pathlib import Path
+import numpy as np
+import pandas as pd
+import collector, common, logreg
+
+WEIGHTS = common.MODELS / "bottleneck_weights.npz"
+EVENTS = common.DATA / "fremont_events_log.csv"
+
+def now_local(at: str | None) -> pd.Timestamp:
+    """Now in common.TZ, or the given 'YYYY-MM-DD HH:MM' localized to it."""
+    ...
+
+def cells_for(t: pd.Timestamp) -> pd.DataFrame:
+    """Three rows: road in logreg.ROADS, hour = t.hour, weekend = t.dayofweek >= 5."""
+    ...
+
+def live_incidents(events: Path, fetch: bool) -> pd.DataFrame:
+    """The newest poll's rows from the CSV, or one poll through collector with --fetch; adds road."""
+    ...
+
+def main(argv=None) -> None:
+    p = argparse.ArgumentParser(description="Score the current hour with bottleneck_weights.npz.")
+    p.add_argument("--at", default=None, help="local 'YYYY-MM-DD HH:MM'; default now")
+    p.add_argument("--fetch", action="store_true", help="poll 511 now instead of reading the CSV")
+    p.add_argument("--weights", type=Path, default=WEIGHTS)
+    p.add_argument("--events", type=Path, default=EVENTS)
+    args = p.parse_args(argv)
+    w, b, names = logreg.load_weights(args.weights)
+    t = now_local(args.at)
+    X, _ = logreg.encode(cells_for(t), names)
+    p_road = logreg.sigmoid(X @ w + b)
+    ...   # header line, one line per road with its incidents beneath, then the ones with no road
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 04_predict_live.py --at "2026-09-16 17:05"` prints three probabilities equal, to two decimals, to the `p` column `03` printed for hour 17 on a weekday, and the newest poll's incidents grouped by road. `python 04_predict_live.py --fetch` prints the same layout with a `pulled_at` a few seconds old.
+
+#### `studies/sigmoid_and_loss.py` · study · new
+
+_Purpose._ The picture behind lesson 7: the sigmoid and its derivative, and the cross-entropy beside the squared error as functions of the score, so that 'why not squared error' is something you have seen and not something you memorized. The module docstring answers the question in words; the output answers it in two numbers.
+
+_Reads._ Nothing.
+
+_Writes._ `output/studies/sigmoid_and_loss.png`, two panels: σ(z) with σ′(z) on the left; the two losses for y = 1 against z from −8 to 8 on the right. `output/studies/sigmoid_and_loss.json` with the keys `z`, `p`, `grad_cross_entropy`, `grad_squared_error`, `ratio`.
+
+_Run._ `python studies/sigmoid_and_loss.py`.
+
+_Must contain._
+- A module docstring of four to six sentences: cross-entropy is the negative log-likelihood of the Bernoulli model, convex in `w` and `b`, and its derivative with respect to the score is `p − y`, which is never zero while the model is wrong; squared error on a sigmoid output is not convex in the weights, and its derivative with respect to the score is `2 (p − y) p (1 − p)`, which vanishes exactly when the model is confidently wrong, so a bad start never recovers.
+- `OUT = common.OUTPUT / "studies"` and `Z_WRONG = -6.0`, the score at which the model is confidently wrong for y = 1.
+- `curves(z: np.ndarray) -> dict[str, np.ndarray]` · `p = sigmoid(z)`, `dp = p (1 − p)`, `ce = −ln p`, `se = (1 − p)²`, `ce_grad = p − 1`, `se_grad = 2 (p − 1) p (1 − p)`, all for y = 1.
+- `main()` · `z = np.linspace(-8, 8, 801)`; the two panels into the PNG with the `Agg` backend; the two gradients at `Z_WRONG` printed and written to the JSON with their ratio, and one printed sentence saying which loss can still learn from that row.
+
+_Skeleton._
+
+```python
+"""Why cross-entropy and not squared error.
+
+Cross-entropy is the negative log-likelihood of the Bernoulli model and is convex in the
+weights; its derivative with respect to the score is p - y, never zero while the model is
+wrong. Squared error on a sigmoid output is not convex in the weights, and its derivative
+with respect to the score is 2 (p - y) p (1 - p), which vanishes exactly when the model is
+confidently wrong, so a bad start never recovers. The JSON holds the two numbers at z = -6.
+"""
+import json
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import common
+
+OUT = common.OUTPUT / "studies"
+Z_WRONG = -6.0
+
+def curves(z: np.ndarray) -> dict[str, np.ndarray]:
+    """p, dp, ce, se and the two gradients with respect to z, for y = 1."""
+    ...
+
+def main() -> None:
+    z = np.linspace(-8, 8, 801)
+    c = curves(z)
+    ...   # two panels to OUT / 'sigmoid_and_loss.png'; the gradients at Z_WRONG to the JSON and the screen
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ The JSON's `grad_cross_entropy` is about `-0.998` and `grad_squared_error` about `-0.005`; the ratio, roughly 200, is the reason. In the PNG the cross-entropy rises without bound to the left and the squared error flattens at 1.
+
+#### `notebook/2026-W44.md` · notebook · new
+
+_Purpose._ The week's lab page, with a section titled 'why the median' that stage 6 will cite when the profile is defined. The reader computes the median and the 85th percentile of a real speed column by hand and with numpy and writes down why the profile is a median and why free flow is the 85th percentile, which is `common.FREE_FLOW_Q`. Use the current week's file if you reach this earlier or later than week 44; the section title is what stage 6 looks for.
+
+_Reads._ One real speed column: one station's day from the first raw PeMS file, read the way phase 1's lesson 2 reads it, `pd.read_csv(path, header=None, usecols=range(12), names=cols, nrows=100_000)`, then `x = df[df.station == df.station.iloc[0]].speed.dropna().to_numpy()`, about 288 values. If no PeMS file has landed yet, use the `(pulled_at − created)` minutes of the 511 log as the stand-in column, say so on the page, and redo the section when the first file arrives.
+
+_Must contain._
+- `# Week 44` with phase 0's headings `## Did`, `## Confused by`, `## Next`.
+- `## why the median` with, in order: the station id, the day and `len(x)`; the by-hand median, sorting the array and taking the middle two values (n is even) and their average, with the two values written down; the by-hand 85th percentile, the position `0.85 (n − 1)`, its two neighbours in the sorted array and the linear interpolation, with the numbers; the lines `np.median(x)` and `np.percentile(x, 85)` and their printed values, equal to the by-hand ones; the experiment, `np.append(x, [0, 0, 0, 70, 70, 70])` (three outage rows and three imputed rows), showing the mean moved and the median did not, with the four numbers; two sentences on why stage 6's profile is a median per slot and not a mean, and why the 85th percentile is free flow while the median at 5 pm is not.
+
+_Check._ The page has both pairs of numbers, the by-hand and the numpy values agree to the last printed digit, and `git log --oneline -1 -- notebook/2026-W44.md` shows a commit.
+
+#### `docs/stages/03_train_from_scratch.md` · doc · new
+
+_Purpose._ The stage page for runner 03, in the shape the layout page fixes for every stage: what it reads, what it writes, how to run it, the numbers from the last run, what surprised you. It is also where 'what each weight means' is written down, which is the phase's first Done when.
+
+_Must contain._
+- `## Reads` · the CSV and the four columns it uses; the polling span of the log on the day of the run.
+- `## Writes` · the npz and its three keys with shapes and dtypes; that `04_predict_live.py` reads it and how.
+- `## Run` · the command with every flag and its default, and `04_predict_live.py`'s command beside it.
+- `## Last run` · the date; rows in the log; distinct events; events that mapped to a road and events that did not; positive cells out of 144; the grad check number; the final loss and AP; the sklearn difference; `seconds` and `rss_gb` from the log line.
+- `## What the weights say` · every weight is a log-odds difference against the reference cell, I-880 at hour 0 on a weekday: the three largest positive and the three largest negative with one sentence each, and `σ(bias)` as the reference probability.
+- `## Surprised by` · at least one line.
+
+_Check._ `ls docs/stages/03_train_from_scratch.md` finds it, and every number under `## Last run` can be pointed at on the screen output of the run it describes. Phase 9's `make all` fails if the page is missing.
 
 ### Done when
 
-- Your loop reproduces `bottleneck_weights.npz` and you can say what each weight means.
-- You can derive the gradient on a whiteboard without notes.
+- `pytest -q tests/test_gradient.py` prints `8 passed`; with the `/ len(y)` removed from `logreg.grad` it prints one failure, in `test_grad_matches_finite_differences`.
+- `python 03_train_from_scratch.py` prints `grad check max|num - analytic| = <n>` with `n` below `1e-5`, ends with `stage=train_from_scratch ... rows=144`, and `models/bottleneck_weights.npz` holds `weights` of shape (26,), `bias`, and 26 `feature_names`.
+- The loop reproduces `bottleneck_weights.npz` to four decimals: copy the file to `/tmp/w1.npz`, run `03` again, and `python -c "import numpy as np; a=np.load('/tmp/w1.npz'); b=np.load('models/bottleneck_weights.npz'); print(np.abs(a['weights']-b['weights']).max(), abs(float(a['bias'])-float(b['bias'])))"` prints two numbers below `1e-4` (with 144 rows the loop is full-batch and both are `0.0`).
+- The weights agree with scikit-learn: the comparison line `03` prints shows a largest weight difference below `1e-3`.
+- You can say what each weight means: `docs/stages/03_train_from_scratch.md` has the section, and when someone runs `python -c "import logreg; w,b,n=logreg.load_weights('models/bottleneck_weights.npz'); [print(f'{k:12s} {v:+.3f}') for k,v in zip(n,w)]"` and points at any line, you say what it is a log-odds difference between.
+- You can derive the gradient on a whiteboard without notes: from `−[y ln p + (1 − y) ln(1 − p)]` with `p = σ(w·x + b)` to `(p − y) x` and `p − y`, using σ′ = σ(1 − σ), in under ten minutes, and then say why the finite-difference check catches a dropped `1/n`.
+- `python 04_predict_live.py --at "2026-09-16 17:05"` prints three probabilities equal to `03`'s table for hour 17 on a weekday, and the newest poll's incidents grouped by road.
+- `python studies/sigmoid_and_loss.py` writes the PNG and a JSON whose two gradients differ by a factor near 200.
+- `notebook/2026-W44.md` has 'why the median' with the by-hand and the numpy values equal, and it is committed.
 
 ### Pitfalls
 
-- Trying to finish all of math first. This phase runs alongside phases 1 and 3 on purpose.
-- Memorizing formulas you have not derived once.
+- Week 8 arrives and no file has been written. Trying to finish all of math first is the cause; linear algebra has no bottom, and this phase runs alongside phases 1 and 3 on purpose. Write `logreg.sigmoid` the day you meet the chain rule and let each lesson's Try this become a function.
+- You can write `(p − y) x` but cannot say where the `p (1 − p)` went. Memorizing formulas you have not derived once is the cause; the derivation is the understanding. Derive it on paper before writing `tests/test_gradient.py`, and again on a whiteboard for the Done when.
+- The loss falls slowly and the gradient check prints a number near 19. `grad` is missing its `/ len(y)`, or `X.T @ e` was written as `X @ e` and only works by accident on a square matrix. `logreg.grad` divides by `len(y)`; the test fails first, which is what it is for.
+- The loss rises, then prints `nan`. `eta` is above the limit set by the curvature, or `np.log(0)` was reached in `loss`. The clip in `logreg.loss` stops the second; halve `--eta` for the first.
+- `03` exits at once naming `id` and `roads`. Phase 1's rename to `event_id` and `road_names` has not been done yet. Finish phase 1's Build first; the runner does not learn two layouts.
+- `n_events` shows every event counted thirty times. The log has one row per event per poll. `events_to_grid` deduplicates on `event_id` before counting; if you wrote your own, add the `drop_duplicates`.
+- Every weight for one road is large and negative, and scikit-learn disagrees by more than `1e-3`. A whole family of cells has no events, so without regularization the optimum is at infinity and the two optimizers stop in different places. Leave `--l2` at `logreg.L2`; the difference comes back below `1e-3`, and the page records which cells were empty.
+- `04_predict_live.py` prints probabilities that do not match `03`'s table. The three rows were encoded with the columns in a different order. Pass the saved `feature_names` to `logreg.encode`; it raises `ValueError` on any mismatch rather than scoring quietly.
 
 ## Phase 3: Data handling, files and SQL
 
@@ -10270,25 +10623,614 @@ rating ≈ u_user · v_item + b_user + b_item
 
 ### Build
 
-_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new._
+_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new._
 
-- Train a small convolutional network on a public digits dataset on MPS, then fine-tune a pretrained ResNet on a tiny set of your own photos.
-- Fine-tune a small pretrained encoder to predict 511 incident severity from headlines; compare with a bag-of-words logistic regression.
-- Run a quantized open language model locally, extract route, direction and severity from 50 headlines, and score exact match against hand labels; build a small retrieval-augmented question answerer over the repository's docs with a 30-question eval set.
-- Train an autoencoder on daily speed profiles and rank days by reconstruction error; train a conditional VAE that generates profiles given weekday and rain.
-- Pretrain a masked-step model on all Fremont stations and compare a linear probe with raw features on the slow-episode label.
+
+This phase is eight side studies, each a script under `studies/` that writes `output/studies/<name>.json` and a figure `output/studies/<name>.png`, and one report that puts their numbers side by side. Nothing here changes the pipeline: `features.py`, the models and the runners stay as phase 7 left them. The studies borrow the pipeline's data where it fits (headlines from `data/fremont_events_log.csv`, daily profiles from `data/pems_processed/`, the slow label from `data/labels/`) and public data where it does not. Write them in the order below, because each teaches something the next one uses: convolutions before transfer, a text classifier before a language model, a plain autoencoder before a conditional one, and the masked model last because it reuses the windows from `stnet.py`. Two of the studies need a hand-made file before any code runs: label `data/labels/headlines_50.csv` and write `tests/fixtures/rag_questions.json` first, on paper if you like, so the evaluation exists before the model that will be judged by it.
+
+The order: `studies/cnn_digits.py`, `studies/finetune_resnet.py`, `studies/headline_severity.py`, `data/labels/headlines_50.csv`, `studies/llm_extract.py`, `tests/fixtures/rag_questions.json`, `studies/rag_docs.py`, `studies/profile_autoencoder.py`, `studies/profile_cvae.py`, `studies/masked_pretrain.py`, then `docs/reports/phase8.md`. Every study takes `--seed` (default 0) and `--device` (default `mps` when available, else `cpu`), seeds numpy and torch, and writes to a `.tmp` path with `common.atomic_write()` before renaming. Every JSON it writes has the keys `study`, `run_at`, `seed`, `device`, `seconds` and `rss_gb` from `common.log_stage()`, then the study's own numbers.
+
+#### `studies/cnn_digits.py` · study · new
+
+_Purpose._ A small convolutional network on a public digits dataset, trained on the M1's GPU, so that convolution, pooling and a training loop on MPS are seen once on data where the answer is known. Add `torchvision>=0.17` to `requirements.txt` under `# phase 8`; it brings the dataset and the transforms.
+
+_Reads._ The MNIST training and test sets through `torchvision.datasets.MNIST(root=common.DATA / 'public', download=True)`, 60,000 and 10,000 images of 28 × 28. The download is about 12 MB and lands in `data/public/`, which `.gitignore` already covers.
+
+_Writes._ `output/studies/cnn_digits.json` with `test_accuracy` (float), `epochs` (int), `seconds_per_epoch` (float), `params` (int), `device` and `confusion` (a 10 × 10 list of lists of ints). `output/studies/cnn_digits.png`: the test loss and accuracy per epoch on the left, the 16 worst-scored test images with their true and predicted digit on the right.
+
+_Run._ `python studies/cnn_digits.py --epochs 3 --batch 256 --lr 1e-3 --seed 0 --device mps`. Defaults are those values; `--device cpu` runs the same script for the timing comparison.
+
+_Must contain._
+
+- `EPOCHS = 3`, `BATCH = 256`, `LR = 1e-3` · the study's own defaults, local to the file.
+- `class DigitNet(nn.Module)` · two blocks of `Conv2d(3 × 3, padding 1) → ReLU → MaxPool2d(2)` with 16 then 32 channels, then `Flatten` and `Linear(32 · 7 · 7, 10)`; `forward(x: Tensor) -> Tensor` returns logits of shape `(B, 10)`.
+- `load_digits(root: Path, batch: int) -> tuple[DataLoader, DataLoader]` · `ToTensor()` and `Normalize((0.1307,), (0.3081,))`, `shuffle=True` on the training loader only.
+- `train_epoch(net, loader, opt, dev) -> float` · one pass with `CrossEntropyLoss`, returns the mean training loss; `net.train()` at the top.
+- `evaluate(net, loader, dev) -> tuple[float, np.ndarray]` · `net.eval()` under `torch.no_grad()`, returns accuracy and the confusion matrix.
+- `count_params(net) -> int`.
+- `main()` · argparse, seeds, the loop, the figure, the JSON through `common.atomic_write()`, the `common.log_stage('study_cnn_digits', t0, rows=len(test))` line.
+
+_Skeleton._
+
+```python
+"""A small convolutional net on MNIST, on MPS."""
+import argparse, time
+import numpy as np, torch, torch.nn as nn
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+import common
+
+EPOCHS, BATCH, LR = 3, 256, 1e-3
+
+class DigitNet(nn.Module):
+    """conv16 → pool → conv32 → pool → linear(10)."""
+    def __init__(self): ...
+    def forward(self, x): ...
+
+def load_digits(root, batch):
+    """MNIST train and test loaders with the standard normalization."""
+    ...
+
+def train_epoch(net, loader, opt, dev):
+    """One pass; returns mean training loss."""
+    ...
+
+def evaluate(net, loader, dev):
+    """Accuracy and the 10 × 10 confusion matrix on a loader."""
+    ...
+
+def count_params(net): ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--epochs", type=int, default=EPOCHS); ap.add_argument("--batch", type=int, default=BATCH)
+    ap.add_argument("--lr", type=float, default=LR); ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--device", default="mps" if torch.backends.mps.is_available() else "cpu")
+    a = ap.parse_args(); t0 = time.time(); torch.manual_seed(a.seed); np.random.seed(a.seed)
+    ...
+    common.log_stage("study_cnn_digits", t0, rows=10_000)
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ After three epochs `test_accuracy` in the JSON is above 0.98; below 0.95 the normalization or the loss is wrong. `--device cpu` and `--device mps` give the same accuracy to two decimals and the JSON's `seconds_per_epoch` is the timing table's first row. The right panel of the figure shows digits a person would also misread (4 for 9, 3 for 5).
+
+#### `studies/finetune_resnet.py` · study · new
+
+_Purpose._ Take an ImageNet-pretrained ResNet-18, replace its classifier head and fine-tune it on a tiny set of your own photos, with the learning-rate rule for fine-tuning: the pretrained body gets a learning rate ten times smaller than the new head, or is frozen for the first epochs. The photos live in `data/photos/<class>/`, two to four classes, 20 to 40 photos each, taken by you.
+
+_Reads._ `data/photos/<class>/*.jpg` through `torchvision.datasets.ImageFolder`, the folder name being the class; the pretrained weights through `torchvision.models.resnet18(weights='IMAGENET1K_V1')` (a 45 MB download into the torch cache).
+
+_Writes._ `output/studies/finetune_resnet.json` with `classes` (list of str), `n_train`, `n_valid` (ints), `valid_accuracy_frozen` and `valid_accuracy_finetuned` (floats), `lr_body`, `lr_head` (floats), `epochs` (int), and `valid_accuracy_scratch` (float, the same net with random weights, same budget). `output/studies/finetune_resnet.png`: validation accuracy per epoch for the three runs on one axis.
+
+_Run._ `python studies/finetune_resnet.py --photos data/photos --epochs 8 --lr-head 1e-3 --lr-body 1e-4 --freeze-epochs 3 --valid-frac 0.25 --seed 0 --device mps`. Those are the defaults.
+
+_Must contain._
+
+- `LR_HEAD = 1e-3`, `LR_BODY = 1e-4`, `FREEZE_EPOCHS = 3` · the rule in numbers: the body's rate is a tenth of the head's, and the body does not move at all for the first three epochs.
+- `load_photos(root: Path, valid_frac: float, seed: int) -> tuple[DataLoader, DataLoader, list[str]]` · `ImageFolder` with `Resize(256)`, `CenterCrop(224)`, `ToTensor()` and the ImageNet mean and std; random flips and crops on the training half only; a seeded split by file, never by folder.
+- `make_model(n_classes: int, pretrained: bool) -> nn.Module` · ResNet-18 with `fc` replaced by `Linear(512, n_classes)`.
+- `param_groups(net, lr_body: float, lr_head: float) -> list[dict]` · two groups for `AdamW`, so one optimizer carries two rates.
+- `set_body_frozen(net, frozen: bool) -> None` · flips `requires_grad` on everything except `fc`.
+- `fit(net, tr, va, epochs, lr_body, lr_head, freeze_epochs, dev) -> list[float]` · returns validation accuracy per epoch; unfreezes after `freeze_epochs`.
+- `main()` · runs `fit` three times: pretrained with the body frozen throughout, pretrained with the rule, and from scratch; writes the JSON and the figure; `common.log_stage('study_finetune_resnet', t0, rows=n_train)`.
+
+_Skeleton._
+
+```python
+"""Fine-tune a pretrained ResNet-18 on data/photos/<class>/."""
+import argparse, time
+import numpy as np, torch, torch.nn as nn
+from torch.utils.data import DataLoader, Subset
+from torchvision import datasets, models, transforms
+import common
+
+LR_HEAD, LR_BODY, FREEZE_EPOCHS = 1e-3, 1e-4, 3
+
+def load_photos(root, valid_frac, seed):
+    """ImageFolder split by file into train and validation loaders; returns the class names too."""
+    ...
+
+def make_model(n_classes, pretrained=True):
+    """ResNet-18, fc replaced by Linear(512, n_classes)."""
+    ...
+
+def param_groups(net, lr_body, lr_head):
+    """Two optimizer groups: everything but fc at lr_body, fc at lr_head."""
+    ...
+
+def set_body_frozen(net, frozen): ...
+
+def fit(net, tr, va, epochs, lr_body, lr_head, freeze_epochs, dev):
+    """Train; returns validation accuracy per epoch."""
+    ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--photos", default=str(common.DATA / "photos")); ap.add_argument("--epochs", type=int, default=8)
+    ap.add_argument("--lr-head", type=float, default=LR_HEAD); ap.add_argument("--lr-body", type=float, default=LR_BODY)
+    ap.add_argument("--freeze-epochs", type=int, default=FREEZE_EPOCHS); ap.add_argument("--valid-frac", type=float, default=0.25)
+    ap.add_argument("--seed", type=int, default=0); ap.add_argument("--device", default="mps")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ The JSON has `valid_accuracy_finetuned` above `valid_accuracy_scratch` by a wide margin on 100 photos (scratch stays near chance), and `valid_accuracy_frozen` close behind the fine-tuned number. Run once more with `--lr-body 1e-3`: the fine-tuned curve should get worse or unstable, which is the pitfall made visible; note both numbers in the report.
+
+_Watch for._ `ImageFolder` sorts class folders alphabetically and numbers them in that order; the JSON's `classes` list is that order, and the confusion you read must use it. Photos straight from an iPhone are HEIC; convert to JPEG first (`sips -s format jpeg` on a Mac), or `PIL` cannot open them.
+
+#### `studies/headline_severity.py` · study · new
+
+_Purpose._ Predict the 511 `severity` of an event from its `headline`, once with a bag-of-words logistic regression and once with a small pretrained encoder fine-tuned on the same rows, and report macro F1 and calibration for both. Add `transformers>=4.38` to `requirements.txt` under `# phase 8`.
+
+_Reads._ `data/fremont_events_log.csv`, columns `event_id`, `headline`, `severity`, `first_seen_at`; one row per event (drop duplicates on `event_id`, keep the last), rows with `severity` in `Minor`, `Moderate`, `Major` (the keys of `common.SEVERITY` with distinct values; `Unknown` is not a class, it is a missing label and is dropped). Fails loudly with the count when fewer than 300 rows remain.
+
+_Writes._ `output/studies/headline_severity.json` with `n_train`, `n_test` (ints), `classes` (list), `class_counts` (dict), and for each of `bow` and `encoder`: `macro_f1`, `accuracy`, `ece` (expected calibration error over 10 quantile bins), `log_loss` (floats), `confusion` (3 × 3 list) and `seconds`. `output/studies/headline_severity.png`: the two reliability diagrams on one axis, the diagonal drawn.
+
+_Run._ `python studies/headline_severity.py --model prajjwal1/bert-tiny --epochs 4 --lr 5e-5 --batch 32 --max-len 48 --seed 0 --device mps`. Defaults as written; `--model distilbert-base-uncased` is the slower, stronger option.
+
+_Must contain._
+
+- `MODEL = 'prajjwal1/bert-tiny'`, `EPOCHS = 4`, `LR = 5e-5`, `MAX_LEN = 48` · a fine-tuning rate, a hundred times below the 1e-3 the digits net used.
+- `load_headlines(path: Path) -> pd.DataFrame` · the read, the dedupe, the class filter, the assert.
+- `split_by_time(df: pd.DataFrame, test_frac: float = 0.25) -> tuple[pd.DataFrame, pd.DataFrame]` · sorted by `first_seen_at`, the last quarter is the test set; a random split would put the same crash's two headlines on both sides.
+- `bow_model(tr, te) -> dict` · `TfidfVectorizer(ngram_range=(1, 2), min_df=2)` into `LogisticRegression(C=1.0, max_iter=1000, class_weight='balanced')`; returns the metrics dict with the predicted probabilities.
+- `encoder_model(tr, te, model: str, epochs, lr, batch, max_len, dev) -> dict` · `AutoTokenizer` and `AutoModelForSequenceClassification.from_pretrained(model, num_labels=3)`, `AdamW`, a linear schedule with warmup over the first 10 % of steps, class weights in the loss from the training counts; returns the same dict shape.
+- `metrics(y: np.ndarray, proba: np.ndarray, classes: list[str]) -> dict` · macro F1 through `sklearn.metrics.f1_score(average='macro')`, accuracy, log loss, the confusion matrix, and `ece()`.
+- `ece(y: np.ndarray, proba: np.ndarray, bins: int = 10) -> float` · on the predicted class's probability: bin by quantile, |mean confidence − accuracy| weighted by bin size.
+- `main()` · the two runs, the figure, the JSON, `common.log_stage('study_headline_severity', t0, rows=len(df))`.
+
+_Skeleton._
+
+```python
+"""511 headline → severity: bag-of-words logistic regression beside a fine-tuned small encoder."""
+import argparse, time
+import numpy as np, pandas as pd, torch
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score, log_loss, confusion_matrix
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup
+import common
+
+MODEL, EPOCHS, LR, MAX_LEN = "prajjwal1/bert-tiny", 4, 5e-5, 48
+CLASSES = ["Minor", "Moderate", "Major"]
+def load_headlines(path):
+    """One row per event_id with a real severity; asserts at least 300 rows."""
+    ...
+
+def split_by_time(df, test_frac=0.25):
+    """Last quarter by first_seen_at is the test set."""
+    ...
+
+def ece(y, proba, bins=10):
+    """Expected calibration error on the predicted class, quantile bins."""
+    ...
+
+def metrics(y, proba, classes):
+    """macro F1, accuracy, log loss, ECE, confusion."""
+    ...
+
+def bow_model(tr, te):
+    """tf-idf 1-2 grams into a balanced logistic regression."""
+    ...
+
+def encoder_model(tr, te, model, epochs, lr, batch, max_len, dev):
+    """Fine-tune a pretrained encoder with a classification head."""
+    ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default=MODEL); ap.add_argument("--epochs", type=int, default=EPOCHS)
+    ap.add_argument("--lr", type=float, default=LR); ap.add_argument("--batch", type=int, default=32)
+    ap.add_argument("--max-len", type=int, default=MAX_LEN); ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--device", default="mps")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python -c "import json; d=json.load(open('output/studies/headline_severity.json')); print(d['bow']['macro_f1'], d['encoder']['macro_f1'], d['bow']['ece'], d['encoder']['ece'])"` prints four numbers; write them into the report whichever way they fall. A macro F1 below 0.4 for both means the headlines do not carry severity, which is a finding, not a bug; check the confusion matrix and the class counts before believing it. The reliability figure shows two curves and a diagonal.
+
+_Watch for._ Macro F1 averages the three per-class F1 scores, so the rare `Major` class counts as much as `Minor`; a model that never predicts `Major` scores at most 0.67. That is the point of the metric, and `class_weight='balanced'` and the weighted loss exist so the rare class is not ignored.
+
+#### `data/labels/headlines_50.csv` · fixture · new
+
+_Purpose._ Fifty 511 headlines with the route, direction and severity a person reads out of them, made by hand before `studies/llm_extract.py` exists, so the language model is scored against labels it never saw. It lives under `data/` because it is derived from collected data and stays out of git.
+
+_Reads._ You. Sample the fifty with `python -c "import pandas as pd; d=pd.read_csv('data/fremont_events_log.csv').drop_duplicates('event_id'); d.sample(50, random_state=0)[['event_id','headline']].to_csv('data/labels/headlines_50.csv', index=False)"`, then open the file and fill the three label columns by reading the headline alone, without looking at the event's other fields.
+
+_Writes._ Columns: `event_id` (str), `headline` (str), `route` (one of `I-880`, `I-680`, `SR-84`, `other`), `direction` (one of `N`, `S`, `E`, `W`, `both`, `unknown`), `severity` (one of `Minor`, `Moderate`, `Major`, `Unknown`). Exactly 50 rows; every label from its set; no empty cells.
+
+_Check._ `python -c "import pandas as pd; d=pd.read_csv('data/labels/headlines_50.csv'); print(len(d), d.route.unique(), d.direction.unique(), d.severity.unique())"` prints 50 and only values from the sets above. Label ten of them a second time a week later and count disagreements with yourself; that number is the ceiling any extractor can be held to, and it goes in the report.
+
+#### `studies/llm_extract.py` · study · new
+
+_Purpose._ Run a quantized open language model locally through Ollama and have it extract `route`, `direction` and `severity` from each of the fifty headlines as JSON; score exact match per field and for the whole row against `data/labels/headlines_50.csv`; print the ten worst cases with what the model said and what the label says. Ollama is an application from ollama.com, not a Python package: install it, run `ollama pull llama3.1:8b` once (about 4.9 GB, a 4-bit quantization of an 8-billion-parameter model), and the study talks to it over HTTP at `localhost:11434` with `requests`, which `requirements.txt` already has.
+
+_Reads._ `data/labels/headlines_50.csv`, all five columns; the model through `POST http://localhost:11434/api/generate` with the body `{"model", "prompt", "stream": false, "format": "json", "options": {"temperature": 0}}`.
+
+_Writes._ `output/studies/llm_extract.json` with `model` (str), `n` (int), `exact_route`, `exact_direction`, `exact_severity`, `exact_all` (floats, the share of the 50 that match), `invalid_json` (int, replies that did not parse), `seconds_per_headline` (float), `worst_ten` (a list of ten dicts with `event_id`, `headline`, `label`, `predicted`, `fields_wrong`), and `rows` (all fifty, same shape). `output/studies/llm_extract.png`: a bar per field of exact-match share, with the whole-row bar beside them.
+
+_Run._ `python studies/llm_extract.py --model llama3.1:8b --url http://localhost:11434 --labels data/labels/headlines_50.csv --shots 3 --seed 0`. Defaults as written; `--shots 0` is the zero-shot prompt for the comparison the report asks for.
+
+_Must contain._
+
+- `MODEL = 'llama3.1:8b'`, `URL = 'http://localhost:11434'`, `SCHEMA = {'route': [...], 'direction': [...], 'severity': [...]}` · the three value sets, identical to the fixture's.
+- `build_prompt(headline: str, shots: list[dict]) -> str` · the instruction, the allowed values for each field spelled out, `shots` worked examples taken from the fixture's first rows (which are then excluded from scoring), and the headline; asks for one JSON object and nothing else.
+- `ask(url: str, model: str, prompt: str, timeout: float = 120) -> dict` · one POST, `raise_for_status()`, returns the parsed `response` field as a dict, or `{}` when it does not parse; retries once on a connection error and then fails with a message saying to start Ollama.
+- `normalize(d: dict) -> dict` · strips, upper-cases directions, maps `Northbound` to `N`, `Interstate 880` to `I-880` and so on; anything outside the schema becomes `other` or `unknown`.
+- `score(labels: pd.DataFrame, preds: list[dict]) -> dict` · exact match per field and all-three, the `worst_ten` sorted by fields wrong then by `event_id`.
+- `main()` · the loop with `tqdm`, the timing, the figure, the JSON, `common.log_stage('study_llm_extract', t0, rows=50)`.
+
+_Skeleton._
+
+```python
+"""Extract route, direction and severity from 50 headlines with a local model via Ollama; exact-match scoring."""
+import argparse, json, time
+import pandas as pd, requests
+from tqdm import tqdm
+import common
+
+MODEL, URL = "llama3.1:8b", "http://localhost:11434"
+SCHEMA = {"route": ["I-880", "I-680", "SR-84", "other"],
+          "direction": ["N", "S", "E", "W", "both", "unknown"],
+          "severity": ["Minor", "Moderate", "Major", "Unknown"]}
+
+def build_prompt(headline, shots):
+    """Instruction + allowed values + worked examples + the headline; asks for one JSON object."""
+    ...
+
+def ask(url, model, prompt, timeout=120):
+    """POST /api/generate with format=json and temperature 0; returns a dict or {}."""
+    ...
+
+def normalize(d):
+    """Map free spellings onto the schema's values."""
+    ...
+
+def score(labels, preds):
+    """Exact match per field and for the row; the worst ten."""
+    ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default=MODEL); ap.add_argument("--url", default=URL)
+    ap.add_argument("--labels", default=str(common.DATA / "labels" / "headlines_50.csv"))
+    ap.add_argument("--shots", type=int, default=3); ap.add_argument("--seed", type=int, default=0)
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `curl -s localhost:11434/api/tags | head -c 200` shows the pulled model before you start. The JSON's `exact_all` is a number between 0 and 1 and `worst_ten` has ten entries with `fields_wrong` at least 1; read all ten and sort the causes into the model's mistakes, your labelling mistakes and genuinely ambiguous headlines, and put that split in the report. Running twice at temperature 0 gives identical `rows`.
+
+_Watch for._ The model holds about 5 GB of unified memory while Ollama runs. Do not run this study while training anything; quit Ollama (`ollama stop llama3.1:8b`, or the menu-bar icon) before `17b_train_stnet.py` or the LightGBM runners, or both will swap.
+
+#### `tests/fixtures/rag_questions.json` · fixture · new
+
+_Purpose._ Thirty questions about this repository whose answers are short exact strings found in its documents, written before the answerer exists so it cannot be tuned to them.
+
+_Writes._ A JSON list of 30 objects with keys `id` (int, 1 to 30), `question` (str), `answer` (str, the shortest exact answer: a number, a file name, a column name, a constant), `source` (the path of the document that contains it, one of the four `.md` files at the repository root or a page under `docs/`). Ten questions about the plan's numbers (the PeMS gap in seconds, the label threshold, the number of steps in the label window), ten about names (which runner writes `data/labels/`, which module holds the profile), ten about decisions in `docs/decisions/` and `docs/stages/`.
+
+_Check._ `python -c "import json; q=json.load(open('tests/fixtures/rag_questions.json')); assert len(q)==30 and all(set(x)=={'id','question','answer','source'} for x in q); print('ok')"` prints `ok`. Every `source` path exists: `python -c "import json,os; print([x['source'] for x in json.load(open('tests/fixtures/rag_questions.json')) if not os.path.exists(x['source'])])"` prints `[]`.
+
+#### `studies/rag_docs.py` · study · new
+
+_Purpose._ A retrieval-augmented question answerer over the repository's own documents: chunk the markdown, embed the chunks with a sentence-transformers model, retrieve the nearest chunks for a question, and let the same local model as `llm_extract.py` answer from those chunks only. Scored on the thirty questions. Add `sentence-transformers>=2.5` to `requirements.txt` under `# phase 8`.
+
+_Reads._ Every `.md` file at the repository root and under `docs/` (recursively, `notebook/` excluded because it is personal); `tests/fixtures/rag_questions.json`; the embedding model `all-MiniLM-L6-v2` (an 80 MB download into the Hugging Face cache); Ollama at `localhost:11434` as before.
+
+_Writes._ `output/studies/rag_docs.json` with `n_docs`, `n_chunks` (ints), `embed_model`, `llm` (str), `k` (int), `retrieval_hit_at_k` (float: the share of questions whose `source` document is among the retrieved chunks), `exact_match` (float, after normalization), `exact_match_no_retrieval` (float: the same model answering from memory, which is the control), `seconds_per_question` (float), and `rows` (per question: `id`, `answer`, `predicted`, `retrieved_sources`, `correct`). `output/studies/rag_docs.png`: exact match with and without retrieval, and hit-at-k, as three bars.
+
+_Run._ `python studies/rag_docs.py --docs . --questions tests/fixtures/rag_questions.json --embed all-MiniLM-L6-v2 --model llama3.1:8b --k 4 --chunk 120 --seed 0`. Defaults as written.
+
+_Must contain._
+
+- `EMBED = 'all-MiniLM-L6-v2'`, `K = 4`, `CHUNK_WORDS = 120`, `OVERLAP_WORDS = 30`.
+- `load_docs(root: Path) -> list[tuple[str, str]]` · `(path, text)` for every included markdown file.
+- `chunk(text: str, words: int, overlap: int) -> list[str]` · fixed-size word windows with overlap; the heading above a chunk is prepended to it so a chunk knows what it is about.
+- `embed(model, texts: list[str]) -> np.ndarray` · `SentenceTransformer.encode(normalize_embeddings=True)`, float32, shape `(n, 384)`.
+- `retrieve(q_vec: np.ndarray, index: np.ndarray, k: int) -> np.ndarray` · cosine similarity is a dot product on normalized vectors; `argsort` on one matrix product; no vector database needed for a few hundred chunks.
+- `answer(question: str, chunks: list[str], model: str, url: str) -> str` · the prompt says to answer with the shortest exact value using only the passages, or `unknown`; reuses `ask()`'s request shape from `llm_extract.py` (copy the ten lines; studies do not import each other).
+- `normalize(s: str) -> str` · lower-case, strip punctuation and backticks, collapse spaces, so `0.6` and `0.6.` agree.
+- `main()` · builds the index, runs every question with and without retrieval, scores, writes, `common.log_stage('study_rag_docs', t0, rows=30)`.
+
+_Skeleton._
+
+```python
+"""Retrieval-augmented answers over the repo's markdown, scored on 30 questions."""
+import argparse, json, re, time
+from pathlib import Path
+import numpy as np, requests
+from sentence_transformers import SentenceTransformer
+import common
+
+EMBED, K, CHUNK_WORDS, OVERLAP_WORDS = "all-MiniLM-L6-v2", 4, 120, 30
+
+def load_docs(root):
+    """(path, text) for every .md at the root and under docs/."""
+    ...
+
+def chunk(text, words=CHUNK_WORDS, overlap=OVERLAP_WORDS):
+    """Overlapping word windows, each prefixed with its nearest heading."""
+    ...
+
+def embed(model, texts): ...
+
+def retrieve(q_vec, index, k=K):
+    """Indices of the k nearest chunks by cosine similarity."""
+    ...
+
+def answer(question, chunks, model, url):
+    """Ask the local model to answer from the passages only."""
+    ...
+
+def normalize(s): ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--docs", default="."); ap.add_argument("--questions", default="tests/fixtures/rag_questions.json")
+    ap.add_argument("--embed", default=EMBED); ap.add_argument("--model", default="llama3.1:8b")
+    ap.add_argument("--k", type=int, default=K); ap.add_argument("--chunk", type=int, default=CHUNK_WORDS)
+    ap.add_argument("--seed", type=int, default=0)
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `retrieval_hit_at_k` above 0.8 before you look at the answers; if retrieval misses the source document, no answer can be right and the fix is in `chunk()` or `k`, not in the prompt. `exact_match` above `exact_match_no_retrieval`, and the gap is the number the report leads with. Ask one question by hand and print the four retrieved chunks; they should visibly contain the answer.
+
+#### `studies/profile_autoencoder.py` · study · new
+
+_Purpose._ An autoencoder on daily speed profiles, one row per station-day of 288 values, trained on training-split days; reconstruction error ranks every station-day by how unlike a normal day it is, and the top five are inspected.
+
+_Reads._ `data/pems_processed/YYYY-MM.parquet` for every month, columns `station_id`, `timestamp`, `speed`; the split dates from `split.py` (the same function the trees used, so training days are the trees' training days). Asserts `common.STEPS_PER_DAY` rows per station per local day after the pivot.
+
+_Writes._ `output/studies/profile_autoencoder.json` with `n_train_days`, `n_all_days` (ints), `latent` (int), `epochs` (int), `train_mse`, `valid_mse` (floats), `top_days` (a list of the 20 highest-error station-days: `station_id`, `date`, `error`, `observed_frac`), and `error_by_weekday` (dict). `output/studies/profile_autoencoder.png`: the five worst station-days, real profile and reconstruction on each panel, local hour on the x axis.
+
+_Run._ `python studies/profile_autoencoder.py --latent 8 --epochs 40 --batch 128 --lr 1e-3 --seed 0 --device mps`. Defaults as written.
+
+_Must contain._
+
+- `LATENT = 8`, `EPOCHS = 40`.
+- `daily_matrix(df: pd.DataFrame) -> tuple[np.ndarray, pd.DataFrame]` · pivot to `(station-days, 288)` in local time (`common.TZ`), speed divided by 100 into [0, 1], slots missing after the cleaning stage's forward fill imputed with the station's slot median and counted into `observed_frac`; drops station-days with more than 20 % missing; returns the matrix and a key frame with `station_id`, `date`, `observed_frac`.
+- `class ProfileAE(nn.Module)` · encoder `288 → 64 → latent`, decoder `latent → 64 → 288`, ReLU between, sigmoid at the output; `forward(x) -> Tensor` returns the reconstruction; `encode(x) -> Tensor`.
+- `fit(net, X_train: np.ndarray, X_valid: np.ndarray, epochs, batch, lr, dev) -> tuple[list[float], list[float]]` · MSE loss, `AdamW`, returns the two loss curves.
+- `errors(net, X: np.ndarray, dev) -> np.ndarray` · per-row mean squared error, `net.eval()`, no grad.
+- `main()` · load, split, fit, rank, plot, write, `common.log_stage('study_profile_autoencoder', t0, rows=len(X))`.
+
+_Skeleton._
+
+```python
+"""Autoencoder on daily speed profiles; reconstruction error ranks station-days."""
+import argparse, time
+import numpy as np, pandas as pd, torch, torch.nn as nn
+import common, split
+
+LATENT, EPOCHS = 8, 40
+
+def daily_matrix(df):
+    """(station-days × 288) in local time, scaled to [0, 1]; returns the matrix and its key frame."""
+    ...
+
+class ProfileAE(nn.Module):
+    """288 → 64 → latent → 64 → 288."""
+    def __init__(self, latent=LATENT): ...
+    def encode(self, x): ...
+    def forward(self, x): ...
+
+def fit(net, X_train, X_valid, epochs, batch, lr, dev):
+    """MSE training; returns train and validation loss per epoch."""
+    ...
+
+def errors(net, X, dev):
+    """Per-row reconstruction MSE."""
+    ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--latent", type=int, default=LATENT); ap.add_argument("--epochs", type=int, default=EPOCHS)
+    ap.add_argument("--batch", type=int, default=128); ap.add_argument("--lr", type=float, default=1e-3)
+    ap.add_argument("--seed", type=int, default=0); ap.add_argument("--device", default="mps")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `valid_mse` is within a factor of two of `train_mse`; far above it means the latent is too small or the split leaked nothing and the days differ. The five panels show days that are visibly odd: a detector stuck at one value, a holiday on a weekday, a closure. If the top five are all low `observed_frac` days, the study has rediscovered `MIN_OBSERVED`; say so in the report and rerun with those days dropped to see what comes next.
+
+#### `studies/profile_cvae.py` · study · new
+
+_Purpose._ A conditional variational autoencoder that generates a daily profile given the weekday and whether it rained, on the same matrix as the autoencoder; the loss is reconstruction plus the KL term from the ELBO; generated profiles are plotted beside real ones and the 5 pm speed's distribution is compared between generated and real days.
+
+_Reads._ The same monthly Parquet as `profile_autoencoder.py`; `data/weather/openmeteo_hourly.parquet`, columns `timestamp`, `precip_mm`, summed per local day, a day being wet when the sum is at least 1 mm.
+
+_Writes._ `output/studies/profile_cvae.json` with `latent`, `epochs` (ints), `beta` (float), `train_loss`, `valid_loss`, `kl_valid` (floats), `n_wet_days`, `n_dry_days` (ints), and `five_pm` (a dict per condition, `wd_dry`, `wd_wet`, `sat_dry`, `sun_dry`, each with `real_mean`, `real_std`, `gen_mean`, `gen_std`, `ks_stat`, `ks_p` from `scipy.stats.ks_2samp` through scikit-learn's dependency, `n_real`, `n_gen`). `output/studies/profile_cvae.png`: left, eight generated weekday-dry profiles in grey behind eight real ones; right, histograms of the 5 pm speed, real against generated, for weekday-dry and weekday-wet.
+
+_Run._ `python studies/profile_cvae.py --latent 8 --epochs 60 --beta 1.0 --n-gen 500 --seed 0 --device mps`. Defaults as written.
+
+_Must contain._
+
+- `LATENT = 8`, `EPOCHS = 60`, `BETA = 1.0`, `SLOT_5PM = 17 * 12` · the 5 pm slot index on the 288-slot day.
+- `conditions(keys: pd.DataFrame, weather: pd.DataFrame) -> np.ndarray` · a `(n, 8)` float32 matrix: weekday one-hot (7) and `is_wet` (1), built from the key frame's `date`.
+- `class ProfileCVAE(nn.Module)` · encoder `288 + 8 → 64 → (mu, logvar)`, decoder `latent + 8 → 64 → 288` with sigmoid; `encode(x, c) -> tuple[Tensor, Tensor]`; `reparameterize(mu, logvar) -> Tensor`; `decode(z, c) -> Tensor`; `forward(x, c) -> tuple[Tensor, Tensor, Tensor]`.
+- `loss_fn(recon, x, mu, logvar, beta) -> tuple[Tensor, Tensor, Tensor]` · sum-of-squares reconstruction plus `beta` × KL, KL = −½ Σ (1 + logvar − mu² − exp(logvar)); returns total, reconstruction, KL.
+- `fit(net, X, C, X_valid, C_valid, epochs, batch, lr, beta, dev) -> dict`.
+- `generate(net, c: np.ndarray, n: int, dev, seed) -> np.ndarray` · `n` profiles from `z ~ N(0, I)` for one condition row, scaled back to mph.
+- `compare_5pm(real: np.ndarray, gen: np.ndarray) -> dict` · the means, stds and the two-sample KS statistic and p-value.
+- `main()` · load, condition, fit, generate per condition, plot, write, `common.log_stage('study_profile_cvae', t0, rows=len(X))`.
+
+_Skeleton._
+
+```python
+"""Conditional VAE generating daily profiles given weekday and rain; 5 pm distribution comparison."""
+import argparse, time
+import numpy as np, pandas as pd, torch, torch.nn as nn
+from scipy.stats import ks_2samp
+import common, split
+
+LATENT, EPOCHS, BETA, SLOT_5PM = 8, 60, 1.0, 17 * 12
+
+def conditions(keys, weather):
+    """(n, 8): weekday one-hot and is_wet."""
+    ...
+
+class ProfileCVAE(nn.Module):
+    """Encoder 296 → 64 → (mu, logvar); decoder latent+8 → 64 → 288."""
+    def __init__(self, latent=LATENT): ...
+    def encode(self, x, c): ...
+    def reparameterize(self, mu, logvar): ...
+    def decode(self, z, c): ...
+    def forward(self, x, c): ...
+
+def loss_fn(recon, x, mu, logvar, beta=BETA):
+    """Reconstruction + beta × KL; returns (total, recon, kl)."""
+    ...
+
+def fit(net, X, C, X_valid, C_valid, epochs, batch, lr, beta, dev): ...
+
+def generate(net, c, n, dev, seed):
+    """n profiles in mph for one condition row."""
+    ...
+
+def compare_5pm(real, gen):
+    """Means, stds and the KS test on the 5 pm speed."""
+    ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--latent", type=int, default=LATENT); ap.add_argument("--epochs", type=int, default=EPOCHS)
+    ap.add_argument("--beta", type=float, default=BETA); ap.add_argument("--n-gen", type=int, default=500)
+    ap.add_argument("--seed", type=int, default=0); ap.add_argument("--device", default="mps")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ The left panel's generated profiles have two rush-hour dips like the real ones, not one flat mean curve. In `five_pm`, `wd_dry` has `gen_mean` within 3 mph of `real_mean` and a `gen_std` that is not a third of `real_std`; a very small generated spread with a KL near zero is posterior collapse, and `--beta 0.5` or more epochs are the fix. The weekday-wet 5 pm mean is below the weekday-dry one in both real and generated columns.
+
+_Watch for._ `kl_valid` near zero with a good reconstruction means the decoder ignores `z` and the samples all look alike: judged by eye they look fine, which is why the 5 pm histogram exists. Judge samples by a distribution comparison, never by a plot alone.
+
+#### `studies/masked_pretrain.py` · study · new
+
+_Purpose._ Pretrain a small network on every Fremont station with a masked-step objective, hide random steps of the 12-step window and predict them from the rest, then freeze it and fit a linear probe on its representation for the slow-episode label; compare the probe's validation AP with a logistic regression on the raw window features on the same rows.
+
+_Reads._ `data/features/YYYY-MM.parquet` for every month, the columns `station_id`, `timestamp`, `speed_ratio`, `occ_lag_0`, `flow_lag_0`, `incident_active`, `min_sin`, `min_cos`, `speed_lag_1` to `speed_lag_12` as available, and `y_30`; the split from `split.py`. The windows are built the way `stnet.py` builds them, and the study imports that code rather than copying it.
+
+_Writes._ `output/studies/masked_pretrain.json` with `n_windows_train`, `n_windows_valid` (ints), `mask_frac` (float), `pretrain_epochs` (int), `pretrain_loss_valid` (float), `probe_ap` (float), `raw_ap` (float), `persistence_ap` (float), `hidden` (int) and `prevalence` (float). `output/studies/masked_pretrain.png`: the pretraining loss curve on the left, the three APs as bars on the right.
+
+_Run._ `python studies/masked_pretrain.py --mask-frac 0.25 --epochs 10 --hidden 64 --seed 0 --device mps`. Defaults as written.
+
+_Must contain._
+
+- `MASK_FRAC = 0.25`, `EPOCHS = 10`, `HIDDEN = 64`.
+- `load_windows(months: list[str]) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]` · calls the window builder from `stnet.py` (the one `17b_train_stnet.py` uses) on the training and validation months; returns `X_train`, `y_train`, `X_valid`, `y_valid` where `X` is `(windows, 12, channels)` per station and `y` is `y_30`.
+- `mask_steps(X: Tensor, frac: float, gen: torch.Generator) -> tuple[Tensor, Tensor]` · zeroes a random `frac` of the 12 steps per window and returns the masked input and the boolean mask.
+- `class MaskedEncoder(nn.Module)` · a `GRU(channels, hidden, batch_first=True)` and a `Linear(hidden, channels)` head that predicts every step; `forward(x) -> Tensor` returns `(B, 12, channels)`; `represent(x) -> Tensor` returns the final hidden state `(B, hidden)`.
+- `pretrain(net, X_train, X_valid, epochs, mask_frac, dev, seed) -> list[float]` · MSE on the masked steps only; returns validation loss per epoch.
+- `probe(Z_train, y_train, Z_valid, y_valid) -> float` · `LogisticRegression(max_iter=1000, class_weight='balanced')` on standardized `Z`; returns validation AP through `sklearn.metrics.average_precision_score`.
+- `raw_baseline(X_train, y_train, X_valid, y_valid) -> float` · the same logistic regression on the flattened `(12 × channels)` window; and the persistence AP from the window's last `speed_ratio` step against `common.SLOW_RATIO`.
+- `main()` · windows, pretraining, the two probes, the figure, the JSON, `common.log_stage('study_masked_pretrain', t0, rows=len(X_train))`.
+
+_Skeleton._
+
+```python
+"""Masked-step pretraining on all stations, then a linear probe against raw features for y_30."""
+import argparse, time
+import numpy as np, torch, torch.nn as nn
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import average_precision_score as ap
+import common, split, stnet
+
+MASK_FRAC, EPOCHS, HIDDEN = 0.25, 10, 64
+
+def load_windows(months):
+    """Windows and y_30 for training and validation months, built by stnet's window code."""
+    ...
+
+def mask_steps(X, frac, gen):
+    """Zero a random share of steps; returns (masked X, mask)."""
+    ...
+
+class MaskedEncoder(nn.Module):
+    """GRU encoder with a per-step reconstruction head."""
+    def __init__(self, channels, hidden=HIDDEN): ...
+    def represent(self, x): ...
+    def forward(self, x): ...
+
+def pretrain(net, X_train, X_valid, epochs, mask_frac, dev, seed):
+    """MSE on masked steps only; returns validation loss per epoch."""
+    ...
+
+def probe(Z_train, y_train, Z_valid, y_valid):
+    """Balanced logistic regression on frozen representations; validation AP."""
+    ...
+
+def raw_baseline(X_train, y_train, X_valid, y_valid):
+    """The same regression on the flattened raw window, and persistence AP."""
+    ...
+
+def main():
+    ap_ = argparse.ArgumentParser()
+    ap_.add_argument("--mask-frac", type=float, default=MASK_FRAC); ap_.add_argument("--epochs", type=int, default=EPOCHS)
+    ap_.add_argument("--hidden", type=int, default=HIDDEN); ap_.add_argument("--seed", type=int, default=0)
+    ap_.add_argument("--device", default="mps")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `pretrain_loss_valid` falls over the epochs and ends below the loss of predicting the window mean (compute that once and print it). `probe_ap`, `raw_ap` and `persistence_ap` are all above `prevalence`; whichever of the first two wins, the report says by how much, and if `raw_ap` wins, that is the plan's practical rule confirmed on this data, not a failure.
+
+_Watch for._ Pretraining on all months and probing on the validation months lets the encoder see validation speeds during pretraining, which is leakage through the representation. Pretrain on training months only, as `load_windows` does, and say in the report that you checked.
+
+#### `docs/reports/phase8.md` · doc · new
+
+_Purpose._ The eight studies' numbers and figures on one page, each with two or three sentences of what it means for the traffic model. The reader of this page has not run anything; every number comes from the JSON files and every figure is linked by its `output/studies/` path.
+
+_Must contain._
+
+- `Digits and transfer` · the CNN's test accuracy and seconds per epoch on MPS and CPU; the three ResNet curves with the fine-tuned, frozen and scratch accuracies, and the sentence about the learning-rate rule with the number from the `--lr-body 1e-3` rerun.
+- `Headline severity` · a list with macro F1, accuracy and ECE for the bag-of-words model and the encoder, the reliability figure, the class counts, and one sentence on which to use if `severity` ever goes missing in the feed.
+- `Extraction with a local model` · exact match per field and for the whole row, zero-shot beside few-shot, the self-agreement ceiling from relabelling ten headlines, and the worst ten sorted into model error, label error and ambiguity, with the counts.
+- `Retrieval-augmented answers` · hit-at-k, exact match with and without retrieval, and the questions the model got wrong with retrieval and why.
+- `Strange days` · the autoencoder's top five station-days with a sentence each, and whether `observed_frac` explains them.
+- `Generated days` · the profile figure, the `five_pm` list per condition with the KS statistic, and the posterior-collapse check.
+- `Pretraining` · `probe_ap`, `raw_ap`, `persistence_ap` and `prevalence`, and the leakage check.
+- `What transfers to the traffic model` · three to five sentences: what, if anything, changes in the pipeline because of this phase, and what does not, with the plan's rule about tabular data and trees restated in your own words.
+
+_Check._ Every number on the page can be found by `grep` in a file under `output/studies/`; every figure path on the page exists (`for f in $(grep -o 'output/studies/[a-z_]*\.png' docs/reports/phase8.md); do test -f $f || echo missing $f; done` prints nothing).
 
 ### Done when
 
-- A headline severity classifier with macro F1 and calibration next to the bag-of-words baseline.
-- An extraction accuracy number for the local LLM with an error analysis of its worst ten cases.
-- A generated-profile plot next to real ones, with a distribution comparison of the 5 pm speed.
+- `pip install -r requirements.txt` finishes clean with `torchvision`, `transformers` and `sentence-transformers` under `# phase 8`, and `python -c "import torchvision, transformers, sentence_transformers; print('ok')"` prints `ok`.
+- `python studies/cnn_digits.py` writes `output/studies/cnn_digits.json` with `test_accuracy` above 0.98, and running it with `--device cpu` gives the same accuracy to two decimals and a `seconds_per_epoch` you wrote into the report.
+- `python studies/finetune_resnet.py` on your own photos in `data/photos/<class>/` writes a JSON where `valid_accuracy_finetuned` beats `valid_accuracy_scratch`, and a rerun with `--lr-body 1e-3` gives a worse or unstable curve that the report names.
+- A headline severity classifier with macro F1 and calibration next to the bag-of-words baseline: `output/studies/headline_severity.json` has `macro_f1` and `ece` under both `bow` and `encoder`, and `output/studies/headline_severity.png` shows two reliability curves against the diagonal.
+- An extraction accuracy number for the local LLM with an error analysis of its worst ten: `output/studies/llm_extract.json` has `exact_all` and a ten-entry `worst_ten`, and `docs/reports/phase8.md` sorts those ten into model error, label error and ambiguity.
+- `output/studies/rag_docs.json` has `retrieval_hit_at_k` above 0.8 and `exact_match` above `exact_match_no_retrieval`, scored on the thirty questions in `tests/fixtures/rag_questions.json`, which the check command above accepts.
+- `output/studies/profile_autoencoder.png` shows five station-days with their reconstructions, and the JSON's `top_days` has 20 entries each with `observed_frac`.
+- A generated-profile plot next to real ones, with a distribution comparison of the 5 pm speed: `output/studies/profile_cvae.png` shows generated profiles behind real ones and the 5 pm histograms, and the JSON's `five_pm.wd_dry` has `ks_stat` and `ks_p`.
+- `output/studies/masked_pretrain.json` has `probe_ap`, `raw_ap` and `persistence_ap`, all above `prevalence`, and the report's last section says what, if anything, this phase changes in the pipeline.
 
 ### Pitfalls
 
-- Fine-tuning with a learning rate meant for training from scratch.
-- Trusting an LLM's output without an eval set.
-- Judging generative samples by eye alone.
+- The fine-tuned ResNet gets worse with every epoch, or its accuracy jumps around. You are fine-tuning with a learning rate meant for training from scratch, and the pretrained features are being overwritten faster than the head can use them. Keep `LR_BODY` at a tenth of `LR_HEAD` and freeze the body for `FREEZE_EPOCHS` first, as `finetune_resnet.py`'s `param_groups()` and `set_body_frozen()` do; the same rule applies to `headline_severity.py`, where 5e-5 is already the fine-tuning rate.
+- The language model's extractions look right when you read a few, and the report says so. Trusting an LLM's output without an eval set is reading the easy cases; the fifty hand labels in `data/labels/headlines_50.csv` exist so that `exact_all` is a measured number and the worst ten are the cases you did not read. Label first, then run `llm_extract.py`, and never edit a label after seeing the model's answer.
+- The generated profiles look fine on the plot and the report calls the VAE a success. Judging generative samples by eye alone misses collapse: a decoder that ignores its latent draws the same plausible day every time. `profile_cvae.py`'s `compare_5pm()` and the `kl_valid` number are the check; a KS statistic near 1 or a generated standard deviation a fraction of the real one is a failed model with pretty samples.
+- The masked-pretraining probe beats the raw features by a wide margin, and only on the validation months. The encoder saw validation speeds during pretraining, so the representation carries the future. `load_windows()` pretrains on training months only; if you changed that to get more data, the probe number is worthless.
+- `llm_extract.py` or `rag_docs.py` hangs, then fails with a connection error. Ollama is not running, or the model was never pulled; `curl localhost:11434/api/tags` shows what is loaded. Start the app, `ollama pull llama3.1:8b`, and quit it before any training run, because the model holds about 5 GB of the 16.
+- The bag-of-words model's macro F1 is high and the encoder's is near 0.33. The encoder trained on a shuffled split or on too few epochs, or `MAX_LEN` cut the headline before the words that carry severity. Check `split_by_time()` is used for both models, print a few tokenized headlines to see where 48 tokens ends, and confirm the loss falls on the first hundred steps before believing any number.
+- The autoencoder's five strangest days are all detector failures. Reconstruction error found `observed_frac`, which the cleaning stage already handles with `MIN_OBSERVED`. Drop station-days below 80 % observed in `daily_matrix()` before ranking, and report the top five that remain; that is the list worth reading.
 
 ## Phase 9: ML engineering and scale
 
@@ -11576,25 +12518,652 @@ compute-optimal: N_opt ∝ C^{0.5}, D_opt ∝ C^{0.5};  roughly 20 tokens per pa
 
 ### Build
 
-_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new._
+_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new._
 
-- `19_predict_live.py` in replay mode; `20_monitor.py`; four launchd plists; `make setup` and `make all`.
-- A golden-file test that serving features equal training features for one stored day; a memory and time line in every stage's log.
-- Wrap the predictor in FastAPI, containerize it, run the golden test through the endpoint, and measure latency.
-- Profile the spatio-temporal net's training step on the M1 and speed up its largest cost; write a compute budget for a statewide model.
-- Score the pipeline against the ML Test Score rubric and turn the gaps into a `tests/` plan.
+
+This phase turns the pipeline into something that runs without you: the serving loop (stage 12), the monitor with its retrain and rollback rules (stage 13), the four launchd jobs that run them, the finished `Makefile`, and the tests that prove the served features are the trained features. Then it puts a door on the predictions (a FastAPI service in a container), profiles the network's training step, and writes two documents: a compute budget for a statewide model and a scorecard against the ML Test Score rubric whose gaps become a `tests/` plan. Everything is built on the rule the plan repeats and the walkthrough opens with: one `features.py`, imported by `13_feature_engineering.py` and by `19_predict_live.py`, never copied.
+
+Write the files in this order. First `models/manifest.json` and `.env.example`, because the loop reads the manifest and the plists read the root path. Then `19_predict_live.py` in replay mode, and `tests/test_golden_features.py` with its `data/golden/` day, because the loop is not trusted until the golden test passes. Then `20_monitor.py`, which needs a week of the loop's log to have anything to score, so start the loop before writing the monitor. Then the four plists and the `Makefile`, and load the jobs; the week the Done-when list needs starts the day they load. While that week runs: `serve/app.py`, `serve/Dockerfile`, `tests/test_serve.py`, `studies/profile_stnet_step.py`, `docs/compute_budget.md`, `docs/ml_test_score.md`, `docs/stages/19_predict_live.md`, `docs/stages/20_monitor.md`, and every stage page still missing, because `make all` now fails without them. Add `fastapi>=0.110`, `uvicorn>=0.27` and `httpx>=0.27` to `requirements.txt` under `# phase 9` when you reach the service.
+
+#### `models/manifest.json` · config · new
+
+_Purpose._ The model registry as a folder with a manifest: which files are live, trained on which split and when, and the previous set that `--rollback` restores. `19_predict_live.py` refuses to start on a set whose hashes do not match; `20_monitor.py --promote` and `--rollback` are the only writers. First written by hand after phase 7's models exist, from the command in the check below.
+
+_Must contain._
+
+- `live` · an object with `set_id` (str, the promotion time as `YYYY-MM-DDTHH:MMZ`), `label` (`thresh0.6_win3`, from the model file names), `trained_at` (ISO UTC), `split` (an object with `train`, `valid`, `test`, each a list of `YYYY-MM` months as `split.py` chose them), `profile` (the file name of the train-only profile, `profile_<split>.parquet`), `files` (an object mapping each file name under `models/` to its `sha256`: the three `gbt_h{h}_thresh0.6_win3.txt`, the three `gbt_h{h}_features.json`, `categorical_dtypes.joblib`, the three `iso_h{h}.joblib`, `calibration.json`, the profile), `reference_ap` (an object `{"15": float, "30": float, "60": float}`, the validation AP `16b_calibrate_select.py` stored in `calibration.json`, copied here at promotion so the monitor's decay rule has a fixed reference), and `promoted_at` (ISO UTC).
+- `previous` · the same shape for the set now in `models/previous/`, or `null` before the first retrain.
+- `history` · a list of `{set_id, promoted_at, action, reason}` with `action` one of `promote`, `rollback`, `refused`, newest last.
+
+_Check._ `python -c "import json,hashlib; m=json.load(open('models/manifest.json')); bad=[f for f,h in m['live']['files'].items() if hashlib.sha256(open('models/'+f,'rb').read()).hexdigest()!=h]; print('bad', bad)"` prints `bad []`. The first manifest is written by `python 20_monitor.py --init`, which hashes what is in `models/` and reads the split months from `split.py`; run it once, read the file, commit nothing (it lives under `models/`, which git ignores).
+
+#### `.env.example` · config · changed
+
+_Purpose._ Phase 9 adds the last three names LAYOUT lists: `TRAFFIC1_ROOT`, the absolute path the plists are rendered with; `PREDICT_INTERVAL_S`, the seconds between cycles when the loop runs by hand, default `common.PREDICT_SECONDS`; `ALERT_PRECISION`, the precision `tau_h` must keep, default `common.ALERT_PRECISION`. Each is read through `common.env(name, default)` and may stay empty.
+
+_Check._ `grep -c 'TRAFFIC1_ROOT\|PREDICT_INTERVAL_S\|ALERT_PRECISION' .env.example` prints `3`, and `git diff --stat .env.example` shows three added lines and nothing removed.
+
+#### `19_predict_live.py` · runner · new
+
+_Purpose._ Stage 12. Every five minutes: load the live model set once, build the last 13 steps of features for every registry station with `features.build_features`, the same function `13_feature_engineering.py` calls, predict with the three LightGBM models, apply the isotonic maps and `tau_h` from `models/calibration.json`, write `output/predictions_latest.json` atomically and append to the prediction log. Until a real-time speed feed exists it runs in replay mode over yesterday's cleaned file at the wall-clock slot, which proves the whole loop end to end on real data. The walkthrough of lesson 12 step 1 is the core; the rest is loading, checking and logging around it.
+
+_Reads._ `models/manifest.json` (`live.files`, `live.profile`, `live.set_id`) and every file it names: `models/gbt_h{h}_thresh0.6_win3.txt`, `models/gbt_h{h}_features.json`, `models/categorical_dtypes.joblib` (the `ctype` dict), `models/iso_h{h}.joblib`, `models/calibration.json` (`cal[str(h)]["tau"]`), `models/profile_<split>.parquet`. `data/pems_meta/fremont_stations.parquet`: `ID`, `fwy`, `dir`, `abs_pm`, `upstream_id`, `downstream_id`, `lanes`, `length`. In replay mode, `data/pems_processed/YYYY-MM.parquet` for yesterday's month: `station_id`, `timestamp`, `speed`, `occupancy`, `flow`, `observed_frac`, `samples`. `data/fremont_events_log.csv`: `event_id`, `road_names`, `directions`, `lat`, `lon`, `severity`, `first_seen_at`, `last_seen_at`, for the live incident window `[first_seen_at, last_seen_at + POLL_SECONDS]`. Rain from `weather.py`: the archive parquet in replay mode (what the training table saw for that hour), the forecast function in live mode. `.env`: `PREDICT_INTERVAL_S`.
+
+_Writes._ `output/predictions_latest.json` with keys `generated_at` (ISO UTC), `input_ts` (ISO UTC, the newest timestamp in the buffer), `mode` (`replay` or `live`), `set_id` (from the manifest), `rows` (a list, one object per station and horizon: `station_id` int, `fwy` int, `dir` str, `abs_pm` float, `h` int (minutes: the plan calls this field `horizon`; the walkthrough and the log column call it `h`, and the delayed-scoring step reads `log.h`, so `h` it is), `p` float, `alert` bool). `output/predictions_log.parquet/YYYY-MM-DD.parquet`, one part per UTC day so appending rewrites at most one day; `pd.read_parquet('output/predictions_log.parquet')` reads the whole directory as one table, which is what the walkthrough's step 3 does. Columns: `generated_at` datetime64[ns, UTC], `input_ts` datetime64[ns, UTC], `station_id` int32, `h` int16, `p` float32, `alert` int8, `mode` category, `set_id` str. Then `common.log_stage('predict', t0, rows=n, input_ts=..., mode=...)`.
+
+_Run._ `python 19_predict_live.py --replay --once` is one cycle, what `make predict` and the plist run. `--replay` (flag, off by default; without it the runner exits with code 2 and the plan's sentence that no real-time feed exists yet); `--once` (flag; otherwise the runner loops every `PREDICT_INTERVAL_S` seconds, default `common.PREDICT_SECONDS`); `--at 2026-03-15T17:00` (a UTC slot to replay directly from its month file, no day subtracted; the golden tests use it); `--out output` (the output folder; tests point it at a temporary one); `--manifest models/manifest.json`.
+
+_Must contain._
+
+- `@dataclass class ModelSet` · `models: dict[int, lgb.Booster]`, `isos: dict[int, IsotonicRegression]`, `feats: list[str]`, `ctype: dict`, `tau: dict[int, float]`, `profile: pd.DataFrame`, `set_id: str`.
+- `sha256(path: Path) -> str`.
+- `load_model_set(manifest: Path) -> ModelSet` · reads the manifest, checks every listed file's hash and exits with the file name on a mismatch (a half-swapped set), loads the three boosters, maps and feature lists; asserts the three feature lists are identical (the walkthrough loads `gbt_h30_features.json` for all three, which is right only while they agree) and that `ctype` covers `common.CATEGORICALS`.
+- `slot_now(now: pd.Timestamp) -> pd.Timestamp` · floors to the 5-minute grid in UTC.
+- `load_last_13_steps(t: pd.Timestamp, replay: bool, registry: pd.DataFrame) -> pd.DataFrame` · the walkthrough's name. In replay mode, `t` minus one day is the slot; reads that month's cleaned Parquet and returns the rows with `timestamp` in the 13 slots ending there for every registry station; asserts 13 rows per station, one row per slot, and speeds within `common.SPEED_RANGE`; fails loudly with the month file name if the day is not there yet. In live mode raises `NotImplementedError('no real-time speed feed; see the plan, Limitations')`.
+- `active_events(t: pd.Timestamp, events: pd.DataFrame) -> pd.DataFrame` · rows with `first_seen_at <= t <= last_seen_at + common.POLL_SECONDS`; the live window, documented beside the archive window in `docs/stages/19_predict_live.md`.
+- `assemble(buf: pd.DataFrame, t: pd.Timestamp, ms: ModelSet, registry, events, rain) -> pd.DataFrame` · joins the profile columns with the same `labels.py` call `11_build_labels.py` uses, the six incident columns with the same `incidents.py` call `12_join_incidents.py` uses (live window), the rain columns, then `X = build_features(buf).sort_values("timestamp").groupby("station_id").tail(1).astype(ms.ctype)` as in the walkthrough; asserts one row per station, every name in `ms.feats` present, no object dtype.
+- `predict(X: pd.DataFrame, ms: ModelSet, registry: pd.DataFrame) -> list[dict]` · the walkthrough's loop: `q = ms.isos[h].predict(m.predict(X[ms.feats]))`, `alert = bool(p >= ms.tau[h])`, with `fwy`, `dir`, `abs_pm` joined from the registry on `station_id` = `ID`.
+- `write_latest(out: dict, path: Path) -> None` · `common.atomic_write(out, path)`, which is the walkthrough's `.tmp`, `flush`, `fsync`, `os.replace` sequence.
+- `append_log(rows: list[dict], generated_at, input_ts, set_id, mode, out_dir: Path) -> None` · builds the typed frame, reads today's part if it exists, concatenates, writes through `common.atomic_write`.
+- `cycle(ms, now, replay, out_dir, registry, events, rain) -> int` · one cycle end to end; returns the number of rows written; never raises past `main()` without the log line.
+- `main()` · argparse, `load_model_set` once, the loop or the single cycle, `time.sleep` to the next interval, `common.log_stage` at the end of every cycle.
+
+_Skeleton._
+
+```python
+"""Stage 12: score every station every five minutes with the training feature module. Replay mode until a live feed exists."""
+import argparse, json, os, time
+from dataclasses import dataclass
+from pathlib import Path
+import joblib, lightgbm as lgb, numpy as np, pandas as pd
+from features import build_features           # the same module 13_feature_engineering.py uses
+import common, labels, incidents, weather
+
+@dataclass
+class ModelSet:
+    models: dict; isos: dict; feats: list; ctype: dict; tau: dict; profile: pd.DataFrame; set_id: str
+
+def load_model_set(manifest):
+    """Load the live set named in manifest.json; refuse on any hash mismatch."""
+    ...
+
+def load_last_13_steps(t, replay, registry):
+    """Replay: slice yesterday's cleaned Parquet at the wall-clock slot, 13 rows per station."""
+    ...
+
+def assemble(buf, t, ms, registry, events, rain):
+    """Profile, incidents, rain, then build_features; newest row per station, categorical dtypes applied."""
+    ...
+
+def predict(X, ms, registry):
+    """Three boosters, isotonic maps, tau_h; one dict per station and horizon."""
+    ...
+
+def write_latest(out, path): ...
+def append_log(rows, generated_at, input_ts, set_id, mode, out_dir): ...
+
+def cycle(ms, now, replay, out_dir, registry, events, rain):
+    """One cycle; returns rows written."""
+    ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--replay", action="store_true"); ap.add_argument("--once", action="store_true")
+    ap.add_argument("--at", default=None); ap.add_argument("--out", default=str(common.OUTPUT))
+    ap.add_argument("--manifest", default=str(common.MODELS / "manifest.json"))
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 19_predict_live.py --replay --once` prints `stage=predict seconds=<under 1> rss_gb=<under 0.2> rows=<3 × stations> input_ts=... mode=replay`, and `python -c "import json; d=json.load(open('output/predictions_latest.json')); print(len(d['rows']), d['input_ts'], sum(r['alert'] for r in d['rows']))"` prints three times the station count, a timestamp about 24 hours old, and a small alert count. `ls output/predictions_log.parquet/` shows today's part. `python 19_predict_live.py --once` without `--replay` exits with code 2 and one sentence. Corrupt one byte of `models/iso_h30.joblib` on a copy and point `--manifest` at a manifest listing it: the runner refuses to start and names the file.
+
+_Watch for._ The wall-clock slot of yesterday is chosen in UTC, so a replay at 17:00 local scores yesterday's 17:00 local, which is what you want; but the month file changes on the first of the month at midnight UTC, not local, and `load_last_13_steps` must read two month files when the 13 slots straddle a month boundary. Test that case with `--at 2026-04-01T00:10`.
+
+#### `20_monitor.py` · runner · new
+
+_Purpose._ Stage 13. Weekly: join the prediction log with the labels `11_build_labels.py` posted for those days, recompute average precision and calibration per horizon over the last seven days, compute the population stability index of every feature against the training distribution, decide whether a retrain is due, and write one JSON per ISO week. It also owns the model registry's three operations: `--stash` before a retrain, `--promote` after one, `--rollback` when a promoted set turns out bad. Lesson 12 steps 2 and 3 are `psi()` and the delayed scoring; put them here unchanged.
+
+_Reads._ `output/predictions_log.parquet/` (all parts, columns as above). `data/labels/YYYY-MM.parquet` for the months the window touches: `station_id`, `timestamp`, `label`. `data/features/YYYY-MM.parquet`: the manifest's training months, sampled to `--sample` rows with seed 0, as the reference distribution; the newest month's rows in the window as the live distribution (it reports the days it found; PeMS posts a day late and `13_feature_engineering.py` may not have run for them yet). `models/manifest.json` and `models/calibration.json`. `output/predictions_latest.json` for freshness.
+
+_Writes._ `output/monitor/YYYY-WW.json` with keys `week` (str), `generated_at` (ISO UTC), `set_id`, `window` (`start`, `end`, ISO UTC), `freshness` (`latest_age_s` float, `cycles_24h` int, `expected_cycles` int = 86400 / `common.PREDICT_SECONDS`), `scoring` (per horizon key `"15"`, `"30"`, `"60"`: `ap`, `prevalence`, `brier`, `ece`, `n` int, `days` int), `drift` (`psi` an object feature → float, `alerts` the list of features with PSI above `common.PSI_ALERT`, `n_live_rows`, `live_days`), `retrain` (`due` bool, `reason` str, `weeks_below` int per horizon). With `--promote` or `--rollback`, `models/manifest.json` and the files under `models/` and `models/previous/`. The log line `common.log_stage('monitor', t0, rows=n_scored, week=...)`; exit code 2 when `retrain.due` is true so the launchd log shows it.
+
+_Run._ `python 20_monitor.py` scores the most recent complete ISO week. Flags: `--week 2026-38` (which week); `--sample 200000` (training rows for the PSI reference); `--stash` (copy the live set to `models/previous/` and note it in the manifest; run before `make retrain` trains); `--promote` (verify the new files in `models/`, compare their validation AP with the previous set's `reference_ap`, write the manifest, or restore the previous set and exit 1 when any horizon fell by more than `common.RETRAIN_DROP` relative); `--rollback` (the previous set becomes live, the live set becomes previous); `--init` (first manifest from what is in `models/`); `--retrain-if-due` (after scoring, run `make retrain` through `subprocess` when due; off by default, on in the weekly plist).
+
+_Must contain._
+
+- `psi(train_col, live_col, bins=10) -> float` · the walkthrough's step 2 verbatim, including the low-cardinality branch and `np.unique` on the quantile edges.
+- `week_bounds(week: str) -> tuple[pd.Timestamp, pd.Timestamp]` · ISO week to UTC start and end; `last_complete_week(now) -> str`.
+- `load_log(start, end) -> pd.DataFrame` · reads only the daily parts inside the window.
+- `score_week(log: pd.DataFrame, labels: pd.DataFrame) -> dict` · the walkthrough's step 3: `target_ts = input_ts + h minutes`, merge on `station_id` and `target_ts` = `timestamp`, AP and prevalence per horizon read together, plus Brier and a 10-bin ECE from `sklearn.calibration.calibration_curve`.
+- `drift(train: pd.DataFrame, live: pd.DataFrame, feats: list[str]) -> dict` · `psi` per feature in the live model set's feature list; alerts above `common.PSI_ALERT`.
+- `freshness(latest: Path, log: pd.DataFrame, now) -> dict`.
+- `retrain_due(weeks: list[dict], reference_ap: dict) -> tuple[bool, str]` · true when, at any horizon, the last `common.RETRAIN_WEEKS` weekly files all have `ap` below `reference_ap[h] × (1 − common.RETRAIN_DROP)`; the monthly retrain is the plist's job, not this function's.
+- `sha256(path) -> str`, `hash_set(folder: Path, names: list[str]) -> dict`.
+- `stash(manifest) -> None` · copies each live file to `models/previous/<name>.tmp` then `os.replace`; writes the manifest with `previous` filled.
+- `promote(manifest) -> int` · reads the new `calibration.json`'s validation AP per horizon, applies the refusal rule, writes `live` with fresh hashes and `reference_ap`, appends to `history`; returns the exit code.
+- `rollback(manifest) -> None` · swaps the two folders file by file with `.tmp` and `os.replace`, swaps `live` and `previous` in the manifest, appends to `history`.
+- `main()`.
+
+_Skeleton._
+
+```python
+"""Stage 13: weekly scoring against posted labels, PSI drift, the retrain rule, and the model registry's stash/promote/rollback."""
+import argparse, hashlib, json, os, shutil, subprocess, time
+from pathlib import Path
+import numpy as np, pandas as pd
+from sklearn.metrics import average_precision_score as ap
+from sklearn.calibration import calibration_curve
+import common
+
+def psi(train_col, live_col, bins=10):
+    """Population stability index against the training distribution (walkthrough step 2)."""
+    ...
+
+def week_bounds(week): ...
+def last_complete_week(now): ...
+
+def load_log(start, end):
+    """The daily parts of output/predictions_log.parquet inside the window."""
+    ...
+
+def score_week(log, labels):
+    """Delayed scoring: AP, prevalence, Brier, ECE per horizon (walkthrough step 3)."""
+    ...
+
+def drift(train, live, feats):
+    """PSI per feature; alerts above PSI_ALERT."""
+    ...
+
+def retrain_due(weeks, reference_ap):
+    """True when AP sat more than RETRAIN_DROP below the reference for RETRAIN_WEEKS weeks."""
+    ...
+
+def stash(manifest): ...
+def promote(manifest): ...
+def rollback(manifest): ...
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--week", default=None); p.add_argument("--sample", type=int, default=200_000)
+    for f in ("stash", "promote", "rollback", "init", "retrain-if-due"): p.add_argument(f"--{f}", action="store_true")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ After a week of the replay loop, `python 20_monitor.py` writes `output/monitor/2026-WW.json`; `python -c "import json,glob; d=json.load(open(sorted(glob.glob('output/monitor/*.json'))[-1])); print(d['scoring']['30'], d['drift']['alerts'], d['retrain'])"` prints an AP with its prevalence, an alert list (usually empty), and `due: false`. The PSI unit check from the lesson: `psi()` on a standard normal training column against the same column shifted by 0.5 σ gives about 0.25, and by 1.0 σ about 0.9. `--stash` then `--rollback` on an unchanged set leaves every hash equal and adds two history entries.
+
+_Watch for._ The scoring window is defined by `input_ts`, and the labels for the last day of the window post a day late; a monitor run on Monday morning scores through Saturday and says so in `scoring.*.days`. Do not shorten the wait by scoring on the cleaned Parquet: it has no `label` column, as the walkthrough's comment says; the labels come from `11_build_labels.py`.
+#### `launchd/com.traffic1.predict.plist` · plist · new
+
+_Purpose._ The predictor's launchd job: one replay cycle every `common.PREDICT_SECONDS` seconds, whether or not a terminal is open, surviving reboots and, unlike cron, running the missed job when the machine wakes. The plist from lesson 12 step 4 is the template; the only change is that the four hard-coded paths become `__ROOT__`, rendered with `TRAFFIC1_ROOT` at install time, because launchd cannot read `.env` and a plist with someone else's home folder in it runs nothing.
+
+_Reads._ Nothing itself; the job it starts reads what `19_predict_live.py` reads.
+
+_Writes._ `logs/predict.log` and `logs/predict.err` through `StandardOutPath` and `StandardErrorPath`.
+
+_Run._ Render and load all four: `set -a; source .env; set +a; for j in poll predict monitor retrain; do sed "s#__ROOT__#$TRAFFIC1_ROOT#g" launchd/com.traffic1.$j.plist > ~/Library/LaunchAgents/com.traffic1.$j.plist; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.traffic1.$j.plist; done`. Check: `launchctl list | grep traffic1` shows four labels, `launchctl print gui/$(id -u)/com.traffic1.predict | grep -E 'state|last exit'` shows the state and the last exit code. Unload one: `launchctl bootout gui/$(id -u)/com.traffic1.predict`. Reload after editing: bootout, then bootstrap again.
+
+_Must contain._
+
+- `Label` `com.traffic1.predict`; `ProgramArguments` `__ROOT__/.venv/bin/python`, `__ROOT__/19_predict_live.py`, `--replay`, `--once`; `StartInterval` 300 (the value of `common.PREDICT_SECONDS`, written as a number here because a plist cannot import); `WorkingDirectory` `__ROOT__`; `StandardOutPath` and `StandardErrorPath` under `__ROOT__/logs/`; `RunAtLoad` true so the first cycle runs the moment the job loads; `EnvironmentVariables` with `OMP_NUM_THREADS` `8`, the plan's house rule, and `PATH` set to `/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin`, because launchd jobs do not get your shell's `PATH` and `libomp` lives under Homebrew.
+
+_Skeleton._
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.traffic1.predict</string>
+  <key>ProgramArguments</key><array>
+    <string>__ROOT__/.venv/bin/python</string><string>__ROOT__/19_predict_live.py</string>
+    <string>--replay</string><string>--once</string>
+  </array>
+  <key>StartInterval</key><integer>300</integer>
+  <key>RunAtLoad</key><true/>
+  <key>WorkingDirectory</key><string>__ROOT__</string>
+  <key>StandardOutPath</key><string>__ROOT__/logs/predict.log</string>
+  <key>StandardErrorPath</key><string>__ROOT__/logs/predict.err</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>OMP_NUM_THREADS</key><string>8</string>
+    <key>PATH</key><string>/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin</string>
+  </dict>
+</dict></plist>
+```
+
+_Check._ `plutil -lint launchd/com.traffic1.predict.plist` prints `OK`. Ten minutes after loading, `grep -c '^stage=predict' logs/predict.log` prints 2 or 3, and `stat -f %m output/predictions_latest.json` changes every five minutes. `logs/predict.err` is empty; if it names `libomp`, the `PATH` line is missing.
+
+#### `launchd/com.traffic1.poll.plist` · plist · new
+
+_Purpose._ The 511 poller every `common.POLL_SECONDS` seconds, which the plan's stage 2 has wanted on launchd since phase 0; the same template with the label `com.traffic1.poll`, `ProgramArguments` `__ROOT__/.venv/bin/python __ROOT__/02_collect_events.py` (one poll per run, as `make collect` does), `StartInterval` 900, logs `logs/collect.log` and `logs/collect.err`, `RunAtLoad` true.
+
+_Check._ `plutil -lint` prints `OK`; after half an hour `tail -3 logs/collect.log` shows two polls and `data/fremont_events_log.csv`'s newest `pulled_at` is under 15 minutes old.
+
+#### `launchd/com.traffic1.monitor.plist` · plist · new
+
+_Purpose._ The weekly monitor. Same template with the label `com.traffic1.monitor`, `ProgramArguments` `__ROOT__/.venv/bin/python __ROOT__/20_monitor.py --retrain-if-due`, and instead of `StartInterval` a `StartCalendarInterval` dict with `Weekday` 1, `Hour` 4, `Minute` 0 (Monday 04:00 local, after Sunday's PeMS file has been cleaned by the retrain job's `features` step or by hand); logs `logs/monitor.log` and `logs/monitor.err`; no `RunAtLoad`. launchd runs a missed calendar job once at the next wake, which is why it and not cron carries the weekly job on a machine that may have slept.
+
+_Check._ `plutil -lint` prints `OK`; `launchctl print gui/$(id -u)/com.traffic1.monitor | grep -A3 'calendar'` shows the Monday entry; the first Monday after loading, `ls output/monitor/` has a new file.
+
+#### `launchd/com.traffic1.retrain.plist` · plist · new
+
+_Purpose._ The monthly retrain by schedule. Label `com.traffic1.retrain`, `ProgramArguments` `/usr/bin/caffeinate`, `-i`, `/usr/bin/make`, `retrain`, so the Mac cannot idle-sleep during the hour the job takes; `StartCalendarInterval` with `Day` 2, `Hour` 3, `Minute` 0 (the second of the month at 03:00, after the first's file has posted); `WorkingDirectory` `__ROOT__`; logs `logs/retrain.log` and `logs/retrain.err`; `EnvironmentVariables` as the predictor's, plus `TRAFFIC1_ROOT` `__ROOT__`. It runs `make retrain`, which is `20_monitor.py --stash`, then `features` for the newest month, `train`, `calibrate`, `evaluate`, then `20_monitor.py --promote`; the promote step refuses a worse model and restores the previous set, which is the canary the lesson's last question asks for. The house rule stands: this job and the download never overlap, and the monitor never runs while this does; the schedule keeps them a day and an hour apart, and `make retrain` starts by checking that no `09_collect_pems_selenium.py` or `20_monitor.py` process is running (`pgrep -f`) and exits 1 if one is.
+
+_Check._ `plutil -lint` prints `OK`. Run it once by hand, `launchctl kickstart gui/$(id -u)/com.traffic1.retrain`, on a month you already have: `tail -1 logs/retrain.log` shows `promote` or `refused` and `models/manifest.json`'s `history` grew by one; `make rollback` then restores the previous hashes.
+
+#### `Makefile` · config · changed
+
+_Purpose._ Finished: phase 0's `setup`, `check` and `test` stay as written, and phase 9 adds every target LAYOUT lists, so the whole pipeline is `make all` and the operations are one word each. Recipes are indented with a tab; `MONTHS` defaults to every month present and can be given on the command line.
+
+_Must contain._
+
+- `MONTHS ?= $(shell ls data/pems_processed 2>/dev/null | sed 's/.parquet//')` at the top; `PY = .venv/bin/python`; `RUNNERS = $(basename $(wildcard [0-9]*_*.py))`, the fifteen runner stems, for the stage-page check; the newest month for `retrain` is `$(lastword $(sort $(MONTHS)))`.
+- `setup`, `check`, `test` · phase 0's recipes, unchanged.
+- `collect` · one poll. `pems` · `09_collect_pems_selenium.py` for `MONTHS`, newest first, under `caffeinate -i`.
+- `clean`, `labels`, `incidents`, `features` · runners 10 to 13 over `MONTHS`, each target depending on the one before.
+- `baselines`, `train`, `calibrate`, `evaluate` · runners 14, 16 (and 15 inside `train`), 16b, 18.
+- `all` · depends on the pipeline targets, then fails naming the first runner without a page under `docs/stages/`.
+- `predict`, `monitor`, `retrain`, `rollback`, `serve`, and `.PHONY` listing every target.
+
+_Skeleton._
+
+```make
+MONTHS ?= $(shell ls data/pems_processed 2>/dev/null | sed 's/.parquet//')
+PY      = .venv/bin/python
+RUNNERS = $(basename $(wildcard [0-9]*_*.py))
+.PHONY: setup check test collect pems clean labels incidents features baselines train calibrate evaluate all predict monitor retrain rollback serve
+setup:
+	test -d .venv || python3 -m venv .venv
+	$(PY) -m pip install --upgrade pip && $(PY) -m pip install -r requirements.txt
+	command -v brew >/dev/null && { brew list libomp >/dev/null 2>&1 || brew install libomp; } || true
+check:
+	$(PY) -c "import platform, torch, lightgbm, pandas; print(platform.machine(), torch.__version__, lightgbm.__version__, pandas.__version__, 'mps', torch.backends.mps.is_available())"
+test:
+	$(PY) -m pytest -q
+collect:
+	$(PY) 02_collect_events.py
+pems:
+	caffeinate -i $(PY) 09_collect_pems_selenium.py $(foreach m,$(sort $(MONTHS)),--month $(m))
+clean:
+	for m in $(MONTHS); do $(PY) 10_clean_pems.py --month $$m || exit 1; done
+labels: clean
+	for m in $(MONTHS); do $(PY) 11_build_labels.py --month $$m || exit 1; done
+incidents: labels
+	for m in $(MONTHS); do $(PY) 12_join_incidents.py --month $$m || exit 1; done
+features: incidents
+	for m in $(MONTHS); do $(PY) 13_feature_engineering.py --month $$m || exit 1; done
+baselines: features
+	$(PY) 14_train_baselines.py
+train: baselines
+	$(PY) 15_train_logreg.py && $(PY) 16_train_lgbm.py
+calibrate: train
+	$(PY) 16b_calibrate_select.py
+evaluate: calibrate
+	$(PY) 18_evaluate_lead_time.py
+all: evaluate
+	for r in $(RUNNERS); do test -f docs/stages/$$r.md || { echo "missing docs/stages/$$r.md"; exit 1; }; done
+predict:
+	$(PY) 19_predict_live.py --replay --once
+monitor:
+	$(PY) 20_monitor.py
+retrain:
+	! pgrep -f '09_collect_pems_selenium.py|20_monitor.py' >/dev/null || { echo "another heavy job is running"; exit 1; }
+	$(PY) 20_monitor.py --stash && $(MAKE) features MONTHS=$(lastword $(sort $(MONTHS))) && $(MAKE) train calibrate evaluate && $(PY) 20_monitor.py --promote
+rollback:
+	$(PY) 20_monitor.py --rollback
+serve:
+	.venv/bin/uvicorn serve.app:app --port 8000
+```
+
+_Check._ `make -n all MONTHS=2026-03` prints the nine commands in order without running them; `make all` on a tree with one page deleted ends with `missing docs/stages/<runner>.md` and exit code 1; `cat -A Makefile | grep -c '^\^I'` prints the number of recipe lines, all tabs. From a fresh clone, `make setup && make all` runs to `output/evaluation_report.json`, which is the first Done-when check.
+
+_Watch for._ `MONTHS` is evaluated when `make` starts, so `make clean` on a fresh clone sees no months in `data/pems_processed/` and does nothing; run `make pems MONTHS=2026-03` first, or pass `MONTHS` explicitly. And `$$m` inside a recipe is the shell's `$m`; a single dollar is `make`'s and silently expands to nothing.
+
+#### `tests/test_golden_features.py` · test · new
+
+_Purpose._ The proof that serving features equal training features: one stored day's input rows and the feature rows `13_feature_engineering.py` produced for it live under `data/golden/YYYY-MM-DD/`; the test runs `features.build_features` on the stored input and compares with the stored output bit for bit. It runs under `make test` (alone: `pytest -q tests/test_golden_features.py`), and skips with a clear message when no golden day exists, so `make test` still passes on a fresh clone. The file also holds the maker, `write_golden(day)`, so the fixture and its test cannot drift apart.
+
+_Reads._ `data/golden/YYYY-MM-DD/input.parquet`, `expected.parquet`, `registry.parquet`, `weather.parquet`, `meta.json` (below); `features.build_features` and whatever it takes beside the frame, passed exactly as `13_feature_engineering.py` passes them.
+
+_Must contain._
+
+- `GOLDEN = common.DATA / 'golden'`; `LEAD_IN = max(common.LAGS + tuple(common.ROLL_STEPS.values()))` · the steps before midnight the input must carry so the first rows' lags and rolling windows are defined (12).
+- `golden_days() -> list[Path]`; the module skips when empty.
+- `write_golden(day: str) -> Path` · slices the day plus `LEAD_IN` steps before its local midnight from the month's `data/pems_processed/`, `data/labels/` and `data/incidents/` files joined on `station_id` and `timestamp` (the rows `13_feature_engineering.py` hands to `build_features`), saves them as `input.parquet`; saves the day's rows of `data/features/YYYY-MM.parquet` restricted to the feature columns in `models/gbt_h30_features.json` plus the keys as `expected.parquet`; copies the registry and the weather rows for the day; writes `meta.json` with `day`, `columns`, the sha256 of each file, and `git rev-parse HEAD` at creation. Invoked once as `python -c "from tests.test_golden_features import write_golden; write_golden('2026-03-15')"` on a weekday with a rush hour.
+- `test_golden_day_exists()` · the folder has the five files and `meta.json`'s hashes match.
+- `test_features_bit_for_bit()` · for every golden day: `build_features` on `input.parquet`, keep the day's timestamps, align to `expected.parquet` on `station_id` and `timestamp`, and `pd.testing.assert_frame_equal(got[cols], exp[cols], check_exact=True, check_dtype=True)`; NaN equals NaN.
+- `test_no_target_in_features()` · none of `y_15`, `y_30`, `y_60`, `speed_t30`, `label`, `label_abs` is among `meta.json`'s `columns`.
+- `test_serving_slice_matches()` · the 13-step slice the loop uses: `build_features` on the rows of the 13 slots ending at 17:00 local only, newest row per station, equals the same rows of `expected.parquet`; this is the exact code path `19_predict_live.py` runs, and it fails when a feature needs more history than the buffer carries.
+
+_Skeleton._
+
+```python
+"""Golden-file test: build_features on a stored day equals the feature table 13 wrote for it, bit for bit."""
+import json, hashlib
+from pathlib import Path
+import pandas as pd, pytest
+import common
+from features import build_features
+
+GOLDEN = common.DATA / "golden"
+LEAD_IN = max(common.LAGS + tuple(common.ROLL_STEPS.values()))
+DAYS = sorted(p for p in GOLDEN.glob("????-??-??") if (p / "meta.json").exists()) if GOLDEN.exists() else []
+pytestmark = pytest.mark.skipif(not DAYS, reason="no data/golden/<day>/ yet; run write_golden() once")
+
+def write_golden(day):
+    """Store one day's input rows, expected feature rows, registry, weather and hashes under data/golden/<day>/."""
+    ...
+
+def _load(p):
+    meta = json.load(open(p / "meta.json"))
+    return pd.read_parquet(p / "input.parquet"), pd.read_parquet(p / "expected.parquet"), meta
+
+@pytest.mark.parametrize("p", DAYS, ids=[p.name for p in DAYS])
+def test_features_bit_for_bit(p):
+    inp, exp, meta = _load(p)
+    got = build_features(inp)                       # plus the same extra arguments 13 passes
+    day = pd.Timestamp(meta["day"], tz=common.TZ)
+    got = got[(got.timestamp >= day) & (got.timestamp < day + pd.Timedelta(days=1))]
+    key = ["station_id", "timestamp"]
+    got = got.sort_values(key).set_index(key); exp = exp.sort_values(key).set_index(key)
+    assert len(got) == len(exp), (len(got), len(exp))
+    pd.testing.assert_frame_equal(got[meta["columns"]], exp[meta["columns"]], check_exact=True, check_dtype=True)
+
+def test_golden_day_exists(): ...
+def test_no_target_in_features(): ...
+def test_serving_slice_matches(): ...
+```
+
+_Check._ `pytest -q tests/test_golden_features.py` prints `4 passed` per golden day. Change one constant in `features.py` (a `min_periods`, a lag) and run it again: `test_features_bit_for_bit` fails naming the first differing column, which is the test doing its job; revert. After a retrain the test still passes, because features do not depend on the model; after an intended change to `features.py`, rebuild the month with `make features MONTHS=<month>` and regenerate the golden day, and say so in the commit message.
+
+#### `data/golden/YYYY-MM-DD/` · fixture · new
+
+_Purpose._ One stored day, chosen for a weekday with a visible rush hour and no detector outage, kept under `data/` because it is 40 MB of derived data and git must not carry it; `meta.json` records where it came from and the hashes so a regenerated folder can be told from the original. Made by `write_golden()` above; never edited by hand.
+
+_Writes._ `input.parquet` (the day plus 12 lead-in steps: `station_id`, `timestamp`, `speed`, `occupancy`, `flow`, `observed_frac`, `samples`, `profile_speed`, `speed_ratio`, `ratio_ff`, `label`, `label_abs`, the six incident columns, the dtypes the monthly files have); `expected.parquet` (the day's feature rows: `station_id`, `timestamp` and every column in `models/gbt_h30_features.json`, float32 and categorical as `13_feature_engineering.py` wrote them); `registry.parquet`; `weather.parquet` (the day's hours of `precip_mm`); `meta.json` with `day`, `month_file`, `columns`, `sha256` per file, `created_at`, `git_head`.
+
+_Check._ `python -c "import pandas as pd; e=pd.read_parquet('data/golden/2026-03-15/expected.parquet'); print(e.shape, e.station_id.nunique(), e.timestamp.min(), e.timestamp.max())"` prints 288 rows per station, the station count, and timestamps spanning the local day; the input has 300 rows per station.
+#### `serve/app.py` · module · new
+
+_Purpose._ A door on the predictions: a FastAPI service that answers `GET /health`, `GET /predictions` (the current `output/predictions_latest.json`) and `GET /predictions/{station_id}` (one station's three horizons). It reads the file the loop writes and computes nothing, which keeps it stateless: any number of copies can answer, and the loop stays the one place predictions are made. Add `fastapi>=0.110`, `uvicorn>=0.27` and `httpx>=0.27` to `requirements.txt` under `# phase 9`.
+
+_Reads._ `output/predictions_latest.json`, every key; the folder comes from `TRAFFIC1_OUTPUT` when set (the container sets it to `/app/output`), else `common.OUTPUT`. The file is read on every request, not cached, so a container that mounts `output/` sees each five-minute rewrite.
+
+_Writes._ Nothing on disk. Responses: `/health` → `{"status": "ok", "generated_at", "set_id", "latest_age_s": float, "stale": bool}` with `stale` true past 3 × `common.PREDICT_SECONDS`, status 503 with `{"status": "no predictions"}` when the file is missing; `/predictions` → the file's object unchanged; `/predictions/{station_id}` → `{"station_id", "generated_at", "input_ts", "rows": [three objects]}`, 404 with `{"detail": "unknown station"}` otherwise. Every response carries the header `X-Traffic1-Set` with the `set_id`.
+
+_Run._ `make serve`, which is `uvicorn serve.app:app --port 8000`; then `curl -s localhost:8000/health` and `curl -s localhost:8000/predictions/$(python -c "import json; print(json.load(open('output/predictions_latest.json'))['rows'][0]['station_id'])")`. The interactive documentation is at `localhost:8000/docs`.
+
+_Must contain._
+
+- `PRED_PATH: Path` from the rule above; `STALE_AFTER_S = 3 * common.PREDICT_SECONDS`.
+- `class Row(BaseModel)` · `station_id: int`, `fwy: int`, `dir: str`, `abs_pm: float`, `h: int`, `p: float`, `alert: bool`. `class Predictions(BaseModel)` · `generated_at: str`, `input_ts: str`, `mode: str`, `set_id: str`, `rows: list[Row]`. `class StationPredictions(BaseModel)`, `class Health(BaseModel)`.
+- `load_latest() -> Predictions` · reads and validates the file; raises `HTTPException(503)` when missing or unparsable.
+- `app = FastAPI(title='Traffic1 predictions', version='1')` and the three route functions `health()`, `predictions()`, `station(station_id: int)`, each with a `response_model`.
+- A middleware or dependency that sets `X-Traffic1-Set`.
+
+_Skeleton._
+
+```python
+"""FastAPI door on output/predictions_latest.json: /health, /predictions, /predictions/{station_id}."""
+import json, os, time
+from pathlib import Path
+from fastapi import FastAPI, HTTPException, Response
+from pydantic import BaseModel
+import common
+
+PRED_PATH = Path(os.environ.get("TRAFFIC1_OUTPUT", common.OUTPUT)) / "predictions_latest.json"
+STALE_AFTER_S = 3 * common.PREDICT_SECONDS
+
+class Row(BaseModel):
+    station_id: int; fwy: int; dir: str; abs_pm: float; h: int; p: float; alert: bool
+
+class Predictions(BaseModel):
+    generated_at: str; input_ts: str; mode: str; set_id: str; rows: list[Row]
+
+class StationPredictions(BaseModel):
+    station_id: int; generated_at: str; input_ts: str; rows: list[Row]
+
+class Health(BaseModel):
+    status: str; generated_at: str; set_id: str; latest_age_s: float; stale: bool
+
+def load_latest():
+    """Parse the loop's file; 503 when it is missing."""
+    ...
+
+app = FastAPI(title="Traffic1 predictions", version="1")
+
+@app.get("/health", response_model=Health)
+def health(response: Response): ...
+
+@app.get("/predictions", response_model=Predictions)
+def predictions(response: Response): ...
+
+@app.get("/predictions/{station_id}", response_model=StationPredictions)
+def station(station_id: int, response: Response): ...
+```
+
+_Check._ With the loop's file present, `curl -s -o /dev/null -w '%{http_code}\n' localhost:8000/predictions` prints `200`; move the file away and `/health` prints `503`; an unknown id prints `404`. `curl -sI localhost:8000/health | grep X-Traffic1-Set` shows the manifest's `set_id`.
+
+#### `serve/Dockerfile` · config · new
+
+_Purpose._ The service in a box: the interpreter, the packages and `serve/app.py` travel together, so the same image runs on the Mac, a server or a cloud VM. The walkthrough's three lines are the core: `COPY requirements.txt`, `pip install`, `CMD`. The predictions come in through a volume, not the image, because a file that changes every five minutes does not belong in an image.
+
+_Must contain._
+
+- `FROM python:3.11-slim`; `WORKDIR /app`; `COPY requirements.txt .`; `RUN pip install --no-cache-dir -r requirements.txt`; `COPY common.py .` and `COPY serve/ serve/`; `ENV TRAFFIC1_OUTPUT=/app/output`; `EXPOSE 8000`; `CMD ["uvicorn", "serve.app:app", "--host", "0.0.0.0", "--port", "8000"]`.
+- A `.dockerignore` at the repository root with `data/`, `models/`, `output/`, `logs/`, `.venv/`, `.git/`, `__pycache__/`, so `docker build` does not ship 16 GB of raw PeMS to the daemon as build context; without it the build takes an hour before the first line runs.
+
+_Skeleton._
+
+```text
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY common.py .
+COPY serve/ serve/
+ENV TRAFFIC1_OUTPUT=/app/output
+EXPOSE 8000
+CMD ["uvicorn", "serve.app:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+_Check._ `docker build -f serve/Dockerfile -t traffic1-serve .` finishes; `docker run --rm -d -p 8000:8000 -v "$PWD/output:/app/output" --name traffic1 traffic1-serve` then `curl -s localhost:8000/health` prints `ok`; `docker stop traffic1`. `docker image ls traffic1-serve` shows the size; it is a few gigabytes because `requirements.txt` carries torch, and the report may note that a service-only requirements list would make it a tenth of that.
+
+_Watch for._ Docker Desktop on the M1 builds arm64 images; a server that is x86 needs `docker build --platform linux/amd64`, which is slow under emulation but works. `common.py` must import without `.env` present: `common.env()` returns defaults when the file is missing, and the service never needs a secret.
+
+#### `tests/test_serve.py` · test · new
+
+_Purpose._ The golden test through the endpoint, and latency measured. It replays the golden day's 5 pm slot with `19_predict_live.py --at`, so `output/predictions_latest.json` holds a known cycle, then asks the service for it, in process by default (FastAPI's `TestClient`, which is httpx underneath) or over HTTP when `SERVE_URL` is set, which is how the container is tested.
+
+_Reads._ `data/golden/YYYY-MM-DD/meta.json` and, when present and made under the live `set_id`, `predictions.json`; `models/manifest.json`; `models/calibration.json` for `tau`; the running service or `serve.app`.
+
+_Must contain._
+
+- `client()` fixture · `httpx.Client(base_url=os.environ['SERVE_URL'])` when set, else `fastapi.testclient.TestClient(app)`; skips when no golden day exists.
+- `golden_cycle()` fixture (module scope) · `subprocess.run([sys.executable, '19_predict_live.py', '--replay', '--once', '--at', slot], check=True)` where `slot` is the golden day at 17:00 local converted to UTC; yields the parsed `output/predictions_latest.json`.
+- `test_health_ok(client)` · 200, `status == 'ok'`, `latest_age_s < 60`.
+- `test_predictions_match_file(client, golden_cycle)` · `/predictions` equals the file's object exactly.
+- `test_station_rows(client, golden_cycle)` · for every station in the registry: 200, three rows with `h` in {15, 30, 60}, `p` in [0, 1], `alert == (p >= tau[h])`; an unknown id gives 404.
+- `test_golden_predictions(client, golden_cycle)` · when `predictions.json` exists and its `set_id` equals the manifest's live `set_id`, every `p` matches to 1e-6; otherwise skips with the reason.
+- `test_latency(client)` · 100 `GET /predictions` and 100 `GET /predictions/{station_id}`; prints median and p95 in ms; asserts the p95 of the station call is under 100 ms in process and under 250 ms over HTTP. The two numbers go into `docs/stages/19_predict_live.md`.
+
+_Skeleton._
+
+```python
+"""Golden test through the endpoint, and latency for 100 requests."""
+import json, os, subprocess, sys, time
+import httpx, numpy as np, pandas as pd, pytest
+import common
+
+GOLDEN = sorted(common.DATA.glob("golden/????-??-??"))
+pytestmark = pytest.mark.skipif(not GOLDEN, reason="no golden day")
+
+@pytest.fixture(scope="module")
+def client():
+    if os.environ.get("SERVE_URL"):
+        return httpx.Client(base_url=os.environ["SERVE_URL"], timeout=5)
+    from fastapi.testclient import TestClient
+    from serve.app import app
+    return TestClient(app)
+
+@pytest.fixture(scope="module")
+def golden_cycle():
+    meta = json.load(open(GOLDEN[-1] / "meta.json"))
+    slot = pd.Timestamp(meta["day"] + " 17:00", tz=common.TZ).tz_convert("UTC").strftime("%Y-%m-%dT%H:%M")
+    subprocess.run([sys.executable, "19_predict_live.py", "--replay", "--once", "--at", slot], check=True, cwd=common.ROOT)
+    return json.load(open(common.OUTPUT / "predictions_latest.json"))
+
+def test_predictions_match_file(client, golden_cycle):
+    r = client.get("/predictions"); assert r.status_code == 200
+    assert r.json() == golden_cycle
+
+def test_latency(client, golden_cycle):
+    sid = golden_cycle["rows"][0]["station_id"]; t = []
+    for _ in range(100):
+        t0 = time.perf_counter(); assert client.get(f"/predictions/{sid}").status_code == 200; t.append(time.perf_counter() - t0)
+    med, p95 = np.median(t) * 1e3, np.percentile(t, 95) * 1e3
+    print(f"latency ms median={med:.1f} p95={p95:.1f}")
+    assert p95 < (250 if os.environ.get("SERVE_URL") else 100)
+
+def test_health_ok(client, golden_cycle): ...
+def test_station_rows(client, golden_cycle): ...
+def test_golden_predictions(client, golden_cycle): ...
+```
+
+_Check._ `pytest -q tests/test_serve.py -s` prints `latency ms median=... p95=...` and `5 passed` (or one skip for the golden predictions when the set changed). Against the container: `SERVE_URL=http://localhost:8000 pytest -q tests/test_serve.py -s` passes the same way, with larger latencies; both pairs of numbers go into the stage page.
+
+#### `studies/profile_stnet_step.py` · study · new
+
+_Purpose._ Profile one training step of the spatio-temporal net on the M1 with the PyTorch profiler and with timers around data movement, forward, backward and optimizer, name the largest cost, apply one fix, and measure again; the JSON carries before and after. Optimizing before profiling is the phase's fourth pitfall, and this study is the habit that prevents it.
+
+_Reads._ `stnet.py`'s `STNet`, `Mix` and its window builder; the windows for one training month built exactly as `17b_train_stnet.py` builds them; `data/pems_meta/fremont_stations.parquet` for the adjacency.
+
+_Writes._ `output/studies/profile_stnet_step.json` with `device`, `batch` (int), `n_stations` (int), `params` (int), and `before` and `after`, each an object with `ms_per_step` (float, mean of 20 timed steps after 3 warm-up steps), `share` (an object `data`, `forward`, `backward`, `optimizer`, fractions summing to 1), `top_ops` (a list of `[name, ms]` for the ten largest from `prof.key_averages()`), plus `fix` (str) and `speedup` (float, before over after). `output/studies/profile_stnet_step.png`: two stacked bars, before and after, one colour per section.
+
+_Run._ `python studies/profile_stnet_step.py --month 2026-03 --batch 64 --fix resident --steps 20 --seed 0 --device mps`. `--fix` is one of `resident` (keep the whole windowed tensor on the device and index it there instead of moving each batch), `batch128` (double the batch), `none` (measure twice, which shows the noise floor); the default is `resident` because on unified memory the per-batch upload is the usual winner, but the JSON must show it, not this sentence.
+
+_Must contain._
+
+- `WARMUP = 3`, `STEPS = 20`.
+- `timed_step(net, opt, lossf, X, y, A_up, A_down, dev, resident: bool) -> dict` · one step with `torch.mps.synchronize()` (or `torch.cuda.synchronize`, or nothing on CPU) after each of the four sections, returning their milliseconds.
+- `profile_step(...) -> list[tuple[str, float]]` · the same step inside `torch.profiler.profile(activities=[ProfilerActivity.CPU], record_shapes=True)`; MPS kernels show as CPU-side dispatch time, and the table still ranks the operators.
+- `run(config) -> dict` · warm-up, the timed steps, the profile, the `share`.
+- `main()` · `before = run(fix='none')`, `after = run(fix=args.fix)`, the figure, the JSON, `common.log_stage('study_profile_stnet_step', t0, rows=n_windows)`.
+
+_Skeleton._
+
+```python
+"""Profile one STNet training step on the M1; name the largest cost; fix it; measure again."""
+import argparse, time
+import numpy as np, torch, torch.nn as nn
+from torch.profiler import profile, ProfilerActivity
+import common, stnet
+
+WARMUP, STEPS = 3, 20
+
+def sync(dev):
+    """Wait for the device so timers measure work, not queueing."""
+    ...
+
+def timed_step(net, opt, lossf, X, y, A_up, A_down, dev, resident):
+    """ms for data, forward, backward, optimizer in one step."""
+    ...
+
+def profile_step(net, opt, lossf, X, y, A_up, A_down, dev):
+    """Top ten operators by CPU time from the PyTorch profiler."""
+    ...
+
+def run(month, batch, fix, steps, dev, seed):
+    """Warm-up, timed steps, profile; returns the before/after object."""
+    ...
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--month", required=True); ap.add_argument("--batch", type=int, default=64)
+    ap.add_argument("--fix", choices=["resident", "batch128", "none"], default="resident")
+    ap.add_argument("--steps", type=int, default=STEPS); ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--device", default="mps")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `before.share` sums to 1 and its largest entry is the cost the report names; `after.ms_per_step` is below `before.ms_per_step` and `speedup` is above 1, or the JSON says the fix did nothing and the report says which section was really the largest. `--fix none` twice gives `speedup` within 0.95 to 1.05, which is the noise you must beat.
+
+#### `docs/compute_budget.md` · doc · new
+
+_Purpose._ A compute budget for a statewide model, built from the numbers this pipeline measured on the M1 and nothing else: the `stage=` lines in `logs/pipeline.log`, the training times in `output/evaluation_report.json`, and `output/studies/profile_stnet_step.json`. It answers what a model for every PeMS mainline station in California would need, where one machine breaks first, and what it would cost.
+
+_Must contain._
+
+- `Measured on the M1` · a list of the numbers used, each with the log line it came from: rows per second in `10_clean_pems.py` and `13_feature_engineering.py`, seconds per horizon and peak `rss_gb` in `16_train_lgbm.py`, milliseconds per step and windows per month in `17b_train_stnet.py`, bytes per row of the feature table, seconds per prediction cycle.
+- `The statewide problem` · station count from the meta files (count every district's `d??_text_meta` file, or the number PeMS documents, stated as which), rows per year, feature-table gigabytes, and the download at one file per `PEMS_GAP_SECONDS` per district-day.
+- `Scaling arithmetic` · stages 5 to 8 and LightGBM scale with rows; LightGBM memory scales with rows × features at one byte per histogram cell; the net scales with stations per step and with steps per epoch; the arithmetic intensity of the net's matrix products and where they sit on the M1's roofline, from the Try-this, with the sentence on why small batches are bandwidth-bound.
+- `What breaks first` · in order: disk for raw files, then LightGBM's memory at the full row count, then wall-clock for the download; with the row count at which each happens.
+- `Options` · one model per district with the same code (embarrassingly parallel), a single large VM, per-route models; what each does to the numbers above.
+- `Cost` · hours from the arithmetic times an hourly VM price you looked up on the day, with the date and the instance type, for a first training and for a monthly retrain; storage per year.
+- `What to re-measure` · the three numbers the budget is most sensitive to and how to measure them on a second district.
+
+_Check._ Every number in the page has a source line or a formula beside it; `grep -c 'logs/pipeline.log\|evaluation_report.json\|profile_stnet_step.json' docs/compute_budget.md` is at least 3. A second reader can recompute the statewide hours from the page alone.
+
+#### `docs/ml_test_score.md` · doc · new
+
+_Purpose._ Score the pipeline against the ML Test Score rubric (Breck et al., 2017): its 28 tests in four sections, each scored 0 (not done), 0.5 (done by hand, once) or 1 (automated and run regularly), with the file or test that is the evidence; the final score is the minimum of the four section totals, as the paper defines it; the gaps become a `tests/` plan with a file name, what each test asserts and when it will be written.
+
+_Must contain._
+
+- `How to read this` · the three scores and the minimum rule, in two sentences.
+- `Data tests` · the seven, each with score and evidence (`tests/test_clean_pems.py`, `tests/test_features.py`, the golden test, `20_monitor.py`'s PSI, and so on).
+- `Model tests` · the seven (baselines beaten, calibration, the leakage experiment, the challenger rule, and the rest), score and evidence.
+- `Infrastructure tests` · the seven (reproducible training, the golden serving test, `--rollback`, the atomic write, the integration test that is `make all`), score and evidence.
+- `Monitoring tests` · the seven (freshness, drift, decay, the retrain rule, alerting when no file lands), score and evidence.
+- `Score` · the four totals and the minimum, and one paragraph on what the minimum means for this project.
+- `The tests/ plan` · a list, one line per gap: the test file, the test function's name, what it asserts, the phase or week it is due; at least five entries; every entry that lands in phase 10 or 11 is named there.
+
+_Check._ 28 scored items are on the page (`grep -c 'score: ' docs/ml_test_score.md` prints `28`); the plan has at least five entries; every evidence path exists.
+
+#### `docs/stages/19_predict_live.md` · page · new
+
+_Purpose._ The stage page for the loop: what it reads, what it writes with the field list above, how to run it and how it is scheduled, the numbers from the last run, and what surprised you. It must also hold the two incident windows side by side, archive `[created, max(updated, created + INCIDENT_MIN_MINUTES)]` against live `[first_seen_at, last_seen_at + POLL_SECONDS]`, and the latency chain in minutes from detector to delivered alert.
+
+_Must contain._ `Reads`, `Writes` (fields and dtypes), `Run` (the command, the plist, load and unload), `Last run` (seconds, `rss_gb`, rows, alert count, the latency numbers from `tests/test_serve.py`), `The two incident windows`, `Latency chain`, `Surprises`.
+
+_Check._ `make all`'s page check passes; the page's `Last run` numbers match the newest `stage=predict` line in `logs/pipeline.log`.
+
+#### `docs/stages/20_monitor.md` · page · new
+
+_Purpose._ The stage page for the monitor: reads, writes with the JSON keys, how to run it, the PSI unit check (0.25 σ, 0.5 σ, 1.0 σ and the PSI each gave), the retrain and rollback procedure step by step with the manifest before and after, the numbers from the last weekly file, and surprises. Every other runner without a page under `docs/stages/` gets one in this phase with the same headings, because `make all` fails until the folder is complete.
+
+_Must contain._ `Reads`, `Writes` (keys), `Run`, `PSI unit check`, `Retrain and rollback` (the exact commands and what the manifest shows at each step), `Last run`, `Surprises`.
+
+_Check._ `make all`'s page check passes with every runner's page present; the retrain section's commands were run once and their output pasted.
 
 ### Done when
 
-- From a fresh clone, `make setup && make all` produces the evaluation report, and the containerized service answers the golden test.
-- The replay loop has run unattended for a week and the monitor has written four weekly files.
+- From a fresh clone, `make setup && make all` produces the evaluation report: `git clone <your fork> t1 && cd t1 && make setup && make pems MONTHS=2026-03 && make all MONTHS=2026-03` ends with `output/evaluation_report.json` written and its page check silent, with a page for all fifteen runners.
+- `pytest -q tests/test_golden_features.py` prints `4 passed` on the stored day, and after changing one lag in `features.py` it fails naming the column, then passes again after reverting.
+- `make predict` prints `stage=predict seconds=<under 1> rss_gb=<under 0.2> rows=<3 × stations> ... mode=replay`, and every runner's last line is in the log: `awk '{print $1}' logs/pipeline.log | sort -u` lists a `stage=` name for each runner in `RUNNERS`, every line carrying `seconds=` and `rss_gb=`.
+- The four jobs are loaded and the Mac cannot sleep: `launchctl list | grep -c traffic1` prints `4`, `plutil -lint launchd/*.plist` prints four `OK`, and `pmset -g | grep -E '^ *(sleep|disksleep)'` shows `0` for both.
+- The replay loop has run unattended for a week: `grep -c '^stage=predict' logs/predict.log` is at least 1900 (seven days at 288 cycles, allowing a few restarts), `ls output/predictions_log.parquet/ | wc -l` is at least 7, and `logs/predict.err` is empty.
+- The monitor has written four weekly files: `ls output/monitor/*.json | wc -l` prints `4`, each with `scoring.30.ap` beside its `prevalence`, a `drift.alerts` list and `retrain.due`.
+- The containerized service answers the golden test: `docker build -f serve/Dockerfile -t traffic1-serve .`, `docker run --rm -d -p 8000:8000 -v "$PWD/output:/app/output" --name traffic1 traffic1-serve`, then `SERVE_URL=http://localhost:8000 pytest -q tests/test_serve.py -s` passes and prints the latency line, whose numbers are in `docs/stages/19_predict_live.md`.
+- `make retrain` on an existing month ends in `promote` or `refused` in `logs/pipeline.log`, and `make rollback` restores the previous hashes, `models/manifest.json`'s `history` showing both actions.
+- `output/studies/profile_stnet_step.json` names the largest cost and has `speedup` above 1 or a sentence in the report on why not; `docs/compute_budget.md` and `docs/ml_test_score.md` exist with every section above, the score page's `grep -c 'score: '` printing `28` and its plan holding at least five tests.
 
 ### Pitfalls
 
-- A second copy of the feature code.
-- cron instead of launchd on a Mac that sleeps.
-- No way to roll back a bad model.
-- Optimizing before profiling.
+- The golden test passes, yet the served alerts disagree with the evaluation report within weeks, or a feature in the loop is 'the same but faster'. A second copy of the feature code: any arithmetic in `19_predict_live.py`'s `assemble()` is a second implementation, and it drifts the first time `features.py` changes. `assemble()` only joins and calls `build_features`; `test_serving_slice_matches` runs the loop's exact 13-step path against the training table and fails when they part.
+- `logs/predict.log` has a gap every night and the weekly file is missing after a reboot. cron instead of launchd on a Mac that sleeps: cron does not run a job the machine slept through and dies with a login session. The four plists in `launchd/`, loaded with `launchctl bootstrap`, plus `pmset` sleep 0 and `caffeinate -i` around the download and the retrain, are the fix; `launchctl print` shows the last exit code when a job ran and failed.
+- Monday's monitor shows the 30-minute AP halved after Sunday's retrain, and the old model files are gone. No way to roll back a bad model: `make train` by hand overwrites `models/` in place. `make retrain` starts with `20_monitor.py --stash`, `--promote` refuses a set that lost more than `RETRAIN_DROP` on validation, and `make rollback` restores `models/previous/` file by file; never run `16_train_lgbm.py` alone on a machine whose loop is live.
+- A week went into the `Mix` layer and the step is no faster. Optimizing before profiling: the largest cost was the per-batch copy to the device or a Python loop, which `studies/profile_stnet_step.py`'s `before.share` would have shown in a minute. Run the profile first, change one thing, and keep the JSON that proves it.
+- The predictor job runs every five minutes and writes nothing; `logs/predict.err` says `libomp` or `No such file`. launchd gives a job neither your shell's `PATH` nor your `.env`, and a plist rendered with `/Users/you` runs on nobody's machine. The `EnvironmentVariables` dict with `PATH` and the `sed` render from `TRAFFIC1_ROOT` are the fix; if `data/` is on an external drive, grant the venv's `python` Full Disk Access in System Settings, the permission that silently blocks scheduled jobs.
+- `19_predict_live.py` refuses to start with a hash mismatch right after you trained by hand. That is the manifest doing its job: the files under `models/` are not the set the manifest promoted. Run `make retrain` properly, or, when the by-hand model is the one you want, `20_monitor.py --promote` to record it; never edit the hashes.
+- `docker build` sits for an hour before the first step. The build context is the repository root, and without `.dockerignore` Docker copies `data/` and `.venv/` to the daemon first. The ignore file listed under `serve/Dockerfile` cuts the context to kilobytes.
+- The weekly AP is `nan` or the scored row count is a few hundred. The window's labels have not posted, or the monitor read the cleaned Parquet, which has no `label` column. `score_week()` joins `data/labels/`, reports `days` per horizon, and a Monday run scores through Saturday; wait, or run `make features MONTHS=<month>` and `make labels` for the new days first.
 
 ## Phase 10: Beyond supervised learning
 
