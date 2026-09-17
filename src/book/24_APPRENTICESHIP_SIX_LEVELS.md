@@ -104,7 +104,7 @@ The repository on GitHub holds four documents and nothing else: the plan (`21_PL
 ### The one convention every file follows
 
 - Numbered scripts, `NN_name.py`, are runners. Each one parses its command line, calls one module, writes its files and prints one log line. Their names start with a digit so `ls` shows the pipeline in order, and that is also why Python cannot import them: `import 02_collect_events` is a syntax error. Nothing imports a runner.
-- The code that does the work lives in plain modules with importable names: `common.py`, `collector.py`, `pems.py`, `labels.py`, `incidents.py`, `weather.py`, `features.py`, `split.py`, `evaluate.py`, `stnet.py`. Tests import these. The serving loop imports these. There is one implementation of every feature, and it is in `features.py`.
+- The code that does the work lives in plain modules with importable names: `common.py`, `collector.py`, `logreg.py`, `pems.py`, `labels.py`, `incidents.py`, `weather.py`, `features.py`, `split.py`, `evaluate.py`, `stnet.py`. Tests import these. The serving loop imports these. There is one implementation of every feature, and it is in `features.py`.
 - Every runner answers `python NN_name.py --help`. Runners that work on history take `--month YYYY-MM` and default to every month present. Every runner writes to a `.tmp` path and renames it into place at the end, so a crash never leaves a half-written file that the next stage would read.
 - Every runner ends with the line `stage=<name> seconds=<n> rss_gb=<n> rows=<n>` from `common.log_stage()`, on the screen and appended to `logs/pipeline.log`. The plan's memory budgets are checked against these lines, not guessed.
 - Every stage has a page in `docs/stages/`, named after its runner: what it reads, what it writes with the column list, how to run it, the numbers from the last run and what surprised you. Phase 9's `make all` fails if a stage has no page.
@@ -126,6 +126,7 @@ Traffic1/
 ├── .env                            # phase 0: the values (never committed)
 ├── .gitignore                      # phase 0
 ├── .vscode/settings.json           # phase 0: the venv interpreter, a 100-column ruler
+├── .dockerignore                   # phase 9: what the service image leaves out (data, models, .venv)
 ├── Makefile                        # phase 0: setup, check, test; phase 9: all, retrain, serve, rollback
 ├── 21_PLAN_M1_TRAFFIC_MODEL.md     # exists: the plan this course builds
 ├── 22_LEARNING_PATH_ML.md          # exists: superseded by 24
@@ -134,6 +135,7 @@ Traffic1/
 │
 ├── common.py          # phase 0: paths, constants, log_stage(), atomic_write()
 ├── collector.py       # phase 1: the 511 poller's functions (phase 0 writes them inside the runner)
+├── logreg.py          # phase 2: sigmoid, loss, gradient and the training loop, so tests can import them
 ├── pems.py            # phase 3: station registry, PeMS file parsing and cleaning
 ├── labels.py          # phase 4: the train-only profile and both labels
 ├── incidents.py       # phase 4: the interval join of 511 events onto station rows
@@ -162,6 +164,8 @@ Traffic1/
 ├── 20_monitor.py               # phase 9: weekly scoring, drift, the retrain trigger
 │
 ├── tests/                      # phase 1 onward: pytest, one file per module, fixtures/ for small data
+├── docs/figures/               # phase 10 onward: committed copies of the figures the write-up and model card cite
+├── docs/causal/                # phase 10: dag.md and dag.png
 ├── docs/stages/                # one page per runner
 ├── docs/decisions/             # phase 6: label.md; phase 7: challenger.md
 ├── docs/                       # phase 9: compute_budget.md, ml_test_score.md; phase 10: model_card.md, datasheet.md; phase 11: writeup.md
@@ -169,7 +173,7 @@ Traffic1/
 ├── studies/                    # phases 5, 8, 10, 11: one script per side study, each writing output/studies/<name>.json
 ├── serve/                      # phase 9: app.py (FastAPI) and Dockerfile
 ├── launchd/                    # phase 9: four .plist files
-├── bench/pems_bay/             # phase 11: the DCRNN-style reproduction
+├── bench/pems_bay/             # phase 11: the DCRNN-style reproduction; its data/ is ignored like the root data/
 ├── notebook/                   # phase 0 onward: YYYY-WW.md, one per week
 │
 ├── data/                       # generated, never committed
@@ -185,25 +189,36 @@ Traffic1/
 │   ├── incidents/YYYY-MM.parquet       # 12: the six incident columns
 │   ├── weather/openmeteo_hourly.parquet # weather.py: hourly rain for Fremont
 │   ├── features/YYYY-MM.parquet        # 13: the training table, monthly parts
-│   ├── golden/YYYY-MM-DD/              # phase 9: one stored day and its expected feature rows
+│   ├── golden/YYYY-MM-DD/              # phase 9: one stored day, its expected feature rows and predictions.json
+│   ├── photos/<class>/                 # phase 8: the reader's own photos for the fine-tuning study
+│   ├── public/                         # phase 8: torchvision's download root for the digits
 │   └── labels/headlines_50.csv         # phase 8: fifty hand-labelled 511 headlines
 ├── models/                     # generated, never committed
 │   ├── bottleneck_weights.npz          # 03
 │   ├── profile_<split>.parquet         # 11
+│   ├── profile_rate_<split>.parquet    # 13: the train-only label rate per cell, joined at serving too
+│   ├── logreg_h{h}_thresh0.6_win3.npz  # 15
 │   ├── gbt_h{15,30,60}_thresh0.6_win3.txt   # 16
 │   ├── gbt_h{h}_features.json          # 16: the feature list in training order
 │   ├── categorical_dtypes.joblib       # 16: the category sets, reused at serving
 │   ├── iso_h{h}.joblib                 # 16b: the isotonic maps
 │   ├── calibration.json                # 16b: tau per horizon, validation AP, the chosen model
 │   ├── mlp_h30.pt, stnet_thresh0.6_win3.pt  # 17a, 17b
+│   ├── gbt_speed30.txt, gbt_speed30_q05.txt, gbt_speed30_q95.txt  # phase 5: the regression twin and its quantiles
+│   ├── ranker_h30_thresh0.6_win3.txt   # phase 10: the dashboard ranker
+│   ├── conformal_h30.json              # phase 11: the conformal quantile the monitor reads
+│   ├── pems_bay_<tag>.pt               # phase 11: benchmark runs
+│   ├── previous/                       # phase 9: the model set stashed before a retrain, restored by rollback
 │   └── manifest.json                   # phase 9: which files are live, trained on which split, when
 ├── output/                     # generated, never committed
-│   ├── evaluation_report.json          # 18
+│   ├── baselines.json, logreg.json, lgbm_training.json  # 14, 15, 16: the numbers each run produced
+│   ├── evaluation_report.json          # 18, with reliability_h{h}.png and lead_time_hist.png beside it
 │   ├── predictions_latest.json         # 19: rewritten every five minutes
-│   ├── predictions_log.parquet         # 19: appended every five minutes
+│   ├── predictions_log.parquet/YYYY-MM-DD.parquet  # 19: one part per day, so an append rewrites one day
+│   ├── predictions_stnet.parquet       # 17b: the challenger's validation and test predictions, read by 16b and 18
 │   ├── monitor/YYYY-WW.json            # 20
 │   └── studies/                        # the side studies' numbers and figures
-└── logs/                       # generated: pipeline.log, collect.log, predict.log, predict.err
+└── logs/                       # generated: pipeline.log, and <job>.log / <job>.err for collect, predict, monitor, retrain
 ```
 
 ### Files you write, phase by phase
@@ -212,16 +227,16 @@ This is the index; each phase's Build page carries the contract for every file n
 
 - Phase 0 · `README.md`, `requirements.txt`, `.env` and `.env.example`, `.gitignore`, `.vscode/settings.json`, `Makefile` (setup, check), `common.py`, `02_collect_events.py` as one file, `notebook/2026-W37.md`.
 - Phase 1 · split the collector into `collector.py` and the runner; add `first_seen_at`, `last_seen_at`, `geo_missing`, the raw JSON log and the `--bootstrap` mode; `tests/test_collector.py`, `tests/test_timezones.py`, `studies/events_per_road_day.py`, `docs/stages/02_collect_events.md`.
-- Phase 2 · `03_train_from_scratch.py`, `04_predict_live.py`, `tests/test_gradient.py`, `studies/sigmoid_and_loss.py`, the notebook page 'why the median', `docs/stages/03_train_from_scratch.md`.
+- Phase 2 · `logreg.py`, `03_train_from_scratch.py`, `04_predict_live.py`, `tests/test_gradient.py`, `studies/sigmoid_and_loss.py`, the notebook page 'why the median', `docs/stages/03_train_from_scratch.md`.
 - Phase 3 · `09_collect_pems_selenium.py`, `pems.py`, `10_clean_pems.py`, `tests/test_clean_pems.py` with `tests/fixtures/pems_100rows.txt` and `tests/fixtures/meta_10rows.txt`, `sql/profile.sql`, `sql/lag.sql`, `studies/plot_station.py`, `studies/pandas_vs_polars.py`, `docs/stages/09_collect_pems_selenium.md`, `docs/stages/10_clean_pems.md`.
 - Phase 4 · `labels.py` and `11_build_labels.py`, `incidents.py` and `12_join_incidents.py`, `features.py` and `13_feature_engineering.py` (first version), `split.py`, `14_train_baselines.py`, `15_train_logreg.py`, `16_train_lgbm.py`, `16b_calibrate_select.py`, `evaluate.py` and `18_evaluate_lead_time.py` (row level), `studies/leakage_experiment.py`, `studies/shap_summary.py`, `tests/test_labels.py`, `tests/test_incidents.py`, `tests/test_features.py`, `tests/test_split.py`, a stage page for each runner.
 - Phase 5 · `studies/regression_twin.py`, `studies/multiclass_ratio.py`, `studies/station_clusters.py`, `studies/tune_lgbm.py`, `studies/feature_information.py`, `docs/reports/phase5.md`.
 - Phase 6 · `weather.py`, `features.py` and `13_feature_engineering.py` (second version: neighbors, rolling, weather, rolling-origin folds), `split.py` (rolling origin), `evaluate.py` and `18_evaluate_lead_time.py` (episodes, lead time, false alarms), `studies/acf_shockwave.py`, `studies/label_choice.py`, `docs/decisions/label.md`, tests extended.
 - Phase 7 · `17a_train_mlp.py`, `stnet.py`, `17b_train_stnet.py`, `tests/test_backprop.py`, `studies/mps_vs_cpu.py`, `16b_calibrate_select.py` extended with the 0.02 rule, `docs/decisions/challenger.md`.
 - Phase 8 · `studies/cnn_digits.py`, `studies/finetune_resnet.py`, `studies/headline_severity.py`, `studies/llm_extract.py` with `data/labels/headlines_50.csv`, `studies/rag_docs.py` with `tests/fixtures/rag_questions.json`, `studies/profile_autoencoder.py`, `studies/profile_cvae.py`, `studies/masked_pretrain.py`, `docs/reports/phase8.md`.
-- Phase 9 · `19_predict_live.py`, `20_monitor.py`, `launchd/com.traffic1.{poll,predict,monitor,retrain}.plist`, the finished `Makefile`, `tests/test_golden_features.py` with `data/golden/`, `serve/app.py`, `serve/Dockerfile`, `tests/test_serve.py`, `studies/profile_stnet_step.py`, `docs/compute_budget.md`, `docs/ml_test_score.md`, `models/manifest.json` and the rollback rule, every missing stage page.
-- Phase 10 · `studies/rl_gridworld.py`, `studies/bandit_alerts.py`, `studies/rain_effect_ipw.py`, `docs/causal/dag.md`, `docs/experiments/switchback.md`, `studies/fairness_audit.py`, `studies/dp_release.py`, `docs/model_card.md`, `docs/datasheet.md`, `studies/rank_segments.py`.
-- Phase 11 · `bench/pems_bay/` (download, config, train, ablation), `studies/conformal.py` and the coverage line in `20_monitor.py`, `studies/bayes_station_rates.py`, `docs/writeup.md`, `docs/reading_log.md`.
+- Phase 9 · `19_predict_live.py`, `20_monitor.py` (with `--stash`, `--promote`, `--rollback`, `--retrain-if-due`), `.dockerignore`, `launchd/com.traffic1.{poll,predict,monitor,retrain}.plist`, the finished `Makefile`, `tests/test_golden_features.py` with `data/golden/`, `serve/app.py`, `serve/Dockerfile`, `tests/test_serve.py`, `studies/profile_stnet_step.py`, `docs/compute_budget.md`, `docs/ml_test_score.md`, `models/manifest.json` and the rollback rule, every missing stage page.
+- Phase 10 · `docs/figures/`, `studies/rl_gridworld.py`, `studies/bandit_alerts.py`, `studies/rain_effect_ipw.py`, `docs/causal/dag.md` and `dag.png`, `docs/experiments/switchback.md`, `studies/fairness_audit.py`, `studies/dp_release.py`, `docs/model_card.md`, `docs/datasheet.md`, `studies/rank_segments.py`.
+- Phase 11 · `bench/pems_bay/` (download, config, train, ablation; the speed tables come from the links in the DCRNN repository's README, the sensor graph from the repository itself), `studies/__init__.py`, `studies/conformal.py` and the coverage line in `20_monitor.py`, `studies/bayes_station_rates.py`, `docs/writeup.md`, `docs/reading_log.md`.
 
 ### The requirements
 
@@ -284,6 +299,8 @@ httpx>=0.27            # the service's tests call it
 
 # phase 11
 pymc>=5.10             # the hierarchical Bayesian model
+tables>=3.9            # PyTables, to read the DCRNN benchmark's .h5 speed tables
+pyyaml>=6.0            # reads bench/pems_bay/config.yaml
 ```
 
 _Check._ `pip install -r requirements.txt` finishes without a red line, and the import block in the phase 0 walkthrough prints `arm64` and one version per package. If `import lightgbm` fails naming `libomp`, run `brew install libomp` and open a new terminal.
@@ -370,7 +387,7 @@ _Targets, finished._
 - `all` · `clean labels incidents features baselines train calibrate evaluate`, then checks that `docs/stages/` has a page for every runner and fails if one is missing.
 - `predict` · one cycle of `19_predict_live.py --replay`.
 - `monitor` · `20_monitor.py`.
-- `retrain` · `features train calibrate evaluate` for the newest month, then `20_monitor.py --promote`, which swaps the model files atomically and records the previous set in `models/manifest.json`.
+- `retrain` · `20_monitor.py --stash` (the live set copied to `models/previous/`), then `features train calibrate evaluate` for the newest month, then `20_monitor.py --promote`, which swaps the model files atomically and records the previous set in `models/manifest.json`. `20_monitor.py --retrain-if-due` is what the monthly launchd job calls; it runs this only when the schedule or the decay rule says so.
 - `rollback` · `20_monitor.py --rollback`: the previous set becomes live again.
 - `serve` · `uvicorn serve.app:app --port 8000`.
 - `MONTHS ?= $(shell ls data/pems_processed | sed 's/.parquet//')` at the top, so every target defaults to every month present and `make features MONTHS=2026-03` does one.
@@ -389,6 +406,7 @@ _Must contain._
 - The constants listed in the last section of this page, with these exact names, so a Build page can say `common.SLOW_RATIO` and mean one number.
 - `log_stage(name, t0, rows=None, **extra)` · prints and appends to `logs/pipeline.log` the line `stage=<name> seconds=<n> rss_gb=<n> rows=<n>` plus any extra key=value pairs; the seconds are `time.time() - t0`, the memory is `psutil.Process().memory_info().rss / 1e9`.
 - `atomic_write(df_or_obj, path)` · writes a DataFrame (Parquet), a dict (JSON) or text to `path.with_suffix(path.suffix + '.tmp')`, then `os.replace` into place.
+- `RATIO_RULE`, `LEAD_WINDOW_STEPS` and `FALSE_ALARM_STEPS` beside the other constants, so the baseline runner and the evaluator import them rather than defining their own.
 - `env(name, default=None, required=False)` · reads `.env` once through `load_dotenv()` and returns the variable, exiting with a one-line message naming it when required and missing.
 
 ### The data, the models and the outputs
@@ -399,13 +417,13 @@ Every generated file, who writes it and what it holds. Column lists are in the B
 - `data/events_raw/YYYY-MM-DD.jsonl` · runner 02, from phase 1. Every poll's raw response, one JSON object per line with `pulled_at` added, so the join rules can change without polling again.
 - `data/pems_raw/*.txt.gz`, `manifest.json`, `pems_last_request.json` · runner 09, phase 3. Raw district-4 files, about 45 MB each; the manifest makes reruns skip finished days and catches truncated downloads; the request clock keeps the 305-second gap across runs.
 - `data/pems_meta/d04_text_meta_*.txt` and `fremont_stations.parquet` · runner 09 moves the meta file; runner 10 builds the registry from it, about 100 mainline stations with `upstream_id`, `downstream_id`, `lanes`, `length`, `abs_pm`.
-- `data/pems_processed/YYYY-MM.parquet` · runner 10. Columns `station_id, timestamp, speed, occupancy, flow, observed_frac, samples`, float32, one row per station per five-minute UTC slot, no gaps.
+- `data/pems_processed/YYYY-MM.parquet` · runner 10. Columns `station_id, timestamp, speed, occ, flow, observed_frac, samples`, float32, one row per station per five-minute UTC slot, no gaps.
 - `data/labels/YYYY-MM.parquet` · runner 11. Adds `profile_speed, speed_ratio, ratio_ff, label, label_abs`; the profile itself is a model artifact, `models/profile_<split>.parquet`.
 - `data/incidents/YYYY-MM.parquet` · runner 12. The six incident columns keyed by `station_id, timestamp`.
 - `data/weather/openmeteo_hourly.parquet` · `weather.py`, phase 6. Hourly `precip_mm` for Fremont, UTC.
-- `data/features/YYYY-MM.parquet` · runner 13. About 60 feature columns plus `y_15, y_30, y_60, speed_t30`, keys `station_id, timestamp`; rows whose target is unknown are dropped, never filled.
-- `models/` · `bottleneck_weights.npz` (03); `profile_<split>.parquet` (11); `gbt_h{h}_thresh0.6_win3.txt`, `gbt_h{h}_features.json`, `categorical_dtypes.joblib` (16); `iso_h{h}.joblib`, `calibration.json` (16b); `mlp_h30.pt` (17a); `stnet_thresh0.6_win3.pt` (17b); `manifest.json` (phase 9).
-- `output/` · `evaluation_report.json` (18); `predictions_latest.json` and `predictions_log.parquet` (19); `monitor/YYYY-WW.json` (20); `studies/<name>.json` and `.png` (every side study).
+- `data/features/YYYY-MM.parquet` · runner 13. About 60 feature columns plus `y_15, y_30, y_60, speed_t30`, keys `station_id, timestamp`; rows whose target is unknown are dropped, never filled. The occupancy column is `occ` from the cleaning stage on, and every feature built from it says `occ` (`occ_lag_3`).
+- `models/` · `bottleneck_weights.npz` (03); `profile_<split>.parquet` (11); `profile_rate_<split>.parquet` (13); `logreg_h{h}_thresh0.6_win3.npz` (15); `gbt_h{h}_thresh0.6_win3.txt`, `gbt_h{h}_features.json`, `categorical_dtypes.joblib` (16); `iso_h{h}.joblib`, `calibration.json` (16b); `mlp_h30.pt` (17a); `stnet_thresh0.6_win3.pt` (17b); `manifest.json` and `previous/` (phase 9); `gbt_speed30*.txt` (phase 5); `ranker_h30_thresh0.6_win3.txt` (phase 10); `conformal_h30.json`, `pems_bay_<tag>.pt` (phase 11).
+- `output/` · `baselines.json`, `logreg.json`, `lgbm_training.json` (14, 15, 16); `evaluation_report.json` with `reliability_h{h}.png` and `lead_time_hist.png` (18); `predictions_latest.json` and `predictions_log.parquet/` as daily parts (19); `predictions_stnet.parquet` (17b); `monitor/YYYY-WW.json` (20); `studies/<name>.json` and `.png` (every side study). Every prediction row carries `h`, the horizon in minutes (15, 30 or 60), under that name.
 - `logs/` · `pipeline.log` (every runner's last line), `collect.log`, `predict.log`, `predict.err`.
 
 ### The numbers the whole project shares
@@ -427,6 +445,8 @@ Written once in `common.py` and imported everywhere. Each is the plan's value; t
 - `INCIDENT_MILES = 1.0`, `INCIDENT_MIN_MINUTES = 20`, `NO_INCIDENT_MILES = 99`, `SEVERITY = {'Unknown': 1, 'Minor': 1, 'Moderate': 2, 'Major': 3}`.
 - `LGBM_PARAMS` · `objective='binary', is_unbalance=True, num_leaves=63, min_data_in_leaf=200, learning_rate=0.05, feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, lambda_l2=1.0, max_bin=255, num_threads=8, metric='average_precision', verbose=-1`; `LGBM_ROUNDS = 3000`, `LGBM_PATIENCE = 100`.
 - `CATEGORICALS = ['station_id', 'fwy', 'dir', 'daytype']`.
+- `RATIO_RULE = 0.7` · the speed ratio below which the rule-of-thumb baseline says slow.
+- `LEAD_WINDOW_STEPS = 24`, `FALSE_ALARM_STEPS = 12` · how far before an onset an alert counts (two hours), and how far ahead a label must be absent for an alert to be a false alarm (one hour).
 - `ALERT_PRECISION = 0.5` · the validation precision `tau_h` must keep; `CHALLENGER_MARGIN = 0.02` · the validation AP gain the net needs to be shipped.
 - `PSI_ALERT = 0.2`, `RETRAIN_DROP = 0.2`, `RETRAIN_WEEKS = 2` · drift and decay rules for `20_monitor.py`.
 - `POLL_SECONDS = 900`, `PEMS_GAP_SECONDS = 305`, `PREDICT_SECONDS = 300`.
@@ -8549,22 +8569,655 @@ pinball(q) = mean( max(q(y − ŷ), (q − 1)(y − ŷ)) )
 
 ### Build
 
-_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new._
+_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new._
 
-- `13_feature_engineering.py` with forward-shifted targets and the rolling-origin split with a one-day gap.
-- The episode-level half of `18_evaluate_lead_time.py`: onset, lead-time histogram, share caught, false alarms.
-- Plot the ACF of speed for one station; estimate the shockwave speed from the fundamental diagram; compute skill over persistence per horizon.
-- Train on the absolute label too; compare prevalence and skill and write the decision.
+
+This phase turns the phase 4 table into a forecasting table and the phase 4 report into a forecast report. Write `weather.py` first: it is one network pull, cached to a small Parquet, and everything after it joins that file. Then extend `features.py`, write the second version of `13_feature_engineering.py`, and add the new tests to `tests/test_features.py` before the full rebuild, because every number in the rest of the phase is measured on that table and a table rebuilt later invalidates them. Then `split.py` with `tests/test_split.py`; the folds are a pure function of the months present, so no file records them and 13 only prints them. Then the episode half of `evaluate.py` and the second version of `18_evaluate_lead_time.py`, which produce the lead-time histogram. The two studies come next because they need the rebuilt table and the episode functions: `studies/acf_shockwave.py` is the physics, `studies/label_choice.py` is the experiment behind the decision. `docs/decisions/label.md` is written last because it quotes the studies' numbers. Update `docs/stages/13_feature_engineering.md` and `docs/stages/18_evaluate_lead_time.md` when their runners change; each runner's block below says what the page must gain.
+
+Two rules run through every file here. Nothing at t may use a row after t: targets shift forward, rolling windows trail, weather joins the last completed hour, and the profile rate is fit on training rows only. And nothing is trusted by shape: every runner asserts the columns and the grid it expects before doing work.
+
+#### `weather.py` · module · new
+
+_Purpose._ Hourly rain for Fremont from Open-Meteo, the weather input of stage 8 and the rain-forecast input of stage 12. No key and no account. The historical archive is cached at `data/weather/openmeteo_hourly.parquet`; the forecast is fetched at serving time. Nothing to add to `requirements.txt`; `requests` came with phase 0. This is the one module with a `__main__` block, because no numbered runner owns the weather file.
+
+_Reads._ `https://archive-api.open-meteo.com/v1/archive` and `https://api.open-meteo.com/v1/forecast`, JSON fields `hourly.time` (ISO strings, UTC when the request says `timezone=UTC`) and `hourly.precipitation` (mm). The month names in `data/pems_processed/` to know the range to fetch, and the existing parquet to fetch only what is missing.
+
+_Writes._ `data/weather/openmeteo_hourly.parquet`: `hour` datetime64[ns, UTC], one row per UTC hour, unique and sorted; `precip_mm` float32, the millimetres that fell in the hour starting at `hour`. Missing hours are absent rows, never NaN.
+
+_Run._ `python weather.py --update [--start YYYY-MM-DD] [--end YYYY-MM-DD]`; start defaults to the first day of the earliest processed month, end to today, and the archive returns nothing for the last few days, which is normal. `python weather.py --forecast` prints the past three and the next three hours as a check of the serving path. Both end with `common.log_stage('weather', ...)`.
+
+_Must contain._
+- `FREMONT_LAT = (common.FREMONT_BOX[0] + common.FREMONT_BOX[1]) / 2` and `FREMONT_LON = (common.FREMONT_BOX[2] + common.FREMONT_BOX[3]) / 2`: the centre of the box, so there is no second set of coordinates anywhere.
+- `ARCHIVE_URL`, `FORECAST_URL` as above; `WEATHER_PATH = common.DATA / 'weather' / 'openmeteo_hourly.parquet'`; `PAST_HOURS = 3`, the trailing window the features need.
+- `fetch_archive(start: str, end: str) -> pd.DataFrame`: one GET with `latitude`, `longitude`, `start_date`, `end_date`, `hourly=precipitation`, `timezone=UTC`; returns `hour`, `precip_mm`; raises on a non-200 or on a response without `hourly`; called one month at a time by the updater.
+- `update_archive(start: str | None = None, end: str | None = None) -> pd.DataFrame`: fetches the months not yet in the parquet, concatenates with the cached rows, drops duplicate hours keeping the newest fetch, sorts, writes with `common.atomic_write`, returns the table.
+- `load_archive() -> pd.DataFrame`: reads the parquet and asserts `hour` is unique, sorted and tz-aware UTC, and `precip_mm` is finite and ≥ 0.
+- `forecast(past_hours: int = PAST_HOURS, ahead_hours: int = 3) -> pd.DataFrame`: GET on `FORECAST_URL` with `hourly=precipitation`, `past_hours`, `forecast_hours`, `timezone=UTC`; same two columns; this is what `19_predict_live.py` passes into the feature module.
+- `rain_features(hourly: pd.DataFrame) -> pd.DataFrame`: reindexes onto the full hourly grid between the first and last hour, then `precip_mm_1h = precip_mm` (float32), `precip_mm_3h` = trailing `rolling(PAST_HOURS, min_periods=1).sum()` (float32), `is_raining = (precip_mm_1h > 0)` as int8; keyed by `hour`.
+- `join_weather(df: pd.DataFrame, hourly: pd.DataFrame) -> pd.DataFrame`: `key = df.timestamp.dt.floor('h') - pd.Timedelta(hours=1)`, the last completed hour, left-merged on `hour`; hours the archive lacks leave NaN in the three columns; asserts the row count did not change and the NaN share is under 1 % when `hourly` covers the frame's dates.
+
+_Skeleton._
+
+```python
+"""Open-Meteo hourly rain for Fremont: archive for training, forecast for serving."""
+import argparse, time
+import numpy as np, pandas as pd, requests
+import common
+
+FREMONT_LAT = (common.FREMONT_BOX[0] + common.FREMONT_BOX[1]) / 2
+FREMONT_LON = (common.FREMONT_BOX[2] + common.FREMONT_BOX[3]) / 2
+ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
+FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+WEATHER_PATH = common.DATA / "weather" / "openmeteo_hourly.parquet"
+PAST_HOURS = 3
+
+def fetch_archive(start: str, end: str) -> pd.DataFrame:
+    """One archive call for [start, end]; columns hour (UTC) and precip_mm."""
+    ...
+
+def update_archive(start: str | None = None, end: str | None = None) -> pd.DataFrame:
+    """Fetch the months missing from WEATHER_PATH, merge, write atomically, return the table."""
+    ...
+
+def load_archive() -> pd.DataFrame:
+    """Read WEATHER_PATH and assert unique sorted UTC hours and finite precip_mm >= 0."""
+    ...
+
+def forecast(past_hours: int = PAST_HOURS, ahead_hours: int = 3) -> pd.DataFrame:
+    """Forecast endpoint: the past and next hours in the same two columns as the archive."""
+    ...
+
+def rain_features(hourly: pd.DataFrame) -> pd.DataFrame:
+    """hour, precip_mm_1h, precip_mm_3h (trailing sum), is_raining on the full hourly grid."""
+    ...
+
+def join_weather(df: pd.DataFrame, hourly: pd.DataFrame) -> pd.DataFrame:
+    """Left-join rain_features on the last completed UTC hour before each timestamp."""
+    ...
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--update", action="store_true"); ap.add_argument("--forecast", action="store_true")
+    ap.add_argument("--start"); ap.add_argument("--end")
+    args = ap.parse_args(); t0 = time.time()
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python weather.py --update` prints `stage=weather seconds=<n> rss_gb=<n> rows=<hours>`. Then `python -c "import weather; w = weather.load_archive(); print(len(w), w.hour.min(), w.hour.max(), w.hour.is_unique, round(float((w.precip_mm > 0).mean()), 3))"` prints a row count equal to the hours between the two ends, `True`, and a share of rainy hours of a few percent; write that share into `docs/stages/13_feature_engineering.md` under inputs. `python weather.py --forecast` prints six rows whose hours straddle the current UTC hour.
+
+_Watch for._ The archive's `time` strings carry no offset; `pd.to_datetime(..., utc=True)` is right only because the request said `timezone=UTC`. Leave the parameter out and the same code silently stores local hours, and the join is off by seven or eight hours.
+
+#### `features.py` · module · changed
+
+_Purpose._ Stage 8's one implementation of every feature, imported by `13_feature_engineering.py` now and by `19_predict_live.py` in phase 9. Changed from phase 4: the neighbour set grows to two hops with the lagged and ratio columns, the 60-minute rolling mean is added, the profile label rate becomes a train-only artifact, the calendar gains `is_weekend` and `day_before_holiday`, and the weather join arrives. `build_features()` is still the only entry point and the phase 4 functions keep their names and behaviour.
+
+_Reads._ Nothing on its own; every function takes frames. The default loaders read `data/pems_meta/fremont_stations.parquet` (`ID`, `Fwy`, `Dir`, `Abs_PM`, `Lanes`, `Length`, `upstream_id`, `downstream_id`), `data/weather/openmeteo_hourly.parquet` through `weather.load_archive()`, and `models/profile_rate_<split>.parquet`.
+
+_Writes._ Nothing. The runner writes.
+
+_Must contain._
+- `FEATURE_COLUMNS: list[str]`: the feature names in a fixed order, written once here; 13 asserts its output has exactly these plus the keys, labels and targets. The groups: own history `speed_lag_{0,1,2,3,6,12}`, `occ_lag_*`, `flow_lag_*` (`common.LAGS`), `speed_roll_mean_30`, `speed_roll_mean_60`, `speed_roll_std_30`, `speed_slope_15`; profile `profile_speed`, `speed_ratio`, `ratio_ff`, `profile_label_rate`; neighbours `up1_speed`, `up1_occ`, `up2_speed`, `up2_occ`, `down1_speed`, `down1_occ`, `down2_speed`, `down2_occ`, `up1_speed_lag_3`, `down1_speed_lag_3`, `up1_ratio`; incidents `incident_active`, `incident_severity`, `minutes_since_incident_start`, `nearest_incident_miles`, `incident_upstream`, `incidents_active_route`; calendar `min_sin`, `min_cos`, `dow_sin`, `dow_cos`, `is_weekend`, `is_holiday`, `day_before_holiday`; weather `precip_mm_1h`, `precip_mm_3h`, `is_raining`; static `fwy`, `dir`, `lanes`, `station_length`, plus `daytype`, `slot`, `observed_frac`.
+- `add_lags(df: pd.DataFrame) -> pd.DataFrame`: phase 4's lesson 5 step 1, unchanged, plus `speed_roll_mean_60` from `common.ROLL_STEPS[60]` with `min_periods=common.ROLL_STEPS[60] // 2`; every rolling window is trailing; requires the frame sorted by `station_id`, `timestamp` on the full grid and asserts it.
+- `add_calendar(df: pd.DataFrame) -> pd.DataFrame`: step 2 unchanged, plus `is_weekend` (int8, local Saturday or Sunday), `day_before_holiday` (int8, the local date plus one day is in the `holidays.US(state='CA')` calendar for the years present); the holiday calendar is built for `df`'s years, not a literal year.
+- `add_neighbors(df: pd.DataFrame, reg: pd.DataFrame) -> pd.DataFrame`: replaces step 3's one-hop loop; a `hops` table `station_id, up1_id, up2_id, down1_id, down2_id` from chaining `upstream_id` and `downstream_id` through the registry twice, then four merges of `speed`, `occ` (and `speed_ratio` for `up1`) on (`neighbour id`, `timestamp`); `up1_speed_lag_3` and `down1_speed_lag_3` are `groupby('station_id').shift(3)` of the merged columns; `up1_ratio` is the upstream neighbour's `speed_ratio`; asserts the row count is unchanged after every merge.
+- `fit_profile_rate(labels_train: pd.DataFrame) -> pd.DataFrame`: `station_id, daytype, slot, profile_label_rate (float32), n (int32)` as the mean of `label` per cell over training rows only, cells with `n < common.PROFILE_MIN_N` set to the (station, daytype) mean.
+- `add_profile_rate(df: pd.DataFrame, rate: pd.DataFrame) -> pd.DataFrame`: left merge on the three keys; NaN stays NaN.
+- `add_weather(df: pd.DataFrame, hourly: pd.DataFrame) -> pd.DataFrame`: `weather.join_weather` after `weather.rain_features`.
+- `add_static(df: pd.DataFrame, reg: pd.DataFrame) -> pd.DataFrame`: phase 4's, unchanged: `fwy`, `dir` as categories from `Fwy`, `Dir`; `lanes` int8 from `Lanes`; `station_length` float32 from `Length`.
+- `shift_targets(df: pd.DataFrame, col: str = 'label') -> pd.DataFrame`: step 4 with `common.HORIZONS`: `y_15`, `y_30`, `y_60` as `groupby('station_id')[col].shift(-steps)`, `speed_t30` as `speed.shift(-common.HORIZONS[30])`, then drops rows where any target is NaN; used with `col='label_abs'` by `studies/label_choice.py`.
+- `build_features(df: pd.DataFrame, reg: pd.DataFrame | None = None, weather_hourly: pd.DataFrame | None = None, rate: pd.DataFrame | None = None, split: str = 'train2026') -> pd.DataFrame`: the chain `add_lags`, `add_calendar`, `add_neighbors`, `add_profile_rate`, `add_weather`, `add_static`, then `shift_targets` only when `label` is in the columns (a serving buffer has none); `None` arguments load the defaults, `split` names the rate artifact; ends by asserting every name in `FEATURE_COLUMNS` is present and float columns are float32.
+- `load_month_with_edges(month: str) -> pd.DataFrame`: reads `data/labels/<month>.parquet` merged with `data/incidents/<month>.parquet` on `station_id`, `timestamp`, plus the last `max(common.LAGS)` steps of the previous month and the first `common.HORIZONS[60]` steps of the next month when those files exist, so lags at the month's first hour and targets at its last hour are real; returns the frame and the month's own timestamp range for the runner to keep.
+
+_Skeleton._
+
+```python
+"""Every feature and the forward-shifted targets. One implementation for training and serving."""
+import numpy as np, pandas as pd, holidays
+import common, weather
+
+FEATURE_COLUMNS = [...]   # the ordered list from the contract
+
+def add_lags(df: pd.DataFrame) -> pd.DataFrame:
+    """Lags, trailing rolling mean 30 and 60, rolling std 30, slope; grouped by station."""
+    ...
+
+def add_calendar(df: pd.DataFrame) -> pd.DataFrame:
+    """Minute and weekday sin/cos, is_weekend, is_holiday, day_before_holiday, in local time."""
+    ...
+
+def add_neighbors(df: pd.DataFrame, reg: pd.DataFrame) -> pd.DataFrame:
+    """Two hops up and down the postmile graph: speed, occ, lag-3 speeds, up1_ratio."""
+    ...
+
+def fit_profile_rate(labels_train: pd.DataFrame) -> pd.DataFrame:
+    """Share of label == 1 per station x daytype x slot, training rows only."""
+    ...
+
+def add_profile_rate(df: pd.DataFrame, rate: pd.DataFrame) -> pd.DataFrame:
+    """Left-merge profile_label_rate on station_id, daytype, slot."""
+    ...
+
+def add_weather(df: pd.DataFrame, hourly: pd.DataFrame) -> pd.DataFrame:
+    """precip_mm_1h, precip_mm_3h, is_raining from the last completed UTC hour."""
+    ...
+
+def add_static(df: pd.DataFrame, reg: pd.DataFrame) -> pd.DataFrame:
+    """fwy, dir, lanes, station_length from the registry."""
+    ...
+
+def shift_targets(df: pd.DataFrame, col: str = "label") -> pd.DataFrame:
+    """y_15, y_30, y_60 as col shifted forward by common.HORIZONS, speed_t30; drop unknown targets."""
+    ...
+def build_features(df: pd.DataFrame, reg: pd.DataFrame | None = None,
+                   weather_hourly: pd.DataFrame | None = None, rate: pd.DataFrame | None = None,
+                   split: str = "train2026") -> pd.DataFrame:
+    """The whole chain; targets only when a label column exists."""
+    ...
+def load_month_with_edges(month: str) -> tuple[pd.DataFrame, pd.Timestamp, pd.Timestamp]:
+    """Labels + incidents for one month with an hour of context on each side."""
+    ...
+```
+
+_Check._ `pytest tests/test_features.py -q` passes. Then the phase 4 leakage assert, generalized: for ten random rows of one rebuilt month, recompute `speed_lag_3`, `speed_roll_mean_60`, `down1_speed` and `precip_mm_1h` by hand from `data/labels/` and the weather parquet using only rows at or before t, and `np.isclose` each; do it in the notebook page for the week and paste the ten timestamps into `docs/stages/13_feature_engineering.md`.
+
+_Watch for._ Every merge in `add_neighbors` can multiply rows if a neighbour id is NaN on both sides or the registry has a duplicate `ID`; the row-count assert after each merge is the whole defence. Merge with `how='left'` and never on a column that can be NaN without first dropping those rows from the right-hand table.
+
+#### `13_feature_engineering.py` · runner · changed
+
+_Purpose._ Stage 8, second version: rebuilds the training table month by month with the extended `features.py`, fits and stores the profile label rate, joins weather, and prints the rolling-origin folds. Peak memory stays near 3 GB because no month is ever in memory with more than an hour of its neighbours.
+
+_Reads._ `data/labels/YYYY-MM.parquet` (the cleaned columns `station_id`, `timestamp`, `speed`, `occ`, `flow`, `observed_frac`, `samples` plus `profile_speed`, `speed_ratio`, `ratio_ff`, `label`, `label_abs`, `daytype`, `slot`); `data/incidents/YYYY-MM.parquet` (the six incident columns keyed by `station_id`, `timestamp`); `data/pems_meta/fremont_stations.parquet`; `data/weather/openmeteo_hourly.parquet`. Before any work it asserts, for each month, one row per station per five-minute slot, the column list above, and that the incidents file has the same keys.
+
+_Writes._ `models/profile_rate_<split>.parquet`: `station_id` category, `daytype` category, `slot` int16, `profile_label_rate` float32, `n` int32. `data/features/YYYY-MM.parquet`, one per month, keys `station_id` category and `timestamp` datetime64[ns, UTC]; every name in `features.FEATURE_COLUMNS` with these dtypes: all lag, rolling, slope, profile, neighbour, `minutes_since_incident_start`, `nearest_incident_miles`, sin/cos, `precip_mm_1h`, `precip_mm_3h`, `station_length`, `observed_frac` float32; `incident_active`, `incident_severity`, `incident_upstream`, `incidents_active_route`, `is_weekend`, `is_holiday`, `day_before_holiday`, `is_raining`, `lanes` int8; `slot` int16; `fwy`, `dir`, `daytype` category; then `label` int8, `label_abs` int8, `y_15`, `y_30`, `y_60` int8, `speed_t30` float32. Rows whose target is unknown are dropped, never filled.
+
+_Run._ `python 13_feature_engineering.py [--month YYYY-MM] [--split train2026] [--label label]`. `--month` defaults to every month in `data/labels/`; `--split` names the profile artifact 11 wrote and the rate artifact this writes; `--label` is `label` or `label_abs` and is the column the targets shift; it stays `label` until `docs/decisions/label.md` says otherwise. Ends with `stage=features seconds=<n> rss_gb=<n> rows=<n> months=<k> folds=<1 or 3>`.
+
+_Must contain._
+- `training_months(months: list[str], train_end: pd.Timestamp) -> list[str]`: the months at or before the primary split's train end from `split.chronological_split`'s dates.
+- `fit_rate(months: list[str], split: str) -> pd.DataFrame`: reads only `station_id`, `timestamp`, `daytype`, `slot`, `label` from the training months, calls `features.fit_profile_rate`, writes the artifact with `common.atomic_write`.
+- `build_month(month: str, reg, hourly, rate, label_col: str) -> pd.DataFrame`: `features.load_month_with_edges`, `features.build_features`, keep the month's own timestamps, cast, assert `FEATURE_COLUMNS`, write to `.tmp` and rename; `del` and `gc.collect()` before the next month.
+- `main()`: argparse, the asserts on inputs, `fit_rate`, the month loop, then `split.folds` on the months present printed one line per fold, then `common.log_stage`.
+
+_Skeleton._
+
+```python
+"""Stage 8: the feature table, month by month, with neighbours, weather and forward targets."""
+import argparse, gc, time
+import pandas as pd
+import common, features, split, weather
+
+def training_months(months: list[str], train_end: pd.Timestamp) -> list[str]:
+    """Months whose rows the primary split trains on."""
+    ...
+
+def fit_rate(months: list[str], split_name: str) -> pd.DataFrame:
+    """Fit profile_label_rate on training months only and write models/profile_rate_<split>.parquet."""
+    ...
+
+def build_month(month: str, reg: pd.DataFrame, hourly: pd.DataFrame,
+                rate: pd.DataFrame, label_col: str) -> int:
+    """Build one month with an hour of context each side; write atomically; return rows written."""
+    ...
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--month", action="append", help="YYYY-MM; repeatable; default every month")
+    ap.add_argument("--split", default="train2026")
+    ap.add_argument("--label", default="label", choices=["label", "label_abs"])
+    args = ap.parse_args(); t0 = time.time()
+    ...
+    common.log_stage("features", t0, rows=total, months=len(months), folds=len(folds))
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 13_feature_engineering.py --month 2026-03` then `python -c "import pandas as pd, features; d = pd.read_parquet('data/features/2026-03.parquet'); print(d.shape, set(features.FEATURE_COLUMNS) - set(d.columns), d.dtypes.value_counts().to_dict())"` prints an empty set and a dtype count with no `float64` and no `object`. The full run's log line shows `rss_gb` under 3.5. `d.groupby('station_id').size().describe()` shows the dropped rows are only the last hour of the last month plus detector gaps. The stage page gains the column list above, the rainy-hour share, the fold lines the runner printed, and the ten leakage timestamps.
+
+_Watch for._ A month's first hour has real lags only because `load_month_with_edges` pulled the previous month's tail; the first month you ever build has no previous month, so its first twelve steps per station are NaN in the lags and its first hour of targets is fine. That is correct, not a bug; do not fill them.
+
+#### `tests/test_features.py` · test · changed
+
+_Purpose._ Phase 4's tests stay; this adds the ones the second version needs: the target shifts forward, no window looks ahead, the two-hop neighbours land on the right station, the weather join uses a completed hour, and the profile rate never sees a non-training row. Every test builds its own tiny grid; none reads `data/`.
+
+_Reads._ Nothing on disk.
+
+_Must contain._
+- `grid(stations: list[int], n: int, start='2026-03-02 08:00', speed=60.0) -> pd.DataFrame`: a helper making `n` five-minute UTC rows per station with `speed`, `occ`, `flow`, `observed_frac`, `profile_speed`, `speed_ratio`, `daytype`, `slot`, `label`, `label_abs` filled with constants.
+- `test_targets_shift_forward`: label 1 only at row 20 of station A gives `y_15 = 1` at row 17 only, `y_30` at row 14 only, `y_60` at row 8 only, station B all zero, and exactly `common.HORIZONS[60]` rows per station dropped from the tail.
+- `test_rolling_mean_60_is_trailing`: a speed of 0 at row 20 in a constant series changes `speed_roll_mean_60` at rows 20 to 31 and at no row before 20.
+- `test_lags_do_not_cross_stations`: station B's first row has NaN in `speed_lag_1` and `up1_speed_lag_3` even though station A's rows precede it in the frame.
+- `test_neighbors_two_hops`: a registry chain A, B, C, D by `downstream_id` gives station C `up1_speed` from B, `up2_speed` from A, `down1_speed` from D, `down2_speed` NaN, all at the same timestamp, and the row count unchanged.
+- `test_weather_join_uses_completed_hour`: 5 mm at hour 14:00 UTC gives `precip_mm_1h = 0` at 14:05 and 14:55, `5` at 15:00 and 15:30, `0` at 16:00, and `precip_mm_3h = 5` from 15:00 up to 17:55.
+- `test_profile_rate_uses_training_rows_only`: a cell with labels (1, 0, 0, 0) in the training frame and a later row with label 1 outside it gives `profile_label_rate = 0.25`.
+- `test_build_features_without_label_has_no_targets`: a 13-step buffer with no `label` column comes back with every `FEATURE_COLUMNS` name and no `y_15`.
+
+_Skeleton._
+
+```python
+import numpy as np, pandas as pd, pytest
+import common, features
+
+def grid(stations, n, start="2026-03-02 08:00", speed=60.0):
+    """n five-minute UTC rows per station with constant filler columns."""
+    ts = pd.date_range(start, periods=n, freq=common.STEP, tz="UTC")
+    rows = [pd.DataFrame({"station_id": s, "timestamp": ts, "speed": speed, "occ": 0.1, "flow": 100.0,
+                          "observed_frac": 1.0, "profile_speed": 65.0, "speed_ratio": speed / 65.0,
+                          "daytype": "wd", "slot": ts.hour * 12 + ts.minute // 5, "label": 0, "label_abs": 0})
+            for s in stations]
+    return pd.concat(rows, ignore_index=True)
+
+def test_targets_shift_forward():
+    df = grid([1, 2], 40)
+    df.loc[(df.station_id == 1) & (df.index == 20), "label"] = 1
+    out = features.shift_targets(df.sort_values(["station_id", "timestamp"]).reset_index(drop=True))
+    a = out[out.station_id == 1].reset_index(drop=True)
+    assert list(a.index[a.y_15 == 1]) == [17] and list(a.index[a.y_30 == 1]) == [14] and list(a.index[a.y_60 == 1]) == [8]
+    assert (out[out.station_id == 2][["y_15", "y_30", "y_60"]] == 0).all().all()
+    assert len(a) == 40 - common.HORIZONS[60]
+
+def test_rolling_mean_60_is_trailing(): ...
+def test_lags_do_not_cross_stations(): ...
+def test_neighbors_two_hops(): ...
+def test_weather_join_uses_completed_hour(): ...
+def test_profile_rate_uses_training_rows_only(): ...
+def test_build_features_without_label_has_no_targets(): ...
+```
+
+_Check._ `pytest tests/test_features.py -q` prints `passed` for the phase 4 count plus seven. Make `test_targets_shift_forward` fail once by changing `-steps` to `steps` in `shift_targets`; it must fail with `[23]` in place of `[17]`.
+
+#### `split.py` · module · changed
+
+_Purpose._ The chronological split from phase 4 plus rolling-origin folds, stage 9's rule: three folds when eighteen months exist, otherwise the single split, with `common.SPLIT_GAP_DAYS` between blocks everywhere. Folds are dates, not frames, so three folds cost no memory; the mean and spread of any score across folds are summarised here so every runner reports them the same way.
+
+_Reads._ Nothing on disk. Functions take a frame or a list of months.
+
+_Writes._ Nothing.
+
+_Must contain._
+- `Fold`: a `NamedTuple` with `name: str`, `train_end`, `val_start`, `val_end`, `test_start`, `test_end`, all `pd.Timestamp` in UTC; the gap days lie between `train_end` and `val_start` and between `val_end` and `test_start` and belong to no block.
+- `months_present(df: pd.DataFrame) -> list[str]`: sorted `YYYY-MM` of the local date of `timestamp`, the same month names as the Parquet files.
+- `split_dates(months: list[str], gap_days: int = common.SPLIT_GAP_DAYS) -> Fold`: the plan's rule scaled to what exists: the last two months are test, the two before are validation, the rest train; `train_end` is the last day of the train block minus `gap_days`, `val_start` the first day of the next month, and the same at the validation end; with twelve months this is the walkthrough's 8, 2, 2; raises if fewer than six months exist.
+- `chronological_split(df: pd.DataFrame, train_end: str | None = None, val_end: str | None = None, gap_days: int = common.SPLIT_GAP_DAYS) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]`: phase 4's function, unchanged in behaviour; with no dates it uses `split_dates(months_present(df))`.
+- `folds(months: list[str], n_folds: int = 3, min_months: int = 18, step_months: int = 2, gap_days: int = common.SPLIT_GAP_DAYS) -> list[Fold]`: when `len(months) >= min_months`, `n_folds` folds named `fold0`, `fold1`, `fold2`, the last equal to `split_dates(months)` and each earlier one `step_months` months earlier with the same block sizes, so train always ends at least ten months in; otherwise one fold named `single` equal to `split_dates(months)`.
+- `apply_fold(df: pd.DataFrame, fold: Fold) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]`: the three frames by boolean masks on `timestamp`.
+- `fold_summary(scores: dict[str, float]) -> dict`: `per_fold` (the input), `mean`, `std`, `spread` as max minus min, `n_folds`; with one fold `spread` is 0 and the report says so rather than hiding it.
+
+_Skeleton._
+
+```python
+"""Chronological split with a gap, rolling-origin folds, and the summary across them."""
+from typing import NamedTuple
+import numpy as np, pandas as pd
+import common
+
+class Fold(NamedTuple):
+    name: str
+    train_end: pd.Timestamp
+    val_start: pd.Timestamp
+    val_end: pd.Timestamp
+    test_start: pd.Timestamp
+    test_end: pd.Timestamp
+
+def months_present(df: pd.DataFrame) -> list[str]:
+    """Sorted YYYY-MM of the local dates in df.timestamp."""
+    ...
+
+def split_dates(months: list[str], gap_days: int = common.SPLIT_GAP_DAYS) -> Fold:
+    """Last two months test, two before validation, the rest train, gap_days between blocks."""
+    ...
+
+def chronological_split(df: pd.DataFrame, train_end: str | None = None, val_end: str | None = None,
+                        gap_days: int = common.SPLIT_GAP_DAYS) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Phase 4's split; dates default to split_dates(months_present(df))."""
+    ...
+
+def folds(months: list[str], n_folds: int = 3, min_months: int = 18, step_months: int = 2,
+          gap_days: int = common.SPLIT_GAP_DAYS) -> list[Fold]:
+    """Three rolling-origin folds when min_months exist, else the single split."""
+    ...
+
+def apply_fold(df: pd.DataFrame, fold: Fold) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Train, validation and test frames for one fold."""
+    ...
+
+def fold_summary(scores: dict[str, float]) -> dict:
+    """per_fold, mean, std, spread (max - min), n_folds."""
+    ...
+```
+
+_Check._ `python -c "import split; [print(f) for f in split.folds([f'2026-{m:02d}' for m in range(1, 13)])]"` prints one fold named `single` with `train_end` 2026-08-30, `val_start` 2026-09-01, `val_end` 2026-10-30, `test_start` 2026-11-01. The same with 18 months prints three folds whose `test_start` values are two months apart. `pytest tests/test_split.py -q` passes.
+
+_Watch for._ The label's profile and the profile rate were fit on the primary split's training block. In a fold whose validation months lie inside that block, the profile has seen those rows; the leak is small (a median over months) but real. Report fold scores as a spread, never as the headline, and let the last fold, which matches the primary split, be the number that goes in the report.
+
+#### `tests/test_split.py` · test · changed
+
+_Purpose._ Phase 4's tests stay; these prove the gap and the folds on a synthetic timeline.
+
+_Reads._ Nothing on disk.
+
+_Must contain._
+- `timeline(n_months: int) -> pd.DataFrame`: one row per hour per month from 2026-01-01, one station, a `timestamp` column in UTC.
+- `test_gap_is_one_full_day`: on twelve months, `va.timestamp.min().normalize() - tr.timestamp.max().normalize()` equals `common.SPLIT_GAP_DAYS + 1` days, and no row of the gap day is in any of the three frames; the same between validation and test.
+- `test_blocks_are_ordered_and_disjoint`: `tr.timestamp.max() < va.timestamp.min()`, `va.timestamp.max() < te.timestamp.min()`, and the three index sets share nothing.
+- `test_three_folds_at_18_months_else_one`: eighteen months give three folds, seventeen give one named `single`.
+- `test_last_fold_equals_primary_split`: `folds(months)[-1]` has the same dates as `split_dates(months)`.
+- `test_fold_summary_mean_and_spread`: `{'fold0': 0.30, 'fold1': 0.34, 'fold2': 0.32}` gives `mean` 0.32 and `spread` 0.04 to 1e-9.
+
+_Skeleton._
+
+```python
+import pandas as pd, pytest
+import common, split
+
+def timeline(n_months):
+    """One station, hourly rows from 2026-01-01 for n_months months."""
+    end = pd.Timestamp("2026-01-01", tz="UTC") + pd.DateOffset(months=n_months)
+    ts = pd.date_range("2026-01-01", end, freq="h", tz="UTC", inclusive="left")
+    return pd.DataFrame({"station_id": 1, "timestamp": ts})
+
+def test_gap_is_one_full_day():
+    tr, va, te = split.chronological_split(timeline(12))
+    day = pd.Timedelta(days=1)
+    assert va.timestamp.min().normalize() - tr.timestamp.max().normalize() == (common.SPLIT_GAP_DAYS + 1) * day
+    assert te.timestamp.min().normalize() - va.timestamp.max().normalize() == (common.SPLIT_GAP_DAYS + 1) * day
+    gap = tr.timestamp.max().normalize() + day
+    assert not any(((x.timestamp >= gap) & (x.timestamp < gap + day)).any() for x in (tr, va, te))
+
+def test_blocks_are_ordered_and_disjoint(): ...
+def test_three_folds_at_18_months_else_one(): ...
+def test_last_fold_equals_primary_split(): ...
+def test_fold_summary_mean_and_spread(): ...
+```
+
+_Check._ `pytest tests/test_split.py -q` passes; set `gap_days=0` in `split_dates` and `test_gap_is_one_full_day` must fail.
+
+#### `evaluate.py` · module · changed
+
+_Purpose._ Stage 11's metrics. Phase 4 wrote the row level; this adds the episode level from lesson 11's walkthrough (onsets, lead time, false alarms per station-day), skill over persistence, the observed-rows mask, and the incident-level lead table. Everything here takes frames and returns numbers, so `18_evaluate_lead_time.py` and `studies/label_choice.py` report the same way.
+
+_Reads._ Nothing on disk.
+
+_Writes._ Nothing.
+
+_Must contain._
+- `LEAD_WINDOW_STEPS = 24`: the two hours before an onset in which an alert counts (the plan's number, defined here because only the evaluation uses it); `FALSE_ALARM_STEPS = common.HORIZONS[60]`: an alert not followed by an episode within 60 minutes is false.
+- `row_metrics(y, p, tau: float) -> dict` and `reliability_table(y, p, n_bins: int = 10) -> list[dict]` and `block_bootstrap_ap(df, y_col, p_col, n: int = 200, seed: int = 0) -> tuple[float, float]`: phase 4's, unchanged.
+- `skill_over_persistence(y, p, persistence) -> float`: `average_precision_score(y, p) / average_precision_score(y, persistence)`; 1.0 means no skill.
+- `observed_mask(df: pd.DataFrame, h: int) -> np.ndarray`: rows with `observed_frac >= common.MIN_OBSERVED / 100` and `target_observed_<h> == 1`, the column `18` attaches from the full-grid labels file; every reported metric is computed on this mask.
+- `mark_onsets(df: pd.DataFrame) -> pd.Series`: lesson 11 step 3, put here unchanged; int8, 1 on the first row of every run of `label == 1` per station; requires the full grid sorted by `station_id`, `timestamp` and asserts one row per slot, because a dropped row would fake an onset.
+- `lead_times(df: pd.DataFrame, alert_col: str = 'alert', window_steps: int = LEAD_WINDOW_STEPS) -> pd.DataFrame`: step 4's loop, returning one row per episode: `station_id`, `onset_ts`, `lead_min` (float, NaN when no alert in the window).
+- `false_alarms_per_station_day(df: pd.DataFrame, alert_col: str = 'alert', horizon_steps: int = FALSE_ALARM_STEPS) -> float`: step 5 unchanged, consecutive false-alarm rows collapsed into one run.
+- `episode_metrics(df: pd.DataFrame, p_col: str, tau: float, window_steps: int = LEAD_WINDOW_STEPS, horizon_steps: int = FALSE_ALARM_STEPS) -> dict`: sets `alert = (df[p_col] >= tau).astype(int)`, calls the three above, returns `n_episodes`, `share_alerted`, `share_lead_ge_15`, `lead_median_min`, `lead_p25_min`, `lead_p75_min`, `hist_edges` (0, 5, ... 120), `hist_counts`, `false_alarms_per_station_day`, `tau`.
+- `incident_lead_table(df: pd.DataFrame, events: pd.DataFrame, reg: pd.DataFrame, alert_col: str = 'alert', before_steps: int = LEAD_WINDOW_STEPS, after_steps: int = FALSE_ALARM_STEPS) -> pd.DataFrame`: for every 511 event whose `created` falls in `df`'s range, the stations `incidents.py` matches to it (import the same candidate-station function `12_join_incidents.py` uses; do not restate the rule), the first alert at any of them between `created` minus two hours and `created` plus one hour, and `lead_min = (created - first_alert)` in minutes, positive when the alert came first; columns `event_id`, `created`, `n_stations`, `first_alert`, `lead_min`.
+
+_Skeleton._
+
+```python
+"""Row-level, episode-level and incident-level metrics; no file access."""
+import numpy as np, pandas as pd
+from sklearn.metrics import average_precision_score as ap
+import common, incidents
+
+LEAD_WINDOW_STEPS = 24
+FALSE_ALARM_STEPS = common.HORIZONS[60]
+
+def row_metrics(y, p, tau: float) -> dict:
+    """AP, ROC-AUC, Brier, log loss, precision, recall, F1 at tau, n, prevalence (phase 4)."""
+    ...
+
+def reliability_table(y, p, n_bins: int = 10) -> list[dict]:
+    """Ten quantile bins of predicted versus observed (phase 4)."""
+    ...
+
+def skill_over_persistence(y, p, persistence) -> float:
+    """AP of the model divided by AP of the label-at-t forecast."""
+    ...
+
+def observed_mask(df: pd.DataFrame, h: int) -> np.ndarray:
+    """Rows observed at t and at t + h."""
+    ...
+
+def mark_onsets(df: pd.DataFrame) -> pd.Series:
+    """1 on the first row of each run of label == 1 per station; full grid required."""
+    ...
+
+def lead_times(df: pd.DataFrame, alert_col: str = "alert", window_steps: int = LEAD_WINDOW_STEPS) -> pd.DataFrame:
+    """One row per episode: station_id, onset_ts, lead_min (NaN if never alerted)."""
+    ...
+
+def false_alarms_per_station_day(df: pd.DataFrame, alert_col: str = "alert",
+                                 horizon_steps: int = FALSE_ALARM_STEPS) -> float:
+    """Runs of alerts with no episode within horizon_steps, per station-day."""
+    ...
+
+def episode_metrics(df: pd.DataFrame, p_col: str, tau: float, window_steps: int = LEAD_WINDOW_STEPS,
+                    horizon_steps: int = FALSE_ALARM_STEPS) -> dict:
+    """Share caught, lead-time quantiles and histogram, false alarms, at one tau."""
+    ...
+def incident_lead_table(df: pd.DataFrame, events: pd.DataFrame, reg: pd.DataFrame, alert_col: str = "alert",
+                        before_steps: int = LEAD_WINDOW_STEPS, after_steps: int = FALSE_ALARM_STEPS) -> pd.DataFrame:
+    """Minutes between the first alert at an event's stations and its 511 created time."""
+    ...
+```
+
+_Check._ Lesson 11's Try this, as code: a made-up two-hour series for one station with an onset at step 18 and probabilities rising from step 10 gives, at τ = 0.5, `lead_min` 25 and, at τ = 0.3, 40 with one false alarm; run it in the notebook and keep it as `test_episode_metrics_toy` in `tests/test_features.py` if you want it under pytest.
+
+_Watch for._ The walkthrough's two-hour window is not clipped at the previous episode's end, so two episodes ten minutes apart let the first one's alerts count for the second. Leave the code as written, report `n_episodes` and the share of onsets within two hours of a previous episode next to the lead numbers, and say so in the report.
+
+#### `18_evaluate_lead_time.py` · runner · changed
+
+_Purpose._ Stage 11, second version: the row level from phase 4 on observed rows only, then the episode level with a lead-time histogram, the incident-level table, and skill over persistence per horizon. It scores the test split once, with the chosen model and the calibration file, and never chooses anything.
+
+_Reads._ `data/features/*.parquet` cut to the test block by `split.chronological_split`; `data/labels/*.parquet` for the test months, full grid, columns `station_id`, `timestamp`, `label`, `observed_frac`; `models/gbt_h{h}_thresh0.6_win3.txt`, `models/gbt_h{h}_features.json`, `models/categorical_dtypes.joblib`, `models/iso_h{h}.joblib`; `models/calibration.json` (`tau`, `chosen` per horizon); `data/fremont_events_log.csv` (`event_id`, `created`, `road_names`, `directions`, `lat`, `lon`, `geo_missing`); `data/pems_meta/fremont_stations.parquet`; optionally `--challenger`, a Parquet with `split`, `station_id`, `timestamp`, `p_15`, `p_30`, `p_60` whose `split == 'test'` rows are scored beside the trees (phase 7 writes it). Asserts before scoring: the test frame has every name in the feature JSON, the labels frame has one row per slot per station, and no test timestamp is at or before the validation end.
+
+_Writes._ `output/evaluation_report.json` with keys `generated_at`, `split` (the fold's dates), `n_test_rows`, `n_observed_rows`; `row`: per horizon, per model in `lgbm`, `persistence`, `profile_rate`, `ratio_rule` (and `stnet` with `--challenger`), the `row_metrics` dict; `reliability`: per horizon the ten bins for the chosen model; `breakdowns`: phase 4's per station, hour, weekday and route AP; `skill_over_persistence`: per horizon a float; `episodes`: per horizon the `episode_metrics` dict for the chosen model at `tau`; `incidents`: `n_events`, `median_lead_min`, `share_alert_before_created`, `rows` as the table's records; `notes`: the unclipped-window caveat and the share of back-to-back onsets. Also `output/lead_time_hist.png`, three panels, one per horizon, minutes on the x axis, episodes on the y axis, the share caught in the title.
+
+_Run._ `python 18_evaluate_lead_time.py [--split train2026] [--challenger PATH] [--no-plot]`. Prints the row table, then one line per horizon `h=30 AP=<n> persistence=<n> skill=<n>x caught=<n> median_lead_min=<n> false_alarms_per_station_day=<n>`, then the incident summary, then `stage=evaluate seconds=<n> rss_gb=<n> rows=<n>`.
+
+_Must contain._
+- `load_test(split_name: str) -> tuple[pd.DataFrame, pd.DataFrame, split.Fold]`: the test rows of the feature table, the full-grid labels for the same months, the fold.
+- `attach_target_observed(te: pd.DataFrame, labels_full: pd.DataFrame) -> pd.DataFrame`: for each horizon, `observed_frac` shifted forward by `common.HORIZONS[h]` within station on the full grid, merged onto `te` as `target_observed_<h>` (int8).
+- `score(te: pd.DataFrame, h: int) -> pd.Series`: the booster's prediction at `best_iteration`, then `iso_h{h}`, as `q_<h>`; persistence is `te.label`, profile rate is `te.profile_label_rate`, the ratio rule is `(te.speed_ratio < 0.7)` as in 14.
+- `episode_block(labels_full: pd.DataFrame, te: pd.DataFrame, h: int, tau: float) -> dict`: joins `q_<h>` onto the full grid by keys (rows without a prediction get 0), then `evaluate.episode_metrics`.
+- `incident_block(labels_full, te, reg, events, h, tau) -> dict`: `evaluate.incident_lead_table` on the same joined frame.
+- `plot_lead_hist(episodes: dict, path) -> None`: matplotlib, saved with `common.atomic_write` semantics (write `.tmp`, rename).
+- `main()`: argparse, loads, asserts, scores, masks with `evaluate.observed_mask`, builds the report dict, writes JSON and PNG atomically, prints, logs.
+
+_Skeleton._
+
+```python
+"""Stage 11: row, episode and incident metrics on the untouched test split."""
+import argparse, json, time
+import joblib, lightgbm as lgb, numpy as np, pandas as pd
+import common, evaluate, split
+
+def load_test(split_name: str) -> tuple[pd.DataFrame, pd.DataFrame, split.Fold]:
+    """Test rows of the feature table, full-grid labels for those months, the fold."""
+    ...
+
+def attach_target_observed(te: pd.DataFrame, labels_full: pd.DataFrame) -> pd.DataFrame:
+    """target_observed_15/30/60 from observed_frac at t + h on the full grid."""
+    ...
+
+def score(te: pd.DataFrame, h: int) -> pd.Series:
+    """Calibrated probability q_h from the saved booster and isotonic map."""
+    ...
+
+def episode_block(labels_full: pd.DataFrame, te: pd.DataFrame, h: int, tau: float) -> dict:
+    """Episode metrics on the full grid with q_h joined in."""
+    ...
+
+def incident_block(labels_full, te, reg, events, h: int, tau: float) -> dict:
+    """Incident-level lead table and its summary."""
+    ...
+
+def plot_lead_hist(episodes: dict, path) -> None:
+    """Three histograms of lead minutes, one per horizon."""
+    ...
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--split", default="train2026"); ap.add_argument("--challenger")
+    ap.add_argument("--no-plot", action="store_true")
+    args = ap.parse_args(); t0 = time.time()
+    ...
+    common.log_stage("evaluate", t0, rows=len(te))
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 18_evaluate_lead_time.py` prints three skill lines and writes the report; `python -c "import json; r = json.load(open('output/evaluation_report.json')); print({h: (round(r['skill_over_persistence'][h], 2), r['episodes'][h]['share_alerted'], r['episodes'][h]['false_alarms_per_station_day']) for h in ('15', '30', '60')})"` prints three triples, and `open output/lead_time_hist.png` shows three histograms with most mass between 0 and 30 minutes. Skill at 15 minutes near 1.0 is expected; skill below 1.0 at any horizon means a bug in the targets or a model that should be dropped for that horizon. Copy the three lines into `docs/stages/18_evaluate_lead_time.md` with one sentence each.
+
+_Watch for._ Episodes come from the labels file, not from the feature table: the feature table has dropped rows where targets were unknown and a gap of one row makes `shift(1)` see a new onset. Join predictions onto the full grid; never compute onsets on the table you scored.
+
+#### `studies/acf_shockwave.py` · study · new
+
+_Purpose._ Lesson 10's steps 1 and 2 as a script: the autocorrelation of one station's speed for lags 1 to 48, the fundamental diagram from one month, and a shockwave speed from the slope of its congested branch. It explains, with one station's numbers, why lag features and downstream neighbours carry the signal, and it is quoted in `docs/decisions/label.md` and later in the write-up.
+
+_Reads._ `data/pems_processed/YYYY-MM.parquet` for one month (`station_id`, `timestamp`, `speed`, `occ`, `flow`) and the registry for `Lanes`. Asserts one row per slot for the chosen station and `occ` within `common.OCC_RANGE` scaled to 0 to 1.
+
+_Writes._ `output/studies/acf_shockwave.json`: `station_id`, `month`, `n_rows`, `acf` (48 floats), `acf_lag_1`, `acf_lag_12`, `first_lag_below_0_5`, `capacity_vph_per_lane`, `occ_at_capacity`, `congested_slope_vph_per_veh_per_mile`, `shockwave_mph`, `l_eff_ft`. `output/studies/acf_shockwave.png`: two panels, the ACF and the flow-against-occupancy scatter with the fitted congested line.
+
+_Run._ `python studies/acf_shockwave.py [--month YYYY-MM] [--station ID]`; month defaults to the newest processed month, station to the walkthrough's `value_counts().idxmax()` choice.
+
+_Must contain._
+- `L_EFF_FT = 22.0`: the effective vehicle length that turns occupancy into density, `density = occ * 5280 / L_EFF_FT` vehicles per mile per lane; a study constant, and the one number here that is an assumption, so it is written into the JSON.
+- `acf(s: pd.Series, max_lag: int = 48) -> list[float]`: step 1's `interpolate(limit=3)` then `autocorr(lag)` for each lag.
+- `fundamental_diagram(x: pd.DataFrame, lanes: int) -> dict`: flow per lane per hour is `flow * 12 / lanes`; capacity is the 99th percentile of that; `occ_at_capacity` is the median occupancy of the rows within 5 % of capacity; the congested branch is the rows with `occ` above it, fitted by least squares as flow against density; the slope in vehicles per hour per (vehicles per mile) is miles per hour, and that is the shockwave speed w = Δq / Δk.
+- `main()`: argparse, load, assert, compute, `json.dump` and the figure, both under `output/studies/`.
+
+_Skeleton._
+
+```python
+"""ACF of one station's speed, its fundamental diagram, and a shockwave speed estimate."""
+import argparse, json
+import matplotlib; matplotlib.use("Agg")
+import matplotlib.pyplot as plt, numpy as np, pandas as pd
+import common
+
+L_EFF_FT = 22.0
+
+def acf(s: pd.Series, max_lag: int = 48) -> list[float]:
+    """Lesson 10 step 1: autocorrelation at lags 1..max_lag after a short interpolation."""
+    ...
+
+def fundamental_diagram(x: pd.DataFrame, lanes: int) -> dict:
+    """Capacity, occupancy at capacity, congested-branch slope, shockwave speed in mph."""
+    ...
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--month"); ap.add_argument("--station", type=int)
+    args = ap.parse_args()
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python studies/acf_shockwave.py` then `python -c "import json; r = json.load(open('output/studies/acf_shockwave.json')); print(r['acf_lag_1'], r['first_lag_below_0_5'], r['shockwave_mph'])"` prints a lag-1 autocorrelation near 0.9, a first lag below 0.5 of several steps, and a negative shockwave speed. The lesson says −10 to −15 mph; if yours is outside −25 to −5, check that `occ` is a fraction and `lanes` came from the registry before doubting the physics. Write the three numbers in the notebook page and, in one sentence, what the first lag below 0.5 means for `LAGS`.
+
+#### `studies/label_choice.py` · study · new
+
+_Purpose._ The experiment behind the decision: LightGBM trained on `label` and on `label_abs` for every horizon and every fold, with prevalence, AP, persistence AP and skill for each, plus episode metrics at the required precision. It uses the same parameters as `16_train_lgbm.py` so the comparison is between labels, not between settings.
+
+_Reads._ `data/features/*.parquet`; `data/labels/*.parquet` for `label_abs` on the full grid, from which the absolute targets are made with `features.shift_targets(..., col='label_abs')` and merged on the keys as `yabs_15`, `yabs_30`, `yabs_60`; never adds those columns to the feature files. Asserts that no `yabs_` name is in the feature list handed to LightGBM.
+
+_Writes._ `output/studies/label_choice.json`: `folds` (names and dates); per label in `label`, `label_abs`, per horizon: `prevalence_train`, `prevalence_val`, `prevalence_by_hour` (24 floats, local hours), `ap_per_fold`, `ap_mean`, `ap_spread`, `persistence_ap_mean`, `skill_mean`, `skill_spread`, `profile_rate_ap_mean`, `best_iteration_per_fold`; `episodes_30`: per label, `share_alerted`, `lead_median_min`, `false_alarms_per_station_day` at the τ that keeps `common.ALERT_PRECISION` on the last fold's validation; `rounds`, `sample`. `output/studies/label_choice.png`: prevalence by local hour for both labels, the plot lesson 4 step 5 asked for.
+
+_Run._ `python studies/label_choice.py [--horizons 15,30,60] [--rounds N] [--sample F] [--folds all]`; `--rounds` defaults to `common.LGBM_ROUNDS`, `--sample` to 1.0 and is a row fraction for a fast first pass; a full run is two labels × three horizons × folds fits at 5 to 20 minutes each, so run it overnight with nothing else heavy.
+
+_Must contain._
+- `absolute_targets(months: list[str]) -> pd.DataFrame`: the full-grid shift of `label_abs`, keys plus `yabs_15`, `yabs_30`, `yabs_60`.
+- `fit_one(tr, va, feats, cats, y_col: str) -> tuple[lgb.Booster, np.ndarray]`: `common.LGBM_PARAMS`, `common.LGBM_ROUNDS`, `common.LGBM_PATIENCE`, the categorical dtype dict from 16, returns the booster and validation predictions.
+- `persistence_for(y_col: str) -> str`: `label` for `y_` targets and `label_abs` for `yabs_` targets, so each label is judged against its own persistence.
+- `run(df, folds, horizons, rounds, sample) -> dict`: the loops, `split.apply_fold`, `evaluate.skill_over_persistence`, `split.fold_summary`, `evaluate.episode_metrics` on the last fold.
+- `main()`: argparse, the assert, `run`, write JSON and PNG.
+
+_Skeleton._
+
+```python
+"""Train on both labels per horizon and fold; prevalence, AP, skill over persistence, episodes."""
+import argparse, json
+import joblib, lightgbm as lgb, numpy as np, pandas as pd
+import common, evaluate, features, split
+
+def absolute_targets(months: list[str]) -> pd.DataFrame:
+    """yabs_15/30/60 from label_abs on the full grid, keyed by station_id, timestamp."""
+    ...
+
+def fit_one(tr, va, feats, cats, y_col: str):
+    """One LightGBM fit with the production parameters; booster and validation predictions."""
+    ...
+
+def persistence_for(y_col: str) -> str:
+    """The column that is the label at t for this target."""
+    ...
+
+def run(df, folds, horizons, rounds: int, sample: float) -> dict:
+    """The full grid of label x horizon x fold."""
+    ...
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--horizons", default="15,30,60"); ap.add_argument("--rounds", type=int, default=common.LGBM_ROUNDS)
+    ap.add_argument("--sample", type=float, default=1.0); ap.add_argument("--folds", default="all")
+    args = ap.parse_args()
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python studies/label_choice.py --sample 0.1 --rounds 300` finishes in minutes and writes the JSON; `python -c "import json; r = json.load(open('output/studies/label_choice.json')); print({l: {h: (round(r[l][h]['prevalence_val'], 3), round(r[l][h]['skill_mean'], 2)) for h in ('15', '30', '60')} for l in ('label', 'label_abs')})"` prints two rows of three pairs. The PNG must show the relative label flat across the day and the absolute label peaking at the two rush hours, as lesson 4 step 5 promised; if both curves peak, `label` was computed against a profile that is not the train-only one. Then the full run, whose numbers go into the decision.
+
+#### `docs/decisions/label.md` · doc · new
+
+_Purpose._ The written decision on which label the product means, with numbers from the study, and the consequence for the model filename. The plan's label limitation calls this blocking; nothing ships until this page exists.
+
+_Reads._ `output/studies/label_choice.json`, `output/evaluation_report.json`, `output/studies/acf_shockwave.json`.
+
+_Must contain._
+- The question: the two sentences from the plan's limitation, will it be slow versus will it be unusually slow, and who the consumer is.
+- The two labels: each defined in one line with its constants named, `common.SLOW_RATIO`, `common.SLOW_WINDOW`, `common.SLOW_ABS_MPH`, and the train-only profile.
+- Prevalence: overall and by local hour for both labels, from the study, with the months used.
+- Skill per horizon: for both labels, AP, persistence AP, skill, mean and spread over folds, one list item per label and horizon; the profile-rate AP beside them.
+- Episodes at 30 minutes: share caught, median lead, false alarms per station-day for both, at the τ that keeps `common.ALERT_PRECISION`.
+- Decision: one sentence naming the label, and the model filename tag that carries it, `thresh0.6_win3` for `label`; if the decision is `label_abs`, the tag is `abs35_win3` and the page says that `13` is rerun with `--label label_abs` and `16` needs the two-line change that builds its filename from `SLOW_ABS_MPH` instead of `SLOW_RATIO`.
+- What would reverse it: the number that would have to move and by how much, and the consumer decision that would change the answer.
+- Date, data window, the commit of the study.
+
+_Check._ `grep -c 'thresh0.6_win3\|abs35_win3' docs/decisions/label.md` prints at least 1; every number on the page can be found in one of the three JSON files; a reader who has not seen the course can say in one sentence what a probability from this model means.
 
 ### Done when
 
-- A lead-time histogram and one sentence per horizon on skill over persistence.
-- A written decision on which label the product means, with numbers.
+- `python weather.py --update` ends with `stage=weather` and `python -c "import weather; w = weather.load_archive(); print(len(w), w.hour.is_unique)"` prints the hour count of the covered range and `True`.
+- `pytest tests/test_features.py tests/test_split.py -q` passes with the seven new feature tests and the five new split tests, and each of `test_targets_shift_forward`, `test_rolling_mean_60_is_trailing` and `test_gap_is_one_full_day` fails when its guard is deliberately broken.
+- `python 13_feature_engineering.py` on every month ends with `stage=features ... rss_gb=<under 3.5> ... folds=<1 or 3>`, and `python -c "import pandas as pd, features; d = pd.read_parquet('data/features/2026-03.parquet'); print(set(features.FEATURE_COLUMNS) - set(d.columns), (d.dtypes == 'float64').sum())"` prints `set() 0`.
+- `models/profile_rate_train2026.parquet` exists and `python -c "import pandas as pd; r = pd.read_parquet('models/profile_rate_train2026.parquet'); print(len(r), r.profile_label_rate.between(0, 1).all())"` prints a cell count near 100 × 3 × 288 and `True`.
+- `python 18_evaluate_lead_time.py` writes `output/evaluation_report.json` with `episodes`, `incidents` and `skill_over_persistence` keys and `output/lead_time_hist.png` with three panels, and `docs/stages/18_evaluate_lead_time.md` carries one sentence per horizon on skill over persistence quoting the printed numbers.
+- `python studies/acf_shockwave.py` writes a JSON whose `acf_lag_1` is above 0.8 and whose `shockwave_mph` is negative; the two numbers and the first lag below 0.5 are in the notebook page.
+- `python studies/label_choice.py` (full run) writes a JSON with `skill_mean` and `skill_spread` for both labels at all three horizons, and the PNG shows a flat relative curve and a rush-hour absolute curve.
+- `docs/decisions/label.md` exists with all eight sections, names the label and the filename tag, and every number on it is traceable to `output/studies/label_choice.json`, `output/evaluation_report.json` or `output/studies/acf_shockwave.json`.
+- `git status --short` shows nothing under `data/`, `models/` or `output/`, and the two stage pages are updated and committed with the code.
 
 ### Pitfalls
 
-- `shift` in the wrong direction; a rolling window that looks ahead.
-- Evaluating on rows whose target was imputed.
+- `y_30` is almost perfectly predicted by `speed_lag_0` and the report looks wonderful. `shift` went the wrong way: `shift(6)` pulls the past into the row, `shift(-6)` pulls the future; the target needs the negative shift and a feature never does. `test_targets_shift_forward` in `tests/test_features.py` catches it; run it before believing any number.
+- A rolling feature is strong on the training table and useless in replay. A window looked ahead: `rolling(..., center=True)` or a `rolling` on a frame not sorted by `station_id`, `timestamp`. Every window in `features.add_lags` is trailing and the sort is asserted; `test_rolling_mean_60_is_trailing` fails if either is lost.
+- Metrics are fine on average and terrible on the days that matter. Rows whose target step was forward-filled or PeMS-imputed are being scored, and imputed rows are smooth and easy. `18` attaches `target_observed_<h>` from the full-grid labels file and every metric runs through `evaluate.observed_mask`; if the masked row count is close to the unmasked one on a month with detector outages, the mask is not being applied.
+- Rain looks like the best feature the model has. The hourly total for the hour containing t includes rain that fell after t. `weather.join_weather` keys on the last completed hour, and `test_weather_join_uses_completed_hour` holds it there; if you change the key to `floor('h')` the feature gains a look-ahead of up to 55 minutes.
+- The row count grows after `add_neighbors` and nothing fails until 16 runs out of memory. A merge on a NaN neighbour id, or a registry with a duplicated `ID`, matched many-to-many. The assert after every merge in `features.add_neighbors` is the fix; if it fires, look at `reg.ID.is_unique` and at stations at the end of a route whose `up2_id` is NaN.
+- `profile_label_rate` is the top feature by gain and the model is worse on the test split than on validation. The rate was fit on all months, so validation and test labels leaked into a feature. `13.fit_rate` reads only the months `training_months` returns; `test_profile_rate_uses_training_rows_only` is the guard.
+- The three folds give nearly identical scores and you report a spread of 0.001. The folds are the same split: `folds()` fell back to `single` because fewer than eighteen months exist, and the summary was called on one score. Print the fold names; with fewer than eighteen months the report says one fold and no spread.
+- Hundreds of episodes have a lead time of exactly zero. Onsets were computed on the feature table, where dropped rows make `shift(1)` see a new run, or the alert column was compared with raw `p_h` instead of the calibrated `q_h`. `evaluate.mark_onsets` asserts one row per slot; compute onsets on the labels file and join predictions onto it.
+- The feature runner reaches 8 GB on a full year. A month was built with the whole year in memory, or a merge upcast float32 to float64. Build one month with an hour of context, cast back to float32 after every merge, `del` and `gc.collect()`, and read `rss_gb` from the log line instead of guessing.
+- The label decision is made from the validation AP alone. AP does not say which label a driver wants; prevalence by hour, episode lead and false alarms at the required precision do, and the plan says the choice is a product question. `docs/decisions/label.md` needs all eight sections filled before the tag goes into a filename.
 
 ## Phase 7: Neural networks
 
@@ -9485,25 +10138,424 @@ Dropout (inverted): h ← h ⊙ mask / p, mask ~ Bernoulli(p)
 
 ### Build
 
-_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The glossary at the end defines any word that is still new._
+_Everything this asks for has been explained above: the lessons and topics for the ideas, the walkthroughs for the code, the books and courses for depth. The page The project, laid out holds the tree, the conventions and the constants every file below refers to; the glossary at the end defines any word that is still new._
 
-- `17a`: a numpy MLP with a hand-written backward pass checked against finite differences.
-- The same MLP in PyTorch with matching loss curves.
-- `17b`: the spatio-temporal net on MPS with the registry's road graph; a CPU versus MPS timing table.
-- Put its validation number next to LightGBM's and apply the plan's 0.02 rule.
+
+Write `17a_train_mlp.py` first: one hidden layer of 64 units in numpy, a backward pass you wrote, a finite-difference check that says whether it is right, and then the same network in PyTorch on the M1's GPU. It is small enough to hold in your head, and every rule of this phase (float32 on MPS, `model.eval()`, the learning rate, early stopping on validation AP) is learned on it before the bigger network hides them. `tests/test_backprop.py` pins the gradient check so it runs on every `pytest`. Then `stnet.py`, the module: the adjacency from the registry, the windows, the `Mix` and `STNet` classes from the walkthroughs, the masked loss with `pos_weight`, a training step, prediction, save and load. Then `17b_train_stnet.py`, which trains it on MPS and writes the checkpoint and a prediction file for both later splits. `studies/mps_vs_cpu.py` comes after the module exists, because it times the real network. Then the change to `16b_calibrate_select.py`, which reads the net's validation predictions and applies `common.CHALLENGER_MARGIN`, and a rerun of `18_evaluate_lead_time.py --challenger` so the net sits in the report beside the trees. `docs/decisions/challenger.md` is last, with the numbers from `calibration.json` and the report and the data flow drawn from memory. `torch` has been in `requirements.txt` since phase 0; nothing is added.
+
+The order of the two networks is the point of the phase. The MLP sees one station's row and cannot beat the trees; the spatio-temporal net sees every station at once and might, at 30 and 60 minutes. Whether it does is decided by a rule written before the run, not after.
+
+#### `17a_train_mlp.py` · runner · new
+
+_Purpose._ Stage 9's educational network, lesson 9 steps 1 to 4. Three parts in one file: the numpy MLP with a hand-written backward pass; the finite-difference check in float64 over twenty random entries of every parameter; the same network in PyTorch, initialised from the numpy weights, run for one epoch of plain SGD in both to show matching loss curves, then trained properly with AdamW and early stopping on validation AP and saved as `models/mlp_h30.pt`. Trains horizon 30 by default.
+
+_Reads._ `data/features/*.parquet` cut by `split.chronological_split`; `models/gbt_h30_features.json` for the feature list, minus `common.CATEGORICALS`, because this network takes numeric columns only. Asserts no object column remains, standardises with training mean and standard deviation, and after standardising replaces NaN with 0 and adds an `<col>_isna` indicator for every column that had NaN in training, lesson 5's rule for networks.
+
+_Writes._ `models/mlp_h30.pt`: a dict with `state_dict`, `columns`, `mean`, `std`, `horizon`, `best_epoch`, `val_ap`. `output/mlp_h30_curves.png`: left, the per-batch loss of the numpy and torch networks over the SGD epoch on the same batches; right, validation AP by epoch under AdamW. Prints `gradcheck max_abs_diff=<n>`, `curves max_rel_diff=<n>`, one line per epoch, `best validation AP <n>`, and ends with `stage=train_mlp seconds=<n> rss_gb=<n> rows=<n> val_ap=<n> best_epoch=<k> device=<mps|cpu>`.
+
+_Run._ `python 17a_train_mlp.py [--horizon 30] [--rows N] [--epochs 30] [--batch 2048] [--lr 1e-3] [--device mps|cpu] [--seed 0]`. `--rows` keeps the last N training rows for a first pass; `--device` defaults to `mps` when `torch.backends.mps.is_available()`.
+
+_Must contain._
+- `H = 64`, `EPS = 1e-4`, `GRADCHECK_TOL = 1e-6`, `N_CHECK = 20`, `SGD_LR = 0.1`, `PATIENCE = 5`: the lesson's numbers; the test imports the tolerance from here, so it is written once.
+- `load_matrix(horizon: int, rows: int | None) -> tuple`: `Xtr, ytr, Xva, yva` as float32 arrays, `columns`, `mean`, `std`.
+- `init(d: int, H: int = H, seed: int = 0) -> dict`: step 1's initialisation, He for `W1`, the four arrays in one dict `P` with keys `W1`, `b1`, `w2`, `b2`; gathering the walkthrough's four globals into `P` is the one change, so the test can pass its own.
+- `forward(P: dict, X: np.ndarray) -> tuple`, `backward(P: dict, X: np.ndarray, y: np.ndarray) -> dict`, `L(P: dict, X: np.ndarray, y: np.ndarray) -> float`: step 1 and step 2's loss, otherwise unchanged; `backward` returns `gW1`, `gb1`, `gw2`, `gb2`.
+- `gradcheck(P: dict, X: np.ndarray, y: np.ndarray, n: int = N_CHECK, eps: float = EPS, seed: int = 0) -> float`: casts everything to float64, draws `n` (parameter, index) pairs across all four parameters, central differences as in step 2, returns the largest absolute difference against `backward`; the caller asserts it is below `GRADCHECK_TOL`.
+- `sgd_epoch_numpy(P: dict, X, y, lr: float, batch: int, order: np.ndarray) -> list[float]`: plain SGD on the batches `order` defines, one loss per batch.
+- `torch_from_numpy(P: dict, dev) -> torch.nn.Sequential`: step 3's `Linear(d, 64), ReLU, Linear(64, 1)` with the weights copied from `P`.
+- `sgd_epoch_torch(net, Xt, yt, lr: float, batch: int, order: np.ndarray) -> list[float]`: `torch.optim.SGD` and `BCEWithLogitsLoss()` without `pos_weight`, the same batches, one loss per batch; the two lists are the curves.
+- `train_adamw(net, Xt, yt, Xv, yva, epochs: int, batch: int, lr: float, path) -> tuple[int, float]`: steps 3 and 4 unchanged, `AdamW(lr, weight_decay=1e-4)`, `pos_weight` from the training prevalence, early stopping on validation AP with `PATIENCE`, save on improvement, reload the best weights at the end.
+- `main()`: argparse, load, `init`, `gradcheck` on 64 rows with the assert, the two SGD epochs and their comparison, `train_adamw`, the figure, the log line.
+
+_Skeleton._
+
+```python
+"""Stage 9: a one-hidden-layer MLP in numpy with backprop by hand, checked, then in PyTorch on MPS."""
+import argparse, os, time
+os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")   # before torch is imported
+import numpy as np, pandas as pd, torch, torch.nn as nn
+from sklearn.metrics import average_precision_score as ap
+import common, split
+
+H, EPS, GRADCHECK_TOL, N_CHECK, SGD_LR, PATIENCE = 64, 1e-4, 1e-6, 20, 0.1, 5
+
+def load_matrix(horizon: int, rows: int | None):
+    """Standardised float32 matrices for train and validation, NaN -> 0 plus indicators."""
+    ...
+
+def init(d: int, H: int = H, seed: int = 0) -> dict:
+    """W1 (H, d) He-initialised, b1, w2 (H,), b2 in one dict."""
+    ...
+
+def forward(P: dict, X: np.ndarray):
+    """z1, h, p as in lesson 9 step 1."""
+    ...
+
+def backward(P: dict, X: np.ndarray, y: np.ndarray) -> dict:
+    """gW1, gb1, gw2, gb2 by hand."""
+    ...
+
+def L(P: dict, X: np.ndarray, y: np.ndarray) -> float:
+    """Mean cross-entropy with clipping."""
+    ...
+
+def gradcheck(P: dict, X: np.ndarray, y: np.ndarray, n: int = N_CHECK, eps: float = EPS, seed: int = 0) -> float:
+    """Largest |central difference - backward| over n random entries, in float64."""
+    ...
+def sgd_epoch_numpy(P: dict, X, y, lr: float, batch: int, order: np.ndarray) -> list[float]: ...
+def torch_from_numpy(P: dict, dev) -> nn.Sequential: ...
+def sgd_epoch_torch(net, Xt, yt, lr: float, batch: int, order: np.ndarray) -> list[float]: ...
+def train_adamw(net, Xt, yt, Xv, yva, epochs: int, batch: int, lr: float, path) -> tuple[int, float]: ...
+def main() -> None:
+    a = argparse.ArgumentParser(description=__doc__)
+    a.add_argument("--horizon", type=int, default=30); a.add_argument("--rows", type=int)
+    a.add_argument("--epochs", type=int, default=30); a.add_argument("--batch", type=int, default=2048)
+    a.add_argument("--lr", type=float, default=1e-3); a.add_argument("--device", default=None); a.add_argument("--seed", type=int, default=0)
+    args = a.parse_args(); t0 = time.time()
+    ...
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 17a_train_mlp.py --rows 200000 --epochs 3` prints `gradcheck max_abs_diff=` around 1e-10 and never above 1e-6, and `curves max_rel_diff=` below 1e-3; if the curves differ by 0.1 the two networks are not the same network (a transposed `W1`, or a sigmoid applied twice). The full run writes `models/mlp_h30.pt` and the PNG; write the MLP's validation AP into `docs/stages/17a_train_mlp.md` beside the logistic regression's and LightGBM's phase 4 numbers, wherever it lands.
+
+_Watch for._ The gradient check must run on arrays that never touched the GPU and in float64; the training must run in float32. Keep the two in separate variables (`P64` for the check, `P` for training) instead of casting one dict back and forth, which is how the walkthrough's `astype` lines get lost and a float64 array reaches `torch.tensor(..., device='mps')`.
+
+#### `stnet.py` · module · new
+
+_Purpose._ Stage 9's Model B: the `Mix` module from lesson 9 step 5 and the `STNet` class from lesson 10 step 5, put here unchanged apart from the head, with the adjacency (lesson 10 step 3), the windows (step 4), the masked loss with `pos_weight` per horizon, one training epoch, prediction, save and load. The model's constants live here and `17b`, `16b` and the study import them.
+
+_Reads._ Nothing on its own; `load_model` reads a checkpoint.
+
+_Writes._ Nothing; `save_model` writes the checkpoint the runner names.
+
+_Must contain._
+- `CHANNELS = ["speed_ratio", "occ", "flow", "incident_active", "min_sin", "min_cos"]`: the walkthrough's `chan`; the plan's scaled flow is `flow` standardised with training statistics, below. `WINDOW = 12`, `HIDDEN = 64`, `BATCH_TIMESTAMPS = 64`, `EPOCHS = 15`, `PATIENCE = 3`, `LR = 1e-3`, `WEIGHT_DECAY = 1e-4`, `HORIZON_ORDER = (15, 30, 60)`; `MODEL_PATH = common.MODELS / f"stnet_thresh{common.SLOW_RATIO}_win{common.SLOW_WINDOW}.pt"`; `PREDICTIONS_PATH = common.OUTPUT / "predictions_stnet.parquet"`.
+- `device() -> torch.device`: `mps` when available, else `cpu`.
+- `adjacency(reg: pd.DataFrame) -> tuple[list[int], np.ndarray, np.ndarray]`: step 3 unchanged: `ids = sorted(reg.ID)` as ints, `A_up` and `A_down` float32 (N, N) with a 1 where the row's station has that neighbour.
+- `channel_stats(df_train: pd.DataFrame) -> dict`: mean and standard deviation of `occ` and `flow` over training rows, stored in the checkpoint so serving scales the same way.
+- `make_windows(df: pd.DataFrame, ids: list[int], stats: dict, window: int = WINDOW) -> tuple[np.ndarray, np.ndarray, np.ndarray, pd.DatetimeIndex]`: step 4 with its assert that `ids` equals the pivot's station order; the frame is first reindexed onto the full five-minute range × `ids` so a window never spans a gap; `occ` and `flow` standardised, then NaN filled with 1.0 for `speed_ratio` and 0 elsewhere (the walkthrough's `nan_to_num` would turn a missing ratio into a stopped road); `X` is `(T − window, window, C, N)` float32 as a strided view from `np.lib.stride_tricks.sliding_window_view` over the `(T, C, N)` array, not the walkthrough's `np.stack` copy, so a year of a hundred stations is about 300 MB instead of about 3 GB and still entirely in memory; `Y` `(T − window, N, 3)` float32 from `y_15`, `y_30`, `y_60` with NaN as 0; `M` the same shape, 1 where the target was known; the timestamps of the window ends.
+- `Mix(nn.Module)`: step 5 of lesson 9, unchanged.
+- `STNet(nn.Module)`: lesson 10 step 5 with `C = len(CHANNELS)`, `H = HIDDEN`; `head = nn.Sequential(nn.Linear(H, H), nn.ReLU(), nn.Linear(H, 3))`, the plan's MLP head in place of the walkthrough's single `Linear`; `forward(x, A_up, A_down)` returns `(B, N, 3)` logits and asserts `x.shape[1:] == (WINDOW, C, N)`.
+- `pos_weights(Y: np.ndarray, M: np.ndarray) -> torch.Tensor`: shape `(3,)`, negatives over positives per horizon among masked entries; asserts every horizon has positives.
+- `masked_bce(logits, y, m, pos_w) -> torch.Tensor`: `BCEWithLogitsLoss(pos_weight=pos_w, reduction='none')` times `m`, summed and divided by `m.sum()`.
+- `train_epoch(model, X, Y, M, A_up, A_down, opt, pos_w, dev, rng, batch: int = BATCH_TIMESTAMPS) -> float`: shuffled batches of `batch` window indices, each gathered from the view into a contiguous float32 array and moved with `.to(dev)`, `zero_grad`, loss, `backward`, `step`; returns the mean loss; raises `FloatingPointError` with the batch index the first time a loss is not finite.
+- `predict(model, X, A_up, A_down, dev, batch: int = 256) -> np.ndarray`: `model.eval()`, `torch.no_grad()`, sigmoid, `(T, N, 3)` float32 on the CPU.
+- `validation_ap(P: np.ndarray, Y: np.ndarray, M: np.ndarray) -> dict[int, float]`: AP per horizon over masked entries.
+- `save_model(model, path, stats: dict, ids: list[int]) -> None` and `load_model(path, dev=None) -> tuple[STNet, dict, list[int]]`: a dict with `state_dict`, `stats`, `ids`, `channels`, `window`, `hidden`; `load_model` calls `model.eval()` before returning.
+- `predictions_frame(P: np.ndarray, ids: list[int], ts: pd.DatetimeIndex, split_name: str) -> pd.DataFrame`: long format `split`, `station_id`, `timestamp`, `p_15`, `p_30`, `p_60`.
+
+_Skeleton._
+
+```python
+"""The spatio-temporal net: adjacency, windows, Mix, STNet, masked loss, train, predict, save."""
+import numpy as np, pandas as pd, torch, torch.nn as nn
+from sklearn.metrics import average_precision_score as ap
+import common
+
+CHANNELS = ["speed_ratio", "occ", "flow", "incident_active", "min_sin", "min_cos"]
+WINDOW, HIDDEN, BATCH_TIMESTAMPS, EPOCHS, PATIENCE, LR, WEIGHT_DECAY = 12, 64, 64, 15, 3, 1e-3, 1e-4
+HORIZON_ORDER = (15, 30, 60)
+MODEL_PATH = common.MODELS / f"stnet_thresh{common.SLOW_RATIO}_win{common.SLOW_WINDOW}.pt"
+PREDICTIONS_PATH = common.OUTPUT / "predictions_stnet.parquet"
+
+def device() -> torch.device: ...
+def adjacency(reg: pd.DataFrame) -> tuple[list[int], np.ndarray, np.ndarray]:
+    """Lesson 10 step 3: sorted ids, A_up, A_down as float32 (N, N)."""
+    ...
+def channel_stats(df_train: pd.DataFrame) -> dict: ...
+def make_windows(df: pd.DataFrame, ids: list[int], stats: dict, window: int = WINDOW):
+    """X view (T-window, window, C, N), Y and M (T-window, N, 3), window-end timestamps."""
+    ...
+
+class Mix(nn.Module):
+    def __init__(self, H): super().__init__(); self.Wu = nn.Linear(H, H, bias=False); self.Wd = nn.Linear(H, H, bias=False)
+    def forward(self, h, A_up, A_down): return h + self.Wu(A_up @ h) + self.Wd(A_down @ h)
+
+class STNet(nn.Module):
+    def __init__(self, C: int = len(CHANNELS), H: int = HIDDEN):
+        super().__init__(); self.gru = nn.GRU(C, H, batch_first=True); self.mix1 = Mix(H); self.mix2 = Mix(H)
+        self.head = nn.Sequential(nn.Linear(H, H), nn.ReLU(), nn.Linear(H, 3))
+    def forward(self, x, A_up, A_down):
+        """x (B, 12, C, N) -> (B, N, 3) logits; lesson 10 step 5."""
+        ...
+
+def pos_weights(Y: np.ndarray, M: np.ndarray) -> torch.Tensor: ...
+def masked_bce(logits, y, m, pos_w) -> torch.Tensor: ...
+def train_epoch(model, X, Y, M, A_up, A_down, opt, pos_w, dev, rng, batch: int = BATCH_TIMESTAMPS) -> float: ...
+def predict(model, X, A_up, A_down, dev, batch: int = 256) -> np.ndarray: ...
+def validation_ap(P: np.ndarray, Y: np.ndarray, M: np.ndarray) -> dict[int, float]: ...
+def save_model(model, path, stats: dict, ids: list[int]) -> None: ...
+def load_model(path, dev=None) -> tuple[STNet, dict, list[int]]: ...
+def predictions_frame(P: np.ndarray, ids: list[int], ts: pd.DatetimeIndex, split_name: str) -> pd.DataFrame: ...
+```
+
+_Check._ `python -c "import pandas as pd, torch, stnet; reg = pd.read_parquet('data/pems_meta/fremont_stations.parquet'); ids, Au, Ad = stnet.adjacency(reg); m = stnet.STNet(); print(len(ids), Au.sum(), (Au.T == Ad).all(), m(torch.zeros(2, 12, 6, len(ids)), torch.as_tensor(Au), torch.as_tensor(Ad)).shape, sum(p.numel() for p in m.parameters()))"` prints the station count, the count minus one route end per (freeway, direction), `True` (i is upstream of j exactly when j is downstream of i), `torch.Size([2, N, 3])`, and about 35 thousand parameters; the plan's 0.1 M is the order of magnitude, not a target.
+
+_Watch for._ `sliding_window_view` returns a read-only view whose window axis comes last; `np.moveaxis` to `(T − window, window, C, N)` is still a view, and indexing a batch of it with an integer array is what makes the copy. Never call `np.ascontiguousarray` on the whole view; that is the 3 GB copy the view exists to avoid.
+
+#### `17b_train_stnet.py` · runner · new
+
+_Purpose._ Stage 9 item 6: trains `stnet.STNet` on the MPS device with the registry's road graph, batches of 64 timestamps, 15 epochs, early stopping on validation AP, float32 only, the whole windowed dataset in memory. Writes the checkpoint with the label tag in its name and a prediction file for the validation and test blocks that `16b` and `18` read.
+
+_Reads._ `data/features/*.parquet`, only `station_id`, `timestamp`, the six `stnet.CHANNELS`, `y_15`, `y_30`, `y_60`; `data/pems_meta/fremont_stations.parquet`. Splits with `split.chronological_split`. Asserts before training: the station set of the table equals the registry's `ID` set (or prints the stations dropped to reach the intersection and refuses if more than five), no NaN in `X` after filling, `M.sum()` over the training windows is positive for every horizon, and the training block's last window ends before `train_end`.
+
+_Writes._ `models/stnet_thresh0.6_win3.pt` (`stnet.MODEL_PATH`): the checkpoint dict from `stnet.save_model` plus `best_epoch`, `val_ap`, `epochs_run`, `seed`, `device`. `output/predictions_stnet.parquet` (`stnet.PREDICTIONS_PATH`): `split` category (`val`, `test`), `station_id` category, `timestamp` datetime64[ns, UTC], `p_15`, `p_30`, `p_60` float32; the test rows are written and never printed or looked at here. Prints per epoch `epoch=<k> loss=<n> val_ap_15=<n> val_ap_30=<n> val_ap_60=<n> seconds=<n>`, then `early stop at epoch <k>, best epoch <j>`, then `stage=train_stnet seconds=<n> rss_gb=<n> rows=<windows> best_epoch=<j> val_ap_30=<n> device=<mps|cpu>`.
+
+_Run._ `python 17b_train_stnet.py [--epochs 15] [--batch 64] [--lr 1e-3] [--device mps|cpu] [--seed 0] [--max-windows N] [--months YYYY-MM,...]`. Defaults come from `stnet`; `--max-windows` keeps the last N training windows for a smoke run; `--months` limits the table. The first line of the file sets `os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")` before `import torch`.
+
+_Must contain._
+- `load_table(months: list[str] | None) -> pd.DataFrame`: the needed columns only, float32, sorted by `station_id`, `timestamp`.
+- `windows_for(part: pd.DataFrame, ids: list[int], stats: dict) -> tuple`: `stnet.make_windows` on one split's rows; windows are built per split so no window straddles a gap day.
+- `fit(model, train: tuple, val: tuple, A_up, A_down, args) -> tuple[int, dict]`: `torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=stnet.WEIGHT_DECAY)`, `stnet.pos_weights` from the training `Y`, `M`; per epoch `stnet.train_epoch`, `stnet.predict` on validation, `stnet.validation_ap`, the mean of the three APs as the early-stopping score, save on improvement, stop after `stnet.PATIENCE` epochs without one, reload the best checkpoint at the end as walkthrough step 4 does; returns the best epoch and its APs.
+- `write_predictions(model, parts: dict, ids, A_up, A_down, dev) -> int`: `stnet.predict` and `stnet.predictions_frame` for `val` and `test`, concatenated, written with `common.atomic_write`; returns the row count.
+- `main()`: the environment line, argparse, seeds (`np.random.default_rng`, `torch.manual_seed`), load, adjacency, split, stats from the training block, windows, the asserts, `fit`, `write_predictions`, the log line.
+
+_Skeleton._
+
+```python
+"""Stage 9: the spatio-temporal net on MPS; checkpoint plus validation and test predictions."""
+import argparse, os, time
+os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")   # must precede import torch
+import numpy as np, pandas as pd, torch
+import common, split, stnet
+
+def load_table(months: list[str] | None) -> pd.DataFrame:
+    """station_id, timestamp, the six channels and the three targets, float32."""
+    ...
+
+def windows_for(part: pd.DataFrame, ids: list[int], stats: dict):
+    """Windows for one split only, so none crosses the gap."""
+    ...
+
+def fit(model, train, val, A_up, A_down, args) -> tuple[int, dict]:
+    """Epoch loop with AdamW, masked BCE, early stopping on mean validation AP."""
+    ...
+
+def write_predictions(model, parts: dict, ids, A_up, A_down, dev) -> int:
+    """Long-format probabilities for val and test to stnet.PREDICTIONS_PATH."""
+    ...
+
+def main() -> None:
+    a = argparse.ArgumentParser(description=__doc__)
+    a.add_argument("--epochs", type=int, default=stnet.EPOCHS); a.add_argument("--batch", type=int, default=stnet.BATCH_TIMESTAMPS)
+    a.add_argument("--lr", type=float, default=stnet.LR); a.add_argument("--device", default=None)
+    a.add_argument("--seed", type=int, default=0); a.add_argument("--max-windows", type=int); a.add_argument("--months")
+    args = a.parse_args(); t0 = time.time()
+    dev = torch.device(args.device) if args.device else stnet.device()
+    ...
+    common.log_stage("train_stnet", t0, rows=n_windows, best_epoch=best, val_ap_30=aps[30], device=str(dev))
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 17b_train_stnet.py --epochs 1 --max-windows 2000` finishes in a couple of minutes with a finite loss and writes the checkpoint; its loss must be lower at the end of the epoch than at the start, the lesson's tiny-subset rule. The full run's log line has `rss_gb` under 4 and `seconds` in the plan's one to three hours; `python -c "import pandas as pd; p = pd.read_parquet('output/predictions_stnet.parquet'); print(p.split.value_counts().to_dict(), p[['p_15', 'p_30', 'p_60']].describe().loc[['min', 'max']].to_dict(), p.isna().sum().sum())"` prints both splits, values inside 0 and 1, and `0`. Write the epoch table and the best epoch into `docs/stages/17b_train_stnet.md`.
+
+_Watch for._ The validation block's first `WINDOW` timestamps have no window and the rows whose targets were unknown are masked, so the net is scored on fewer rows than LightGBM; `16b` aligns by keys and reports both counts. Do not pad the validation block with training rows to recover the first hour; that is the gap being crossed.
+
+#### `tests/test_backprop.py` · test · new
+
+_Purpose._ The finite-difference check as a test that runs on every `pytest`, at the tolerance `17a` defines, plus the proof that the torch twin is the same network. It loads `17a_train_mlp.py` by path with `importlib`, because a digit-led name cannot be imported and the numpy network lives nowhere else; the runner's work sits under `if __name__ == '__main__'`, so loading runs nothing. Synthetic data only; no `data/` and no GPU.
+
+_Reads._ `17a_train_mlp.py` as a module.
+
+_Must contain._
+- `mlp()`: a module-level fixture that loads the runner with `importlib.util.spec_from_file_location("mlp17a", common.ROOT / "17a_train_mlp.py")`.
+- `toy(d: int = 10, n: int = 64, seed: int = 0) -> tuple[np.ndarray, np.ndarray]`: random float32 `X` and a label made from a fixed linear rule, so about a third of rows are positive.
+- `test_backward_matches_finite_differences`: `gradcheck(P, X, y)` is below `mlp.GRADCHECK_TOL` and the check touched all four parameter names (`gradcheck` with `return_names=True`, or a second call per name); the value is printed so `pytest -s` shows it near 1e-10.
+- `test_torch_twin_matches_numpy_forward`: `torch_from_numpy(P, 'cpu')` on `X` gives probabilities equal to `forward(P, X)[2]` to 1e-5.
+- `test_one_sgd_step_matches`: after one `sgd_epoch_numpy` and one `sgd_epoch_torch` on the same single batch with `SGD_LR`, the torch `W1` equals the numpy `W1` to 1e-5 and the two losses agree to 1e-6.
+
+_Skeleton._
+
+```python
+import importlib.util
+import numpy as np, pytest, torch
+import common
+
+def _load():
+    spec = importlib.util.spec_from_file_location("mlp17a", common.ROOT / "17a_train_mlp.py")
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); return mod
+
+@pytest.fixture(scope="module")
+def mlp():
+    return _load()
+
+def toy(d=10, n=64, seed=0):
+    rng = np.random.default_rng(seed); X = rng.normal(size=(n, d)).astype(np.float32)
+    y = (X[:, 0] - X[:, 1] > 0.4).astype(np.float32); return X, y
+
+def test_backward_matches_finite_differences(mlp):
+    X, y = toy(); P = mlp.init(X.shape[1], seed=0)
+    diff = mlp.gradcheck(P, X, y, n=mlp.N_CHECK, eps=mlp.EPS, seed=1)
+    print("max_abs_diff", diff)
+    assert diff < mlp.GRADCHECK_TOL
+
+def test_torch_twin_matches_numpy_forward(mlp): ...
+def test_one_sgd_step_matches(mlp): ...
+```
+
+_Check._ `pytest tests/test_backprop.py -q -s` prints `max_abs_diff` around 1e-10 and `3 passed`. Change `(z1 > 0)` to `(z1 >= 0)` in `backward` and the first test still passes (the boundary has measure zero); change `np.outer(e, w2)` to `np.outer(w2, e)` and it fails with a difference near 1. Both facts are worth one line in the notebook page.
+
+#### `studies/mps_vs_cpu.py` · study · new
+
+_Purpose._ The plan's benchmark of the M1's GPU against its eight cores, done once: one training step and one epoch of `stnet.STNet` at batch 64 on `cpu` and on `mps`, and the MLP from `17a` at batches 256, 2048 and 8192 to find the crossover lesson 9 asks for. Synthetic windows, so it runs before any table exists and on any machine.
+
+_Reads._ `data/pems_meta/fremont_stations.parquet` for the real adjacency when present; otherwise a line graph of 100 stations. No feature data.
+
+_Writes._ `output/studies/mps_vs_cpu.json`: `torch_version`, `machine`, `mps_available`, `n_stations`, `windows`, `rows` as a list of `{model, device, batch, step_ms_median, epoch_s, samples_per_s}`, `stnet_speedup_mps_over_cpu`, `mlp_crossover_batch` (the smallest batch at which MPS is faster, or null). Prints the same rows as text lines.
+
+_Run._ `python studies/mps_vs_cpu.py [--windows 8000] [--devices cpu,mps] [--skip-mlp] [--seed 0]`.
+
+_Must contain._
+- `synthetic_windows(n: int, N: int, seed: int) -> tuple`: random float32 `X` `(n, 12, 6, N)`, `Y`, `M` of ones.
+- `time_step(model, batch_x, batch_y, batch_m, A_up, A_down, opt, pos_w, dev, warmup: int = 3, reps: int = 10) -> float`: the median of `reps` forward-backward-step timings after `warmup`, with `torch.mps.synchronize()` before each `perf_counter()` read on `mps`.
+- `time_epoch(...) -> float`: one full pass over the windows at the batch size, synchronised the same way.
+- `mlp_rows(dev, d: int = 60, n: int = 200_000, batches=(256, 2048, 8192)) -> list[dict]`: `Linear(d, 64), ReLU, Linear(64, 1)` on random data.
+- `main()`: argparse, both devices when available, JSON and printed lines.
+
+_Skeleton._
+
+```python
+"""CPU versus MPS: one training step and one epoch of STNet at batch 64, and the MLP at three batch sizes."""
+import argparse, json, os, platform, time
+os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+import numpy as np, pandas as pd, torch, torch.nn as nn
+import common, stnet
+
+def synthetic_windows(n: int, N: int, seed: int):
+    """Random X (n, 12, 6, N), Y and M (n, N, 3)."""
+    ...
+
+def time_step(model, bx, by, bm, A_up, A_down, opt, pos_w, dev, warmup: int = 3, reps: int = 10) -> float:
+    """Median milliseconds of forward, backward and step; synchronised on mps."""
+    ...
+
+def time_epoch(model, X, Y, M, A_up, A_down, opt, pos_w, dev, batch: int) -> float:
+    """Seconds for one pass over all windows."""
+    ...
+
+def mlp_rows(dev, d: int = 60, n: int = 200_000, batches=(256, 2048, 8192)) -> list[dict]:
+    """Rows per second for the small MLP at each batch size."""
+    ...
+
+def main() -> None:
+    a = argparse.ArgumentParser(description=__doc__)
+    a.add_argument("--windows", type=int, default=8000); a.add_argument("--devices", default="cpu,mps")
+    a.add_argument("--skip-mlp", action="store_true"); a.add_argument("--seed", type=int, default=0)
+    args = a.parse_args()
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python studies/mps_vs_cpu.py` prints one line per row and `python -c "import json; r = json.load(open('output/studies/mps_vs_cpu.json')); print(r['stnet_speedup_mps_over_cpu'], r['mlp_crossover_batch'])"` prints a speed-up somewhere between 0.5 and 3, the plan's "about as fast", and a crossover batch; a speed-up of 50 means the clock stopped before the GPU finished. Copy the table into `docs/decisions/challenger.md` under cost.
+
+#### `16b_calibrate_select.py` · runner · changed
+
+_Purpose._ Stage 10 with the plan's selection rule. Phase 4's version fits an isotonic map per horizon on LightGBM's validation scores and picks `tau_h` at `common.ALERT_PRECISION`. The change: when the net's prediction file exists, read its validation rows, align them to LightGBM's by keys, compute the net's validation AP on the same rows, time its prediction for one timestamp, and ship LightGBM unless the net's AP is at least `common.CHALLENGER_MARGIN` higher and it predicts in under a second. For a horizon the net wins, the isotonic map and `tau_h` are fit on the net's scores. Every number behind the choice is recorded in `calibration.json`.
+
+_Reads._ What phase 4's version reads (the validation block of `data/features/*.parquet`, the three boosters, `models/gbt_h{h}_features.json`, `models/categorical_dtypes.joblib`); `output/predictions_stnet.parquet` rows with `split == 'val'` (`station_id`, `timestamp`, `p_15`, `p_30`, `p_60`); `models/stnet_thresh0.6_win3.pt` and the registry for the timing. Asserts the challenger file has the six columns, that its aligned row count is at least 90 % of the validation rows the net could have windows for, and that no challenger timestamp lies outside the validation block.
+
+_Writes._ `models/calibration.json`: top level `generated_at`, `split`, `alert_precision`, `margin` (`common.CHALLENGER_MARGIN`), `max_predict_seconds` (1.0), `challenger_file` or null, `challenger_predict_seconds` or null; per horizon under the keys `"15"`, `"30"`, `"60"`: `tau`, `recall_at_tau`, `val_ap` (of the chosen model), `val_ap_lgbm`, `val_ap_stnet` or null, `n_val`, `n_val_aligned`, `pos_rate`, `chosen` (`lgbm` or `stnet`), `iso_knots` as `{x: [...], y: [...]}`. `models/iso_h{h}.joblib`, fit on the chosen model's scores. `19_predict_live.py` keeps reading `cal[str(h)]['tau']` unchanged.
+
+_Run._ `python 16b_calibrate_select.py [--split train2026] [--challenger output/predictions_stnet.parquet] [--no-challenger]`; the challenger path defaults to `stnet.PREDICTIONS_PATH` and is skipped with a printed line when the file is absent. Prints per horizon `h=30 ap_lgbm=<n> ap_stnet=<n> diff=<n> predict_s=<n> chosen=<lgbm|stnet>` and ends with `stage=calibrate seconds=<n> rss_gb=<n> rows=<n>`.
+
+_Must contain._
+- `lgbm_validation_scores(va: pd.DataFrame, h: int) -> pd.Series`, `fit_isotonic(y, p) -> IsotonicRegression` with lesson 11 step 1's first-half, second-half check printed, `threshold_at_precision(y, q, precision: float = common.ALERT_PRECISION) -> tuple[float, float]` from step 2: phase 4's, unchanged.
+- `load_challenger(path, va: pd.DataFrame) -> pd.DataFrame`: the `val` rows inner-joined to `va` on `station_id`, `timestamp`; prints `n_val` and `n_val_aligned`.
+- `time_challenger(path, reg: pd.DataFrame, n: int = 5) -> float`: `stnet.load_model` on the CPU, the serving device, one window of zeros `(1, 12, 6, N)`, the median of `n` timed calls of `stnet.predict`; the checkpoint load is not timed, because serving loads once.
+- `select(ap_lgbm: float, ap_stnet: float | None, seconds: float | None, margin: float = common.CHALLENGER_MARGIN, max_seconds: float = 1.0) -> str`: `stnet` only when `ap_stnet - ap_lgbm >= margin` and `seconds < max_seconds`, else `lgbm`.
+- `main()`: argparse, the phase 4 flow, then per horizon the challenger AP on the aligned rows, `select`, the isotonic fit and threshold on the chosen scores, the JSON with every field above, written atomically.
+
+_Skeleton._
+
+```python
+"""Stage 10: isotonic maps, thresholds at the required precision, and the challenger rule."""
+import argparse, json, time
+import joblib, lightgbm as lgb, numpy as np, pandas as pd
+from sklearn.isotonic import IsotonicRegression
+from sklearn.metrics import average_precision_score as ap, precision_recall_curve
+import common, split, stnet
+
+def lgbm_validation_scores(va: pd.DataFrame, h: int) -> pd.Series: ...
+def fit_isotonic(y, p) -> IsotonicRegression: ...
+def threshold_at_precision(y, q, precision: float = common.ALERT_PRECISION) -> tuple[float, float]: ...
+
+def load_challenger(path, va: pd.DataFrame) -> pd.DataFrame:
+    """The net's validation rows aligned to va by station_id and timestamp."""
+    ...
+
+def time_challenger(path, reg: pd.DataFrame, n: int = 5) -> float:
+    """Median seconds for one timestamp's prediction on the CPU."""
+    ...
+
+def select(ap_lgbm: float, ap_stnet: float | None, seconds: float | None,
+           margin: float = common.CHALLENGER_MARGIN, max_seconds: float = 1.0) -> str:
+    """'stnet' only when it beats the trees by margin and predicts fast enough."""
+    ...
+
+def main() -> None:
+    a = argparse.ArgumentParser(description=__doc__)
+    a.add_argument("--split", default="train2026"); a.add_argument("--challenger", default=str(stnet.PREDICTIONS_PATH))
+    a.add_argument("--no-challenger", action="store_true")
+    args = a.parse_args(); t0 = time.time()
+    ...
+    common.log_stage("calibrate", t0, rows=len(va))
+
+if __name__ == "__main__":
+    main()
+```
+
+_Check._ `python 16b_calibrate_select.py` prints three `chosen=` lines and `python -c "import json; c = json.load(open('models/calibration.json')); print(c['margin'], {h: (c[h]['chosen'], round(c[h]['val_ap_lgbm'], 3), c[h]['val_ap_stnet'] and round(c[h]['val_ap_stnet'], 3)) for h in ('15', '30', '60')})"` prints `0.02` and three triples. Then `python 18_evaluate_lead_time.py --challenger output/predictions_stnet.parquet` and the report's `row` block has `stnet` beside `lgbm` at every horizon. `python -c "import json; print(json.load(open('models/calibration.json'))['30']['tau'])"` still works for phase 9.
+
+_Watch for._ A mixed choice, trees at 15 minutes and the net at 60, is allowed by the rule and means the serving loop of phase 9 loads both models and builds both inputs. Write that consequence into `challenger.md` before accepting a mixed result; if the consumer wants one model, say so there and choose per the 30-minute horizon.
+
+#### `docs/decisions/challenger.md` · doc · new
+
+_Purpose._ The written decision on the challenger, with the numbers that made it, the cost of the net, and its data flow drawn from memory and checked against the code.
+
+_Reads._ `models/calibration.json`, `output/evaluation_report.json` (the `--challenger` run), `output/studies/mps_vs_cpu.json`, `logs/pipeline.log` (the `train_stnet` line).
+
+_Must contain._
+- The rule: `common.CHALLENGER_MARGIN`, the one-second bar, and the plan's reason, that trees are faster, more stable and easier to debug at 3 am.
+- The numbers: one list item per horizon with LightGBM's validation AP, the net's, the difference, the net's prediction seconds and `chosen`, copied from `calibration.json`; then the test-split row for both from the report.
+- Cost: `seconds`, `rss_gb`, `best_epoch` and `device` from the log line; the step and epoch timings on both devices from the study.
+- Data flow: a text drawing made with `stnet.py` closed, with the shape at every arrow, from the feature Parquet through the pivot `(T, C, N)`, the windows `(T − 12, 12, C, N)`, the per-station sequences `(B·N, 12, C)`, the GRU to `(B, N, H)`, two `Mix` rounds with `A_up` and `A_down`, the head to `(B, N, 3)`, the masked loss with `pos_weight`, AdamW, early stopping on validation AP, the checkpoint, the predictions Parquet and `16b`; then the shapes printed by the module's check, and a list of every arrow the drawing had wrong. A picture at `docs/decisions/stnet_dataflow.png` may sit beside the drawing but does not replace it.
+- What the net sees that the trees do not, in the plan's words, and what it does not see: the calendar beyond sin and cos, the incident columns beyond the flag, rain, the static columns.
+- Decision: one sentence per horizon naming the shipped model, matching `chosen`, and what the serving loop will load.
+- What would change it: a second seed's spread, more months, a third hop; the number that would have to move and by how much.
+- Date, data window, commit of `17b` and `16b`.
+
+_Check._ `grep -c 'chosen\|lgbm\|stnet' docs/decisions/challenger.md` is above 5; the per-horizon decisions on the page equal `calibration.json`'s `chosen`; the data-flow section lists its mistakes, and a blank list means the drawing was made with the file open.
 
 ### Done when
 
-- Your backward pass matches autograd to 1e-6.
-- The net trains without NaN, early-stops, and sits in the report next to the trees.
-- You can draw its data flow from memory.
+- `pytest tests/test_backprop.py -q -s` prints `max_abs_diff` below 1e-6 (it should be near 1e-10) and `3 passed`; flipping `np.outer(e, w2)` in `backward` makes the first test fail.
+- `python 17a_train_mlp.py --rows 200000 --epochs 3` prints `gradcheck max_abs_diff=` below 1e-6 and `curves max_rel_diff=` below 1e-3; the full run writes `models/mlp_h30.pt` and `output/mlp_h30_curves.png`, and `docs/stages/17a_train_mlp.md` shows the MLP's validation AP beside the logistic regression's and LightGBM's.
+- `python 17b_train_stnet.py --epochs 1 --max-windows 2000` ends with a finite, lower loss and a checkpoint; the full run's log line has `rss_gb` under 4, every epoch line finite, and an `early stop at epoch` line or, if it ran all 15, a `best_epoch` in the log line; the net trained without a NaN.
+- `python -c "import pandas as pd; p = pd.read_parquet('output/predictions_stnet.parquet'); print(sorted(p.split.unique()), p.isna().sum().sum(), float(p.p_30.min()) >= 0 and float(p.p_30.max()) <= 1)"` prints `['test', 'val'] 0 True`.
+- `python studies/mps_vs_cpu.py` writes `output/studies/mps_vs_cpu.json` with rows for both devices and a `stnet_speedup_mps_over_cpu` between 0.5 and 3; the table is in `challenger.md` under cost.
+- `python 16b_calibrate_select.py` prints three `chosen=` lines; `calibration.json` has `margin` 0.02, `chosen` per horizon and `tau` per horizon; `python 18_evaluate_lead_time.py --challenger output/predictions_stnet.parquet` puts `stnet` beside `lgbm` in the report's `row` block at every horizon, which is the net sitting next to the trees.
+- `docs/decisions/challenger.md` exists with all eight sections; its data-flow drawing was made with `stnet.py` closed, its shapes match the ones the module's check prints, and its per-horizon decision equals `chosen` in `calibration.json`.
+- `git status --short` shows the four new code files, the test, the study, the two docs and the stage pages, and nothing under `models/` or `output/`.
 
 ### Pitfalls
 
-- float64 on MPS.
-- Forgetting `model.eval()` at prediction time.
-- A learning rate ten times too high.
-- Believing the deep model must win.
+- `TypeError: Cannot convert a MPS Tensor to float64 dtype` or a run that is ten times slower than the CPU. A float64 array reached the device: pandas gives float64 from any column that was upcast, and the gradient check works in float64 on purpose. Cast with `.astype(np.float32)` before every `torch.tensor(..., device=dev)`, keep the float64 arrays of `gradcheck` in their own variables, and let `stnet.make_windows` assert float32; there is no float64 on MPS and there never will be.
+- Predictions at serving time differ from the ones `17b` wrote, or memory climbs while predicting. The model was left in training mode and prediction ran with autograd on; today the net has no dropout so the numbers only drift when you add one, but the memory cost is there now. `stnet.predict` calls `model.eval()` inside `torch.no_grad()`, `stnet.load_model` calls `eval()` before returning, and nothing else predicts.
+- The loss rises after the first epoch, or is NaN by the second, and validation AP sits at the prevalence. The learning rate is ten times too high: 1e-2 with AdamW on standardised inputs diverges on this network. `stnet.LR` is 1e-3, `17a` starts there too, and the tiny-subset rule holds: `--max-windows 2000` must show the loss falling within one epoch before the full run.
+- The net won by 0.03 on the third seed and you ship it. Selection on noise: three seeds is three draws and the rule was written for one. The rule in `16b` is fixed before the run, one seed is the run, and if you want a second seed its spread goes into `challenger.md` and the margin applies to the mean. The plan says the deep model may not beat the trees on a hundred stations and a year, and that is a normal outcome, not a failure of the phase.
+- `FloatingPointError` from `stnet.train_epoch` at a random batch. A NaN in `X` (a station whose `speed_ratio` was NaN and did not get the 1.0 fill, or a channel standardised with a zero standard deviation) or an infinite `pos_weight` because a horizon had no positive training window. `make_windows` fills and asserts; `pos_weights` asserts positives per horizon; the error names the batch so you can index into `X` and find the station.
+- The adjacency assert in `make_windows` fires, or worse, does not, and the net learns nothing from its neighbours. `station_id` is a category of strings in the feature table and `reg.ID` is integers, so the two sorted orders differ (`'1000' < '999'`). Sort both as integers, and compare `ids` against `sorted(df.station_id.astype(int).unique())`.
+- `TypeError: unsupported operand type(s) for @: 'numpy.ndarray' and 'Tensor'` inside `Mix`. `A_up` was passed as the numpy array `adjacency` returns. `torch.as_tensor(A_up, device=dev)` once, before the loop, as lesson 10 step 5 does, and never inside `forward`.
+- MPS appears fifty times faster than the CPU in the timing study. The clock stopped when the kernel was queued, not when it finished. `torch.mps.synchronize()` before every `perf_counter()` read; the honest ratio is near 1 for this network at batch 64.
+- An op fails with `NotImplementedError: The operator ... is not currently implemented for the MPS device`. `PYTORCH_ENABLE_MPS_FALLBACK=1` was set after `import torch`, which is too late. The first line of `17b` and of the study sets it before the import; setting it in the shell works as well.
+- The net's validation AP is higher than LightGBM's until you look at the rows. The two were scored on different row sets: the net has no window for the first hour of the validation block and skips masked targets. `16b.load_challenger` inner-joins on the keys and writes `n_val` and `n_val_aligned`; compare APs only on the aligned rows.
+- The gradient check fails at 1e-6 with differences near 1e-4 and the backward pass is right. The check ran in float32, where rounding swamps a central difference at ε = 1e-4; lesson 9 step 2 casts to float64 for exactly this reason. `gradcheck` casts internally; if you rewrote it, cast.
+- Validation windows contain training rows. The windows were built on the whole table and then cut by timestamp, so the first eleven validation windows reach back across the gap day. `17b.windows_for` builds each split's windows from that split's rows only, and the assert on the last training window's end catches the other direction.
 
 ## Phase 8: Deep learning across domains
 
