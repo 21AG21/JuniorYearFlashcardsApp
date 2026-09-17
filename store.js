@@ -186,12 +186,24 @@
       var rn = Math.round(num(rl[day], 0, 100000, 0));
       if (rn > (state.log[day] || 0)) { state.log[day] = rn; changed = true; }
     }
+    // The Six Ladders ticks are merged lesson by lesson, whichever side is
+    // newer, set or cleared. Copying the map whole with the rest of the
+    // settings let two devices erase each other's reading progress.
+    if (plain(remote.settings) && plain(remote.settings.ladderDone)) {
+      var ld = plain(state.settings.ladderDone) ? state.settings.ladderDone : {}, rd = remote.settings.ladderDone;
+      for (var lk in rd) {
+        var rv2 = rd[lk], mv = ld[lk];
+        if (typeof rv2 !== 'number' || !isFinite(rv2)) continue;
+        if (mv === undefined || Math.abs(rv2) > Math.abs(mv)) { ld[lk] = rv2; changed = true; }
+      }
+      state.settings.ladderDone = ld;
+    }
     // Settings used to be copied in whole. A blob with sessionSize 0 made the
     // daily review deal nothing and say "Nothing due" over four thousand
     // untouched cards. Only known keys, only sane values.
     if (plain(remote.settings) && (remote._at || 0) > lastSyncAt) {
       for (var k in DEFAULT_SETTINGS) {
-        if (!(k in remote.settings)) continue;
+        if (!(k in remote.settings) || k === 'ladderDone') continue;
         var rv = remote.settings[k], dv = DEFAULT_SETTINGS[k];
         if (typeof dv === 'number') rv = Math.round(num(rv, 1, 1000, dv));
         else if (typeof dv === 'boolean') rv = !!rv;
@@ -349,7 +361,9 @@
      and tell the app. Nothing happens when nothing changed. */
   function refreshIndex() {
     if (global.__DECKS && global.__DECKS.index) return Promise.resolve(false);
-    var fp = function (ix) { return ((ix && ix.courses) || []).map(function (c) { return c.id + ':' + c.count; }); };
+    // a deck's version stamp changes when its file does, so a book that grew
+    // without gaining a card still counts as new
+    var fp = function (ix) { return ((ix && ix.courses) || []).map(function (c) { return c.id + ':' + c.count + ':' + (c.v || ''); }); };
     return fetch('data/index.json', { cache: 'no-cache' })
       .then(function (r) { if (!r.ok) throw new Error('index ' + r.status); return r.json(); })
       .then(function (j) {

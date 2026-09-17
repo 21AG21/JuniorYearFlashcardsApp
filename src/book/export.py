@@ -511,4 +511,7 @@ json.dump(deck, open(str(DECK) + '.tmp', 'w', encoding='utf-8'), ensure_ascii=Fa
 print('items with no matched terms:', [i['id'] for p in book['phases'] for i in p['items'] if not i['terms']])
 os.replace(str(DECK) + '.tmp', DECK)
 print('merged into', DECK)
+sys.path.insert(0, str(ROOT / 'src' / 'scripts'))
+from stamp_index import stamp
+print('index stamps moved:', stamp(ROOT))
 print('wrote', OUT, len(json.dumps(book, ensure_ascii=False)) // 1024, 'KB')

@@ -4,10 +4,14 @@
  *   GET /api/state -> { updatedAt, state }        + Bearer <account token>
  *   PUT /api/state <- { updatedAt, state }        + Bearer <account token>
  *
- * An account IS a token. The allowed token is configured once, in the
- * project's environment: SYNC_TOKEN holds the token itself (comma-separated
- * for more than one), or SYNC_TOKEN_HASH holds sha256 hex of it. The API
- * never mints tokens; an unconfigured deployment refuses to sync at all.
+ * An account IS a token. Three ways a token is allowed, any one suffices:
+ * SYNC_TOKEN in the project's environment holds the token itself (comma-
+ * separated for more than one); SYNC_TOKEN_HASH holds sha256 hex of it; or
+ * the token OWNS a deck — the first 16 hex of sha256('apdecks-owner:' + token)
+ * matches an "owner" in data/index.json, the same derivation the app uses to
+ * shelve a private deck, so the account that owns the Ladders syncs with no
+ * secret configured anywhere. The API never mints tokens; a deployment with
+ * none of the three refuses to sync at all.
  * State is one JSON blob per account under apdecks/<sha256(token)>.json;
  * the app merges, this function just stores.
  */
@@ -25,12 +29,27 @@ function eq(a, b) {
 function split(v) {
   return String(v || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 }
-function configured() { return split(process.env.SYNC_TOKEN).length + split(process.env.SYNC_TOKEN_HASH).length > 0; }
+var OWNER_SALT = 'apdecks-owner:';
+var owners = [];
+try {
+  owners = (require('../data/index.json').courses || [])
+    .map(function (c) { return c && c.owner; })
+    .filter(function (o) { return typeof o === 'string' && /^[0-9a-f]{16}$/.test(o); });
+} catch (e) { owners = []; }
+// "configured" means both halves exist: someone is allowed, and there is a
+// Blob store to write to. Without the store the app would see every push
+// fail as a network error; with this it is told, truthfully, that sync is
+// off on this deployment.
+function configured() {
+  var anyone = split(process.env.SYNC_TOKEN).length + split(process.env.SYNC_TOKEN_HASH).length + owners.length > 0;
+  return anyone && !!process.env.BLOB_READ_WRITE_TOKEN;
+}
 function allowed(tok) {
   if (!/^[A-Za-z0-9_-]{16,128}$/.test(tok)) return false;
-  var h = sha256(tok);
+  var h = sha256(tok), o = sha256(OWNER_SALT + tok).slice(0, 16);
   return split(process.env.SYNC_TOKEN).some(function (t) { return eq(t, tok); }) ||
-         split(process.env.SYNC_TOKEN_HASH).some(function (x) { return eq(x.toLowerCase(), h); });
+         split(process.env.SYNC_TOKEN_HASH).some(function (x) { return eq(x.toLowerCase(), h); }) ||
+         owners.some(function (x) { return eq(x, o); });
 }
 function send(res, code, body) {
   res.statusCode = code;
@@ -87,3 +106,8 @@ module.exports = async function handler(req, res) {
     return send(res, 500, { error: 'store failed' });
   }
 };
+
+// for the tests: the checks, and the owner list they read
+module.exports.allowed = allowed;
+module.exports.configured = configured;
+module.exports.owners = owners;

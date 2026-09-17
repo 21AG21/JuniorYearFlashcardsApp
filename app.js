@@ -1005,11 +1005,20 @@
     if (lp && typeof lp.lvl === 'number' && lp.lvl >= 0 && lp.lvl < 6) ladder = { lvl: lp.lvl, all: !!lp.all };
   } catch (e) {}
   function saveLadder() { try { localStorage.setItem('apdecks.v1.ladder', JSON.stringify(ladder)); } catch (e) {} }
-  function bookDone() { return S.getSettings().ladderDone || {}; }
+  /* A tick is a wish, not a measurement, and it has to survive a sync with a
+     device that ticked something else: each entry carries the moment it was
+     set (positive) or cleared (negative), the newer moment wins per lesson in
+     the store's merge, and the map the pages read holds only the ticks that
+     are on. A value of 1 from before the moments were kept still reads as on. */
+  function bookDone() {
+    var raw = S.getSettings().ladderDone || {}, out = {};
+    for (var k in raw) if (raw[k] > 0) out[k] = 1;
+    return out;
+  }
   function setBookDone(id, on) {
-    var d = {}; var cur = bookDone();
+    var d = {}, cur = S.getSettings().ladderDone || {};
     for (var k in cur) d[k] = cur[k];
-    if (on) d[id] = 1; else delete d[id];
+    d[id] = on ? Date.now() : -Date.now();
     S.setSetting('ladderDone', d);
   }
 
