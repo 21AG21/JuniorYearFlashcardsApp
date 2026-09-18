@@ -10,56 +10,64 @@
       "n": 1,
       "title": "Setup, Python and data handling",
       "weight": "Phases 0, 1 and 3",
-      "count": 54
+      "count": 54,
+      "blurb": "Terminal, git, a venv and a .env kept out of commits, then Python modules with offline tests and UTC timestamps, then pandas, Parquet, DuckDB and SQL that turn PeMS detector rows and 511 incidents into a clean table."
     },
     {
       "id": "u2",
       "n": 2,
       "title": "The math the model uses",
       "weight": "Phase 2",
-      "count": 25
+      "count": 25,
+      "blurb": "Vectors, dot products and X @ w, the chain rule and the negative gradient, distributions and likelihood, enough to fit a logistic regression by hand in numpy on a road, hour and weekend grid and score the current hour."
     },
     {
       "id": "u3",
       "n": 3,
       "title": "Classical machine learning",
       "weight": "Phases 4 and 5",
-      "count": 61
+      "count": 61,
+      "blurb": "Labels, lag features, a time split that does not leak, and gradient boosted trees in LightGBM for a forecast that holds up, then regression metrics, k-nearest neighbors, SVMs, clustering, PCA and hyperparameter search."
     },
     {
       "id": "u4",
       "n": 4,
       "title": "Time series and forecasting",
       "weight": "Phase 6",
-      "count": 25
+      "count": 25,
+      "blurb": "How jams move along a road graph, with neighbor stations, wave speed, a shared GRU and one ARIMA fit, then calibration, thresholds, lead time and false alarms per station-day that turn a score into an alert."
     },
     {
       "id": "u5",
       "n": 5,
       "title": "Neural networks and deep learning",
       "weight": "Phases 7 and 8",
-      "count": 50
+      "count": 50,
+      "blurb": "A one-hidden-layer network in numpy with a gradient check, then the same in PyTorch on the M1 GPU, then convolutions, embeddings, attention, transformers, local LLMs with retrieval, VAEs, GANs and diffusion."
     },
     {
       "id": "u6",
       "n": 6,
       "title": "ML engineering and scale",
       "weight": "Phase 9",
-      "count": 31
+      "count": 31,
+      "blurb": "A serving loop, a monitor with retrain and rollback rules, launchd jobs, atomic writes and tests that prove served features match trained ones, then a FastAPI service in a container, mixed precision and scaling laws."
     },
     {
       "id": "u7",
       "n": 7,
       "title": "Beyond supervised learning, and depth",
       "weight": "Phases 10 and 11",
-      "count": 58
+      "count": 58,
+      "blurb": "Bandits and policies, causal inference with colliders and randomization, a fairness audit and a dashboard ranker, then quantiles, conformal prediction, Gaussian processes and a reproduced PEMS-BAY benchmark, written up."
     },
     {
       "id": "u8",
       "n": 8,
       "title": "Every word, defined",
       "weight": "Glossary",
-      "count": 125
+      "count": 125,
+      "blurb": "Short definitions of every term the course uses, from terminal, shell, git and Parquet to PeMS, station, postmile and upstream, and the words for tables, code, prediction and models. A reference to check, not a lesson."
     }
   ],
   "cards": [

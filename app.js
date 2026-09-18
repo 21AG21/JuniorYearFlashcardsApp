@@ -900,6 +900,8 @@
         '<span class="lname">' + esc(u.title) + '</span>' +
         '<span class="lval num">' + (anySeen ? pct(us.pct) : us.total.toLocaleString()) + '</span>' +
         (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
+        // what the unit holds, in a line, so the title is not the only clue
+        (u.blurb ? '<span class="lsub ublurb">' + esc(u.blurb) + '</span>' : '') +
         '</button></li>';
     }).join('');
 
@@ -1002,6 +1004,7 @@
         '<h1 class="dnh"><button class="dn" data-back>' + esc(u.title) + '</button></h1>' +
         '<span class="dv num">' + us.total.toLocaleString() + '</span>' +
       '</div>' +
+      (u.blurb ? '<div class="dblurb">' + esc(u.blurb) + '</div>' : '') +
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due.toLocaleString() : 'Study') + '</button>' +
       dealLine(buildDaily({ deck: d, unit: unitId })) +
       '<div class="modes">' +
