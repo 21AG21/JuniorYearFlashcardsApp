@@ -43,10 +43,19 @@ try {
 // What a 503 lacks, named, so the app and whoever reads the response can
 // say so instead of guessing: 'store' = no Blob store is linked to this
 // deployment, 'allowlist' = no token would be accepted anyway.
+// Connecting a Blob store injects BLOB_READ_WRITE_TOKEN; a store connected
+// under a custom prefix injects <PREFIX>_READ_WRITE_TOKEN instead. Either
+// is the store, and it is handed to every Blob call explicitly so the
+// library never has to guess the name.
+function storeToken() {
+  if (process.env.BLOB_READ_WRITE_TOKEN) return process.env.BLOB_READ_WRITE_TOKEN;
+  var k = Object.keys(process.env).filter(function (x) { return /_READ_WRITE_TOKEN$/.test(x) && process.env[x]; }).sort()[0];
+  return k ? process.env[k] : '';
+}
 function missing() {
   var m = [];
   if (!(split(process.env.SYNC_TOKEN).length + split(process.env.SYNC_TOKEN_HASH).length + owners.length)) m.push('allowlist');
-  if (!process.env.BLOB_READ_WRITE_TOKEN) m.push('store');
+  if (!storeToken()) m.push('store');
   return m;
 }
 function configured() { return missing().length === 0; }
@@ -77,7 +86,7 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      var meta = await blob.head(pathname);
+      var meta = await blob.head(pathname, { token: storeToken() });
       if (!meta || !meta.url) return send(res, 200, { updatedAt: 0, state: null });
       // the public blob URL rides a CDN — a unique query skips its cache so
       // a pull right after a push on another device sees the fresh write
@@ -101,6 +110,7 @@ module.exports = async function handler(req, res) {
   if (Buffer.byteLength(text, 'utf8') > MAX_BYTES) return send(res, 413, { error: 'too big' });
   try {
     await blob.put(pathname, text, {
+      token: storeToken(),
       access: 'public',
       addRandomSuffix: false,
       allowOverwrite: true,
