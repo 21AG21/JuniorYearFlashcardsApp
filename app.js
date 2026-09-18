@@ -818,8 +818,38 @@
         // to go and no way to find out what the star is for.
         '<button class="textbtn" data-go="#/starred">Starred' +
           (nStarred ? ' · ' + nStarred.toLocaleString() : '') + '</button>' +
+        '<button class="textbtn" data-go="#/how">How it works</button>' +
       '</div>' + nudge
     );
+  }
+
+  /* A mode is a word and, under it, the one line that says what it deals.
+     "High-yield" and "Trouble spots" were guesses until you tapped them; the
+     line is the deal, in the same words the session will keep. */
+  var MODE_DESC = {
+    core: 'The high-yield cards only, the ones most likely on the exam',
+    quiz: 'The same deal as four choices, marked for you',
+    starred: 'The cards you starred, shuffled',
+    due: 'Only what is due, nothing new',
+    hard: 'Cards missed twice, or missed the last time',
+    all: 'A session\'s worth, shuffled from the whole deck',
+    games: 'Rounds built from this deck',
+    cram: 'Every card in the unit, one pass, nothing rescheduled',
+    print: 'Questions and answers on paper, two columns'
+  };
+  function modeBtn(go, label, desc) {
+    return '<button class="textbtn mode" data-go="' + go + '"><span class="mlab">' + esc(label) + '</span>' +
+      (desc ? '<span class="mdesc">' + esc(desc) + '</span>' : '') + '</button>';
+  }
+  /* what the big button will deal, counted: "12 due · 8 new" says why the
+     number is 20 today and 31 tomorrow */
+  function dealLine(queue) {
+    if (!queue || !queue.length) return '';
+    var fresh = queue.filter(function (c) { return S.isNew(c.i); }).length, due = queue.length - fresh;
+    var bits = [];
+    if (due) bits.push(due.toLocaleString() + ' due');
+    if (fresh) bits.push(fresh.toLocaleString() + ' new');
+    return '<div class="actsub">' + esc(bits.join(' · ')) + (due && fresh ? ', due first' : '') + '</div>';
   }
 
   /* ==========================================================================
@@ -869,7 +899,7 @@
     // the app knows when the exam is — the countdown sits over the course name
     var pl = paceLine(d);
     var cl = coverLine(deckId);
-    var dealNow = buildDaily({ deck: d }).length;
+    var deal = buildDaily({ deck: d }), dealNow = deal.length;
     // a course that carries its book has pages before its first unit: the
     // rules, the project laid out file by file, how to study
     var about = aboutPages(d).map(function (a) {
@@ -885,22 +915,23 @@
         '<h1 class="dnh"><button class="dn" data-back>' + esc(nice(d)) + '</button></h1>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
       '</div>' +
+      (d.blurb ? '<div class="dblurb">' + esc(d.blurb) + '</div>' : '') +
       // "Review 20" used to name the DUE count and then deal thirty, because
       // the deal is due cards plus the day's new ones. It names the deal.
       '<button class="act" data-go="#/study/' + deckId + '/smart">' +
         (dealNow ? (st.due && dealNow === st.due ? 'Review ' : 'Study ') + dealNow.toLocaleString()
                  : 'Study') + '</button>' +
+      dealLine(deal) +
       '<div class="modes">' +
-        '<button class="textbtn" data-go="#/study/' + deckId + '/core">High-yield</button>' +
-        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart">Quiz</button>' +
-        (st.starred ? '<button class="textbtn" data-go="#/study/' + deckId + '/starred">Study starred</button>' : '') +
+        modeBtn('#/study/' + deckId + '/core', 'High-yield', MODE_DESC.core) +
+        modeBtn('#/quiz/' + deckId + '/smart', 'Quiz', MODE_DESC.quiz) +
+        (st.starred ? modeBtn('#/study/' + deckId + '/starred', 'Study starred', MODE_DESC.starred) : '') +
         (st.due > S.getSettings().sessionSize
-          ? '<button class="textbtn" data-go="#/study/' + deckId + '/due">Catch up · ' +
-            st.due.toLocaleString() + '</button>' : '') +
-        '<button class="textbtn" data-go="#/study/' + deckId + '/hard">Trouble spots</button>' +
-        '<button class="textbtn" data-go="#/study/' + deckId + '/all">Shuffle</button>' +
+          ? modeBtn('#/study/' + deckId + '/due', 'Catch up · ' + st.due.toLocaleString(), MODE_DESC.due) : '') +
+        modeBtn('#/study/' + deckId + '/hard', 'Trouble spots', MODE_DESC.hard) +
+        modeBtn('#/study/' + deckId + '/all', 'Shuffle', MODE_DESC.all) +
         (window.Games && window.Games.linksFor(deckId).length
-          ? '<button class="textbtn" data-go="#/games">Games</button>' : '') +
+          ? modeBtn('#/games', 'Games', MODE_DESC.games) : '') +
       '</div>' +
       (about ? '<ul class="list" style="margin-top:var(--s-4);gap:0"><li><div class="ulabel">Before you start</div></li>' + about + '</ul>' : '') +
       '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
@@ -951,13 +982,14 @@
         '<span class="dv num">' + us.total.toLocaleString() + '</span>' +
       '</div>' +
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due.toLocaleString() : 'Study') + '</button>' +
+      dealLine(buildDaily({ deck: d, unit: unitId })) +
       '<div class="modes">' +
-        '<button class="textbtn" data-go="#/study/' + deckId + '/core/' + unitId + '">High-yield</button>' +
-        '<button class="textbtn" data-go="#/quiz/' + deckId + '/smart/' + unitId + '">Quiz</button>' +
-        '<button class="textbtn" data-go="#/cram/' + deckId + '/' + unitId + '">Cram</button>' +
+        modeBtn('#/study/' + deckId + '/core/' + unitId, 'High-yield', MODE_DESC.core) +
+        modeBtn('#/quiz/' + deckId + '/smart/' + unitId, 'Quiz', MODE_DESC.quiz) +
+        modeBtn('#/cram/' + deckId + '/' + unitId, 'Cram', MODE_DESC.cram) +
         // the print sheet has existed in the stylesheet for months with no way
         // in: two columns, questions and answers, no chrome
-        '<button class="textbtn" data-print>Print</button>' +
+        '<button class="textbtn mode" data-print><span class="mlab">Print</span><span class="mdesc">' + MODE_DESC.print + '</span></button>' +
         gameLinks +
       '</div>' +
       bookUnitHTML(deckId, unitId) +
@@ -2849,12 +2881,90 @@
         '<button class="textbtn" data-import>Restore</button>' +
         '<button class="textbtn" data-reset>Reset progress</button>' +
       '</div>' +
+      '<div class="data-list"><button class="textbtn" data-go="#/how">How it works</button></div>' +
       reqHTML('Request a feature') +
       // the keys, said once, where a keyboard exists — CSS hides this line on
       // coarse-pointer screens, where it would only be clutter
       '<div class="keyline">Keyboard — space reveal · 1 2 3 4 grade · s star · n note · ' +
         '1–4 answer · enter next · / search · ← → tabs · esc back</div>' +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
+    );
+  }
+
+  /* ==========================================================================
+     VIEW · how it works — the whole system on one page, in the words the
+     screens use. Numbers come from Settings so the page never drifts from
+     what the buttons will actually deal.
+     ========================================================================== */
+  function viewHow() {
+    curDeckId = null;
+    var s = S.getSettings();
+    var book = S.getDeck('sixladders');
+    function sec(k, ps) {
+      return '<div class="k">' + esc(k) + '</div>' + ps.map(function (t) { return '<p>' + t + '</p>'; }).join('');
+    }
+    function b(t) { return '<b>' + esc(t) + '</b>'; }
+    mount(
+      '<div class="head"><span class="k">Before you start</span><h1 class="uhead">How it works</h1></div>' +
+      '<div class="how">' +
+      sec('Each day', [
+        'Open a deck and tap ' + b('Study') + '. The deal is what is due today, then new cards: up to ' +
+          s.sessionSize + ' a session, ' + s.newPerSession + ' of them new. On a fresh deck that is ' + s.newPerSession + ' new cards. ' +
+          'The line under the button counts the two halves.',
+        'The line over a course name says when its exam is and whether this pace sees every card before it. ' +
+          'Both numbers move under Settings.',
+        'The deck list adds it up: the big number is what is due across every deck, and ' + b('Start') + ' deals it. ' +
+          b('Quick ten') + ' is the same deal cut to ten.'
+      ]) +
+      sec('Grading a card', [
+        'Read the question, answer it in your head, then turn the card. ' + b('Hint') + ' shows the shape of the answer, only when you tap it. ' +
+          'After the answer, the grey note is the trap or the reason, from the card itself.',
+        b('Again') + ': you did not have it. The card comes back this session and its ladder starts over.',
+        b('Hard') + ': you had it, but only just. It keeps its place, comes back sooner, and each step grows by a fifth instead of the usual multiple.',
+        b('Good') + ': the normal step. A new card goes 2 days, then 3, then each step multiplies by the card\'s ease, about two and a half.',
+        b('Easy') + ': a longer step, 3 days then 6, and the ease grows so later steps stretch further.',
+        'Every button prints the day it would bring the card back, and nothing is ever scheduled past the exam.'
+      ]) +
+      sec('Ways into a deck', [
+        b('High-yield') + ' — ' + esc(MODE_DESC.core) + '.',
+        b('Quiz') + ' — ' + esc(MODE_DESC.quiz) + '. The card\'s note appears under the right choice.',
+        b('Trouble spots') + ' — ' + esc(MODE_DESC.hard) + '.',
+        b('Shuffle') + ' — ' + esc(MODE_DESC.all) + '.',
+        b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
+        b('Cram') + ', on a unit — ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
+        b('Print') + ', on a unit — ' + esc(MODE_DESC.print) + '.'
+      ]) +
+      sec('Stars, notes and typing', [
+        'The ' + b('star') + ' keeps a card. Starred cards collect under Starred on the deck list and under Study starred on their deck; swiping a card up stars it.',
+        b('Note') + ' is your own words on a card: a mnemonic, the trap you keep hitting. It shows under the answer every time after.',
+        b('Typing') + ', under Settings, asks you to type the answer before you turn the card. The app checks it against the answer and any accepted wording and recommends a grade; a miss recommends Again.'
+      ]) +
+      sec('Games', [
+        'Every game deals rounds built from a deck, so a round is practice on the same material. ' +
+          b('Match') + ' pairs two columns. ' + b('Order') + ' puts items in sequence. ' + b('Quiz') + ' is one prompt and four answers. ' +
+          b('Board') + ' shows a prompt and a board of tiles; tap the one it names. ' + b('Circle') + ' is the unit circle. ' + b('Graph') + ' asks which trig function is drawn.',
+        'Each game keeps a best, and the Games page says under every name what its round asks.'
+      ]) +
+      sec('Progress', [
+        b('Progress') + ' shows what is due, the week ahead at this pace, the units where you are weakest, the cards you keep missing, and the last four weeks of reviews. ' +
+          'Weak spots and sticking points open as sessions.'
+      ]) +
+      sec('Sync', [
+        'Progress lives on this device until you paste an account token under Settings → Sync. Then every device with the same token shares one record: ' +
+          'reviews, stars, notes, settings' + (book ? ', lesson ticks' : '') + '. Two devices that both worked offline both keep their work, card by card.',
+        'The ID under Sync is derived from the token and is safe to share; the token is not.'
+      ]) +
+      (book ? sec('The Ladders', [
+        'The Ladders is a course, not only a deck. Its unit pages list the phases to read, each lesson at six reading levels, ' +
+          'and the pages before Phase 0 lay the whole project out file by file. Tick a lesson done at its foot; the ticks count on the unit page and sync with everything else.'
+      ]) : '') +
+      sec('Keys and swipes', [
+        'In a session: ' + b('space') + ' or ' + b('→') + ' turns the card, ' + b('1 2 3 4') + ' grade it, ' + b('←') + ' takes the last grade back, ' +
+          b('s') + ' stars, ' + b('n') + ' opens the note, ' + b('esc') + ' leaves. In a quiz, 1 to 4 pick and enter moves on.',
+        'Anywhere: ' + b('/') + ' searches, ' + b('← →') + ' move between tabs, ' + b('esc') + ' goes back. In a Ladders lesson, ← → turn its pages.',
+        'On a phone: swipe a card left for Again, right for Good, up to star it.'
+      ]) +
+      '</div>'
     );
   }
 
@@ -3411,6 +3521,7 @@
     if (p[0] === 'search') return viewSearch();
     if (p[0] === 'stats') return viewStats();
     if (p[0] === 'settings') return viewSettings();
+    if (p[0] === 'how') return viewHow();
     if (p[0] === 'games' && window.Games) return window.Games.hub();
     if (p[0] === 'game' && p[1] && window.Games) return window.Games.play(p[1], p[2]);
     // an unknown hash is the root, and on two panes the root is a course —

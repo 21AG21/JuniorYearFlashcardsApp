@@ -507,6 +507,38 @@
     return hot.concat(cold);
   }
 
+  /* what each round asks, in one line under its name on the hub */
+  var DESC = {
+    timeline:   'Put events in the order they happened',
+    presorder:  'Put presidents in the order they served',
+    periodquiz: 'Which period does this event belong to?',
+    yearquiz:   'Pick the year an event happened',
+    apterms:    'A description from the deck; tap the name it points to',
+    chemorder:  'Put elements in order by a property',
+    chemformula:'Match compound names with their formulas',
+    ionmatch:   'Match polyatomic ions with their formulas',
+    elemmatch:  'Match element names with their symbols',
+    sigfigs:    'How many significant figures?',
+    moles:      'Moles, mass and particles, every option to three sig figs',
+    econfig:    'Pick the electron configuration',
+    langmatch:  'Match each rhetorical device with its meaning',
+    langboard:  'A definition from the deck; tap the term it defines',
+    frmatch:    'Match French words with English',
+    frconj:     'Person, verb, tense; tap the right form',
+    frgender:   'Le or la, from the vocabulary itself',
+    frnumbers:  'Read numbers written out in French',
+    frtime:     'Tell the time the French way',
+    unitcircle: 'Angles, coordinates and exact values in radians',
+    degcircle:  'The same circle in degrees',
+    triggraphs: 'Which trig function is drawn?',
+    identities: 'Tap the expression each one equals',
+    derivmatch: 'Match functions with their derivatives',
+    antideriv:  'Match functions with their antiderivatives',
+    seriesmatch:'Match functions with their Maclaurin series',
+    radmatch:   'Match degrees with radians',
+    limitsquiz: 'Evaluate the limit',
+    converge:   'Does the series converge, and by which test?'
+  };
   /* ---------------- hub ---------------------------------------------------- */
   function hub() {
     st = null;
@@ -536,10 +568,12 @@
       Object.keys(GAMES).forEach(function (id) {
         if (GAMES[id].deck !== deckId) return;
         var bs = shown(id);
+        // the symbol says the kind; the line says what the round asks
+        var ask = (bs ? '★ ' + esc(bs.label) + ' · ' : '') + esc(DESC[id] || '');
         rows += '<li><button class="ledger mid" data-go="#/game/' + id + '">' +
           '<span class="lname">' + esc(GAMES[id].name) + '</span>' +
           '<span class="lval word gkind">' + (CUE[GAMES[id].kind] || '') + '</span>' +
-          (bs ? '<span class="lsub">★ ' + esc(bs.label) + '</span>' : '') +
+          (ask ? '<span class="lsub">' + ask + '</span>' : '') +
           '</button></li>';
       });
       if (rows) html += '<div class="ulabel">' + esc(ctx.nice(deckId)) + '</div><ul class="list" style="gap:0">' + rows + '</ul>';
