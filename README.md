@@ -37,17 +37,25 @@ so two devices reviewing offline both keep their work.
 
 Setting it up once, in the Vercel dashboard:
 
-1. **Storage → Create → Blob**, connected to this project (this injects
-   `BLOB_READ_WRITE_TOKEN` automatically).
-2. **Settings → Environment Variables**: add `SYNC_TOKEN` = the token you
-   will paste into the app (16–128 characters of `A–Z a–z 0–9 _ -`; generate
-   one with `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`).
-   `SYNC_TOKEN_HASH` with sha256 hex works too, if you'd rather not store
-   the token itself.
-3. Redeploy so the environment applies.
+1. **Storage → Create → Blob**, connected to this project for Production
+   (this injects `BLOB_READ_WRITE_TOKEN`; without it the API answers 503
+   and the app shows *Sync is off here*).
+2. Decide which tokens are allowed. Any one of these works:
+   - the token's **owner id** (`sha256("apdecks-owner:" + token)` first 16
+     hex digits, shown under Settings → Sync → ID) appears as an `owner`
+     on a deck in `data/index.json` — whoever owns a private deck syncs
+     with no extra setup;
+   - `SYNC_TOKEN` (Settings → Environment Variables) lists the token itself,
+     comma-separated for more than one (16–128 characters of `A–Z a–z 0–9 _ -`;
+     generate one with
+     `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`);
+   - `SYNC_TOKEN_HASH` lists sha256 hex of it, if you'd rather not store the
+     token itself.
+3. Redeploy after adding the store or a variable: Vercel bakes the
+   environment into each deployment.
 
-The API refuses to sync until `SYNC_TOKEN` is configured, and rejects every
-token that doesn't match — an account still IS a token, provisioned by hand.
+Every other token gets `401 bad token` — an account still IS a token,
+provisioned by hand or by owning a deck.
 
 ## How studying works
 

@@ -9,9 +9,10 @@ the site is https://myfleshcards.vercel.app.
 There is no user database. An **account is a token**: a 16–128 character
 string of `[A-Za-z0-9_-]`. The user pastes it once in *Settings → Sync*
 (or opens the site as `https://myfleshcards.vercel.app/#t=TOKEN`). It lives
-only in the device's localStorage (`apdecks.v1.tok`); the server's
-`SYNC_TOKEN` env var allows it for progress sync. The token itself is never
-committed anywhere.
+only in the device's localStorage (`apdecks.v1.tok`); the server allows it
+for progress sync when its owner id is on a deck in `data/index.json` or
+the `SYNC_TOKEN` env var lists it. The token itself is never committed
+anywhere.
 
 A deck is made private with one field on its entry in `data/index.json`:
 
@@ -34,8 +35,8 @@ now.
 **ID** row appears under Sync showing the 16 hex digits; tapping it copies
 them. Ask the user for the *ID*, never the token. If they have not set a
 token yet, they invent one (any 16–128 chars of `[A-Za-z0-9_-]`), paste it,
-and read the ID. That same token later becomes `SYNC_TOKEN` in Vercel for
-cross-device sync.
+and read the ID. Once that ID owns a deck, the same token syncs progress
+across devices with no Vercel change.
 
 Equivalent offline derivation (their machine, token never leaves it):
 
