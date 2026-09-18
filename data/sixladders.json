@@ -11,7 +11,17 @@
       "title": "Setup, Python and data handling",
       "weight": "Phases 0, 1 and 3",
       "count": 54,
-      "blurb": "Terminal, git, a venv and a .env kept out of commits, then Python modules with offline tests and UTC timestamps, then pandas, Parquet, DuckDB and SQL that turn PeMS detector rows and 511 incidents into a clean table."
+      "blurb": "Terminal, git, a venv and a .env kept out of commits, then Python modules with offline tests and UTC timestamps, then pandas, Parquet, DuckDB and SQL that turn PeMS detector rows and 511 incidents into a clean table.",
+      "keys": [
+        "A .env holding the API key is never committed, since git history is permanent and public repos are scanned for keys within minutes.",
+        "A venv isolates the interpreter and installed packages for one project, and arm64 Python is what uses the M1 chip well.",
+        "The model predicts whether a station is inside a slow episode 15, 30 or 60 minutes ahead from inputs known at that moment only.",
+        "A probability beats a yes or no answer because the cost of a false alarm and a miss are unequal and unknown at training time.",
+        "Tests run on fake events so a failure means your code changed, and timestamps stay in UTC because local time skips and repeats an hour.",
+        "Occupancy stands in for density, speed is often estimated, and % Observed says which rows are real and which are imputed.",
+        "Cleaning reads each gzip in chunks, filters per chunk, forward-fills within each station and drops the ambiguous November hour.",
+        "Parquet is columnar and typed, DuckDB queries a year of it in one glob, and a window function gives a lag without collapsing rows."
+      ]
     },
     {
       "id": "u2",
@@ -19,7 +29,17 @@
       "title": "The math the model uses",
       "weight": "Phase 2",
       "count": 25,
-      "blurb": "Vectors, dot products and X @ w, the chain rule and the negative gradient, distributions and likelihood, enough to fit a logistic regression by hand in numpy on a road, hour and weekend grid and score the current hour."
+      "blurb": "Vectors, dot products and X @ w, the chain rule and the negative gradient, distributions and likelihood, enough to fit a logistic regression by hand in numpy on a road, hour and weekend grid and score the current hour.",
+      "keys": [
+        "X @ w dots every row of X with w in one operation, so the dot product and matrix-vector product are the whole arithmetic of a linear model.",
+        "The gradient points toward rising loss, so learning steps against it, and backpropagation is the chain rule run in reverse along the graph.",
+        "A positive semidefinite Hessian means the loss is convex, so every local minimum is global and gradient descent cannot get stuck.",
+        "The profile uses a median because a few outage days at speed 0 or an imputed 70 would drag a mean, and the median ignores them.",
+        "The likelihood measures how probable the data are under a model, and cross-entropy is the negative log-likelihood of the Bernoulli outcome.",
+        "Logistic regression scores z = w·x + b, squashes it with the sigmoid, and the bias sets the base rate when every feature is zero.",
+        "A finite-difference gradient check catches a sign error or a dropped 1/n that would otherwise leave a loop still slowly decreasing the loss.",
+        "Past a limit set by curvature a bigger learning rate diverges, and weights rank features only after standardization and only for the linear part."
+      ]
     },
     {
       "id": "u3",
@@ -27,7 +47,17 @@
       "title": "Classical machine learning",
       "weight": "Phases 4 and 5",
       "count": 61,
-      "blurb": "Labels, lag features, a time split that does not leak, and gradient boosted trees in LightGBM for a forecast that holds up, then regression metrics, k-nearest neighbors, SVMs, clustering, PCA and hyperparameter search."
+      "blurb": "Labels, lag features, a time split that does not leak, and gradient boosted trees in LightGBM for a forecast that holds up, then regression metrics, k-nearest neighbors, SVMs, clustering, PCA and hyperparameter search.",
+      "keys": [
+        "A row is slow when speed is under 0.6 of the station's median profile for three steps in a row, and the profile comes from training days only.",
+        "Lags come from a shift within each station on the full grid, only trailing windows are safe, and every feature must be known at time t.",
+        "A time split trains on the past and tests on the future, so shuffled cross-validation on a time series leaks and reports fantasy scores.",
+        "Persistence is a strong baseline at 15 minutes because speed is highly autocorrelated, and skill over it grows with horizon.",
+        "Under 5 percent positives accuracy is useless, average precision is the headline metric, and ROC-AUC flatters because true negatives are cheap.",
+        "Boosting fits each small tree to the residuals of the sum so far, early stopping on validation AP finds the peak, and min_data_in_leaf regularizes.",
+        "RMSE is at least MAE and grows with outliers, R² of 0 means no better than the mean, and k-NN needs scaled features so no unit swamps the rest.",
+        "Random search beats grid because few parameters matter, the test split is never chosen on, and clusters are judged by stability and use."
+      ]
     },
     {
       "id": "u4",
@@ -35,7 +65,17 @@
       "title": "Time series and forecasting",
       "weight": "Phase 6",
       "count": 25,
-      "blurb": "How jams move along a road graph, with neighbor stations, wave speed, a shared GRU and one ARIMA fit, then calibration, thresholds, lead time and false alarms per station-day that turn a score into an alert."
+      "blurb": "How jams move along a road graph, with neighbor stations, wave speed, a shared GRU and one ARIMA fit, then calibration, thresholds, lead time and false alarms per station-day that turn a score into an alert.",
+      "keys": [
+        "Speed now correlates with speed five minutes ago at about 0.9, which is why persistence is strong and lags are the first features.",
+        "Queues grow backwards, so a slow downstream station means the wave is heading toward you and tells more than the upstream one.",
+        "Neighbors help only up to the distance to the disturbance divided by the wave speed, and beyond an hour of history windows mostly add noise.",
+        "One GRU shared across stations sees a hundred times more data, since queue dynamics are the same physics everywhere.",
+        "A reliability diagram bins rows by predicted probability, and Platt or isotonic fits on the validation split fix the gap without changing the ranking.",
+        "The threshold 0.5 is only right when a false alarm and a miss cost the same, so the threshold is chosen on validation for a required precision.",
+        "Lead time runs from first alert to onset, zero or negative means the model saw the jam rather than foresaw it, and false alarms count per station-day.",
+        "Naive and seasonal naive are the forecasting baselines, MASE makes skill comparable across series, and ARIMA residual checks apply to any model."
+      ]
     },
     {
       "id": "u5",
@@ -43,7 +83,17 @@
       "title": "Neural networks and deep learning",
       "weight": "Phases 7 and 8",
       "count": 50,
-      "blurb": "A one-hidden-layer network in numpy with a gradient check, then the same in PyTorch on the M1 GPU, then convolutions, embeddings, attention, transformers, local LLMs with retrieval, VAEs, GANs and diffusion."
+      "blurb": "A one-hidden-layer network in numpy with a gradient check, then the same in PyTorch on the M1 GPU, then convolutions, embeddings, attention, transformers, local LLMs with retrieval, VAEs, GANs and diffusion.",
+      "keys": [
+        "A one-hidden-layer network is h = ReLU(W1 x + b1) and p = sigmoid(w2·h + b2), and backprop multiplies (p - y) back through each layer.",
+        "Check gradients numerically even with autograd, since a wrong backward pass still trains, just badly, and the check catches a detached tensor.",
+        "BCEWithLogitsLoss takes logits and uses log-sum-exp, so it stays stable where sigmoid followed by log can underflow to minus infinity.",
+        "The M1 GPU is barely faster for a tiny network because kernel launch overhead rivals the arithmetic, and only validation AP says it works.",
+        "A convolution shares one filter across the whole image so a pattern counts wherever it appears, and pooling widens the receptive field.",
+        "An embedding is a learned vector per token, and attention relates every position to every other in one step as a softmax-weighted average of values.",
+        "Retrieval-augmented generation grounds answers in your documents, and a held-out set of your own questions measures what you will ship.",
+        "VAEs bound a likelihood, GANs play a game and diffusion regresses noise, while a pretrained model is the default unless the data are tabular."
+      ]
     },
     {
       "id": "u6",
@@ -51,7 +101,17 @@
       "title": "ML engineering and scale",
       "weight": "Phase 9",
       "count": 31,
-      "blurb": "A serving loop, a monitor with retrain and rollback rules, launchd jobs, atomic writes and tests that prove served features match trained ones, then a FastAPI service in a container, mixed precision and scaling laws."
+      "blurb": "A serving loop, a monitor with retrain and rollback rules, launchd jobs, atomic writes and tests that prove served features match trained ones, then a FastAPI service in a container, mixed precision and scaling laws.",
+      "keys": [
+        "The serving loop loads the models once, and every five minutes builds the last 13 steps of features with the same code that built the training table.",
+        "A second implementation of the features drifts within weeks, so golden-file tests prove that served features match trained ones.",
+        "Write JSON to a temporary name and rename, since rename is atomic and a reader then sees either the old file or the new one, never half.",
+        "Log the input timestamp with every prediction, because later scoring needs what the model knew and the gap to generation time is the real latency.",
+        "A nightly retrain must canary the new model before it swaps, or a bad day of data ships a bad model at midnight, and rollback restores the old hashes.",
+        "Freshness and missing data fail before accuracy does, and launchd coalesces missed runs after sleep, so paths and logs must be set explicitly.",
+        "A container carries code, interpreter and libraries together, and stateless serving lets any instance answer any request with state in storage.",
+        "GPUs run thousands of identical multiply-adds in parallel, mixed precision needs loss scaling, and loss follows power laws in size, data and compute."
+      ]
     },
     {
       "id": "u7",
@@ -59,7 +119,17 @@
       "title": "Beyond supervised learning, and depth",
       "weight": "Phases 10 and 11",
       "count": 58,
-      "blurb": "Bandits and policies, causal inference with colliders and randomization, a fairness audit and a dashboard ranker, then quantiles, conformal prediction, Gaussian processes and a reproduced PEMS-BAY benchmark, written up."
+      "blurb": "Bandits and policies, causal inference with colliders and randomization, a fairness audit and a dashboard ranker, then quantiles, conformal prediction, Gaussian processes and a reproduced PEMS-BAY benchmark, written up.",
+      "keys": [
+        "In reinforcement learning there are no labels, only rewards, and the agent's actions change the data it sees, so bandits are the practical case.",
+        "Randomization makes treated and untreated groups comparable on everything, and adjusting for a collider invents an association that is not causal.",
+        "Fairness criteria conflict when base rates differ, and differential privacy bounds how much one person's data can change the released output.",
+        "Offline evaluation of a recommender is biased because the log only holds items the old policy showed, and NDCG rewards relevant items near the top.",
+        "Ninety percent coverage means about 90 percent of intervals contain the truth over many predictions, and conformal needs held-out data to get it.",
+        "A bigger model does not always win because it fits noise, and inductive bias, the assumptions in a model class, is what lets anything generalize.",
+        "The first thing to check in a results table is the baselines, and reproducing at reduced scale verifies the pipeline before compute is added.",
+        "A prior dominates when data are scarce, which shrinks stations with few observations, and a GP kernel states what you know about function shape."
+      ]
     },
     {
       "id": "u8",
@@ -67,7 +137,17 @@
       "title": "Every word, defined",
       "weight": "Glossary",
       "count": 125,
-      "blurb": "Short definitions of every term the course uses, from terminal, shell, git and Parquet to PeMS, station, postmile and upstream, and the words for tables, code, prediction and models. A reference to check, not a lesson."
+      "blurb": "Short definitions of every term the course uses, from terminal, shell, git and Parquet to PeMS, station, postmile and upstream, and the words for tables, code, prediction and models. A reference to check, not a lesson.",
+      "keys": [
+        "The shell reads typed commands, a pipe sends one command's output into the next, and an environment variable in .env carries a secret to a script.",
+        "Git records commits in a repository, .gitignore keeps data and .env out of it, and Parquet stores a typed, columnar table small and fast.",
+        "A station reports flow, occupancy and speed every five minutes, pct_obs says how much was real, and postmile orders stations to find neighbors.",
+        "The grid holds every station at every slot with NaN for gaps, timestamps stay in UTC, and forward fill copies the last value up to a limit.",
+        "In pandas groupby splits by key, merge lines up tables on shared columns, shift(k) lags a column and rolling(n) summarizes the last n rows.",
+        "A unit is one station at one timestamp, features must be known at that moment, and leakage is anything from after it reaching the inputs.",
+        "Precision is the share of alarms that were right, recall the share of jams alarmed, and average precision is the area under their curve.",
+        "A model maps inputs to a score, training steps against the gradient of the loss, and early stopping keeps the best validation point."
+      ]
     }
   ],
   "cards": [
