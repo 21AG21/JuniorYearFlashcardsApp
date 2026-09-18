@@ -775,11 +775,19 @@
       var st = d ? S.deckStats(d) : { due: 0, known: 0, total: c.count, pct: 0, fresh: c.count };
       due += st.due; seen += st.seen || 0;
       // one meaning per column: every row shows its total; a due count is a
-      // second line on the rows where it is true (skill §4.1)
+      // second line on the rows where it is true (skill §4.1), and a course
+      // that carries a book counts its pages read on the same line
+      var bits = [];
+      if (st.due) bits.push(st.due.toLocaleString() + ' due');
+      var bk = d && bookOf(c.id);
+      if (bk && bk.order.length) {
+        var dn = bookDone(), rd = bk.order.filter(function (id) { return dn[id]; }).length;
+        if (rd) bits.push(rd + ' of ' + bk.order.length + ' read');
+      }
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
-        (st.due ? '<span class="lsub">' + st.due.toLocaleString() + ' due</span>' : '') +
+        (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
         '</button></li>';
     }).join('');
 
@@ -1020,6 +1028,12 @@
         '<button class="textbtn mode" data-print><span class="mlab">Print</span><span class="mdesc">' + MODE_DESC.print + '</span></button>' +
         gameLinks +
       '</div>' +
+      // the unit in five to eight sentences, before its ninety cards: what a
+      // teacher would say on the first day, drawn from the cards themselves
+      (u.keys && u.keys.length
+        ? '<div class="ulabel" style="margin-top:var(--s-4)">Key ideas</div><ol class="keys">' +
+          u.keys.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join('') + '</ol>'
+        : '') +
       bookUnitHTML(deckId, unitId) +
       '<div class="scoperow unit"><button class="textbtn quiet" data-unit-filter>' +
         esc(UNIT_FILTERS[unitFilter][0]) + '</button>' +
@@ -1361,6 +1375,17 @@
       var meta = (r.lives || '').split(' · ');
       return { n: meta[0] || 'read', t: r.title, go: '#/d/' + deckId + '/r/' + r.id, done: false };
     })) : '';
+    // the phase at a glance: what it asks for, counted, before the reading
+    var nFiles = 0, nChecks = 0;
+    function countFiles(bs) { (bs || []).forEach(function (b) { if (b.t === 'file') { nFiles++; countFiles(b.b); } }); }
+    (ph.after || []).forEach(function (s) {
+      if (s.k === 'build') countFiles(s.b);
+      if (s.k === 'done-when') (s.b || []).forEach(function (b) { if (b.t === 'ul' || b.t === 'ol') nChecks += b.items.length; });
+    });
+    var glance = [plural(ph.items.length, 'lesson')];
+    if (ph.resources.length) glance.push(plural(ph.resources.length, 'thing', 'things') + ' to read or watch');
+    if (nFiles) glance.push(plural(nFiles, 'file') + ' to write');
+    if (nChecks) glance.push(plural(nChecks, 'check'));
     var after = (ph.after || []).map(function (s) {
       if (s.k === 'done-when') return checklistHTML(ph, s);
       return '<div class="row"><h3>' + esc(secLabel(s)) + '</h3>' + bookBlocks(s.b) + '</div>';
@@ -1370,6 +1395,7 @@
       '<div class="eyebrow">Phase ' + ph.n + (ph.meta ? ' · ' + mdT(ph.meta) : '') + '</div>' +
       '<h2>' + esc(ph.title) + '</h2>' +
       (goal ? '<p class="lede">' + bookBlocks(goal.b).replace(/^<p>|<\/p>$/g, '') + '</p>' : '') +
+      '<p class="note glance">' + esc(glance.join(' · ')) + '</p>' +
       wordsHTML(bk, ph.terms) + '</div>' +
       (learn ? '<div class="row"><h3>What you need to learn</h3>' + bookBlocks(learn.b) + '</div>' : '') +
       '<div class="row"><h3>Lessons and topics</h3>' + lessons + '</div>' +
