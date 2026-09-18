@@ -1077,6 +1077,33 @@
     d[id] = on ? Date.now() : -Date.now();
     S.setSetting('ladderDone', d);
   }
+  /* A phase's "Done when" is a list of things to have seen with your own
+     eyes. Each line is a tick, kept and merged exactly like a lesson's. */
+  function bookChecks() {
+    var raw = S.getSettings().ladderChecks || {}, out = {};
+    for (var k in raw) if (raw[k] > 0) out[k] = 1;
+    return out;
+  }
+  function setBookCheck(key, on) {
+    var d = {}, cur = S.getSettings().ladderChecks || {};
+    for (var k in cur) d[k] = cur[k];
+    d[key] = on ? Date.now() : -Date.now();
+    S.setSetting('ladderChecks', d);
+  }
+  function checklistHTML(ph, s) {
+    var on = bookChecks(), items = [], n = 0, dn = 0;
+    (s.b || []).forEach(function (b) {
+      if (b.t !== 'ul' && b.t !== 'ol') { items.push(bookBlocks([b])); return; }
+      b.items.forEach(function (x) {
+        var key = 'p' + ph.n + '-' + n, is = !!on[key]; n++; if (is) dn++;
+        items.push('<li class="' + (is ? 'on' : '') + '"><button class="chk' + (is ? ' on' : '') + '" data-book-check="' + key + '" aria-pressed="' + is + '" aria-label="Done"><i></i></button>' +
+          '<div class="ckt">' + md(x) + '</div></li>');
+      });
+    });
+    return '<div class="row ckrow"><h3>' + esc(secLabel(s)) + (n ? ' <span class="ckcnt num">' + dn + ' of ' + n + '</span>' : '') + '</h3>' +
+      '<p class="note">Tick each line once you have seen it happen. The ticks sync with your lesson ticks.</p>' +
+      '<ul class="cklist">' + items.join('') + '</ul></div>';
+  }
 
   function bookOf(deckId) {
     var d = S.getDeck(deckId);
@@ -1330,7 +1357,10 @@
       var meta = (r.lives || '').split(' · ');
       return { n: meta[0] || 'read', t: r.title, go: '#/d/' + deckId + '/r/' + r.id, done: false };
     })) : '';
-    var after = (ph.after || []).map(function (s) { return '<div class="row"><h3>' + esc(secLabel(s)) + '</h3>' + bookBlocks(s.b) + '</div>'; }).join('');
+    var after = (ph.after || []).map(function (s) {
+      if (s.k === 'done-when') return checklistHTML(ph, s);
+      return '<div class="row"><h3>' + esc(secLabel(s)) + '</h3>' + bookBlocks(s.b) + '</div>';
+    }).join('');
     var html = toplineHTML('#/d/' + deckId + '/u/' + ph.u, nice(d) + (u ? ' · Unit ' + u.n : '') + ' · Phase ' + ph.n) +
       '<section class="page phase stack-l"><div class="stack">' +
       '<div class="eyebrow">Phase ' + ph.n + (ph.meta ? ' · ' + mdT(ph.meta) : '') + '</div>' +
@@ -2278,6 +2308,24 @@
       // the day log counts grades given, not distinct cards: twenty cards
       // missed and redone read "80 cards today", which is not what happened
       plural(S.studiedToday(), 'review') + ' today';
+    // what this deck (or every deck) hands back next: the tallies say what
+    // you did, this says what it cost tomorrow and this week
+    var today = S.dayNum(), tmrw = 0, week = 0;
+    var addBack = function (dk) {
+      dk.cards.forEach(function (c) {
+        var st = S.cs(c.i); if (!st || !(st.r || st.t || st.l)) return;
+        var gap = (st.d || 0) - today;
+        if (gap === 1) tmrw++;
+        if (gap >= 1 && gap <= 7) week++;
+      });
+    };
+    if (d) addBack(d);
+    else S.getIndex().courses.forEach(function (c) { var dk = S.getDeck(c.id); if (dk) addBack(dk); });
+    var backRows = (tmrw || week)
+      ? '<div class="k" style="margin:var(--s-4) 0 6px">Coming back</div><div class="done-rows">' +
+        '<div class="ledger"><span class="lname">Tomorrow</span><span class="lval num">' + tmrw + '</span></div>' +
+        '<div class="ledger"><span class="lname">Within a week</span><span class="lval num">' + week + '</span></div></div>'
+      : '';
     sess = null;
     // the session is over — a reload or a back gesture should land on the
     // deck, not silently deal a brand-new session (no hashchange fires here)
@@ -2289,7 +2337,7 @@
         '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">' +
           esc(moment) + '</div>' +
       '</div>' +
-      '<div class="done-rows">' + rows + '</div>' +
+      '<div class="done-rows">' + rows + '</div>' + backRows +
       (dueLeft ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
     );
     // the bar comes back with this screen but no hashchange fired — the
@@ -2995,7 +3043,7 @@
       ]) +
       (book ? sec('The Ladders', [
         'The Ladders is a course, not only a deck. Its unit pages list the phases to read, each lesson at six reading levels, ' +
-          'and the pages before Phase 0 lay the whole project out file by file. Tick a lesson done at its foot; the ticks count on the unit page and sync with everything else.'
+          'and the pages before Phase 0 lay the whole project out file by file. Tick a lesson done at its foot, and tick each line of a phase\'s Done when as you see it happen; both count on the unit page and sync with everything else.'
       ]) : '') +
       sec('Keys and swipes', [
         'In a session: ' + b('space') + ' or ' + b('→') + ' turns the card, ' + b('1 2 3 4') + ' grade it, ' + b('←') + ' takes the last grade back, ' +
@@ -3648,6 +3696,15 @@
   document.addEventListener('click', function (e) {
     var dn = e.target.closest('[data-book-done]');
     if (dn) { var on = !dn.classList.contains('on'); setBookDone(dn.getAttribute('data-book-done'), on); dn.classList.toggle('on', on); return; }
+    var ck = e.target.closest('[data-book-check]');
+    if (ck) {
+      var li = ck.closest('li'), on2 = !li.classList.contains('on');
+      setBookCheck(ck.getAttribute('data-book-check'), on2);
+      li.classList.toggle('on', on2); ck.classList.toggle('on', on2); ck.setAttribute('aria-pressed', String(on2));
+      var row = ck.closest('.ckrow'), cnt = row && row.querySelector('.ckcnt');
+      if (cnt) cnt.textContent = row.querySelectorAll('.cklist li.on').length + ' of ' + row.querySelectorAll('.cklist li').length;
+      return;
+    }
     var al = e.target.closest('[data-book-all]');
     if (al) { ladder.all = !ladder.all; applyLevel(); return; }
     var tb = e.target.closest('[data-term]');

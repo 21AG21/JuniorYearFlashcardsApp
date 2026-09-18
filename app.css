@@ -1104,6 +1104,13 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book .chk i::before{ content:""; width:10px; height:10px; border-radius:2px; background:var(--ink); transform:scale(0); transition:transform .12s ease; }
 .book .chk.on i::before{ transform:scale(1); }
 .book .chk.on span{ color:var(--ink); }
+/* a phase's Done when, as ticks: the box, then the line it stands for */
+.book .cklist{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
+.book .cklist li{ display:flex; gap:12px; align-items:flex-start; }
+.book .cklist .chk{ flex:none; padding:8px 0; }
+.book .cklist .ckt{ flex:1; min-width:0; padding:6px 0; line-height:1.5; }
+.book .cklist li.on .ckt{ color:var(--ink-soft); }
+.book .ckrow h3 .ckcnt{ font-weight:500; color:var(--ink-soft); margin-left:8px; font-size:.8em; }
 .book .lvls{ display:flex; flex-direction:column; gap:var(--s-3); min-width:0; }
 .book [hidden]{ display:none !important; }
 .book .lvl{ display:flex; flex-direction:column; gap:12px; border-left:2px solid var(--lc,var(--hair)); padding:2px 0 2px 16px; }

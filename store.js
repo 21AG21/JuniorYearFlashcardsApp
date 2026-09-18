@@ -77,6 +77,7 @@
     // written by the app rather than by a settings row, and listed here so a
     // sync merge knows them: an unknown key is no longer copied in
     ladderDone: {},       // the Six Ladders lessons ticked off
+    ladderChecks: {},     // the Done-when lines ticked off, per phase
     gameBest: {},         // best score per game
     gameMiss: {}          // the cards each game got wrong, for a replay
   };
@@ -158,6 +159,8 @@
     return ((mine && mine.s) || (theirs && theirs.s)) ? 1 : 0;
   }
 
+  // the maps of signed moments: lesson ticks and Done-when ticks
+  var TICK_MAPS = ['ladderDone', 'ladderChecks'];
   function mergeRemote(remote) {
     if (!remote || typeof remote !== 'object') return false;
     var changed = false;
@@ -196,21 +199,22 @@
     // The Six Ladders ticks are merged lesson by lesson, whichever side is
     // newer, set or cleared. Copying the map whole with the rest of the
     // settings let two devices erase each other's reading progress.
-    if (plain(remote.settings) && plain(remote.settings.ladderDone)) {
-      var ld = plain(state.settings.ladderDone) ? state.settings.ladderDone : {}, rd = remote.settings.ladderDone;
+    TICK_MAPS.forEach(function (tk) {
+      if (!plain(remote.settings) || !plain(remote.settings[tk])) return;
+      var ld = plain(state.settings[tk]) ? state.settings[tk] : {}, rd = remote.settings[tk];
       for (var lk in rd) {
         var rv2 = rd[lk], mv = ld[lk];
         if (typeof rv2 !== 'number' || !isFinite(rv2)) continue;
         if (mv === undefined || Math.abs(rv2) > Math.abs(mv)) { ld[lk] = rv2; changed = true; }
       }
-      state.settings.ladderDone = ld;
-    }
+      state.settings[tk] = ld;
+    });
     // Settings used to be copied in whole. A blob with sessionSize 0 made the
     // daily review deal nothing and say "Nothing due" over four thousand
     // untouched cards. Only known keys, only sane values.
     if (plain(remote.settings) && (remote._at || 0) > lastSyncAt) {
       for (var k in DEFAULT_SETTINGS) {
-        if (!(k in remote.settings) || k === 'ladderDone') continue;
+        if (!(k in remote.settings) || TICK_MAPS.indexOf(k) > -1) continue;
         var rv = remote.settings[k], dv = DEFAULT_SETTINGS[k];
         if (typeof dv === 'number') rv = Math.round(num(rv, 1, 1000, dv));
         else if (typeof dv === 'boolean') rv = !!rv;
@@ -687,7 +691,7 @@
   function resetProgress(deckId) {
     // the reader's done marks are progress too, not a preference — leaving
     // them behind made "Progress reset" a lie on the Ladders index
-    if (!deckId) { state.cards = {}; state.log = {}; delete state.settings.ladderDone; }
+    if (!deckId) { state.cards = {}; state.log = {}; delete state.settings.ladderDone; delete state.settings.ladderChecks; }
     else {
       var d = decks[deckId];
       if (d) d.cards.forEach(function (c) { delete state.cards[c.i]; });
