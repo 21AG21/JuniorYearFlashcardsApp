@@ -1345,6 +1345,32 @@
   function bookMount(html) {
     mount('<div class="book">' + html + segHTML() + '</div>', { book: true });
     applyLevel();
+    jumpsFor();
+  }
+  /* A lesson runs to eight thousand pixels on a phone. One line under its
+     head names the parts and jumps to them: the six levels, the check, the
+     misconceptions, the walkthrough. Built from the headings the page has,
+     so it never promises a part that is not there. */
+  function jumpsFor() {
+    var heads = app.querySelectorAll('.book section .row > h3');
+    var host = app.querySelector('.book section > .stack'), after = false;
+    if (!host) { host = app.querySelector('.book section .ladder > .head'); after = true; }
+    if (!host) return;
+    var links = [];
+    // a lesson's six levels are not a titled row, but they are its first part
+    var lv = app.querySelector('.book .levels');
+    if (lv) { lv.id = lv.id || 'part-levels'; links.push('<button class="jump" data-jump="part-levels">Six levels</button>'); }
+    for (var i = 0; i < heads.length; i++) {
+      var row = heads[i].parentNode, name = (heads[i].textContent || '').replace(/\s+\d+ of \d+$/, '').trim();
+      if (!name) continue;
+      row.id = row.id || 'part-' + i;
+      links.push('<button class="jump" data-jump="' + row.id + '">' + esc(name) + '</button>');
+    }
+    if (links.length < 3) return;
+    var nav = document.createElement('nav');
+    nav.className = 'jumps'; nav.setAttribute('aria-label', 'On this page');
+    nav.innerHTML = '<span class="jl">On this page</span>' + links.join('');
+    if (after) host.insertAdjacentElement('afterend', nav); else host.appendChild(nav);
   }
 
   /* the unit page: what to read, with progress, before the cards */
@@ -3771,6 +3797,17 @@
   document.addEventListener('click', function (e) {
     var dn = e.target.closest('[data-book-done]');
     if (dn) { var on = !dn.classList.contains('on'); setBookDone(dn.getAttribute('data-book-done'), on); dn.classList.toggle('on', on); return; }
+    var jp = e.target.closest('[data-jump]');
+    if (jp) {
+      var part = document.getElementById(jp.getAttribute('data-jump'));
+      if (part) {
+        var top = app.querySelector('.book .topline'), pad = top ? top.getBoundingClientRect().height + 12 : 12;
+        var sc = app.scrollHeight > app.clientHeight ? app : document.scrollingElement;
+        var y = part.getBoundingClientRect().top - (sc === app ? app.getBoundingClientRect().top : 0) + sc.scrollTop - pad;
+        try { sc.scrollTo({ top: y, behavior: 'smooth' }); } catch (err) { sc.scrollTop = y; }
+      }
+      return;
+    }
     var ck = e.target.closest('[data-book-check]');
     if (ck) {
       var li = ck.closest('li'), on2 = !li.classList.contains('on');

@@ -1108,6 +1108,11 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book .chk.on i::before{ transform:scale(1); }
 .book .chk.on span{ color:var(--ink); }
 /* a phase's Done when, as ticks: the box, then the line it stands for */
+/* the parts of a long page, one line, each a jump */
+.book .jumps{ display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; margin-top:6px; }
+.book .jumps .jl{ font-size:12.5px; font-weight:600; color:var(--muted); letter-spacing:.02em; text-transform:uppercase; }
+.book .jumps .jump{ background:none; border:0; padding:4px 0; font:inherit; font-size:14.5px; font-weight:600; color:var(--ink-soft); cursor:pointer; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:4px; }
+.book .jumps .jump:active{ opacity:.5; }
 .book .cklist{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
 .book .cklist li{ display:flex; gap:12px; align-items:flex-start; }
 .book .cklist .chk{ flex:none; padding:8px 0; }
