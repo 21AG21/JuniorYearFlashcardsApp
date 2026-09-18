@@ -226,7 +226,7 @@
     var p = h.replace(/^#/, '').split('/').filter(Boolean);
     if (p[0] === 'game') return '#/games';
     if (p[0] === 'games') return '#/';
-    if (p[0] === 'd' && p[2] === 'u') return '#/d/' + p[1];
+    if (p[0] === 'd' && (p[2] === 'u' || p[2] === 'w' || p[2] === 'a')) return '#/d/' + p[1];
     if (p[0] === 'd' && p[2] === 'l') { var bi = bookOf(p[1]), it = bi && bi.items[p[3]]; return '#/d/' + p[1] + (it ? '/u/' + it.u : ''); }
     if (p[0] === 'd' && p[2] === 'r') { var br = bookOf(p[1]), rp = br && br.resPhase[p[3]]; return '#/d/' + p[1] + (rp ? '/b/' + rp.n : ''); }
     if (p[0] === 'd' && p[2] === 'b') { var bp = bookOf(p[1]), ph = bp && bp.phases[p[3]]; return '#/d/' + p[1] + (ph ? '/u/' + ph.u : ''); }
@@ -915,6 +915,10 @@
       return '<li><button class="ledger mid" data-go="#/d/' + deckId + '/a/' + esc(a.id) + '">' +
         '<span class="lname">' + esc(a.title) + '</span></button></li>';
     }).join('');
+    if (bk && Object.keys(bk.terms).length) {
+      about += '<li><button class="ledger mid" data-go="#/d/' + deckId + '/w">' +
+        '<span class="lname">Every word, explained</span><span class="lval num">' + Object.keys(bk.terms).length + '</span></button></li>';
+    }
     // where you are in the book, and the next page one tap away: the course
     // page listed eight units and left "which one am I on" to memory
     var where = '';
@@ -1394,6 +1398,50 @@
       }).join('') + '</section>';
     endTerms();
     bookMount(html);
+  }
+
+  /* every word the course uses, on one page: grouped, alphabetical, each one
+     opening to its six levels exactly as it does inline. A reader who meets
+     "collider" in phase 7 and cannot place it has somewhere to look it up. */
+  function viewWords(deckId) {
+    var d = S.getDeck(deckId), bk = bookOf(deckId);
+    if (!bk) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
+    var groups = {}, order = [];
+    Object.keys(bk.terms).forEach(function (id) {
+      var t = bk.terms[id], g = t.group || 'Other';
+      if (!groups[g]) { groups[g] = []; order.push(g); }
+      groups[g].push(t);
+    });
+    var n = 0;
+    var rows = order.map(function (g) {
+      var list = groups[g].sort(function (a, b) { return a.term.localeCompare(b.term); });
+      n += list.length;
+      return '<div class="row wgroup"><h3>' + esc(g) + ' <span class="ckcnt num">' + list.length + '</span></h3><div class="gb">' +
+        list.map(function (t) {
+          return '<div class="term" data-word="' + esc((t.term + ' ' + (t.names || []).join(' ') + ' ' + T.plain(t.def || '')).toLowerCase()) + '">' +
+            '<button class="tq" data-term="' + t.id + '"><span class="k">' + esc(t.term) + '</span>' +
+            (t.def ? '<span class="d">' + md(t.def) + '</span>' : '') + '</button></div>';
+        }).join('') + '</div></div>';
+    }).join('');
+    var html = toplineHTML('#/d/' + deckId, nice(d) + ' · Every word') +
+      '<section class="page phase stack-l"><div class="stack"><div class="eyebrow">Every word the course uses</div>' +
+      '<h2>Words</h2><p class="lede">' + n + ' words in ' + order.length + ' groups. Tap one for its six levels; the reading level you chose is the dark one.</p>' +
+      '<div class="searchbar"><input id="wq" type="search" aria-label="Find a word" placeholder="find a word" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></div>' +
+      '</div>' + rows + '</section>';
+    bookMount(html);
+  }
+  function filterWords(q) {
+    q = (q || '').trim().toLowerCase();
+    var groups = app.querySelectorAll('.wgroup');
+    for (var i = 0; i < groups.length; i++) {
+      var terms = groups[i].querySelectorAll('.term'), shown = 0;
+      for (var j = 0; j < terms.length; j++) {
+        var hit = !q || (terms[j].getAttribute('data-word') || '').indexOf(q) > -1;
+        terms[j].hidden = !hit; if (hit) shown++;
+      }
+      groups[i].hidden = !shown;
+    }
   }
 
   function viewLesson(deckId, id) {
@@ -3043,7 +3091,7 @@
       ]) +
       (book ? sec('The Ladders', [
         'The Ladders is a course, not only a deck. Its unit pages list the phases to read, each lesson at six reading levels, ' +
-          'and the pages before Phase 0 lay the whole project out file by file. Tick a lesson done at its foot, and tick each line of a phase\'s Done when as you see it happen; both count on the unit page and sync with everything else.'
+          'and the pages before Phase 0 lay the whole project out file by file. Tick a lesson done at its foot, and tick each line of a phase\'s Done when as you see it happen; both count on the unit page and sync with everything else. Every word the course uses is explained at six levels where it first appears, and all of them together under Every word, explained on the course page.'
       ]) : '') +
       sec('Keys and swipes', [
         'In a session: ' + b('space') + ' or ' + b('→') + ' turns the card, ' + b('1 2 3 4') + ' grade it, ' + b('←') + ' takes the last grade back, ' +
@@ -3592,6 +3640,7 @@
       return mount('<div class="head"><span class="k">' + esc(nice(p[1])) + '</span><h1>Loading</h1></div>');
     }
     if (p[0] === 'd' && p[1] && p[2] === 'a' && p[3]) return viewAbout(p[1], p[3]);
+    if (p[0] === 'd' && p[1] && p[2] === 'w') return viewWords(p[1]);
     if (p[0] === 'd' && p[1] && p[2] === 'b' && p[3]) return viewPhase(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
@@ -3722,6 +3771,9 @@
       if (tb.closest('.term')) host.appendChild(el); else host.insertAdjacentElement('afterend', el);
       tb.classList.add('on');
     }
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'wq') filterWords(e.target.value);
   });
   document.addEventListener('lg-change', function (e) {
     if (!e.target || e.target.id !== 'lvlseg') return;

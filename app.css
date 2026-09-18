@@ -1166,6 +1166,9 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book details.guide[open]>summary::after{ content:'hide'; }
 .book details.guide[open]>summary{ color:var(--ink); }
 .book .guide .gb{ display:flex; flex-direction:column; gap:16px; padding-top:12px; max-width:72ch; }
+.book .wgroup .gb{ display:flex; flex-direction:column; padding-top:6px; max-width:72ch; }
+.book .wgroup .term[hidden]{ display:none; }
+.book .stack .searchbar{ margin-bottom:0; }
 .book .guide p{ font-size:15.5px; line-height:1.55; }
 .book .guide ol,.book .guide ul{ display:flex; flex-direction:column; gap:9px; padding-left:1.25em; }
 .book .guide li{ font-size:15.5px; line-height:1.5; }
