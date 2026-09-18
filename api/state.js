@@ -40,10 +40,16 @@ try {
 // Blob store to write to. Without the store the app would see every push
 // fail as a network error; with this it is told, truthfully, that sync is
 // off on this deployment.
-function configured() {
-  var anyone = split(process.env.SYNC_TOKEN).length + split(process.env.SYNC_TOKEN_HASH).length + owners.length > 0;
-  return anyone && !!process.env.BLOB_READ_WRITE_TOKEN;
+// What a 503 lacks, named, so the app and whoever reads the response can
+// say so instead of guessing: 'store' = no Blob store is linked to this
+// deployment, 'allowlist' = no token would be accepted anyway.
+function missing() {
+  var m = [];
+  if (!(split(process.env.SYNC_TOKEN).length + split(process.env.SYNC_TOKEN_HASH).length + owners.length)) m.push('allowlist');
+  if (!process.env.BLOB_READ_WRITE_TOKEN) m.push('store');
+  return m;
 }
+function configured() { return missing().length === 0; }
 function allowed(tok) {
   if (!/^[A-Za-z0-9_-]{16,128}$/.test(tok)) return false;
   var h = sha256(tok), o = sha256(OWNER_SALT + tok).slice(0, 16);
@@ -61,7 +67,7 @@ function send(res, code, body) {
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
   if (req.method !== 'GET' && req.method !== 'PUT') return send(res, 405, { error: 'method' });
-  if (!configured()) return send(res, 503, { error: 'sync not configured' });
+  if (!configured()) return send(res, 503, { error: 'sync not configured', missing: missing() });
 
   var auth = req.headers.authorization || '';
   var tok = auth.indexOf('Bearer ') === 0 ? auth.slice(7).trim() : '';
@@ -111,3 +117,4 @@ module.exports = async function handler(req, res) {
 module.exports.allowed = allowed;
 module.exports.configured = configured;
 module.exports.owners = owners;
+module.exports.missing = missing;

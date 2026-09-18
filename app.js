@@ -2796,7 +2796,10 @@
     // to read "Never" through an entire review whatever the server answered
     var f = S.account.lastFail ? S.account.lastFail() : '';
     if (f === 'auth') return 'Token refused';
-    if (f === 'off') return 'Sync is off here';
+    if (f === 'off') {
+      var w = S.account.offWhy ? S.account.offWhy() : '';
+      return w === 'store' ? 'Sync is off: no storage linked' : w === 'allowlist' ? 'Sync is off: no accounts allowed' : 'Sync is off here';
+    }
     if (f === 'net' && !at) return 'Cannot reach sync';
     if (!at) return 'Never';
     var m = (Date.now() - at) / 60000;

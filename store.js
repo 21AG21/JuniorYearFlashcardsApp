@@ -141,6 +141,13 @@
   // deployment has no sync configured, 'net' offline or a server error.
   // Without it the row says "Never" forever and never says why.
   var lastFail = '';
+  // when it is 'off', what the server said it lacks: 'store' (no Blob store
+  // linked) or 'allowlist' (no token would be accepted); '' if it did not say
+  var offWhy = '';
+  function noteOff(r) {
+    lastFail = 'off';
+    return r.json().then(function (j) { offWhy = (j && j.missing && j.missing[0]) || ''; }, function () { offWhy = ''; });
+  }
 
   /* Whoever touched the star last wins; with no evidence either way a star
      survives, because losing one is the mistake the reader would notice. */
@@ -237,7 +244,7 @@
     return fetch(API, { headers: { Authorization: 'Bearer ' + token() } })
       .then(function (r) {
         if (r.status === 401) { lastFail = 'auth'; return false; }
-        if (r.status === 503) { lastFail = 'off'; return false; }
+        if (r.status === 503) return noteOff(r).then(function () { return false; });
         if (!r.ok) { lastFail = 'net'; return false; }
         return r.json().then(function (j) {
           var changed = j && j.state ? mergeRemote(j.state) : false;
@@ -262,7 +269,8 @@
       body: JSON.stringify(blob),
     }).then(function (r) {
       if (r.ok) { lastFail = ''; lastSyncAt = at; write('syncat', at); }
-      else lastFail = r.status === 401 ? 'auth' : r.status === 503 ? 'off' : 'net';
+      else if (r.status === 503) return noteOff(r);
+      else lastFail = r.status === 401 ? 'auth' : 'net';
     })
       .catch(function () { lastFail = 'net'; /* offline: the next save retries */ })
       .then(function () { syncing = false; });
@@ -758,6 +766,7 @@
       setToken: setToken, clearToken: clearToken,
       pull: pull, lastSyncAt: function () { return lastSyncAt; },
       lastFail: function () { return lastFail; },
+      offWhy: function () { return offWhy; },
       ownerId: function () { return ownerHex; }
     }
   };
