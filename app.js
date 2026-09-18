@@ -876,12 +876,19 @@
     // once anything in the deck is studied the column flips to mastery, all
     // rows at once — never a % beside a count in the same column
     var anySeen = st.seen > 0;
+    // a course that carries a book counts its pages read beside its cards
+    var bk = bookOf(deckId), done = bk ? bookDone() : {};
     var units = d.units.map(function (u) {
       var us = S.unitStats(d, u.id);
       if (!us.total) return '';
       var bits = [];
       var wt = weightText(u);
       if (wt) bits.push(wt);
+      if (bk && bk.byUnit[u.id]) {
+        var lt = 0, ld = 0;
+        bk.byUnit[u.id].forEach(function (ph) { ph.items.forEach(function (it) { lt++; if (done[it.id]) ld++; }); });
+        if (lt) bits.push(ld + ' of ' + lt + ' read');
+      }
       // the column flips to mastery once anything is studied, and the count
       // used to vanish with it — "0%" beside nothing is not progress
       if (anySeen) bits.push(us.seen ? us.seen.toLocaleString() + ' of ' + us.total.toLocaleString() + ' seen'
@@ -906,6 +913,19 @@
       return '<li><button class="ledger mid" data-go="#/d/' + deckId + '/a/' + esc(a.id) + '">' +
         '<span class="lname">' + esc(a.title) + '</span></button></li>';
     }).join('');
+    // where you are in the book, and the next page one tap away: the course
+    // page listed eight units and left "which one am I on" to memory
+    var where = '';
+    if (bk && bk.order.length) {
+      var read = bk.order.filter(function (id) { return done[id]; }).length, nextId = null;
+      for (var oi = 0; oi < bk.order.length; oi++) if (!done[bk.order[oi]]) { nextId = bk.order[oi]; break; }
+      var nx = nextId && bk.items[nextId];
+      where = '<div class="ulabel" style="margin-top:var(--s-4)">Reading</div>' +
+        (nx ? '<button class="act" data-go="#/d/' + deckId + '/l/' + nx.id + '">' + (read ? 'Continue' : 'Start reading') + '</button>' +
+              '<div class="actsub">' + esc('Phase ' + nx.pn + ' · ' + lessonWord(nx) + ' · ') + mdT(nx.title) +
+              (read ? esc(' · ' + read + ' of ' + bk.order.length + ' read') : '') + '</div>'
+            : '<div class="actsub">All ' + bk.order.length + ' lessons read</div>');
+    }
 
     // the name is the way back; the number is a fact, not a hidden link
     mount(
@@ -933,6 +953,7 @@
         (window.Games && window.Games.linksFor(deckId).length
           ? modeBtn('#/games', 'Games', MODE_DESC.games) : '') +
       '</div>' +
+      where +
       (about ? '<ul class="list" style="margin-top:var(--s-4);gap:0"><li><div class="ulabel">Before you start</div></li>' + about + '</ul>' : '') +
       '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
     );
@@ -1696,6 +1717,17 @@
     if (save) toast(txt.trim() ? 'Noted' : 'Note cleared');
   }
 
+  /* the card's own history in a phrase, beside its topic: why it is here today */
+  function histWord(c) {
+    var st = S.cs ? S.cs(c.i) : null;
+    if (!st || !(st.r || st.t || st.l)) return 'first time';
+    if (st.r) return st.r + ' in a row';
+    return st.l ? 'missed ' + st.l + (st.l === 1 ? ' time' : ' times') : '';
+  }
+  function metaHTML(c) {
+    var bits = [topicLabel(c), histWord(c)].filter(Boolean);
+    return bits.length ? '<div class="meta reveal">' + esc(bits.join(' · ')) + '</div>' : '';
+  }
   function topicLabel(c) {
     if (!c.t) return c.c ? 'high-yield' : '';
     var t = /^\d+\.\d+$/.test(c.t) ? 'CED ' + c.t : c.t;
@@ -1744,7 +1776,7 @@
               : sess.verdict.text) + '</div>' : '') +
         (c.n ? '<div class="note reveal' + (stacked(c.n) ? ' mathy' : '') + '">' + T.html(c.n) + '</div>' : '') +
         noteHTML(c) +
-        (topicLabel(c) ? '<div class="meta reveal">' + esc(topicLabel(c)) + '</div>' : '');
+        metaHTML(c);
     }
 
     // grades in the flow, as text; the recommended grade is the heavier ink —
@@ -2362,7 +2394,11 @@
     if (!out) return;
     var q = fold(searchState.q.trim().toLowerCase());
     // one letter used to blank the screen, which looks like a crash
-    if (!q) { out.innerHTML = ''; return; }
+    if (!q) {
+      out.innerHTML = '<div class="empty">Searches every question, answer and note in every deck. ' +
+        'A term, a year, a formula, a French word without its accents.</div>';
+      return;
+    }
     if (q.length < 2) { out.innerHTML = '<div class="empty">Keep typing</div>'; return; }
     var terms = q.split(/\s+/);
     // every deck is scanned, always: a budget that stopped at the first deck
