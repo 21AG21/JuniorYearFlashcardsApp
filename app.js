@@ -999,9 +999,24 @@
     // you keep missing. One cycling word, the same control search and the
     // games use, narrows it; the count beside it says how many that leaves.
     var shown = cards.filter(function (c) { return unitFilterKeep(c); });
+    // Ninety rows in one run were a wall. When the unit's topics are real
+    // groups (three cards or more to a topic, on average) the rows sit under
+    // their topic, in the order the topics first appear; a unit whose every
+    // card has its own topic stays a plain list.
+    var topics = [], byTopic = {};
+    shown.forEach(function (c) { var t = c.t || ''; if (!byTopic[t]) { byTopic[t] = []; topics.push(t); } byTopic[t].push(c); });
+    var grouped = topics.length >= 2 && shown.length / topics.length >= 3;
+    if (grouped) shown = topics.reduce(function (acc, t) { return acc.concat(byTopic[t]); }, []);
+    var lastTopic = null;
     var list = shown.map(function (c, n) {
       var known = S.isKnown(c.i);
-      return '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
+      var sep = '';
+      if (grouped && c.t !== lastTopic) {
+        lastTopic = c.t;
+        var tl = /^\d+\.\d+$/.test(c.t || '') ? 'CED ' + c.t : (c.t || 'Other');
+        sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' + byTopic[c.t].length + '</span></div></li>';
+      }
+      return sep + '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
         '<span class="qq' + (known ? ' dim' : '') + '">' + T.html(c.q) + '</span>' +
         '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
         (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
@@ -1135,6 +1150,12 @@
         ph.resources.forEach(function (r) { bk.res[r.id] = r; bk.resPhase[r.id] = ph; });
       });
       (d.book.terms || []).forEach(function (t) { if (t.def || (t.levels && t.levels.length)) bk.terms[t.id] = t; });
+      // where each word is first used, in reading order: a lesson "builds on"
+      // the earlier lessons that introduced the words it leans on
+      bk.termFirst = {};
+      bk.order.forEach(function (id) {
+        (bk.items[id].terms || []).forEach(function (tid) { if (!(tid in bk.termFirst)) bk.termFirst[tid] = id; });
+      });
       d._bk = bk;
     }
     return d._bk;
@@ -1346,6 +1367,7 @@
     mount('<div class="book">' + html + segHTML() + '</div>', { book: true });
     applyLevel();
     jumpsFor();
+    readMinutes();
   }
   /* A lesson runs to eight thousand pixels on a phone. One line under its
      head names the parts and jumps to them: the six levels, the check, the
@@ -1496,6 +1518,39 @@
     }
   }
 
+  /* the lessons this one leans on, and the ones that lean on it, counted by
+     the words they share: the map a reader lost mid-course needs */
+  function relatedHTML(deckId, bk, it) {
+    var mine = {}; (it.terms || []).forEach(function (t) { mine[t] = 1; });
+    var before = {}, after = {}, pos = bk.order.indexOf(it.id);
+    (it.terms || []).forEach(function (tid) {
+      var f = bk.termFirst[tid];
+      if (f && f !== it.id) before[f] = (before[f] || 0) + 1;
+    });
+    bk.order.slice(pos + 1).forEach(function (oid) {
+      (bk.items[oid].terms || []).forEach(function (tid) { if (bk.termFirst[tid] === it.id) after[oid] = (after[oid] || 0) + 1; });
+    });
+    function top(m) {
+      return Object.keys(m).sort(function (a, b) { return m[b] - m[a] || bk.order.indexOf(a) - bk.order.indexOf(b); }).slice(0, 3);
+    }
+    function link(oid) {
+      var o = bk.items[oid];
+      return '<button class="lnk" data-go="#/d/' + deckId + '/l/' + oid + '">Phase ' + o.pn + ' · ' + esc(lessonWord(o)) + '</button>';
+    }
+    var b = top(before), a = top(after), out = '';
+    if (b.length) out += '<p class="note rel">Builds on ' + b.map(link).join(', ') + '.</p>';
+    if (a.length) out += '<p class="note rel">Comes up again in ' + a.map(link).join(', ') + '.</p>';
+    return out;
+  }
+  /* minutes to read what is on the page at the chosen level, at a steady
+     220 words a minute; it follows the level control */
+  function readMinutes() {
+    var el = document.getElementById('readmin'), sec = app.querySelector('.book section');
+    if (!el || !sec) return;
+    var words = (sec.innerText || '').split(/\s+/).filter(Boolean).length;
+    el.textContent = '≈ ' + Math.max(1, Math.round(words / 220)) + ' min';
+  }
+
   function viewLesson(deckId, id) {
     var d = S.getDeck(deckId), bk = bookOf(deckId), it = bk && bk.items[id];
     if (!it) return go('#/d/' + deckId);
@@ -1508,10 +1563,11 @@
     var extra = (it.sections || []).filter(function (s) { return ['goal', 'level', 'guided-walkthrough', 'step', 'check-yourself', 'misconceptions'].indexOf(s.k) < 0; });
     var html = toplineHTML('#/d/' + deckId + '/u/' + it.u, nice(d) + (u ? ' · Unit ' + u.n : '') + ' · Phase ' + ph.n + ' · ' + lessonWord(it)) +
       '<section class="page"><div class="ladder">' +
-      '<div class="head"><div class="hd"><div class="eyebrow">Six levels' + (nq ? ' · ' + nq + (nq === 1 ? ' question' : ' questions') + ' to check yourself' : '') + '</div>' + checkRow(deckId, it) + '</div>' +
+      '<div class="head"><div class="hd"><div class="eyebrow">Six levels' + (nq ? ' · ' + nq + (nq === 1 ? ' question' : ' questions') + ' to check yourself' : '') + ' · <span id="readmin"></span></div>' + checkRow(deckId, it) + '</div>' +
       '<h3 class="title">' + mdT(it.title) + '</h3>' +
       (goal ? '<p class="lede">' + bookBlocks(goal.b).replace(/^<p>|<\/p>$/g, '') + '</p>' : '') +
       (it.lives ? '<p class="note">' + mdT(it.lives) + '</p>' : '') +
+      relatedHTML(deckId, bk, it) +
       wordsHTML(bk, it.terms) +
       (extra.length ? extra.map(function (s) { return bookBlocks(s.b); }).join('') : '') +
       '</div>' +
@@ -3818,7 +3874,7 @@
       return;
     }
     var al = e.target.closest('[data-book-all]');
-    if (al) { ladder.all = !ladder.all; applyLevel(); return; }
+    if (al) { ladder.all = !ladder.all; applyLevel(); readMinutes(); return; }
     var tb = e.target.closest('[data-term]');
     if (tb) {
       var host = tb.closest('.term') || tb.closest('p, li, .lede, .note, .try, .d');
@@ -3840,7 +3896,7 @@
   });
   document.addEventListener('lg-change', function (e) {
     if (!e.target || e.target.id !== 'lvlseg') return;
-    ladder.lvl = e.detail; ladder.all = false; applyLevel();
+    ladder.lvl = e.detail; ladder.all = false; applyLevel(); readMinutes();
   });
 
   /* account: paste-token commit + disconnect + re-render when a pull merges */
