@@ -1535,7 +1535,8 @@
     }
     function link(oid) {
       var o = bk.items[oid];
-      return '<button class="lnk" data-go="#/d/' + deckId + '/l/' + oid + '">Phase ' + o.pn + ' · ' + esc(lessonWord(o)) + '</button>';
+      var tt = T.plain(o.title || '').replace(/[`*_]/g, ''); if (tt.length > 42) tt = tt.slice(0, 40).replace(/\s+\S*$/, '') + '…';
+      return '<button class="lnk" data-go="#/d/' + deckId + '/l/' + oid + '">' + esc(lessonWord(o) + (tt ? ' · ' + tt : '')) + '</button>';
     }
     var b = top(before), a = top(after), out = '';
     if (b.length) out += '<p class="note rel">Builds on ' + b.map(link).join(', ') + '.</p>';
