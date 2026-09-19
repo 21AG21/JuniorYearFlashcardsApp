@@ -110,7 +110,12 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-l{ flex:0 0 26%; min-width:280px; max-width:360px; height:100%; overflow-y:auto; overscroll-behavior-y:none;
     display:flex; flex-direction:column;
     border-right:1px solid var(--hair-soft);
-    padding:42px 36px 40px calc(env(safe-area-inset-left, 0px) + 40px); }
+    padding:42px 36px 40px calc(env(safe-area-inset-left, 0px) + 40px);
+    /* the rail is an index that just overflows a short window; a classic
+       scrollbar drew a fat grey bar down the middle of the screen for the
+       sake of forty pixels, so it scrolls without showing one */
+    scrollbar-width:none; }
+  .pane-l::-webkit-scrollbar{ display:none; width:0; height:0; }
   .pane-r{ flex:1 1 auto; height:100%; overflow-y:auto; overscroll-behavior-y:none;
     scroll-padding-bottom:32px; scroll-padding-top:24px;
     padding:46px calc(env(safe-area-inset-right, 0px) + 72px) 80px 72px; }
