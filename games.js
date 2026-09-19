@@ -45,9 +45,10 @@
     seriesmatch:{ name: 'Series',           deck: 'calcbc', kind: 'match'  },
     radmatch:   { name: 'Radians',          deck: 'calcbc', kind: 'match'  },
     limitsquiz: { name: 'Limits',           deck: 'calcbc', kind: 'quiz'   },
-    converge:   { name: 'Converge',         deck: 'calcbc', kind: 'quiz'   }
+    converge:   { name: 'Converge',         deck: 'calcbc', kind: 'quiz'   },
+    blank:      { name: 'In context',       deck: 'sat',    kind: 'quiz'   }
   };
-  var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush'];
+  var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush', 'sat'];
 
   /* ==========================================================================
      Content is GENERATED, never a hardcoded question list. The only tables
@@ -387,7 +388,7 @@
   /* unit / period filters for the games that draw from real data.
      FILT[id] is a cycling index — 0 is All; tapping the word restarts. */
   var GFILT = { timeline: 'apush', yearquiz: 'apush', langmatch: 'lang', langboard: 'lang',
-                apterms: 'apushunit' };
+                apterms: 'apushunit', blank: 'satunit' };
   var FILT = {};
   /* A unit too thin to deal a round used to be offered anyway: choosing it
      dealt nothing, the start fell back to All, and the word snapped back — so
@@ -400,13 +401,23 @@
       playCache[k] =
         id === 'langmatch' ? langPairs(unitId).length >= 4 :
         id === 'langboard' ? termRound(9, unitId).length >= 4 :
-        id === 'apterms' ? namedRound(9, unitId).length >= 4 : true;
+        id === 'apterms' ? namedRound(9, unitId).length >= 4 :
+        id === 'blank' ? blankRound(4, unitId).length >= 4 : true;
     }
     return playCache[k];
   }
   function filtList(id) {
     var kind = GFILT[id];
     if (kind === 'apush') return PERIODS.map(function (p) { return { label: p[0], v: p }; });
+    if (kind === 'satunit') {
+      // the vocab deck's word units, by the one word that names each
+      var sd = S.getDeck('sat'), so = [];
+      if (!sd) return so;
+      sd.units.forEach(function (u) {
+        if (SAT_UNITS[u.id] && playable(id, u.id)) so.push({ label: SAT_UNITS[u.id], v: u.id });
+      });
+      return so;
+    }
     // the US History deck's units ARE the nine periods — filter by unit id
     var d = S.getDeck(kind === 'apushunit' ? 'apush' : 'lang');
     if (!d) return [];
@@ -537,7 +548,8 @@
     seriesmatch:'Match functions with their Maclaurin series',
     radmatch:   'Match degrees with radians',
     limitsquiz: 'Evaluate the limit',
-    converge:   'Does the series converge, and by which test?'
+    converge:   'Does the series converge, and by which test?',
+    blank:      'A sentence from the deck with its word missing; tap the word that fits'
   };
   /* ---------------- hub ---------------------------------------------------- */
   function hub() {
@@ -2011,6 +2023,135 @@
     return qs;
   }
 
+  /* ==========================================================================
+     IN CONTEXT — the PSAT's Words in Context question, dealt from the vocab
+     deck itself. Every word card carries one example sentence; the word is
+     blanked out of it (in whatever form the sentence used) and offered
+     against three neighbours of the same part of speech from the same unit,
+     inflected to fit the same slot. A transition is offered against three
+     that signal different relationships, which is how the test sets them.
+     The units' own fill-the-blank cards deal as they are written.
+     ========================================================================== */
+  var SAT_UNITS = { arg: 'Arguments', chg: 'Change', tone: 'Tone', char: 'People',
+                    sci: 'Science', soc: 'History', art: 'Art', trans: 'Transitions' };
+  /* the forms a sentence may use a word in, each with the ending it stands for */
+  function wordForms(w) {
+    var e = /e$/.test(w), cy = /[^aeiou]y$/.test(w), stem = w.slice(0, -1), last = w.charAt(w.length - 1);
+    var out = [[w, ''], [w + 's', 's'], [w + 'es', 's'], [w + 'd', 'ed'], [w + 'ed', 'ed'],
+               [w + last + 'ed', 'ed'], [w + 'ing', 'ing'], [w + last + 'ing', 'ing'], [w + 'ly', 'ly']];
+    if (cy) out.push([stem + 'ies', 's'], [stem + 'ied', 'ed'], [stem + 'ily', 'ly']);
+    if (e) out.push([stem + 'ing', 'ing']);
+    if (/le$/.test(w)) out.push([stem + 'y', 'ly']);
+    if (/ic$/.test(w)) out.push([w + 'ally', 'ly']);
+    return out;
+  }
+  function inflect(w, ending) {
+    if (!ending || /[ -]/.test(w)) return w;
+    var e = /e$/.test(w), cy = /[^aeiou]y$/.test(w), stem = w.slice(0, -1);
+    if (ending === 's') return cy ? stem + 'ies' : /(s|x|z|ch|sh)$/.test(w) ? w + 'es' : w + 's';
+    if (ending === 'ed') return e ? w + 'd' : cy ? stem + 'ied' : w + 'ed';
+    if (ending === 'ing') return e && !/ee$/.test(w) ? stem + 'ing' : w + 'ing';
+    if (ending === 'ly') return cy ? stem + 'ily' : /le$/.test(w) ? stem + 'y' : /ic$/.test(w) ? w + 'ally' : w + 'ly';
+    return w;
+  }
+  /* the sentence with its word taken out — and which form of the word it used */
+  function blankOut(ex, w) {
+    var lw = w.toLowerCase();
+    if (/[ -]/.test(lw)) {   // a phrase, or a hyphenated word: whole and exact
+      var re = new RegExp('(^|[^A-Za-z-])(' + lw.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + ')(?![A-Za-z-])', 'i');
+      var m = re.exec(ex);
+      if (!m) return null;
+      return { text: ex.slice(0, m.index + m[1].length) + '______' + ex.slice(m.index + m[0].length), form: lw, ending: '' };
+    }
+    var forms = wordForms(lw), toks = ex.split(/(\s+)/), i, j;
+    for (i = 0; i < toks.length; i++) {
+      var t = /^([^A-Za-z]*)([A-Za-z][A-Za-z'’-]*[A-Za-z]|[A-Za-z])([^A-Za-z]*)$/.exec(toks[i]);
+      if (!t) continue;
+      var core = t[2].toLowerCase();
+      for (j = 0; j < forms.length; j++) {
+        if (core === forms[j][0]) {
+          toks[i] = t[1] + '______' + t[3];
+          return { text: toks.join(''), form: core, ending: forms[j][1] };
+        }
+      }
+    }
+    return null;
+  }
+  var BLANK_POOL = null;
+  function blankPool() {
+    var d = S.getDeck('sat');
+    if (!d) return [];
+    if (BLANK_POOL && BLANK_POOL.deck === d) return BLANK_POOL.items;
+    var items = [];
+    d.cards.forEach(function (c) {
+      if (!SAT_UNITS[c.u]) return;
+      var m;
+      if (c.v === 'APPLY') {
+        m = /^([\s\S]*?)\s*Choose from (.+?)\.?\s*$/.exec(c.q);
+        if (!m || !c.x || !c.x[0]) return;
+        var ch = m[2].split(/,\s*/);
+        if (ch.length !== 4 || ch.indexOf(c.x[0]) < 0) return;
+        items.push({ kind: 'given', unit: c.u, topic: c.t, word: c.x[0], text: m[1], choices: ch,
+                     why: clean(c.a).replace(/\s*The answer is [^.]+\.\s*$/, '') });
+        return;
+      }
+      m = /^What does "([^"]+)" (?:mean|signal between two sentences)\?$/.exec(c.q);
+      if (!m) return;
+      var qi = c.a.indexOf('"'), qe = c.a.lastIndexOf('"');
+      if (qi < 0 || qe <= qi) return;
+      var head = c.a.slice(0, qi).trim(), def = head.split(' — ')[0];
+      var pm = /(noun|verb|adjective|adverb)/.exec(head.slice(def.length));
+      items.push({ kind: 'word', unit: c.u, topic: c.t, word: m[1].toLowerCase(), def: def,
+                   pos: pm ? pm[1] : '', ex: c.a.slice(qi + 1, qe) });
+    });
+    BLANK_POOL = { deck: d, items: items };
+    return items;
+  }
+  function blankQ(it, src, pool) {
+    if (it.kind === 'given') {
+      return { p: it.text, c: shuffle(it.choices.slice()), r: it.word, tag: it.word, why: it.why };
+    }
+    var b = blankOut(it.ex, it.word);
+    if (!b) return null;
+    var others = [], used = {};
+    used[it.word] = 1;
+    function take(list, distinctTopic) {
+      var seenT = {};
+      if (distinctTopic) seenT[it.topic] = 1;
+      shuffle(list.slice()).forEach(function (x) {
+        if (others.length >= 3 || x.kind !== 'word' || used[x.word]) return;
+        if (distinctTopic && seenT[x.topic]) return;
+        var form = inflect(x.word, b.ending);
+        if (form === b.form) return;
+        used[x.word] = 1; seenT[x.topic] = 1; others.push(form);
+      });
+    }
+    var unit = src.filter(function (x) { return x.unit === it.unit; });
+    if (it.unit === 'trans') take(unit, true);
+    else {
+      // same part of speech, so the slot rules nothing out — but from another
+      // topic first: a topic is where the near-synonyms live, and a choice
+      // that also fits is not a wrong answer
+      var samePos = function (x) { return x.pos === it.pos; };
+      take(unit.filter(function (x) { return samePos(x) && x.topic !== it.topic; }));
+      take(pool.filter(function (x) { return x.unit !== 'trans' && samePos(x); }));
+      take(unit);
+    }
+    if (others.length < 3) return null;
+    return { p: b.text, c: shuffle([b.form].concat(others)), r: b.form, tag: it.word, why: it.def };
+  }
+  function blankRound(n, unitId) {
+    var pool = blankPool();
+    var src = unitId ? pool.filter(function (x) { return x.unit === unitId; }) : pool;
+    var qs = [];
+    missFirst(shuffle(src.slice()), function (x) { return x.word; }, 'blank').forEach(function (x) {
+      if (qs.length >= n) return;
+      var q = blankQ(x, src, pool);
+      if (q) qs.push(q);
+    });
+    return qs;
+  }
+
   /* Quizzes deal a generated batch per round: classic plays it out and stops,
      sprint races the clock, streak ends on the first miss. */
   function quizBatch(id) {
@@ -2023,6 +2164,7 @@
       id === 'frnumbers' ? numbersRound(10) :
       id === 'frtime' ? timeRound(10) :
       id === 'econfig' ? econfigRound(10) :
+      id === 'blank' ? blankRound(10, filtVal('blank')) :
       genderRound(12);
   }
   function refillQuiz() {
@@ -2094,13 +2236,16 @@
       ctx.backbar(GAMES[st.id].name, modeCtl(st.id) + filtCtl(st.id, true)) +
       top +
       '<div class="gcur' + (st.lock ? '' : ' swap') + '">' +
-        '<div class="gname num' + (flat(q.p).length > 44 ? ' gsm' : '') + '" data-plain="' + esc(flat(q.p)) + '">' + fx(q.p) + '</div></div>' +
+        // a whole sentence for a prompt reads at a paragraph size, not a headline's
+        '<div class="gname num' + (flat(q.p).length > 88 ? ' gsm gxs' : flat(q.p).length > 44 ? ' gsm' : '') + '" data-plain="' + esc(flat(q.p)) + '">' + fx(q.p) + '</div></div>' +
       '<div class="choices' + (st.lock ? '' : ' deal') + '">' + q.c.map(function (cl, i) {
         var state = '';
         if (st.lock) state = cl === q.r ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
+        // once answered, a question that carries a reason prints it under the right choice
+        var why = st.lock && q.why && cl === q.r ? '<span class="why">' + esc(q.why) + '</span>' : '';
         return '<button class="choice num" data-gc="' + i + '"' +
           (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
-          fx(cl) + '</button>';
+          fx(cl) + why + '</button>';
       }).join('') + '</div>',
       { session: true, keepScroll: st.i > 0 }
     );
@@ -2139,8 +2284,10 @@
     st.wrongChoice = right ? -1 : i;
     renderQuiz();
     clearTimeout(timer);
-    if (st.mode === 'streak' && !right) { timer = setTimeout(quizDone, 1400); return; }
-    timer = setTimeout(nextQuizQ, right ? 550 : st.mode === 'sprint' ? 900 : 1400);
+    if (st.mode === 'streak' && !right) { timer = setTimeout(quizDone, q.why ? 2600 : 1400); return; }
+    // a miss with a reason under it stays long enough to read the reason
+    timer = setTimeout(nextQuizQ, right ? 550 : st.mode === 'sprint' ? 900 :
+      q.why ? Math.min(4200, 1600 + q.why.length * 11) : 1400);
   }
 
   /* the quiz score screen — one per mode, each showing that mode's best */
@@ -2471,6 +2618,9 @@
         if (mn) out.push([GAMES.langmatch.name, '#/game/langmatch/' + mn]);
         var bn = filtIndexOf('langboard', unitId);
         if (bn) out.push([GAMES.langboard.name, '#/game/langboard/' + bn]);
+      } else if (deckId === 'sat') {
+        var sn = filtIndexOf('blank', unitId);
+        if (sn) out.push([GAMES.blank.name, '#/game/blank/' + sn]);
       }
       return out;
     }
