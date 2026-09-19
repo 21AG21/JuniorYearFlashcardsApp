@@ -21,14 +21,22 @@
   --t-hero:clamp(48px,16.4vw,64px);
   --t-row:clamp(30px,12.3vw,48px);
   --t-title:clamp(40px,14vw,55px);
+  --t-act:clamp(28px,8.6vw,38px);      /* the primary action, and a utility heading */
   --t-prompt:clamp(26px,8.7vw,34px);
-  --t-answer:clamp(20px,6.2vw,24px);
-  --t-body:16px;
-  --t-label:14px;
-  --t-caption:12.5px;
+  --t-mid:clamp(24px,7.7vw,30px);      /* unit rows, summary rows */
+  --t-option:clamp(20px,6.2vw,24px);   /* an answer, a choice, a search field, a mode word */
+  --t-answer:var(--t-option);
+  --t-lead:20px;      /* a control's word: text buttons, settings rows, fields */
+  --t-body:17px;      /* running text */
+  --t-label:14px;     /* the small word above or beside a value */
+  --t-caption:13px;   /* footnotes, hints, keys */
 
   /* --- spacing ----------------------------------------------------------- */
-  --s-1:6px; --s-2:12px; --s-3:18px; --s-4:26px; --s-5:40px;
+  --s-0:3px; --s-1:6px; --s-2:12px; --s-3:18px; --s-4:26px; --s-5:40px;
+
+  /* --- motion: one curve, three durations (skill §9) --------------------- */
+  --ease:cubic-bezier(.32,.72,0,1);
+  --d-fast:.12s; --d-base:.24s; --d-slow:.34s;
   --gutter:24px;
   --row:64px;              /* every settings row is exactly this tall */
   --tabh:calc(env(safe-area-inset-bottom, 0px) + 66px + 28px);
@@ -135,10 +143,10 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-l .lnav{ flex:none; border-top:1px solid var(--hair-soft);
     padding:10px 36px calc(env(safe-area-inset-bottom, 0px) + 12px) calc(env(safe-area-inset-left, 0px) + 40px);
     display:flex; flex-direction:column; align-items:flex-start; gap:0; }
-  .pane-l .lnav .textbtn{ font-size:16px; padding:8px 0; min-height:40px; }
+  .pane-l .lnav .textbtn{ font-size:var(--t-body); padding:10px 0; min-height:44px; }
   /* a short window gives the rail nav less room to take */
   @media (max-height:720px){
-    .pane-l .lnav .textbtn{ font-size:15px; padding:5px 0; min-height:34px; }
+    .pane-l .lnav .textbtn{ font-size:var(--t-label); padding:6px 0; min-height:36px; }
   }
   /* on a tall monitor half the rail was empty ground between six 45px rows and
      five 40px links — the rows take the air instead */
@@ -149,7 +157,12 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
      an animation, whatever a shared class says. */
   .pane-l .head, .pane-l .list > li, .pane-l .lnav .textbtn{ animation:none; }
   .pane-l, .pane-l *{ animation:none !important; }
-  /* the right pane scales up — same content, bigger type */
+  /* the right pane scales up — same content, bigger type. The tokens are
+     redefined on the pane, so every control and caption inside it grows
+     with the window instead of staying phone-sized on a 1080p screen. */
+  .pane-r{ --t-act:clamp(34px, 2.6vw, 44px); --t-mid:clamp(26px, 1.9vw, 32px);
+    --t-option:clamp(22px, 1.6vw, 26px); --t-lead:clamp(20px, 1.3vw, 22px);
+    --t-body:clamp(17px, 1.1vw, 19px); --t-label:clamp(14px, .95vw, 16px); --t-caption:clamp(13px, .85vw, 14px); }
   .pane-r .head h1{ font-size:clamp(64px, 5vw, 92px); }
   /* .uhead is the phone-sized utility heading and simply comes later in the
      file, so Settings and Weak spots stayed at 40px beside a 92px Games */
@@ -158,7 +171,7 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-r .dhero.longname .dn{ font-size:clamp(30px, 2.4vw, 42px); }
   .pane-r .card .q{ font-size:clamp(30px, 2.4vw, 40px); }
   .pane-r .card .a{ font-size:clamp(22px, 1.8vw, 28px); }
-  .pane-r .qrow .qq{ font-size:22px; }
+  .pane-r .qrow .qq{ font-size:var(--t-option); }
   .pane-r .searchbar input{ font-size:28px; }
   .pane-r .prose, .pane-r .card .a, .pane-r .card .note{ max-width:62ch; }
   /* one reading measure for session content on a wide screen: the card, its
@@ -205,8 +218,8 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 /* at 280 the rhythm inverted: 22px of end padding against 4px between
    "Progress" and "Settings" — the bar's own edges had more air than its words */
 @media (max-width:320px){
-  .lg-tabbar{ padding:4px 8px; }
-  .lg-tab{ min-width:40px; padding:0; }
+  .lg-tabbar{ padding:4px 4px; }
+  .lg-tab{ min-width:44px; padding:0; }
 }
 .lg, .lg-btn, .lg-tab, .lg-seg-item, .lg-title, .lg-sub,
 .lg-search-input, .lg-header-title{ font-family:var(--font-sf); }
@@ -223,7 +236,7 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
 .head h1{ margin:0; font-size:var(--t-hero); font-weight:460; letter-spacing:-.035em; line-height:1.1; color:var(--ink); }
 .head .sub{ margin-top:10px; font-size:var(--t-label); color:var(--muted); }
 button.hero-tap{ background:none; border:0; padding:0; margin:0; font:inherit; color:inherit; text-align:left; cursor:pointer; }
-button.hero-tap:active{ opacity:.55; }
+button.hero-tap:active{ opacity:.5; }
 
 /* name · number on one baseline — the detail hero (skill §4.2) */
 .dhero{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin:0 0 var(--s-3); }
@@ -232,8 +245,8 @@ button.hero-tap:active{ opacity:.55; }
    and nothing else: the button keeps every pixel it had. */
 .dhero .dnh{ display:contents; font:inherit; margin:0; }
 .dhero .dn,.dhero .dv{ background:none; border:0; padding:0; margin:0; font:inherit; cursor:pointer;
-  font-size:var(--t-title); font-weight:430; letter-spacing:-.035em; line-height:1.16; text-align:left;
-  transition:opacity .12s ease; }
+  font-size:var(--t-title); font-weight:460; letter-spacing:-.035em; line-height:1.16; text-align:left;
+  transition:opacity var(--d-fast) ease; }
 .dhero .dn:active,.dhero .dv:active{ opacity:.5; }
 .dhero .dn{ position:relative; color:var(--ink-soft); min-width:0; }   /* the title always shows in full */
 /* the name IS the back control here, so it gets the expander the other quiet
@@ -244,19 +257,19 @@ button.hero-tap:active{ opacity:.55; }
 .dhero.tallval{ align-items:center; }
 .dhero.tallval .dv{ line-height:1; letter-spacing:-.04em; }
 /* a long name steps down instead of wrapping word-per-line at title size */
-.dhero.longname .dn{ font-size:clamp(26px,8.4vw,33px); line-height:1.24; letter-spacing:-.02em;
+.dhero.longname .dn{ font-size:var(--t-prompt); line-height:1.24; letter-spacing:-.02em;
   overflow-wrap:break-word; }
 
 .backbar{ display:flex; align-items:center; gap:8px; margin:0 0 var(--s-3); }
 /* the screen's name is the back control — a word, never an arrow */
 .backbar .bk{ background:none; border:0; padding:12px 0; min-height:44px; font:inherit;
-  font-size:14px; font-weight:500; color:var(--muted); cursor:pointer; letter-spacing:0; }
+  font-size:var(--t-label); font-weight:500; color:var(--muted); cursor:pointer; letter-spacing:0; }
 .backbar .bk:active{ opacity:.5; }
-.backbar .gfilt{ margin-left:auto; padding:12px 0; min-height:44px; font-size:14px; }
+.backbar .gfilt{ margin-left:auto; padding:12px 0; min-height:44px; font-size:var(--t-label); }
 .iconbtn{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; margin-left:-11px;
   background:none; border:0; padding:0; color:var(--ink-soft); cursor:pointer; }
 .iconbtn svg{ width:24px; height:24px; }
-.iconbtn:active{ opacity:.45; }
+.iconbtn:active{ opacity:.5; }
 .iconbtn.right{ margin-left:auto; margin-right:-11px; }
 
 /* --- the ledger (skill §7.1): name left, number right, same size ---------- */
@@ -264,7 +277,7 @@ button.hero-tap:active{ opacity:.55; }
 .list.tight{ gap:var(--s-3); }
 .ledger{ display:grid; grid-template-columns:1fr auto; align-items:baseline; column-gap:14px; width:100%;
   background:none; border:0; padding:0; margin:0; color:inherit; font:inherit; text-align:left; cursor:pointer;
-  transition:opacity .12s ease; }
+  transition:opacity var(--d-fast) ease; }
 .ledger:active{ opacity:.5; }
 /* A course name takes a second line rather than losing its last syllable — at
    320px the deck list printed "Chemis…" and "US Hist…". Below 380px the row
@@ -331,8 +344,8 @@ button.hero-tap:active{ opacity:.55; }
   /* the name and its count read as two unrelated things a screen apart */
   .dhero{ max-width:460px; }
 }
-.ledger .lname{ font-size:var(--t-row); font-weight:430; color:var(--ink-soft); letter-spacing:-.03em; line-height:1.2;
-  min-width:0; overflow-wrap:anywhere; overflow:hidden;
+.ledger .lname{ font-size:var(--t-row); font-weight:460; color:var(--ink-soft); letter-spacing:-.03em; line-height:1.2;
+  min-width:0; overflow-wrap:anywhere; overflow:hidden; text-overflow:ellipsis;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
 .ledger .lname small{ display:none; }   /* taglines are gone; the row is name + number */
 .ledger .lval{ font-size:var(--t-row); font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-.03em;
@@ -352,28 +365,34 @@ button.hero-tap:active{ opacity:.55; }
 
 /* smaller ledger for unit lists and summary rows */
 .ledger.mid{ padding:7px 0; }
-.ledger.mid .lname,.ledger.mid .lval{ font-size:clamp(24px,7.7vw,30px); letter-spacing:-.02em; line-height:1.3; }
+.ledger.mid .lname,.ledger.mid .lval{ font-size:var(--t-mid); letter-spacing:-.02em; line-height:1.3; }
 .ledger.mid .lname{ display:block; overflow:visible; text-overflow:clip; }  /* unit names wrap — nothing clipped, ever */
 /* wrapped name → the number scales up to the height of the text block */
 /* a value that is a word, not a number (the pace verdict): a quiet ink word
    beside the big name — never a phrase shouting at ledger size */
-.ledger .lval.word, .ledger.mid .lval.word{ font-size:17px; font-weight:500; letter-spacing:-.01em; }
+.ledger .lval.word, .ledger.mid .lval.word{ font-size:var(--t-body); font-weight:500; letter-spacing:-.01em; }
 .ulabel{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:var(--s-3) 0 2px; }
 .ulabel:first-child{ margin-top:0; }
+/* the rhythm a screen sets between its blocks — named here, not in markup */
+.mt0{ margin-top:0 !important; }
+.mt4{ margin-top:var(--s-4) !important; }
+.mt5{ margin-top:var(--s-5) !important; }
+.gap0{ gap:0 !important; }
+.k.sec{ margin:var(--s-5) 0 var(--s-3); }
 .nowrap{ white-space:nowrap; }
 
 /* --- actions: one compact pill at most, text buttons for the rest --------- */
 /* nowhere in this app is there a button shape — an action is a line of text,
    and the primary one is simply the biggest line on the screen */
 .act{ display:inline-block; background:none; border:0; border-radius:0; margin:0;
-  padding:10px 0; color:var(--ink); font:inherit; font-size:clamp(28px,8.6vw,38px);
-  font-weight:430; letter-spacing:-.03em; line-height:1.15; text-align:left;
-  cursor:pointer; transition:opacity .12s ease; }
+  padding:10px 0; color:var(--ink); font:inherit; font-size:var(--t-act);
+  font-weight:460; letter-spacing:-.03em; line-height:1.15; text-align:left;
+  cursor:pointer; transition:opacity var(--d-fast) ease; }
 .act:active{ opacity:.5; }
-.textbtn{ background:none; border:0; padding:12px 0; margin:0; min-height:44px; font:inherit; font-size:19px; font-weight:500;
+.textbtn{ background:none; border:0; padding:12px 0; margin:0; min-height:44px; font:inherit; font-size:var(--t-lead); font-weight:500;
   color:var(--ink-soft); cursor:pointer; letter-spacing:-.005em; }
 .textbtn:active{ opacity:.5; }
-.textbtn.quiet{ font-size:15px; color:var(--muted); font-weight:500; }
+.textbtn.quiet{ font-size:var(--t-label); color:var(--muted); font-weight:500; }
 /* stretch, not flex-start: a mode word's tap target is its row. At 280 the
    "Quiz" button was 43px wide because the word is 43px wide. */
 .modes{ display:flex; flex-direction:column; align-items:stretch; margin-top:var(--s-2); }
@@ -384,25 +403,26 @@ button.hero-tap:active{ opacity:.55; }
 .actsub{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:-2px 0 var(--s-1); }
 .ledger .ublurb{ font-weight:400; line-height:1.35; white-space:normal; margin-top:3px; }
 .ledger.now .lname{ color:var(--ink); }
-.gask{ font-size:14.5px; font-weight:500; color:var(--muted); margin:-4px 0 12px; line-height:1.35; }
+.gask{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:-4px 0 12px; line-height:1.35; }
 .list .tsep{ list-style:none; }
 .list .tsep .ulabel{ margin:var(--s-4) 0 4px; display:flex; gap:8px; align-items:baseline; }
 .list .tsep .ulabel .num{ color:var(--muted); font-variant-numeric:tabular-nums; }
 .list .tsep .tstudy{ margin-left:auto; padding:0 0 0 12px; min-height:0; }
+.list .tsep .tstudy::after{ inset:-12px -14px; }   /* the label row stays 22px; the target does not */
 .list .tsep:first-child .ulabel{ margin-top:var(--s-2); }
 .keys{ margin:0 0 var(--s-3); padding:0 0 0 1.4em; display:flex; flex-direction:column; gap:8px; max-width:62ch; }
-.keys li{ font-size:16.5px; line-height:1.45; color:var(--ink); padding-left:4px; }
+.keys li{ font-size:var(--t-body); line-height:1.45; color:var(--ink); padding-left:4px; }
 .keys li::marker{ color:var(--muted); font-variant-numeric:tabular-nums; }
 .dblurb{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:-4px 0 var(--s-2); }
 /* how it works: label, then prose in the reading size */
 .how .k{ margin:var(--s-5) 0 8px; }
-.how p{ margin:0 0 10px; font-size:17px; line-height:1.5; color:var(--ink); max-width:62ch; }
-.how p b{ font-weight:600; }
-.modes .textbtn{ padding:12px 0; min-height:52px; font-size:clamp(20px,5.8vw,26px); letter-spacing:-.02em; }
+.how p{ margin:0 0 10px; font-size:var(--t-body); line-height:1.5; color:var(--ink); max-width:62ch; }
+.how p b{ font-weight:650; }
+.modes .textbtn{ padding:12px 0; min-height:52px; font-size:var(--t-option); letter-spacing:-.02em; }
 /* the deck list's own row is a footer of links, not a list of study modes —
    one line at reading size, the way the desktop rail already carries them */
 .modes.nav{ flex-direction:row; flex-wrap:wrap; align-items:baseline; column-gap:28px; }
-.modes.nav .textbtn{ font-size:17px; min-height:44px; padding:11px 0; letter-spacing:-.005em; }
+.modes.nav .textbtn{ font-size:var(--t-body); min-height:44px; padding:11px 0; letter-spacing:-.005em; }
 
 /* --- study session: the card is text on the ground (skill §4.3) ----------- */
 .session{ display:flex; flex-direction:column; }
@@ -433,24 +453,30 @@ button.hero-tap:active{ opacity:.55; }
    phone screen with wider margins: on a 768x1024 window the answer sat at the
    top and Again/Good/Easy 578px below it, with nothing in between — 56% of the
    viewport. The card and its grades belong together in the optical centre. */
-@media (min-width:700px) and (max-width:899px){
+@media (min-width:680px) and (max-width:899px){
   #app{ max-width:760px; }
   #app.is-session:not(.is-wide) .cardstage{ flex:0 1 auto; }
   #app.is-session:not(.is-wide) .session{ justify-content:center; }
+}
+/* from a tablet up, a list keeps a list's measure: a name and its number
+   used to sit 700px apart on an iPad, unrelated things on one line */
+@media (min-width:680px){
+  .list, .setgroup, .data-list, .reqwrap, .modes:not(.nav), .dhero, .resumewrap, .scoperow,
+  .pane-r .list, .pane-r .dhero{ max-width:640px; }
 }
 #app.is-session:not(.is-wide) .rate{ margin-top:var(--s-3); }
 /* thirty-two pixels, not twelve: the X sat directly under the Again button
    and inside its horizontal span, so a thumb that landed low ended the
    session instead of grading the card */
-#app.is-session:not(.is-wide) .sess-util{ margin-top:32px; }
+#app.is-session:not(.is-wide) .sess-util{ margin-top:var(--s-4); }
 .sess-top{ display:flex; align-items:baseline; gap:12px; margin-bottom:var(--s-4); }
-.sess-top .scope{ font-size:15px; font-weight:500; color:var(--muted); min-width:0; margin-right:auto; }
-.sess-top .pos{ font-size:15px; font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.sess-top .scope{ font-size:var(--t-label); font-weight:500; color:var(--muted); min-width:0; margin-right:auto; }
+.sess-top .pos{ font-size:var(--t-label); font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
 /* the cards that came back — counted beside the position, never inside it */
 .sess-top .pos .redo{ color:var(--ink-soft); }
 /* what this game asks of you, in one glyph pair — read before it is read */
-.ledger .gkind{ font-size:14px; color:var(--muted); letter-spacing:.14em; font-weight:400; }
-.sess-top .cue{ font-size:14px; color:var(--muted); letter-spacing:.14em; white-space:nowrap; flex:none; }
+.ledger .gkind{ font-size:var(--t-label); color:var(--muted); letter-spacing:.14em; font-weight:400; }
+.sess-top .cue{ font-size:var(--t-label); color:var(--muted); letter-spacing:.14em; white-space:nowrap; flex:none; }
 .sess-top .tick{ color:var(--ink-soft); }
 /* .grow is the order games' placed ROW — a display:flex block. The scope's
    direction arrow borrowed the name and rendered full-width on its own
@@ -465,28 +491,28 @@ button.hero-tap:active{ opacity:.55; }
 
 .cardstage{ position:relative; display:flex; align-items:flex-start; padding:0 0 var(--s-3); }
 /* there is more card below: a hairline and a chevron on the ground, no gradient */
-.morecue{ display:none; text-align:center; font-size:15px; line-height:1; color:var(--muted);
+.morecue{ display:none; text-align:center; font-size:var(--t-label); line-height:1; color:var(--muted);
   padding:7px 0 2px; border-top:1px solid var(--hair-soft); }
 .session.more .morecue{ display:block; }
 /* the browser claimed the horizontal drag for its own scroll and cancelled
    the pointer at ~28px, so swipe-to-grade never fired on a phone at all */
 .cardwrap{ width:100%; will-change:transform; touch-action:pan-y; }
 .cardwrap.swiping{ transition:none; }
-.cardwrap.settle{ transition:transform .34s cubic-bezier(.32,.72,0,1); }
+.cardwrap.settle{ transition:transform var(--d-slow) var(--ease); }
 .card{ width:100%; display:flex; flex-direction:column; }
 /* a run with no space in it — a 300-character URL, a formula with forty
    subscripts — has to break at the measure. It used to leave the card
    sideways, on a phone with no gesture that could bring it back. */
 .card .q,.card .a,.card .note,.card .hint{ overflow-wrap:anywhere; }
-.card .q{ font-size:var(--t-prompt); font-weight:480; letter-spacing:-.02em; line-height:1.25; color:var(--ink); }
-.card .q.small{ font-size:clamp(20px,6vw,26px); line-height:1.32; }
-.card .q.tiny{ font-size:18px; font-weight:500; line-height:1.4; letter-spacing:-.012em; }
-.card .hint{ margin-top:14px; font-size:13.5px; color:var(--muted); }
+.card .q{ font-size:var(--t-prompt); font-weight:500; letter-spacing:-.02em; line-height:1.25; color:var(--ink); }
+.card .q.small{ font-size:var(--t-option); line-height:1.32; }
+.card .q.tiny{ font-size:var(--t-body); font-weight:500; line-height:1.4; letter-spacing:-.012em; }
+.card .hint{ margin-top:14px; font-size:var(--t-caption); color:var(--muted); }
 /* the hint waits to be asked — a quiet word, its hit area padded invisibly */
-.card .hint-btn{ align-self:flex-start; margin-top:14px; font:inherit; font-size:13.5px; font-weight:500;
+.card .hint-btn{ align-self:flex-start; margin-top:14px; font:inherit; font-size:var(--t-caption); font-weight:500;
   color:var(--muted); background:none; border:0; padding:0; position:relative; cursor:pointer; }
 .card .hint-btn::after{ content:""; position:absolute; inset:-14px -18px; }
-.card .rule{ height:1px; background:var(--hair-soft); margin:24px 0 20px; }
+.card .rule{ height:1px; background:var(--hair-soft); margin:var(--s-4) 0 var(--s-3); }
 /* the reader's own words on a card: set apart from the deck's note by a rule
    down its left, the same mark the book uses for a term it is explaining */
 .card .mynote{ margin-top:14px; padding:2px 0 2px 14px; border-left:2px solid var(--ink);
@@ -500,17 +526,17 @@ button.hero-tap:active{ opacity:.55; }
 .card .mynote textarea:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
 .card .mynote textarea::placeholder{ color:var(--muted); }
 .card .mynote .noteacts{ display:flex; gap:26px; margin-top:8px; }
-.card .mynote .noteacts .textbtn{ padding:6px 0; min-height:40px; }
+.card .mynote .noteacts .textbtn{ padding:8px 0; min-height:44px; }
 /* on a browse row the note rides under the answer, in the same quiet ink */
 .qrow .qn{ display:block; margin-top:6px; padding-left:12px; border-left:2px solid var(--hair);
-  font-size:16px; line-height:1.4; color:var(--ink-soft); white-space:pre-wrap; overflow-wrap:anywhere; }
-.card .a{ font-size:var(--t-answer); font-weight:440; letter-spacing:-.015em; line-height:1.32; color:var(--ink); }
-.card .a.small{ font-size:clamp(17px,4.6vw,20px); font-weight:440; line-height:1.42; }
-.card .a.tiny{ font-size:15.5px; font-weight:450; line-height:1.55; letter-spacing:0; }
-.card .note{ margin-top:16px; padding-left:12px; border-left:1.5px solid var(--hair); font-size:13.5px; line-height:1.5; color:var(--ink-soft); }
+  font-size:var(--t-body); line-height:1.4; color:var(--ink-soft); white-space:pre-wrap; overflow-wrap:anywhere; }
+.card .a{ font-size:var(--t-answer); font-weight:460; letter-spacing:-.015em; line-height:1.32; color:var(--ink); }
+.card .a.small{ font-size:var(--t-body); font-weight:460; line-height:1.42; }
+.card .a.tiny{ font-size:var(--t-body); font-weight:460; line-height:1.55; letter-spacing:0; }
+.card .note{ margin-top:16px; padding-left:12px; border-left:1.5px solid var(--hair); font-size:var(--t-caption); line-height:1.5; color:var(--ink-soft); }
 .card .meta{ margin-top:16px; font-size:var(--t-caption); color:var(--muted); }
 
-.card.enter{ animation:cardIn .26s cubic-bezier(.32,.72,0,1); }
+.card.enter{ animation:cardIn var(--d-base) var(--ease); }
 @keyframes cardIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
 /* once, when the answer is first shown — not again for a star or a note */
 .card.fresh .reveal{ animation:revealIn .2s ease; }
@@ -530,7 +556,7 @@ button.hero-tap:active{ opacity:.55; }
    theirs, the end words flush, and the two outer gaps ran half again as wide
    as the one between Hard and Good. */
 .rate button{ flex:1 1 auto; min-width:0; background:none; border:0; padding:10px 0; min-height:44px; cursor:pointer; font:inherit;
-  display:flex; flex-direction:column; align-items:flex-start; gap:2px; transition:opacity .12s ease; }
+  display:flex; flex-direction:column; align-items:flex-start; gap:2px; transition:opacity var(--d-fast) ease; }
 .rate button:not(:first-child):not(:last-child){ flex-grow:2; align-items:center; text-align:center; }
 .rate button:last-child:not(:first-child){ align-items:flex-end; text-align:right; }
 /* four words on a 320px screen: the labels hold, the intervals step down */
@@ -543,12 +569,12 @@ button.hero-tap:active{ opacity:.55; }
   .rate .when{ font-size:10.5px; }
 }
 .rate button:active{ opacity:.5; }
-.rate .lab{ font-size:17px; font-weight:500; letter-spacing:-.01em; color:var(--ink-soft); }
+.rate .lab{ font-size:var(--t-body); font-weight:500; letter-spacing:-.01em; color:var(--ink-soft); }
 .rate .r-good .lab{ color:var(--ink); }   /* the recommended grade carries the ink */
 /* a scored typing miss recommends Again — the heavier ink moves with it */
 .rate.miss .r-good .lab{ color:var(--ink-soft); }
 .rate.miss .r-again .lab{ color:var(--ink); }
-.rate .when{ font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--muted); }
+.rate .when{ font-size:var(--t-caption); font-weight:500; font-variant-numeric:tabular-nums; color:var(--muted); }
 /* the keyboard hint exists only where a keyboard does — and there it takes
    the slot the interval had: one line under each word, never two */
 .rate .when.kbd{ display:none; }
@@ -559,12 +585,12 @@ button.hero-tap:active{ opacity:.55; }
    their places when it appears — a node that changes kind is rebuilt. */
 .resumewrap:empty{ display:none; }
 .resumewrap{ margin:2px 0 var(--s-3); }
-.resume{ display:flex; align-items:baseline; gap:10px; width:100%; background:none; border:0; padding:8px 0;
-  font:inherit; text-align:left; cursor:pointer; color:var(--ink); transition:opacity .12s ease; }
+.resume{ display:flex; align-items:baseline; gap:10px; width:100%; background:none; border:0; padding:10px 0; min-height:44px;
+  font:inherit; text-align:left; cursor:pointer; color:var(--ink); transition:opacity var(--d-fast) ease; }
 .resume:active{ opacity:.5; }
-.resume .rl{ font-size:17px; font-weight:500; }
-.resume .rv{ font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
-.pane-l .resume .rl{ font-size:16px; }
+.resume .rl{ font-size:var(--t-body); font-weight:500; }
+.resume .rv{ font-size:var(--t-label); color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.pane-l .resume .rl{ font-size:var(--t-body); }
 /* quiet utilities under a card: Done · Undo · Star as small text */
 .sess-util{ display:flex; align-items:center; gap:10px; margin-top:var(--s-4); margin-left:-11px; }
 .sess-util .iconbtn{ margin-left:0; }
@@ -576,22 +602,22 @@ button.hero-tap:active{ opacity:.55; }
 .sess-util .sizebtn.exit{ margin-left:11px; margin-right:auto; color:var(--ink-soft); }
 .sess-util .sizebtn + .sizebtn{ margin-left:16px; }
 .sess-util .sizebtn{ background:none; border:0; margin-left:auto; padding:12px 0; min-height:44px;
-  font:inherit; font-size:13px; color:var(--muted); cursor:pointer; font-variant-numeric:tabular-nums; }
+  font:inherit; font-size:var(--t-caption); color:var(--muted); cursor:pointer; font-variant-numeric:tabular-nums; }
 .sess-util .sizebtn:active{ opacity:.5; }
 
-.swipehint{ position:absolute; top:50%; transform:translateY(-50%); font-size:13px; font-weight:500;
-  letter-spacing:-.01em; color:var(--ink); opacity:0; transition:opacity .12s ease; pointer-events:none; }
+.swipehint{ position:absolute; top:50%; transform:translateY(-50%); font-size:var(--t-caption); font-weight:500;
+  letter-spacing:-.01em; color:var(--ink); opacity:0; transition:opacity var(--d-fast) ease; pointer-events:none; }
 .swipehint.l{ left:8px; } .swipehint.r{ right:8px; }
 
 .typewrap{ margin-top:18px; }
 .typein{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--hair); padding:9px 0;
-  font:inherit; font-size:19px; color:var(--ink); letter-spacing:-.01em; }
+  font:inherit; font-size:var(--t-lead); color:var(--ink); letter-spacing:-.01em; }
 .typein::placeholder{ color:var(--muted); }
 .typein:focus{ outline:none; border-bottom-color:var(--ink-soft); }
 /* the quiet underline stays, but a keyboard user keeps a ring */
 .typein:focus-visible,.searchbar input:focus-visible,.reqbox textarea:focus-visible{
   outline:2px solid var(--ink); outline-offset:3px; }
-.verdict{ margin-top:12px; font-size:13.5px; font-weight:500; color:var(--ink); }
+.verdict{ margin-top:12px; font-size:var(--t-caption); font-weight:500; color:var(--ink); }
 .verdict.miss::before{ content:"Not quite — "; font-weight:500; color:var(--muted); }
 .verdict.hit::before{ content:"Correct — "; font-weight:500; color:var(--muted); }
 /* an answer no one could type is not a miss — it carries no verdict word */
@@ -603,7 +629,7 @@ button.hero-tap:active{ opacity:.55; }
 .list li .qacts{ display:none; }
 /* the two words' hit areas each reach 14px past their glyphs — the gap has to
    clear both, or a tap between them lands on whichever painted last */
-.list li.open .qacts{ display:flex; flex-wrap:wrap; column-gap:34px; margin:-2px 0 10px; }
+.list li.open .qacts{ display:flex; flex-wrap:wrap; column-gap:var(--s-5); margin:0 0 var(--s-2); }
 /* a four-letter word is a 30px target: the padding carries it to 44 */
 .list li.open .qacts .textbtn{ padding:11px 0; min-height:44px; }
 /* a row whose star has just come off keeps its place in the list rather than
@@ -611,14 +637,14 @@ button.hero-tap:active{ opacity:.55; }
 .list li.dropped .qq, .list li.dropped .qa{ color:var(--muted); text-decoration:line-through;
   text-decoration-thickness:1px; }
 .list li.dropped .qmeta{ opacity:.6; }
-.choices{ display:flex; flex-direction:column; margin-top:20px; }
-.choice{ position:relative; width:100%; text-align:left; padding:19px 26px 19px 0; border:0; border-top:1px solid var(--hair-soft);
-  background:none; color:var(--ink-soft); font:inherit; font-size:clamp(19px,5.4vw,24px); font-weight:480; line-height:1.4; cursor:pointer;
-  transition:opacity .12s ease; min-height:44px; }
+.choices{ display:flex; flex-direction:column; margin-top:var(--s-3); }
+.choice{ position:relative; width:100%; text-align:left; padding:var(--s-3) var(--s-4) var(--s-3) 0; border:0; border-top:1px solid var(--hair-soft);
+  background:none; color:var(--ink-soft); font:inherit; font-size:var(--t-option); font-weight:500; line-height:1.4; cursor:pointer;
+  transition:opacity var(--d-fast) ease; min-height:44px; }
 .choice:first-child{ border-top:0; }
-.choice:active{ opacity:.55; }
+.choice:active{ opacity:.5; }
 /* long prose options drop a size — the question stays the biggest thing */
-.choice.small{ font-size:17px; line-height:1.45; font-weight:460; letter-spacing:-.005em; }
+.choice.small{ font-size:var(--t-body); line-height:1.45; font-weight:460; letter-spacing:-.005em; }
 /* answered: three shades, no decoration — a rule through seven wrapped lines
    reads as a rendering fault. Right is ink, your miss is soft, the rest fade. */
 .choice[data-state="right"]{ color:var(--ink); }
@@ -633,20 +659,20 @@ button.hero-tap:active{ opacity:.55; }
 /* fraction leading stays closer to prose here — options are lists, not cards */
 .choice.mathy{ line-height:1.8 !important; }
 /* the justification rides as the second line of the right answer */
-.choice .why{ display:block; font-size:15px; font-weight:430; color:var(--ink-soft);
+.choice .why{ display:block; font-size:var(--t-label); font-weight:460; color:var(--ink-soft);
   line-height:1.45; margin-top:6px; letter-spacing:0;
-  animation:riseIn .24s cubic-bezier(.32,.72,0,1); }
+  animation:riseIn var(--d-base) var(--ease); }
 
 /* --- browse / search rows -------------------------------------------------- */
 .qrow{ display:block; width:100%; text-align:left; background:none; border:0; padding:0; color:inherit; font:inherit; cursor:pointer;
-  transition:opacity .12s ease; }
-.qrow:active{ opacity:.55; }
+  transition:opacity var(--d-fast) ease; }
+.qrow:active{ opacity:.5; }
 .qrow .qq, .qrow .qa, .qrow .qmeta{ display:block; }
 .qrow [hidden]{ display:none !important; }
-.qrow .qq{ font-size:22px; font-weight:460; color:var(--ink); letter-spacing:-.012em; line-height:1.32;
+.qrow .qq{ font-size:var(--t-option); font-weight:460; color:var(--ink); letter-spacing:-.012em; line-height:1.32;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
 .qrow.open .qq{ display:block; -webkit-line-clamp:none; overflow:visible; }
-.qrow .qa{ font-size:17px; color:var(--ink-soft); line-height:1.4; margin-top:5px; }
+.qrow .qa{ font-size:var(--t-body); color:var(--ink-soft); line-height:1.4; margin-top:5px; }
 .qrow .qq,.qrow .qa{ overflow-wrap:anywhere; }
 .qrow .qmeta{ font-size:var(--t-label); color:var(--muted); margin-top:5px; }
 .qrow.done .qq{ color:var(--muted); }
@@ -656,12 +682,12 @@ button.hero-tap:active{ opacity:.55; }
   padding-top:calc(env(safe-area-inset-top, 0px) + 4px); }
 #app .searchbar:first-child{ padding-top:0; }
 .searchbar input{ flex:1; min-width:0; background:transparent; border:0; border-bottom:1px solid var(--hair); padding:10px 0;
-  font:inherit; font-size:24px; font-weight:430; color:var(--ink); letter-spacing:-.015em; }
+  font:inherit; font-size:var(--t-option); font-weight:460; color:var(--ink); letter-spacing:-.015em; }
 .searchbar input:focus{ border-bottom-color:var(--ink-soft); }   /* the ring is restored by :focus-visible above */
 .searchbar input::placeholder{ color:var(--muted); }
 /* the scope word under the field — one tap narrows the search to one course */
 .scoperow{ display:flex; align-items:baseline; gap:14px; margin:-6px 0 var(--s-3); }
-.scoperow .textbtn{ padding:6px 0; min-height:40px; }
+.scoperow .textbtn{ padding:8px 0; min-height:44px; }
 /* the count that belongs to the word beside it — a fact, never a control */
 .scoperow .scount{ color:var(--muted); font-size:var(--t-label); }
 /* a second word in the row belongs at the far end, away from the first */
@@ -676,11 +702,12 @@ button.hero-tap:active{ opacity:.55; }
 .searchbar input::-webkit-search-cancel-button{ -webkit-appearance:none; appearance:none; display:none; }
 
 /* --- empty / done ---------------------------------------------------------- */
-.empty{ padding:var(--s-4) 0; color:var(--ink-soft); font-size:var(--t-title); font-weight:430; letter-spacing:-.03em; line-height:1.2; }
+.empty{ padding:var(--s-4) 0; color:var(--ink-soft); font-size:var(--t-title); font-weight:460; letter-spacing:-.03em; line-height:1.2; }
 .empty.cap{ font-size:var(--t-label); font-weight:500; color:var(--muted); letter-spacing:0; }
 .done-hero{ padding:var(--s-4) 0 var(--s-3); }
 .done-hero .v{ font-size:var(--t-hero); font-weight:460; letter-spacing:-.035em; line-height:1.1; color:var(--ink); }
 .done-rows{ margin:var(--s-4) 0 var(--s-5); }
+.done-hero .done-sub{ margin-top:8px; color:var(--ink-soft); font-size:var(--t-label); }
 
 /* --- math ------------------------------------------------------------------
    Every inline atom keeps the text baseline, so a formula never tilts the
@@ -714,8 +741,8 @@ sub,sup{ font-size:max(.68em, 11px); }
 
 /* the app knows when writes are failing; it used to keep that to itself */
 .warnline{ display:block; width:100%; text-align:left; background:none; border:0;
-  border-bottom:1px solid var(--hair); font:inherit; font-size:14px; font-weight:500;
-  color:var(--ink); padding:10px 0 11px; margin:0 0 var(--s-3); letter-spacing:-.005em; }
+  border-bottom:1px solid var(--hair); font:inherit; font-size:var(--t-label); font-weight:500;
+  color:var(--ink); padding:12px 0 13px; min-height:44px; margin:0 0 var(--s-3); letter-spacing:-.005em; }
 /* the same line at a quieter weight: a count that is missing a course says so
    without shouting, because the rest of the screen is still true */
 .warnline.soft{ color:var(--muted); border-bottom-color:var(--hair-soft); font-weight:400; }
@@ -735,9 +762,9 @@ sub,sup{ font-size:max(.68em, 11px); }
   width:max-content; max-width:min(calc(100vw - 48px), 520px); min-height:44px;
   display:flex; align-items:center; justify-content:center; padding:10px 20px;
   --lg-blur:30px; --lg-tint-a:0.62;
-  color:var(--ink); font-size:15px; font-weight:500; letter-spacing:-.01em; line-height:1.35; text-align:center;
+  color:var(--ink); font-size:var(--t-label); font-weight:500; letter-spacing:-.01em; line-height:1.35; text-align:center;
   opacity:0; pointer-events:none; transform:translate(-50%, 8px);
-  transition:opacity .2s ease, transform .24s cubic-bezier(.32,.72,0,1); }
+  transition:opacity var(--d-base) ease, transform var(--d-base) var(--ease); }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) #toast{ --lg-tint-a:0.74; } }
 :root[data-theme="dark"] #toast{ --lg-tint-a:0.74; }
 #toast.show{ opacity:1; transform:translate(-50%, 0); }
@@ -770,7 +797,7 @@ sub,sup{ font-size:max(.68em, 11px); }
    steep two-level hierarchy — 14px section labels, 17px rows. Whitespace
    groups sections (≈40px above a label, 10px below); a single hairline
    separates rows within a section. No sublabels, no boxes, no chevrons. */
-.head h1.uhead{ font-size:clamp(32px,10vw,40px); }
+.head h1.uhead{ font-size:var(--t-act); }
 .setgroup{ margin-top:var(--s-4); }
 .setrow{ position:relative; display:flex; align-items:center; justify-content:space-between; gap:16px;
   padding:12px 0; min-height:var(--row); }
@@ -781,22 +808,28 @@ sub,sup{ font-size:max(.68em, 11px); }
 /* …but the two account rows sit one above the other, and one of them
    disconnects: they keep a tight target that cannot bleed into its neighbour */
 .setrow .cyc[data-acct-off]::after,.setrow .cyc[data-acct-id]::after{ inset:0 -14px; }
-.setrow + .setrow{ border-top:1px solid var(--hair-soft); }
-.setrow .sname{ font-size:21px; font-weight:500; color:var(--ink); }
+.setrow + .setrow, .setnote + .setrow{ border-top:1px solid var(--hair-soft); }
+/* the token row draws its hairline under the whole row, field and Paste
+   alike, and the row after it draws none — two lines of two lengths used to
+   meet under the button */
+.setrow.stack + .setrow{ border-top:0; }
+.setrow.stack .searchbar{ border-bottom:1px solid var(--hair-soft); }
+.setrow.stack .searchbar input{ border-bottom:0; }
+.setrow .sname{ font-size:var(--t-lead); font-weight:500; color:var(--ink); }
 /* a value that cycles when tapped — the control is the word itself */
-.cyc{ background:none; border:0; font:inherit; font-size:21px; font-weight:500; color:var(--ink);
+.cyc{ background:none; border:0; font:inherit; font-size:var(--t-lead); font-weight:500; color:var(--ink);
   cursor:pointer; padding:14px 0; margin:-14px 0; }   /* hit area grows, row height does not */
 .cyc:active{ opacity:.5; }
 .setrow.stack{ display:block; padding-bottom:0; }   /* the field carries its own 12px — keeps the hairline centered between rows */
 .lg-seg{ width:100%; margin:var(--s-2) 0; }   /* flush right on phones; 12+12 below matches the hairline rows' 24px rhythm */
 .setrow.stack .searchbar{ margin:0; }
-.setrow.stack .searchbar input{ font-size:21px; font-weight:500; padding:12px 0; }
+.setrow.stack .searchbar input{ font-size:var(--t-lead); font-weight:500; padding:12px 0; }
 .data-list{ display:flex; flex-direction:column; align-items:stretch; margin-top:var(--s-5); }
-.data-list .textbtn{ text-align:left; font-size:21px; font-weight:500; padding:12px 0; min-height:var(--row); }
+.data-list .textbtn{ text-align:left; font-size:var(--t-lead); font-weight:500; padding:12px 0; min-height:var(--row); }
 .data-list .textbtn + .textbtn{ border-top:1px solid var(--hair-soft); }
 /* destructive arm state: ink and heavy, never red, never a dialog */
 .textbtn.armed{ color:var(--ink); }
-.foot{ margin-top:var(--s-5); font-size:14px; color:var(--muted); }
+.foot{ margin-top:var(--s-5); font-size:var(--t-label); color:var(--muted); }
 /* the keyboard caption exists only where a keyboard does — same rule as the
    session's "space" hint; a coarse-pointer phone never sees it */
 .keyline{ display:none; margin-top:var(--s-5); font-size:var(--t-label); font-weight:500; color:var(--muted); }
@@ -808,31 +841,31 @@ sub,sup{ font-size:max(.68em, 11px); }
 .gcur{ margin:var(--s-3) 0 var(--s-4); }
 .gcur .gname .mfrac > span{ padding:0 .24em; }
 .gcur .k{ display:block; margin-bottom:4px; }
-.gcur .gname{ font-size:clamp(30px,9vw,40px); font-weight:430; letter-spacing:-.02em; line-height:1.22; color:var(--ink); }
-.gcur .gname.gsm{ font-size:clamp(21px,6.4vw,28px); line-height:1.32; letter-spacing:-.012em; }
-.gcur .gname.gxs{ font-size:clamp(18px,5.2vw,23px); line-height:1.38; letter-spacing:-.006em; }
+.gcur .gname{ font-size:var(--t-act); font-weight:460; letter-spacing:-.02em; line-height:1.22; color:var(--ink); }
+.gcur .gname.gsm{ font-size:var(--t-option); line-height:1.32; letter-spacing:-.012em; }
+.gcur .gname.gxs{ font-size:var(--t-lead); line-height:1.38; letter-spacing:-.006em; }
 .gline{ display:flex; flex-direction:column; }
 .gline .gap{ position:relative; display:block; width:100%; height:46px; background:none; border:0; padding:0; cursor:pointer; }
 .gline .gap::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:var(--hair); }
 /* a slot must look like a slot: a small + names every insertion point, and it
    has to survive a bright phone outdoors — the hairline alone did not */
 .gline .gap::after{ content:"+"; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  font-size:17px; font-weight:500; color:var(--ink-soft); background:var(--ground); padding:0 9px; line-height:1; }
+  font-size:var(--t-body); font-weight:500; color:var(--ink-soft); background:var(--ground); padding:0 9px; line-height:1; }
 .gline .gap:active::before{ height:2px; background:var(--ink); }
 @media (hover:hover){ .gline .gap:hover::before{ background:var(--ink-soft); } .gline .gap:hover::after{ color:var(--ink); } }
 .grow{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
-.grow .gname{ font-size:clamp(19px,5.4vw,23px); font-weight:430; color:var(--ink); min-width:0; }
-.grow .gval{ font-size:17px; font-weight:500; color:var(--muted); white-space:nowrap; }
+.grow .gname{ font-size:var(--t-option); font-weight:460; color:var(--ink); min-width:0; }
+.grow .gval{ font-size:var(--t-body); font-weight:500; color:var(--muted); white-space:nowrap; }
 .grow.miss .gname{ color:var(--muted); }
 
 /* the board: a field of tappable expressions, whitespace only — text as big
    as three columns allow, centered like the game boards it is modeled on */
 .board{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px 12px; margin-top:var(--s-4); align-items:start; }
 .board .tile{ background:none; border:0; padding:12px 2px; min-height:52px; font:inherit;
-  font-size:clamp(17px,5.2vw,22px); font-weight:430; color:var(--ink-soft); cursor:pointer;
+  font-size:var(--t-lead); font-weight:460; color:var(--ink-soft); cursor:pointer;
   text-align:center; line-height:1.22; font-variant-numeric:tabular-nums;
   min-width:0; overflow-wrap:break-word; hyphens:auto;   /* long terms wrap, never widen */
-  transition:opacity .12s ease; }
+  transition:opacity var(--d-fast) ease; }
 /* the board's prompt sits centered over its centered field */
 .bcur{ text-align:center; }
 /* long expressions take two wide columns — equations never break mid-paren */
@@ -851,16 +884,16 @@ sub,sup{ font-size:max(.68em, 11px); }
 .mcols.prose{ grid-template-columns:minmax(0,.74fr) minmax(0,1.26fr); }
 .mhead{ margin:0 0 12px; align-self:end; }
 .mrow{ display:block; width:100%; text-align:left; background:none; border:0; padding:17px 0; min-height:52px;
-  border-top:1px solid var(--hair-soft); font:inherit; font-size:clamp(18px,5vw,22px); font-weight:430; line-height:1.32;
-  color:var(--ink-soft); cursor:pointer; transition:opacity .12s ease; }
+  border-top:1px solid var(--hair-soft); font:inherit; font-size:var(--t-lead); font-weight:460; line-height:1.32;
+  color:var(--ink-soft); cursor:pointer; transition:opacity var(--d-fast) ease; }
 /* the two columns are one grid now, so a pair shares a row band and the
    sixth definition sits beside the sixth term instead of 519px below it */
 .mrow0{ border-top:0; }
-.mrow:active{ opacity:.55; }
+.mrow:active{ opacity:.5; }
 .mrow.sel{ color:var(--ink); }
 /* a wrong pair recedes for a beat — the miss has to be visible without a counter */
 .mrow.miss{ opacity:.26; }
-.mrow.done{ color:var(--muted); font-weight:480; text-decoration:line-through; text-decoration-thickness:1px; }
+.mrow.done{ color:var(--muted); font-weight:500; text-decoration:line-through; text-decoration-thickness:1px; }
 
 .tgwrap{ display:flex; margin:var(--s-2) 0; }
 .tg{ width:min(92vw, 480px, 148vh); height:auto; }
@@ -960,35 +993,35 @@ sub,sup{ font-size:max(.68em, 11px); }
 /* a screen arrives once: heads and heroes rise, the first rows follow in a
    short wave and the rest come with them. A screen re-rendered under your
    hands (.screen.still, below) and the standing rail (.list.still) hold still. */
-.head, .dhero{ animation:riseIn .26s cubic-bezier(.32,.72,0,1) both; }
-.act{ animation:riseIn .24s cubic-bezier(.32,.72,0,1) both .03s; }
-.list:not(.still) > li{ animation:riseIn .28s cubic-bezier(.32,.72,0,1) both; }
+.head, .dhero{ animation:riseIn var(--d-base) var(--ease) both; }
+.act{ animation:riseIn var(--d-base) var(--ease) both .03s; }
+.list:not(.still) > li{ animation:riseIn var(--d-base) var(--ease) both; }
 .list:not(.still) > li:nth-child(2){ animation-delay:.025s; }
 .list:not(.still) > li:nth-child(3){ animation-delay:.05s; }
 .list:not(.still) > li:nth-child(4){ animation-delay:.075s; }
 .list:not(.still) > li:nth-child(n+5){ animation-delay:.1s; }
-.modes .textbtn{ animation:riseIn .26s cubic-bezier(.32,.72,0,1) both; }
+.modes .textbtn{ animation:riseIn var(--d-base) var(--ease) both; }
 .modes .textbtn:nth-child(2){ animation-delay:.025s; }
 .modes .textbtn:nth-child(3){ animation-delay:.05s; }
 .modes .textbtn:nth-child(n+4){ animation-delay:.075s; }
-.setgroup .setrow{ animation:riseIn .26s both; }
+.setgroup .setrow{ animation:riseIn var(--d-base) var(--ease) both; }
 .setgroup .setrow:nth-child(2){ animation-delay:.03s; }
 .setgroup .setrow:nth-child(n+3){ animation-delay:.06s; }
-.data-list .textbtn{ animation:riseIn .26s both .06s; }
-.reqwrap, .foot{ animation:riseIn .26s both .08s; }
-.ulabel{ animation:riseIn .24s both; }
+.data-list .textbtn{ animation:riseIn var(--d-base) var(--ease) both .06s; }
+.reqwrap, .foot{ animation:riseIn var(--d-base) var(--ease) both .08s; }
+.ulabel{ animation:riseIn var(--d-base) var(--ease) both; }
 /* progress bars grow up from the baseline */
 @keyframes barUp{ from{ transform:scaleY(0); } }
-.spark i{ animation:barUp .55s cubic-bezier(.32,.72,0,1) both; transform-origin:bottom; }
+.spark i{ animation:barUp var(--d-slow) var(--ease) both; transform-origin:bottom; }
 .spark i:nth-child(odd){ animation-delay:.05s; }
 .spark i:last-child{ animation-delay:.16s; }
 
 /* the request line: a quiet composer, hairline for a floor; the trigger sits
    in the same 21px row voice as the data actions above it */
-.reqwrap > .textbtn{ font-size:21px; padding:12px 0; min-height:var(--row); }
+.reqwrap > .textbtn{ font-size:var(--t-lead); padding:12px 0; min-height:var(--row); }
 .reqbox{ margin-top:2px; }
 .reqbox textarea{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--hair);
-  padding:10px 0; font:inherit; font-size:19px; color:var(--ink); resize:none; line-height:1.4; }
+  padding:10px 0; font:inherit; font-size:var(--t-lead); color:var(--ink); resize:none; line-height:1.4; }
 .reqbox textarea::placeholder{ color:var(--muted); }
 .reqbox textarea:focus{ border-bottom-color:var(--ink-soft); }   /* same: :focus-visible owns the ring */
 
@@ -996,7 +1029,7 @@ sub,sup{ font-size:max(.68em, 11px); }
   overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0; }
 /* visible only once a keyboard reaches it */
 .skip{ position:absolute; left:-9999px; top:0; z-index:60; padding:10px 14px;
-  background:var(--wall); color:var(--ink); font:inherit; font-size:15px; }
+  background:var(--wall); color:var(--ink); font:inherit; font-size:var(--t-label); }
 .skip:focus{ left:12px; top:12px; outline:2px solid var(--ink); outline-offset:2px; }
 
 /* --- motion: things arrive, they never pop ------------------------------- */
@@ -1004,8 +1037,8 @@ sub,sup{ font-size:max(.68em, 11px); }
    and while it slides, its rows keep still: one motion at a time */
 @keyframes slideFwd{ from{ opacity:0; transform:translateX(28px); } }
 @keyframes slideBack{ from{ opacity:0; transform:translateX(-28px); } }
-.screen.fwd{ animation:slideFwd .27s cubic-bezier(.32,.72,0,1) both; }
-.screen.back{ animation:slideBack .27s cubic-bezier(.32,.72,0,1) both; }
+.screen.fwd{ animation:slideFwd var(--d-base) var(--ease) both; }
+.screen.back{ animation:slideBack var(--d-base) var(--ease) both; }
 .screen.fwd :is(.head,.dhero,.act,.list > li,.modes .textbtn,.setgroup .setrow,.data-list .textbtn,.reqwrap,.foot,.ulabel,.spark i),
 .screen.back :is(.head,.dhero,.act,.list > li,.modes .textbtn,.setgroup .setrow,.data-list .textbtn,.reqwrap,.foot,.ulabel,.spark i),
 /* …and the same screen drawn again — a grade, a tick, a toggle, a filter, the
@@ -1013,24 +1046,16 @@ sub,sup{ font-size:max(.68em, 11px); }
 .screen.still :is(.head,.dhero,.act,.list > li,.modes .textbtn,.setgroup .setrow,.data-list .textbtn,.reqwrap,.foot,.ulabel,.spark i){ animation:none; }
 @keyframes riseIn{ from{ opacity:0; transform:translateY(9px); } to{ opacity:1; transform:none; } }
 @keyframes dotPop{ 0%{ r:5; } 45%{ r:9; } 100%{ r:7; } }
-.gcur.swap .gname{ animation:riseIn .24s cubic-bezier(.32,.72,0,1) both; }
-.board.deal .tile{ animation:riseIn .34s cubic-bezier(.32,.72,0,1) both; }
-.choices.deal .choice{ animation:riseIn .28s cubic-bezier(.32,.72,0,1) both; }
-.mcols.deal .mrow{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
-.board.deal .tile:nth-child(2), .choices.deal .choice:nth-child(2){ animation-delay:.03s; }
-.board.deal .tile:nth-child(3), .choices.deal .choice:nth-child(3){ animation-delay:.06s; }
-.board.deal .tile:nth-child(4), .choices.deal .choice:nth-child(4){ animation-delay:.09s; }
-.board.deal .tile:nth-child(5){ animation-delay:.12s; }
-.board.deal .tile:nth-child(6){ animation-delay:.15s; }
-.board.deal .tile:nth-child(7){ animation-delay:.18s; }
-.board.deal .tile:nth-child(8){ animation-delay:.21s; }
-.board.deal .tile:nth-child(9){ animation-delay:.24s; }
-.board.deal .tile:nth-child(10){ animation-delay:.27s; }
-.board.deal .tile:nth-child(11){ animation-delay:.3s; }
-.board.deal .tile:nth-child(12){ animation-delay:.33s; }
+.gcur.swap .gname{ animation:riseIn var(--d-base) var(--ease) both; }
+.board.deal .tile{ animation:riseIn var(--d-slow) var(--ease) both; }
+.choices.deal .choice{ animation:riseIn var(--d-base) var(--ease) both; }
+.mcols.deal .mrow{ animation:riseIn var(--d-base) var(--ease) both; }
+/* each tile and choice carries its own index (--i) from the markup, and
+   the wave is one rule on it — it used to be eleven counted-out rules */
+.board.deal .tile, .choices.deal .choice{ animation-delay:calc(var(--i, 0) * .03s); }
 .uc-dot.on{ animation:dotPop .32s ease-out both; }
-.done-hero .v{ animation:riseIn .3s cubic-bezier(.32,.72,0,1) both; }
-.grow.reveal{ animation:riseIn .26s cubic-bezier(.32,.72,0,1); }
+.done-hero .v{ animation:riseIn var(--d-slow) var(--ease) both; }
+.grow.reveal{ animation:riseIn var(--d-base) var(--ease); }
 /* a misplaced card slides to its real slot — the move needs to read as a
    correction, not as the card simply appearing where you meant it to */
 .grow.miss.reveal{ animation:nudge .34s cubic-bezier(.36,.07,.19,.97); }
@@ -1068,6 +1093,13 @@ sub,sup{ font-size:max(.68em, 11px); }
 /* --- accessibility ---------------------------------------------------------- */
 :focus-visible{ outline:2px solid var(--ink); outline-offset:3px; border-radius:6px; }
 
+/* a pointer that hovers gets one cue: the thing under it lifts to ink.
+   Nothing moves, nothing tints — the same shade step a tap gives. */
+@media (hover:hover) and (pointer:fine){
+  .ledger:not(.fc):hover .lname, .qrow:hover .qq, .textbtn:hover, .resume:hover .rl,
+  .choice:hover, .mrow:hover, .board .tile:hover, .cyc:hover{ color:var(--ink); }
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
 }
@@ -1081,7 +1113,7 @@ sub,sup{ font-size:max(.68em, 11px); }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --wall:#161618; } }
 :root[data-theme="dark"]{ --wall:#161618; }
 
-.book{ font-size:16px; line-height:1.5; letter-spacing:0; }
+.book{ font-size:var(--t-body); line-height:1.5; letter-spacing:0; }
 .book h1,.book h2,.book h3,.book h4,.book p,.book ul,.book ol{ margin:0; }
 .book ul,.book ol{ padding-left:1.15em; }
 .book li{ margin:0; } .book li+li{ margin-top:4px; }
@@ -1103,21 +1135,21 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book pre .cl{ display:block; padding-left:2.5ch; text-indent:-2.5ch; }
 .book a{ color:inherit; text-underline-offset:3px; text-decoration-thickness:1px; text-decoration-color:var(--hair); }
 .book button{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; text-align:left; cursor:pointer; }
-.book .eyebrow{ font-size:13.5px; font-weight:650; color:var(--ink-soft); letter-spacing:.01em; }
-.book .note{ font-size:13.5px; color:var(--ink-soft); line-height:1.45; max-width:62ch; }
-.book .lede{ font-size:clamp(16px,2.2vw,18px); line-height:1.55; color:var(--ink); max-width:62ch; }
+.book .eyebrow{ font-size:var(--t-caption); font-weight:650; color:var(--ink-soft); letter-spacing:.01em; }
+.book .note{ font-size:var(--t-caption); color:var(--ink-soft); line-height:1.45; max-width:62ch; }
+.book .lede{ font-size:var(--t-body); line-height:1.55; color:var(--ink); max-width:62ch; }
 .book .stack{ display:flex; flex-direction:column; gap:var(--s-3); }
 .book .stack-l{ display:flex; flex-direction:column; gap:var(--s-5); }
 .book .page{ display:flex; flex-direction:column; gap:var(--s-4); padding-bottom:var(--s-4); }
 .book .page>h2,.book .phase>h2{ font-size:clamp(26px,5.4vw,38px); font-weight:500; letter-spacing:-.025em; line-height:1.12; text-wrap:balance; }
 .book .row{ display:flex; flex-direction:column; gap:10px; border-top:1px solid var(--hair-soft); padding-top:18px; }
-.book .row h3{ font-size:clamp(19px,3.4vw,22px); font-weight:600; letter-spacing:-.018em; line-height:1.22; }
-.book .gk{ font-size:12.5px; font-weight:680; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
-.book .learn li{ font-size:15.5px; line-height:1.5; }
+.book .row h3{ font-size:var(--t-lead); font-weight:650; letter-spacing:-.018em; line-height:1.22; }
+.book .gk{ font-size:var(--t-caption); font-weight:650; letter-spacing:.01em; color:var(--muted); }
+.book .learn li{ font-size:var(--t-body); line-height:1.5; }
 .book details{ border-top:1px solid var(--hair-soft); padding:10px 0; }
-.book summary{ cursor:pointer; list-style:none; font-size:15.5px; line-height:1.5; font-weight:600; }
+.book summary{ cursor:pointer; list-style:none; font-size:var(--t-body); line-height:1.5; font-weight:650; }
 .book summary::-webkit-details-marker{ display:none; }
-.book details .a{ margin-top:8px; font-size:15.5px; color:var(--ink-soft); max-width:68ch; }
+.book details .a{ margin-top:8px; font-size:var(--t-body); color:var(--ink-soft); max-width:68ch; }
 .book details[open] summary{ color:var(--ink); }
 
 /* topline: where you are, and the rung you are reading at */
@@ -1128,7 +1160,7 @@ sub,sup{ font-size:max(.68em, 11px); }
   display:flex; justify-content:space-between; align-items:baseline; gap:22px 20px; flex-wrap:wrap;
   margin:calc(-1 * var(--toppad)) 0 4px;
   padding:var(--toppad) 0 10px;
-  border-bottom:1px solid var(--hair-soft); font-size:13.5px; font-weight:650; color:var(--ink-soft); line-height:1.3; }
+  border-bottom:1px solid var(--hair-soft); font-size:var(--t-caption); font-weight:650; color:var(--ink-soft); line-height:1.3; }
 /* "Reading at: High school · All six levels" needs 290px; at 280 the second
    half ran off the edge, because the only wrap point was before .now */
 .book .topline .now{ color:var(--ink); display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; }
@@ -1141,14 +1173,14 @@ sub,sup{ font-size:max(.68em, 11px); }
    made the breadcrumb overlap the all-levels word on a wrapped line */
 .book .topline .pos::after{ content:""; position:absolute; inset:-10px -8px; }
 .book .topline .pos .cv{ flex:none; font-size:1.35em; line-height:0.8; }
-.book .topline .pos:active{ opacity:.55; }
+.book .topline .pos:active{ opacity:.5; }
 
 /* the ladder: head, six rungs, the side, the walkthrough */
 .book .ladder{ display:flex; flex-direction:column; gap:var(--s-3); }
 .book .ladder>.head{ display:flex; flex-direction:column; gap:var(--s-3); }
-.book .ladder h3.title,.book .res h3.title{ font-size:clamp(24px,4.6vw,34px); font-weight:520; letter-spacing:-.022em; line-height:1.16; text-wrap:balance; }
+.book .ladder h3.title,.book .res h3.title{ font-size:clamp(24px,4.6vw,34px); font-weight:500; letter-spacing:-.022em; line-height:1.16; text-wrap:balance; }
 .book .hd{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; }
-.book .chk{ display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:650; color:var(--ink-soft); padding:11px 0; white-space:nowrap; user-select:none; }
+.book .chk{ display:inline-flex; align-items:center; gap:8px; font-size:var(--t-caption); font-weight:650; color:var(--ink-soft); padding:11px 0; white-space:nowrap; user-select:none; }
 .book .chk i{ width:18px; height:18px; border:1.5px solid var(--hair); border-radius:5px; background:var(--wall); display:grid; place-content:center; }
 .book .chk i::before{ content:""; width:10px; height:10px; border-radius:2px; background:var(--ink); transform:scale(0); transition:transform .12s ease; }
 .book .chk.on i::before{ transform:scale(1); }
@@ -1156,11 +1188,13 @@ sub,sup{ font-size:max(.68em, 11px); }
 /* a phase's Done when, as ticks: the box, then the line it stands for */
 /* the parts of a long page, one line, each a jump */
 .book .jumps{ display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; margin-top:6px; }
-.book .jumps .jl{ font-size:12.5px; font-weight:600; color:var(--muted); letter-spacing:.02em; text-transform:uppercase; }
-.book .jumps .jump{ background:none; border:0; padding:4px 0; font:inherit; font-size:14.5px; font-weight:600; color:var(--ink-soft); cursor:pointer; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:4px; }
+.book .jumps .jl{ font-size:var(--t-caption); font-weight:650; color:var(--muted); letter-spacing:.01em; }
+.book .jumps .jump{ position:relative; background:none; border:0; padding:4px 0; font:inherit; font-size:var(--t-label); font-weight:650; color:var(--ink-soft); cursor:pointer; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:4px; }
+.book .jumps .jump::after{ content:""; position:absolute; inset:-8px -10px; }
 .book .jumps .jump:active{ opacity:.5; }
 /* a lesson's relations: inline links in a note */
-.book .lnk{ background:none; border:0; padding:0; font:inherit; color:var(--ink-soft); cursor:pointer; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:4px; }
+.book .lnk{ position:relative; background:none; border:0; padding:0; font:inherit; color:var(--ink-soft); cursor:pointer; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:4px; }
+.book .lnk::after{ content:""; position:absolute; inset:-10px -6px; }
 .book .lnk:active{ opacity:.5; }
 .book .cklist{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
 .book .cklist li{ display:flex; gap:12px; align-items:flex-start; }
@@ -1176,28 +1210,28 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book.all .lvl .sub{ color:var(--ink-soft); }
 .book.all .lvl.cur{ --lc:var(--ink); }
 .book.all .lvl.cur .sub{ color:var(--ink); }
-.book .lvl .sub{ font-size:13.5px; font-weight:680; color:var(--lc); }
-.book .lvl p{ font-size:16px; line-height:1.55; max-width:68ch; }
-.book .lvl.k5 p{ font-size:clamp(17px,2.3vw,19px); line-height:1.5; }
-.book .lvl .try{ color:var(--ink); font-size:15.5px; }
-.book .lvl .try b{ font-weight:680; }
+.book .lvl .sub{ font-size:var(--t-caption); font-weight:650; color:var(--lc); }
+.book .lvl p{ font-size:var(--t-body); line-height:1.55; max-width:68ch; }
+.book .lvl.k5 p{ font-size:var(--t-body); line-height:1.5; }
+.book .lvl .try{ color:var(--ink); font-size:var(--t-body); }
+.book .lvl .try b{ font-weight:650; }
 .book .side{ min-width:0; }
-.book .mode{ padding:12px 0; font-size:14px; font-weight:640; color:var(--ink-soft); }
+.book .mode{ padding:12px 0; font-size:var(--t-label); font-weight:650; color:var(--ink-soft); }
 .book .mode:active{ opacity:.5; }
 .book .walk ol{ display:flex; flex-direction:column; gap:28px; padding-left:0; list-style:none; counter-reset:step; }
 .book .walk li.step{ display:flex; flex-direction:column; gap:12px; border-top:1px solid var(--hair-soft); padding-top:18px; counter-increment:step; }
 .book .walk li.step:first-child{ border-top:0; padding-top:0; }
 .book .walk .pre{ display:flex; flex-direction:column; gap:8px; }
-.book .walk .pre p{ font-size:15.5px; line-height:1.55; max-width:70ch; }
+.book .walk .pre p{ font-size:var(--t-body); line-height:1.55; max-width:70ch; }
 .book .walk .pre .gk{ color:var(--ink); }
-.book .walk .do{ font-size:16px; line-height:1.5; max-width:70ch; }
-.book .walk .do b{ font-weight:680; }
+.book .walk .do{ font-size:var(--t-body); line-height:1.5; max-width:70ch; }
+.book .walk .do b{ font-weight:650; }
 .book .walk .do b::before{ content:counter(step) ". "; }
 .book .walk pre{ margin-top:0; white-space:pre-wrap; overflow-wrap:anywhere; }
 .book .walk .code{ display:flex; flex-direction:column; gap:12px; min-width:0; }
 .book .walk .ln ul{ list-style:none; padding:0; display:flex; flex-direction:column; gap:8px; }
-.book .walk .ln li{ display:flex; flex-direction:column; gap:2px; font-size:14.5px; line-height:1.45; }
-.book .walk .ln li code{ font-size:12.5px; color:var(--ink); white-space:pre-wrap; word-break:break-word; }
+.book .walk .ln li{ display:flex; flex-direction:column; gap:2px; font-size:var(--t-label); line-height:1.45; }
+.book .walk .ln li code{ font-size:var(--t-caption); color:var(--ink); white-space:pre-wrap; word-break:break-word; }
 .book .walk .ln li span{ color:var(--ink-soft); }
 
 /* a file's contract on a Build page: the path, what kind of file, then the
@@ -1205,71 +1239,71 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book .fb{ display:flex; flex-direction:column; gap:10px; border-top:1px solid var(--hair-soft); padding-top:16px; }
 .book .fbh{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; }
 .book .fbh .fn{ font:600 15px/1.35 ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink); letter-spacing:0; overflow-wrap:anywhere; }
-.book .fbh .ft{ font-size:13px; font-weight:600; color:var(--ink-soft); }
-.book .fb p,.book .fb li,.book .row.build>p{ font-size:15.5px; line-height:1.5; max-width:72ch; }
+.book .fbh .ft{ font-size:var(--t-caption); font-weight:650; color:var(--ink-soft); }
+.book .fb p,.book .fb li,.book .row.build>p{ font-size:var(--t-body); line-height:1.5; max-width:72ch; }
 .book .fb .gk{ margin-top:4px; }
 .book .fb pre,.book .phase pre{ white-space:pre-wrap; overflow-wrap:anywhere; }
 
 /* resources: title links out, meta, rungs, the study guide */
 .book .res{ display:flex; flex-direction:column; gap:12px; }
 .book .res h3.title a{ text-decoration-color:var(--hair); }
-.book .res .meta{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:13.5px; color:var(--muted); align-items:center; }
-.book .res .meta .cost.free{ color:var(--ink); font-weight:600; }
-.book .res .eyebrow.why{ font-weight:600; }
+.book .res .meta{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:var(--t-caption); color:var(--muted); align-items:center; }
+.book .res .meta .cost.free{ color:var(--ink); font-weight:650; }
+.book .res .eyebrow.why{ font-weight:650; }
 .book .res .lvls{ gap:10px; }
 .book details.guide{ border-top:0; border-left:2px solid var(--hair); padding:2px 0 2px 16px; margin-top:2px; }
-.book details.guide>summary{ font-size:14px; font-weight:650; color:var(--ink-soft); display:flex; gap:10px; align-items:baseline; }
-.book details.guide>summary::after{ content:'show'; color:var(--muted); font-weight:500; font-size:13px; }
+.book details.guide>summary{ font-size:var(--t-label); font-weight:650; color:var(--ink-soft); display:flex; gap:10px; align-items:baseline; padding:12px 0; min-height:44px; }
+.book details.guide>summary::after{ content:'show'; color:var(--muted); font-weight:500; font-size:var(--t-caption); }
 .book details.guide[open]>summary::after{ content:'hide'; }
 .book details.guide[open]>summary{ color:var(--ink); }
 .book .guide .gb{ display:flex; flex-direction:column; gap:16px; padding-top:12px; max-width:72ch; }
 .book .wgroup .gb{ display:flex; flex-direction:column; padding-top:6px; max-width:72ch; }
 .book .wgroup .term[hidden]{ display:none; }
 .book .stack .searchbar{ margin-bottom:0; }
-.book .guide p{ font-size:15.5px; line-height:1.55; }
+.book .guide p{ font-size:var(--t-body); line-height:1.55; }
 .book .guide ol,.book .guide ul{ display:flex; flex-direction:column; gap:9px; padding-left:1.25em; }
-.book .guide li{ font-size:15.5px; line-height:1.5; }
-.book .guide pre{ font-size:13px; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+.book .guide li{ font-size:var(--t-body); line-height:1.5; }
+.book .guide pre{ font-size:var(--t-caption); line-height:1.5; white-space:pre-wrap; word-break:break-word; }
 .book .guide .prac{ border-left:2px solid var(--ink); padding-left:12px; }
-.book .guide .prac b{ font-weight:680; }
+.book .guide .prac b{ font-weight:650; }
 
 /* words used here: every term, explained at every rung, in place */
-.book details.words>summary .cnt{ color:var(--muted); font-weight:500; font-size:13px; margin-left:8px; }
+.book details.words>summary .cnt{ color:var(--muted); font-weight:500; font-size:var(--t-caption); margin-left:8px; }
 .book .words .gb{ gap:0; padding-top:6px; max-width:none; }
 .book .term{ border-top:1px solid var(--hair-soft); }
 .book .term:first-child{ border-top:0; }
 .book .tq{ display:flex; flex-direction:column; gap:2px; width:100%; padding:10px 0; }
-.book .tq .k{ font-size:15.5px; font-weight:600; color:var(--ink); letter-spacing:-.01em; }
-.book .tq .d{ font-size:14.5px; color:var(--ink-soft); line-height:1.45; max-width:68ch; }
-.book .tq:active{ opacity:.55; }
+.book .tq .k{ font-size:var(--t-body); font-weight:650; color:var(--ink); letter-spacing:-.01em; }
+.book .tq .d{ font-size:var(--t-label); color:var(--ink-soft); line-height:1.45; max-width:68ch; }
+.book .tq:active{ opacity:.5; }
 .book .tm{ position:relative; font:inherit; color:inherit; text-decoration:underline dotted; text-decoration-color:var(--ink); text-underline-offset:3px; text-decoration-thickness:1.5px; }
 /* a one-character term is a 5px target inline — the mark carries its own */
 .book .tm::after{ content:""; position:absolute; inset:-11px -7px; }
 .book .tm.on{ text-decoration-style:solid; }
 .book .tmx{ display:flex; flex-direction:column; gap:10px; margin:8px 0 14px; padding:10px 0 10px 14px; border-left:2px solid var(--ink); }
-.book .tmx .tt{ font-size:13.5px; font-weight:680; color:var(--ink); }
-.book .tmx .d{ font-size:15.5px; color:var(--ink); }
-.book .tmx .lv{ font-size:14.5px; line-height:1.5; color:var(--ink-soft); max-width:68ch; }
+.book .tmx .tt{ font-size:var(--t-caption); font-weight:650; color:var(--ink); }
+.book .tmx .d{ font-size:var(--t-body); color:var(--ink); }
+.book .tmx .lv{ font-size:var(--t-label); line-height:1.5; color:var(--ink-soft); max-width:68ch; }
 .book .tmx .lv.cur{ color:var(--ink); }
-.book .tmx .lk{ font-weight:680; color:var(--lc,var(--ink-soft)); margin-right:6px; }
+.book .tmx .lk{ font-weight:650; color:var(--lc,var(--ink-soft)); margin-right:6px; }
 .book .term .tmx{ margin:0 0 10px; }
 
 /* lists: lessons of a phase, the pager */
 /* the only route into a lesson: the gap becomes padding, so every row is the
    same height and none of them is a 22px target 10px from its neighbour */
 .book .plist{ display:flex; flex-direction:column; gap:0; list-style:none; padding:0; margin:0; }
-.book .plist .pl{ display:flex; gap:10px; align-items:baseline; font-size:16px; line-height:1.4;
+.book .plist .pl{ display:flex; gap:10px; align-items:baseline; font-size:var(--t-body); line-height:1.4;
   padding:11px 0; min-height:44px; }
-.book .plist .n{ font-size:12.5px; font-weight:650; color:var(--ink-soft); flex:none; min-width:5.5em; }
+.book .plist .n{ font-size:var(--t-caption); font-weight:650; color:var(--ink-soft); flex:none; min-width:5.5em; }
 .book .plist .t{ text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; text-decoration-thickness:1px; }
 .book .plist .pl.done .t{ color:var(--muted); }
-.book .plist .pl:active{ opacity:.55; }
+.book .plist .pl:active{ opacity:.5; }
 .book .pager{ display:flex; justify-content:space-between; gap:16px 28px; flex-wrap:wrap; padding-top:var(--s-3); border-top:1px solid var(--hair-soft); }
 .book .pager button{ display:flex; flex-direction:column; gap:3px; min-width:0; max-width:48%; }
 .book .pager .next{ text-align:right; margin-left:auto; align-items:flex-end; }
-.book .pager .n{ font-size:12.5px; font-weight:650; color:var(--muted); }
-.book .pager .t{ font-size:16px; font-weight:600; letter-spacing:-.012em; line-height:1.3; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; text-decoration-thickness:1px; }
-.book .pager button:active{ opacity:.55; }
+.book .pager .n{ font-size:var(--t-caption); font-weight:650; color:var(--muted); }
+.book .pager .t{ font-size:var(--t-body); font-weight:650; letter-spacing:-.012em; line-height:1.3; text-decoration:underline; text-decoration-color:var(--hair); text-underline-offset:3px; text-decoration-thickness:1px; }
+.book .pager button:active{ opacity:.5; }
 
 /* the unit page's index: phases with progress, their lessons beneath */
 .book.idx-wrap{ margin-top:var(--s-4); display:flex; flex-direction:column; gap:14px; }
@@ -1277,17 +1311,17 @@ sub,sup{ font-size:max(.68em, 11px); }
 .book .idx{ display:flex; flex-direction:column; gap:18px; list-style:none; padding:0; margin:0; }
 .book .idx>li{ display:flex; flex-direction:column; gap:6px; }
 .book .idx .ph{ display:flex; flex-direction:column; gap:2px; width:100%; }
-.book .idx .n{ font-size:13.5px; font-weight:650; color:var(--ink-soft); display:flex; justify-content:space-between; gap:12px; }
+.book .idx .n{ font-size:var(--t-caption); font-weight:650; color:var(--ink-soft); display:flex; justify-content:space-between; gap:12px; }
 .book .idx .n .pct{ font-variant-numeric:tabular-nums; color:var(--muted); }
-.book .idx .t{ font-size:clamp(17px,2.2vw,19px); font-weight:520; letter-spacing:-.015em; line-height:1.25; }
+.book .idx .t{ font-size:var(--t-body); font-weight:500; letter-spacing:-.015em; line-height:1.25; }
 .book .idx .bar{ display:block; height:2px; background:var(--hair-soft); border-radius:1px; overflow:hidden; margin-top:4px; }
 .book .idx .bar i{ display:block; height:100%; background:var(--ink); }
 .book .idx ul{ list-style:none; padding:0 0 0 14px; margin:0; display:flex; flex-direction:column; gap:0; }
-.book .idx ul button{ display:flex; flex-direction:row; gap:8px; font-size:14.5px; color:var(--ink-soft);
+.book .idx ul button{ display:flex; flex-direction:row; gap:8px; font-size:var(--t-label); color:var(--ink-soft);
   align-items:baseline; width:100%; padding:12px 0; min-height:44px; }
-.book .idx ul button .n{ font-size:12.5px; flex:none; }
+.book .idx ul button .n{ font-size:var(--t-caption); flex:none; }
 .book .idx ul button.done{ color:var(--muted); text-decoration:line-through; text-decoration-color:var(--hair); }
-.book .idx button:active{ opacity:.55; }
+.book .idx button:active{ opacity:.5; }
 
 /* the level switcher: the one glass control on a book page */
 .book .segwrap{ position:sticky; bottom:calc(env(safe-area-inset-bottom,0px) + 14px); display:flex; justify-content:center; gap:10px; align-items:center; flex-wrap:wrap;
@@ -1331,10 +1365,10 @@ sub,sup{ font-size:max(.68em, 11px); }
     .book .res>details.guide{ grid-column:2; margin-top:0; }
   }
   .book .walk .pre p,.book .walk .do{ max-width:none; }
-  .book .lvl p{ font-size:17px; max-width:none; }
+  .book .lvl p{ font-size:var(--t-body); max-width:none; }
   .book .guide .gb{ max-width:none; }
-  .book .guide p,.book .guide li{ font-size:16px; }
-  .book .learn li,.book details .a{ font-size:16px; }
+  .book .guide p,.book .guide li{ font-size:var(--t-body); }
+  .book .learn li,.book details .a{ font-size:var(--t-body); }
   .book{ --toppad:46px; }
   /* A floating pill is a phone answer: on a laptop it sat over live prose at
      every width — a code span, a "Try this" instruction, a whole paragraph —

@@ -902,7 +902,7 @@
         '<div class="gname num' + (flat(f[0]).length > 88 ? ' gsm gxs' : flat(f[0]).length > 44 ? ' gsm' : '') + '">' + fx(f[0]) + '</div></div>' +
       '<div class="board' + (wide ? ' b2' : '') + (st.anim ? ' deal' : '') + '">' + st.tiles.map(function (tl, i) {
         var cls = 'tile' + (tl.done ? ' done' : '') + (i === st.flash ? ' flash' : '');
-        return '<button class="' + cls + '" data-tile="' + i + '"' + (tl.done ? ' disabled' : '') + '>' + fx(tl.t) + '</button>';
+        return '<button class="' + cls + '" data-tile="' + i + '" style="--i:' + i + '"' + (tl.done ? ' disabled' : '') + '>' + fx(tl.t) + '</button>';
       }).join('') + '</div>',
       { session: true, keepScroll: st.i > 0 }
     );
@@ -1539,7 +1539,7 @@
     return '<div class="choices">' + q.choices.map(function (c, i) {
       var state = '';
       if (st.lock) state = c === q.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
-      return '<button class="choice num" data-gc="' + i + '"' +
+      return '<button class="choice num" data-gc="' + i + '" style="--i:' + i + '"' +
         (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
         fx(c) + '</button>';
     }).join('') + '</div>';
@@ -2243,7 +2243,7 @@
         if (st.lock) state = cl === q.r ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
         // once answered, a question that carries a reason prints it under the right choice
         var why = st.lock && q.why && cl === q.r ? '<span class="why">' + esc(q.why) + '</span>' : '';
-        return '<button class="choice num" data-gc="' + i + '"' +
+        return '<button class="choice num" data-gc="' + i + '" style="--i:' + i + '"' +
           (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' +
           fx(cl) + why + '</button>';
       }).join('') + '</div>',
@@ -2418,7 +2418,7 @@
     var ch = '<div class="choices">' + g.choices.map(function (cl, i) {
       var state = '';
       if (st.lock) state = cl === g.right ? 'right' : (i === st.wrongChoice ? 'wrong' : 'mute');
-      return '<button class="choice" data-gc="' + i + '"' +
+      return '<button class="choice" data-gc="' + i + '" style="--i:' + i + '"' +
         (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') +
         '>' + esc(cl) + '</button>';
     }).join('') + '</div>';

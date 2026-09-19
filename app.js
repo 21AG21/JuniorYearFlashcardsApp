@@ -918,7 +918,7 @@
       // these three are navigation, not modes: as a stack of 26px words they
       // pushed themselves 92px below the fold, under the tab bar, where the
       // first tap on "Starred" landed on the Search tab instead
-      '<div class="modes nav" style="margin-top:var(--s-5)">' +
+      '<div class="modes nav mt5">' +
         '<button class="textbtn" data-go="#/ten">Quick ten</button>' +
         '<button class="textbtn" data-go="#/games">Games</button>' +
         // starring a card in a session used to be a one-way trip: the star was
@@ -1027,7 +1027,7 @@
     var tableBlock = '';
     if (tables.length) {
       var tAll = 0;
-      tableBlock = '<div class="ulabel" style="margin-top:var(--s-4)">Tables</div><div class="modes">' +
+      tableBlock = '<div class="ulabel mt4">Tables</div><div class="modes">' +
         tables.map(function (u) {
           var n = S.unitStats(d, u.id).total; tAll += n;
           return modeBtn('#/cram/' + deckId + '/' + u.id, u.title + ' · ' + n, u.blurb || 'Every card, the least-known first.');
@@ -1068,7 +1068,7 @@
         });
       });
       var ckWord = nCk ? ' · ' + dCk + ' of ' + nCk + ' checks' : '';
-      where = '<div class="ulabel" style="margin-top:var(--s-4)">Reading</div>' +
+      where = '<div class="ulabel mt4">Reading</div>' +
         (nx ? '<button class="act" data-go="#/d/' + deckId + '/l/' + nx.id + '">' + (read ? 'Continue' : 'Start reading') + '</button>' +
               '<div class="actsub">' + esc('Phase ' + nx.pn + ' · ' + lessonWord(nx) + ' · ') + mdT(nx.title) +
               (read ? esc(' · ' + read + ' of ' + bk.order.length + ' read') : '') + esc(dCk ? ckWord : '') + '</div>'
@@ -1079,11 +1079,11 @@
     // the line over the name: the countdown while the exam is ahead; once it
     // has passed, the way to stop the pile — and once stopped, what is paused
     var topLine = over
-      ? '<div class="ulabel" style="margin-top:0">' + esc('Exam over' + (st.paused ? ' · ' + plural(st.paused, 'card') + ' paused' : '')) + '</div>'
+      ? '<div class="ulabel mt0">' + esc('Exam over' + (st.paused ? ' · ' + plural(st.paused, 'card') + ' paused' : '')) + '</div>'
       : examPast
-      ? '<div class="ulabel" style="margin-top:0">' + esc('Exam was ' + examName(deckId) + ' · ') +
+      ? '<div class="ulabel mt0">' + esc('Exam was ' + examName(deckId) + ' · ') +
         '<button class="pace" data-deck-over="' + deckId + '">clear what\'s due</button></div>'
-      : (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '');
+      : (pl ? '<div class="ulabel mt0">' + esc(pl) + '</div>' : '');
     mount(
       topLine +
       cl +
@@ -1118,8 +1118,8 @@
       '</div>' +
       tableBlock +
       where +
-      (about ? '<ul class="list" style="margin-top:var(--s-4);gap:0"><li><div class="ulabel">Before you start</div></li>' + about + '</ul>' : '') +
-      '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>' +
+      (about ? '<ul class="list mt4 gap0"><li><div class="ulabel">Before you start</div></li>' + about + '</ul>' : '') +
+      '<ul class="list mt4 gap0">' + units + '</ul>' +
       // when the test is done the pile has to be stoppable from here, exam
       // date or none — a course with no date on file (the SAT) has one too
       (over ? '' : '<div class="data-list"><button class="textbtn quiet" data-deck-over="' + deckId + '">' +
@@ -1169,7 +1169,7 @@
     if (!plan) return go('#/d/' + deckId);
     curDeckId = lastDeckId = deckId;
     var set = S.getSettings();
-    var head = '<div class="ulabel" style="margin-top:0">' + esc(nice(d) + ' · Exam ' + examName(deckId) + (plan.over ? '' : ' · in ' + plural(plan.days, 'day'))) + '</div>' +
+    var head = '<div class="ulabel mt0">' + esc(nice(d) + ' · Exam ' + examName(deckId) + (plan.over ? '' : ' · in ' + plural(plan.days, 'day'))) + '</div>' +
       '<div class="dhero"><h1 class="dnh"><button class="dn" data-back>Plan</button></h1>' +
       '<span class="dv num">' + (plan.over || !plan.left ? '' : plan.left.toLocaleString()) + '</span></div>';
     if (plan.over) return mount(head + '<div class="sub">The exam has passed. Review what is due, and the deck is still here.</div>');
@@ -1250,7 +1250,7 @@
     }).join('');
 
     mount(
-      '<div class="ulabel" style="margin-top:0">' + esc(nice(d)) + ' · Unit ' + u.n +
+      '<div class="ulabel mt0">' + esc(nice(d)) + ' · Unit ' + u.n +
         (weightText(u) ? ' · ' + esc(weightText(u)) : '') + '</div>' +
       '<div class="dhero">' +
         '<h1 class="dnh"><button class="dn" data-back>' + esc(u.title) + '</button></h1>' +
@@ -1271,7 +1271,7 @@
       // the unit in five to eight sentences, before its ninety cards: what a
       // teacher would say on the first day, drawn from the cards themselves
       (u.keys && u.keys.length
-        ? '<div class="ulabel" style="margin-top:var(--s-4)">Key ideas</div><ol class="keys">' +
+        ? '<div class="ulabel mt4">Key ideas</div><ol class="keys">' +
           u.keys.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join('') + '</ol>'
         : '') +
       bookUnitHTML(deckId, unitId) +
@@ -2306,7 +2306,7 @@
         // long prose options drop a size so four of them still read as
         // options under the question, not four paragraphs over it
         var cls = (stacked(ch.text) ? ' mathy' : '') + (T.plain(ch.text).length > 110 ? ' small' : '');
-        return '<button class="choice' + cls + '" data-pick="' + n + '"' + (state ? ' data-state="' + state + '"' : '') +
+        return '<button class="choice' + cls + '" data-pick="' + n + '" style="--i:' + n + '"' + (state ? ' data-state="' + state + '"' : '') +
           (sess.answered ? ' disabled' : '') + '>' + T.html(ch.text) + why + '</button>';
       }).join('') + '</div>';
 
@@ -2497,7 +2497,8 @@
         if (ratio > 0.55) return { ok: 'hit', text: 'close enough' };
       }
     }
-    return { ok: 'miss', text: 'you wrote "' + typed.trim().slice(0, 60) + '"' };
+    var t60 = typed.trim();
+    return { ok: 'miss', text: 'you wrote "' + (t60.length > 60 ? t60.slice(0, 59) + '\u2026' : t60) + '"' };
   }
 
   /* was `t` less than `ms` ago? A negative delta means the clock moved
@@ -2800,7 +2801,7 @@
       '<div class="done-hero">' +
         '<span class="k">Session complete</span>' +
         '<div class="v">' + total.toLocaleString() + '</div>' +
-        '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">' +
+        '<div class="sub done-sub">' +
           esc(moment) + '</div>' +
       '</div>' +
       '<div class="done-rows">' + rows + '</div>' + backRows +
@@ -3013,7 +3014,7 @@
         '</button></li>';
     }).join('');
     var paceBlock = paceRows
-      ? '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">At this pace</div><ul class="list tight">' + paceRows + '</ul>'
+      ? '<div class="k sec">At this pace</div><ul class="list tight">' + paceRows + '</ul>'
       : '';
 
     // The week ahead — but only when a week is the truth. With a pile of
@@ -3032,7 +3033,7 @@
       var when = cd === null
         ? 'not clearing at this pace'
         : cd === 0 ? 'clear today' : plural(cd, 'day') + ' to clear';
-      fcBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">The backlog</div>' +
+      fcBlock = '<div class="k sec">The backlog</div>' +
         '<ul class="list tight"><li><div class="ledger mid">' +
         '<span class="lname">Overdue</span>' +
         '<span class="lval num">' + over.toLocaleString() + '</span>' +
@@ -3049,7 +3050,7 @@
       // the bar reads against a day's session, not against the week's own
       // maximum: a full rule always means the same amount of work
       var ref = Math.max(sizeNow, Math.max.apply(null, fc));
-      fcBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">The week ahead</div>' +
+      fcBlock = '<div class="k sec">The week ahead</div>' +
         '<ul class="list tight">' + fc.map(function (n, i) {
           return '<li><div class="ledger mid fc' + (n ? '' : ' zero') + '"' +
             ' style="--fc:' + Math.round((n / ref) * 100) + '%">' +
@@ -3066,7 +3067,7 @@
     // the three units that bite back hardest — each tap is the fix, not a report
     var weak = weakBuckets(), weakBlock = '';
     if (weak.length) {
-      weakBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">Weak spots</div><ul class="list tight">' +
+      weakBlock = '<div class="k sec">Weak spots</div><ul class="list tight">' +
         weak.slice(0, 3).map(function (w) {
           return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/hard/' + w.unit.id + '">' +
             '<span class="lname">' + esc(w.unit.title) + '</span>' +
@@ -3084,7 +3085,7 @@
     // to rewrite, and only this list can tell you which you have
     var stuck = stuckCards(), stuckBlock = '';
     if (stuck.length) {
-      stuckBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">Sticking points</div>' +
+      stuckBlock = '<div class="k sec">Sticking points</div>' +
         '<ul class="list tight">' + stuck.slice(0, 3).map(function (c) {
           var d3 = S.getDeck(c.deck), u3 = d3.unitById[c.u], st3 = S.cs(c.i) || {};
           return '<li><button class="ledger mid" data-go="#/stuck">' +
@@ -3134,7 +3135,7 @@
       weakBlock +
       stuckBlock +
       spark +
-      (totals.due ? '<div style="margin-top:var(--s-5)"><button class="act" data-go="#/review">Review ' + totals.due.toLocaleString() + '</button></div>'
+      (totals.due ? '<div class="mt5"><button class="act" data-go="#/review">Review ' + totals.due.toLocaleString() + '</button></div>'
         : !totals.seen ? '<button class="textbtn" data-go="#/">Decks</button>' : '')
     );
   }
@@ -3258,7 +3259,7 @@
       '<div class="empty cap">A card at this count usually needs saying in your ' +
       'own words, not another pass. In the session the note control is on the ' +
       'card — write the version that would have worked.</div>' +
-      '<ul class="list tight still" style="margin-top:var(--s-4)">' + all.map(function (c) {
+      '<ul class="list tight still mt4">' + all.map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u], st = S.cs(c.i) || {};
         var when = dueWord(st, today);
         return '<li><button class="qrow" data-peek="' + c.i + '" aria-expanded="false">' +
@@ -3324,7 +3325,7 @@
             '<span class="scount num">' + list.length.toLocaleString() + '</span>'
           : '') +
         '<button class="textbtn quiet end" data-print>Print</button></div>' +
-      '<ul class="list tight still" style="margin-top:var(--s-4)">' + list.map(function (c) {
+      '<ul class="list tight still mt4">' + list.map(function (c) {
         var d = S.getDeck(c.deck), u = d.unitById[c.u], st = S.cs(c.i);
         var when = dueWord(st, today);
         return '<li><button class="qrow" data-peek="' + c.i + '" aria-expanded="false">' +
