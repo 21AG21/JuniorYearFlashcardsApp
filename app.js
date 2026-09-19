@@ -1248,7 +1248,8 @@
         '<span class="qq' + (known ? ' dim' : '') + '">' + T.html(c.q) + '</span>' +
         '<span class="qa" hidden>' + T.html(c.a) + '</span>' +
         (S.noteOf(c.i) ? '<span class="qn" hidden>' + esc(S.noteOf(c.i)) + '</span>' : '') +
-        '<span class="qmeta">' + esc(verb(c.v)) + (topicLabel(c) ? ' · ' + esc(topicLabel(c)) : '') + '</span>' +
+        (verb(c.v) || topicLabel(c)
+          ? '<span class="qmeta">' + esc([verb(c.v), topicLabel(c)].filter(Boolean).join(' · ')) + '</span>' : '') +
         '</button>' + rowActs(c) + '</li>';
     }).join('');
 
@@ -1263,7 +1264,9 @@
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due.toLocaleString() : 'Study') + '</button>' +
       dealLine(buildDaily({ deck: d, unit: unitId })) +
       '<div class="modes">' +
-        modeBtn('#/study/' + deckId + '/core/' + unitId, 'High-yield', MODE_DESC.core) +
+        // a table has no high-yield subset: every row is the point
+        (cards.some(function (c) { return c.c; })
+          ? modeBtn('#/study/' + deckId + '/core/' + unitId, 'High-yield', MODE_DESC.core) : '') +
         modeBtn('#/quiz/' + deckId + '/smart/' + unitId, 'Quiz', MODE_DESC.quiz) +
         modeBtn('#/cram/' + deckId + '/' + unitId, 'Cram', MODE_DESC.cram) +
         // the print sheet has existed in the stylesheet for months with no way
