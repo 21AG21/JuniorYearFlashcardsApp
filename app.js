@@ -58,6 +58,38 @@
      patched only when a number on it moved: it used to be rebuilt, and its
      rows re-run their entrance, on every card graded beside it. */
   var railHTML = '';
+
+  /* Make a standing element match new markup by changing the least it can:
+     a text node whose words moved gets new words, an attribute that differs is
+     set, and only a node whose kind changed is swapped out. Rows keep their
+     identity, so nothing re-lays out, re-animates or loses hover under the
+     pointer. Children pair up by position, which is all the rail needs — its
+     courses are a fixed list in a fixed order. */
+  function syncHTML(el, html) {
+    var tpl = document.createElement('template');
+    tpl.innerHTML = html;
+    syncNodes(el, tpl.content);
+  }
+  function syncNodes(a, b) {
+    var ac = Array.prototype.slice.call(a.childNodes), bc = Array.prototype.slice.call(b.childNodes);
+    var n = Math.max(ac.length, bc.length);
+    for (var i = 0; i < n; i++) {
+      var x = ac[i], y = bc[i];
+      if (!y) { a.removeChild(x); continue; }
+      if (!x) { a.appendChild(y); continue; }
+      if (x.nodeType !== y.nodeType || x.nodeName !== y.nodeName) { a.replaceChild(y, x); continue; }
+      if (x.nodeType !== 1) { if (x.nodeValue !== y.nodeValue) x.nodeValue = y.nodeValue; continue; }
+      for (var j = x.attributes.length - 1; j >= 0; j--) {
+        var an = x.attributes[j].name;
+        if (!y.hasAttribute(an)) x.removeAttribute(an);
+      }
+      for (var k = 0; k < y.attributes.length; k++) {
+        var at = y.attributes[k];
+        if (x.getAttribute(at.name) !== at.value) x.setAttribute(at.name, at.value);
+      }
+      syncNodes(x, y);
+    }
+  }
   function mount(html, opts) {
     var keepFocus = opts && opts.session ? focusKey() : '';
     var dir = opts && opts.session ? '' : pendingDir;
@@ -79,9 +111,11 @@
         app.innerHTML = '<div class="pane-l">' + rail + '</div>' +
           '<div class="pane-r"><div class="inner">' + shell + '</div></div>';
       } else {
-        // the rail is furniture: patched when a count on it moved, keeping
-        // its scroll; left alone otherwise
-        if (rail !== railHTML) { var y = pl.scrollTop; pl.innerHTML = rail; pl.scrollTop = y; }
+        // the rail is furniture: when a count on it moved, only that count is
+        // touched — the rows, the head and the links stand. It used to be
+        // torn down and rebuilt on every graded card, which read as the whole
+        // sidebar reloading beside each answer.
+        if (rail !== railHTML) syncHTML(pl, rail);
         inner.innerHTML = shell;
       }
       railHTML = rail;
