@@ -596,6 +596,12 @@ button.hero-tap:active{ opacity:.5; }
 .resume .rl{ font-size:var(--t-body); font-weight:500; }
 .resume .rv{ font-size:var(--t-label); color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
 .pane-l .resume .rl{ font-size:var(--t-body); }
+/* the × beside a line: this deal is not coming back. A 44px target whose
+   glyph sits on the content's right edge, quiet until the pointer is on it */
+.resumerow{ display:flex; align-items:center; gap:4px; }
+.resumerow .resume{ flex:1 1 auto; width:auto; min-width:0; }
+.resumerow .forget{ flex:none; margin-left:0; color:var(--muted); }
+@media (hover:hover) and (pointer:fine){ .resumerow .forget:hover{ color:var(--ink); } }
 /* quiet utilities under a card: Done · Undo · Star as small text */
 .sess-util{ display:flex; align-items:center; gap:10px; margin-top:var(--s-4); margin-left:-11px; }
 .sess-util .iconbtn{ margin-left:0; }

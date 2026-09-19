@@ -1935,9 +1935,12 @@
      place when a line appears */
   function resumeHTML() {
     return '<div class="resumewrap">' + pausedSessions().map(function (x) {
-      return '<button class="resume" data-go="#' + esc(x.h) + '">' +
+      return '<div class="resumerow"><button class="resume" data-go="#' + esc(x.h) + '">' +
         '<span class="rl">Continue · ' + esc(x.name) + '</span>' +
-        '<span class="rv">' + x.done + ' of ' + x.planned + '</span></button>';
+        '<span class="rv">' + x.done + ' of ' + x.planned + '</span></button>' +
+        // a deal you will not come back to: the line goes, the grades given stay
+        '<button class="iconbtn right forget" data-forget="' + esc(x.h) + '" aria-label="Clear ' + esc(x.name) + '">' +
+        '<svg aria-hidden="true"><use href="#i-close"/></svg></button></div>';
     }).join('') + '</div>';
   }
   var byId = null;
@@ -3510,7 +3513,7 @@
         'On a phone each grade prints when it would bring the card back; with a keyboard it prints its key, and the day is in the button\'s tooltip. Nothing is ever scheduled past the exam.'
       ]) +
       sec('Keeping your place', [
-        'Leave a deal for another course and it waits for you, for the day: a ' + b('Continue') + ' line on the course list and on every course page brings you back to the same card.',
+        'Leave a deal for another course and it waits for you, for the day: a ' + b('Continue') + ' line on the course list and on every course page brings you back to the same card. The × beside a line clears it.',
         'When a test is done, ' + b('Exam over') + ' on the course page stops its pile: nothing from it counts as due or is dealt by Review, and the reminder leaves it out. ' + b('Resume the schedule') + ' brings every card back as it was.',
         b('Reminder') + ', under Settings, sends one note a day to this device on the days something is due; tap it to land on Review. An iPhone or iPad sends it only to an app added to the Home Screen.',
         'Chemistry carries two tables, the polyatomic ions and the VSEPR shapes: drill either on its own or both together from the course page. They stay out of the daily deal until you have studied them.'
@@ -3774,6 +3777,12 @@
       S.setRetired(oid, true);
       var ow = 'Exam over. ' + nice(oid) + ' no longer counts.';
       announce(ow); toast(ow);
+      route(); return;
+    }
+    var fg = t.closest('[data-forget]');
+    if (fg) {
+      var fm = sessMap(); delete fm[fg.getAttribute('data-forget')]; writeSessMap(fm);
+      announce('Cleared'); toast('Cleared.');
       route(); return;
     }
     var resBtn = t.closest('[data-deck-resume]');
