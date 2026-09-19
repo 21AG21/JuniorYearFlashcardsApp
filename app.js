@@ -102,7 +102,7 @@
     // a device that cannot write is a device losing every grade you give it —
     // the store has known this all along and nothing ever said so
     var warn = S.storageFailed && S.storageFailed()
-      ? '<div class="warnline">Not saving — this browser is refusing to store progress.</div>' : '';
+      ? '<div class="warnline">Not saving. This browser is refusing to store progress.</div>' : '';
     var shell = '<div class="screen' + (dir ? ' ' + dir : '') + (still ? ' still' : '') + '">' + warn + html + '</div>';
     if (isWide()) {
       // Two full-height panes: the deck list lives on the left, every view on
@@ -228,9 +228,9 @@
       due += st.due; seen += st.seen || 0;
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
-        '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
-        (st.due ? '<span class="lsub">' + st.due.toLocaleString() + ' due</span>'
-                : S.retired(c.id) ? '<span class="lsub">exam over</span>' : '') +
+        '<span class="lval num">' + (st.due || c.count).toLocaleString() + '</span>' +
+        (st.due ? '<span class="lsub">' + esc('due · ' + plural(c.count, 'card')) + '</span>'
+                : S.retired(c.id) ? '<span class="lsub">Exam over</span>' : '') +
         '</button></li>';
     }).join('');
     var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
@@ -297,6 +297,8 @@
     toastTimer = setTimeout(function () { toastEl.classList.remove('show'); },
       Math.min(7000, Math.max(1900, String(msg).length * 85)));
   }
+  var CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var RING = '<div class="loadring" role="status" aria-label="Loading"></div>';
   var pushDepth = 0;   // in-app pushes behind us — back falls back to a parent at zero
   function go(hash) {
     var next = hash.charAt(0) === '#' ? hash : '#' + hash;
@@ -506,11 +508,11 @@
   function paceWord(d) {
     var p = corePace(d);
     if (!p) return '';
-    if (!p.left) return 'done';
+    if (!p.left) return 'Done';
     if (!p.sure) return '';
     if (p.drift <= -3) return (-p.drift) + ' days behind';
     if (p.drift >= 3) return p.drift + ' days ahead';
-    return 'on pace';
+    return 'On pace';
   }
   /* What the next week actually looks like. The app knew every card's due day
      and never said it out loud: a reader who took Saturday off had no way to
@@ -586,7 +588,7 @@
     // …and what a session actually deals when there is nothing due yet, which
     // is where "Session 30" and a screen reading "1 of 20" part company
     var head = plural(slots, 'review') + ' a session after ' + fresh + ' new' +
-      (fresh < size ? ' — with nothing due, a session is ' + fresh : '');
+      (fresh < size ? '; with nothing due, a session is ' + fresh : '');
     var drift = driftAt(size);
     if (Math.abs(drift) <= STEADY) return head + '. At this pace the pile holds steady.';
     if (drift < 0) return head + '. At this pace the pile falls by about ' +
@@ -598,7 +600,7 @@
       if (driftAt(SIZES[i]) <= STEADY) { fix = SIZES[i]; break; }
     }
     return head + '. At this pace the review pile grows by about ' + Math.round(drift) + ' a day' +
-      (fix ? ' — a session of ' + fix + ' would hold it.'
+      (fix ? '. A session of ' + fix + ' would hold it.'
            : ', and no session length here holds it: fewer new cards a day would.');
   }
 
@@ -877,8 +879,8 @@
       // second line on the rows where it is true (skill §4.1), and a course
       // that carries a book counts its pages read on the same line
       var bits = [];
-      if (st.due) bits.push(st.due.toLocaleString() + ' due');
-      else if (S.retired(c.id)) bits.push('exam over');
+      if (st.due) bits.push('due · ' + plural(c.count, 'card'));
+      else if (S.retired(c.id)) bits.push('Exam over');
       var bk = d && bookOf(c.id);
       if (bk && bk.order.length) {
         var dn = bookDone(), rd = bk.order.filter(function (id) { return dn[id]; }).length;
@@ -886,7 +888,7 @@
       }
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
-        '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
+        '<span class="lval num">' + (st.due || c.count).toLocaleString() + '</span>' +
         (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
         '</button></li>';
     }).join('');
@@ -910,7 +912,8 @@
       '<div class="head">' +
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
-        (note0.length ? '<div class="sub">' + esc(note0.join(' · ')) + '</div>' : '') +
+        (note0.length ? '<div class="sub">' + esc(note0.join(' · ')) + '</div>'
+          : !seen ? '<div class="sub">Pick a course, or start with twenty from all of them.</div>' : '') +
       '</div>' +
       resumeHTML() +
       (deal0 ? '<button class="act" data-go="#/review">Start · ' + plural(deal0, 'card') + '</button>' : '') +
@@ -941,8 +944,8 @@
     starred: 'The cards you starred, shuffled',
     due: 'Only what is due, nothing new',
     hard: 'Cards missed twice, or missed the last time',
-    all: 'A session\'s worth, shuffled from the whole deck',
-    games: 'Rounds built from this deck',
+    all: 'A session\'s worth, shuffled from the whole course',
+    games: 'Rounds built from this course',
     plan: 'The units week by week to the exam, from what is left',
     cram: 'Every card in the unit, one pass, nothing rescheduled',
     print: 'Questions and answers on paper, two columns'
@@ -974,12 +977,12 @@
     if (!d && !listed) return go('#/');
     // …and one still on its way is neither: it says so and repaints on arrival
     if (!d && S.deckPending && S.deckPending(deckId)) return mount(
-      '<div class="head"><span class="k">' + esc(nice(deckId)) + '</span><h1>Loading</h1></div>');
+      '<div class="head"><h1>' + esc(nice(deckId)) + '</h1>' + RING + '</div>');
     if (!d) return mount(
-      '<div class="head"><span class="k">' + esc(nice(deckId)) + '</span>' +
-      '<h1>Not downloaded</h1><div class="sub">This course did not load. Open it once with a connection.</div></div>' +
+      '<div class="head"><h1>' + esc(nice(deckId) + ' did not download') + '</h1>' +
+      '<div class="sub">Open it once with a connection.</div></div>' +
       '<button class="act" onclick="location.reload()">Try again</button>' +
-      '<button class="textbtn" data-back>Decks</button>');
+      '<button class="textbtn" data-back>Courses</button>');
     curDeckId = lastDeckId = deckId;
     var st = S.deckStats(d);
     // units in course order, each under a small muted label — never a header (skill §4.2)
@@ -1082,15 +1085,15 @@
       ? '<div class="ulabel mt0">' + esc('Exam over' + (st.paused ? ' · ' + plural(st.paused, 'card') + ' paused' : '')) + '</div>'
       : examPast
       ? '<div class="ulabel mt0">' + esc('Exam was ' + examName(deckId) + ' · ') +
-        '<button class="pace" data-deck-over="' + deckId + '">clear what\'s due</button></div>'
+        '<button class="pace" data-deck-over="' + deckId + '">Clear what\'s due</button></div>'
       : (pl ? '<div class="ulabel mt0">' + esc(pl) + '</div>' : '');
     mount(
-      topLine +
-      cl +
       '<div class="dhero">' +
         '<h1 class="dnh"><button class="dn" data-back>' + esc(nice(d)) + '</button></h1>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
       '</div>' +
+      topLine +
+      cl +
       resumeHTML() +
       (d.blurb ? '<div class="dblurb">' + esc(d.blurb) + '</div>' : '') +
       (over
@@ -1172,7 +1175,7 @@
     var head = '<div class="ulabel mt0">' + esc(nice(d) + ' · Exam ' + examName(deckId) + (plan.over ? '' : ' · in ' + plural(plan.days, 'day'))) + '</div>' +
       '<div class="dhero"><h1 class="dnh"><button class="dn" data-back>Plan</button></h1>' +
       '<span class="dv num">' + (plan.over || !plan.left ? '' : plan.left.toLocaleString()) + '</span></div>';
-    if (plan.over) return mount(head + '<div class="sub">The exam has passed. Review what is due, and the deck is still here.</div>');
+    if (plan.over) return mount(head + '<div class="sub">The exam has passed. Review what is due, and the course is still here.</div>');
     if (!plan.left) return mount(head +
       '<div class="how"><p>Every card has been seen. The ' + plural(plan.days, 'day') + ' left ' + (plan.days === 1 ? 'is' : 'are') + ' for what is due, Trouble spots and High-yield.</p></div>' +
       '<div class="modes">' + modeBtn('#/study/' + deckId + '/smart', 'Study', 'What is due today') + modeBtn('#/study/' + deckId + '/hard', 'Trouble spots', MODE_DESC.hard) + '</div>');
@@ -1629,7 +1632,7 @@
       var n = ph.items.length, dn = ph.items.filter(function (it) { return done[it.id]; }).length;
       // the hours the phase asks for, from its own meta line ("≈40 h")
       var hm = /≈\s*(\d+)\s*h/.exec(ph.meta || ''), hrs = hm ? ' · ≈' + hm[1] + ' h' : '';
-      return '<li><button class="ph" data-go="#/d/' + deckId + '/b/' + ph.n + '"><span class="n"><span>Phase ' + ph.n + esc(hrs) + '</span><span class="pct">' + dn + ' / ' + n + '</span></span>' +
+      return '<li><button class="ph" data-go="#/d/' + deckId + '/b/' + ph.n + '"><span class="n"><span>Phase ' + ph.n + esc(hrs) + '</span><span class="pct">' + dn + ' of ' + n + '</span></span>' +
         '<span class="t">' + esc(ph.title) + '</span><span class="bar"><i style="width:' + (n ? Math.round(dn / n * 100) : 0) + '%"></i></span></button>' +
         '<ul>' + ph.items.map(function (it) {
           return '<li><button class="' + (done[it.id] ? 'done' : '') + '" data-go="#/d/' + deckId + '/l/' + it.id + '"><span class="n">' + esc(lessonWord(it)) + '</span><span class="t">' + mdT(it.title) + '</span></button></li>';
@@ -1728,7 +1731,8 @@
     var html = toplineHTML('#/d/' + deckId, nice(d) + ' · Every word') +
       '<section class="page phase stack-l"><div class="stack"><div class="eyebrow">Every word the course uses</div>' +
       '<h2>Words</h2><p class="lede">' + plural(n, 'word') + ' in ' + plural(order.length, 'group') + '. Tap one for its six levels; the reading level you chose is the dark one.</p>' +
-      '<div class="searchbar"><input id="wq" type="search" aria-label="Find a word" placeholder="find a word" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></div>' +
+      '<div class="searchbar"><input id="wq" type="search" aria-label="Find a word" placeholder="Find a word" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></div>' +
+      '<div class="empty" id="wempty" hidden>No words match</div>' +
       '</div>' + rows + '</section>';
     bookMount(html);
   }
@@ -1743,6 +1747,9 @@
       }
       groups[i].hidden = !shown;
     }
+    var any = false;
+    for (var g = 0; g < groups.length; g++) if (!groups[g].hidden) any = true;
+    var we = app.querySelector('#wempty'); if (we) we.hidden = any || !groups.length;
   }
 
   /* the lessons this one leans on, and the ones that lean on it, counted by
@@ -1913,7 +1920,7 @@
       var deck = j.deck ? S.getDeck(j.deck) : null;
       var unit = deck && j.unitId ? deck.unitById[j.unitId] : null;
       var name = p[0] === 'review' ? 'Review' : p[0] === 'ten' ? 'Quick ten'
-        : p[0] === 'starred' ? 'Starred' : p[0] === 'stuck' ? 'Stuck cards'
+        : p[0] === 'starred' ? 'Starred' : p[0] === 'stuck' ? 'Trouble spots'
         : deck ? nice(deck) + (unit ? ' · ' + unit.title : j.unitId && j.unitId.indexOf('+') > -1 ? ' · both tables' : '')
         : 'Session';
       if (j.cram) name += ' · cram'; else if (j.quiz) name += ' · quiz';
@@ -1977,7 +1984,7 @@
   }
   /* the screen that waits for the decks so the saved deal can be read */
   function waitingScreen() {
-    mount('<div class="head"><h1>Loading</h1><div class="sub">Finding where you were.</div></div>');
+    mount('<div class="head">' + RING + '<div class="sub">Finding where you were.</div></div>');
     return true;
   }
   function resume() {
@@ -1985,7 +1992,7 @@
     if (!r) return false;
     sess = r;
     renderCard();
-    toast(plural(r.queue.length, 'card') + ' left — picked up where you were');
+    toast(plural(r.queue.length, 'card') + ' left. Picked up where you were.');
     return true;
   }
 
@@ -2055,7 +2062,7 @@
       return mount(
         '<div class="head"><h1>Nothing due</h1>' +
         (when ? '<div class="sub">' + esc(when) + '</div>' : '') + '</div>' +
-        '<button class="textbtn" data-go="#/">Decks</button>'
+        '<button class="textbtn" data-go="#/">Courses</button>'
       );
     }
     sess = {
@@ -2152,7 +2159,7 @@
       (sess.queue.length ? '<button class="sizebtn" data-note>' +
         (S.noteOf(sess.queue[0].i) ? 'Note ·' : 'Note') + '</button>' : '') +
       // the mode word changes THIS session only — Settings owns the default
-      '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'MCQ' : (sess.typing ? 'Typing' : 'Flip')) + '</button>' +
+      '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'Choices' : (sess.typing ? 'Typing' : 'Flip')) + '</button>' +
       '</div>';
   }
 
@@ -2163,7 +2170,7 @@
   function noteHTML(c) {
     if (sess && sess.noting) {
       return '<div class="mynote editing reveal"><textarea id="mynote" aria-label="Your note on this card" rows="2" maxlength="' +
-        (S.NOTE_MAX || 400) + '" placeholder="your own words — a mnemonic, the trap you keep hitting">' +
+        (S.NOTE_MAX || 400) + '" placeholder="Your own words: a mnemonic, the trap you keep hitting">' +
         esc(S.noteOf(c.i)) + '</textarea>' +
         '<div class="noteacts"><button class="textbtn quiet" data-note-save>Save</button>' +
         '<button class="textbtn quiet" data-note-cancel>Cancel</button></div></div>';
@@ -2194,18 +2201,18 @@
   /* the card's own history in a phrase, beside its topic: why it is here today */
   function histWord(c) {
     var st = S.cs ? S.cs(c.i) : null;
-    if (!st || !(st.r || st.t || st.l)) return 'first time';
+    if (!st || !(st.r || st.t || st.l)) return 'First time';
     if (st.r) return st.r + ' in a row';
-    return st.l ? 'missed ' + st.l + (st.l === 1 ? ' time' : ' times') : '';
+    return st.l ? 'Missed ' + st.l + (st.l === 1 ? ' time' : ' times') : '';
   }
   function metaHTML(c) {
     var bits = [topicLabel(c), histWord(c)].filter(Boolean);
     return bits.length ? '<div class="meta reveal">' + esc(bits.join(' · ')) + '</div>' : '';
   }
   function topicLabel(c) {
-    if (!c.t) return c.c ? 'high-yield' : '';
+    if (!c.t) return c.c ? 'High-yield' : '';
     var t = /^\d+\.\d+$/.test(c.t) ? 'CED ' + c.t : c.t;
-    return t + (c.c ? ' · high-yield' : '');
+    return t + (c.c ? ' · High-yield' : '');
   }
   function sizeClass(s) {
     var n = T.plain(s).length;
@@ -2246,7 +2253,7 @@
         '<div class="a reveal' + sizeClass(c.a) + '">' + T.html(c.a) + '</div>' +
         (sess.verdict ? '<div class="verdict reveal ' +
           (sess.verdict.ok === 'miss' && !typeable(c) ? 'long' : sess.verdict.ok) + '">' +
-          esc(sess.verdict.ok === 'miss' && !typeable(c) ? 'too long to type — grade yourself'
+          esc(sess.verdict.ok === 'miss' && !typeable(c) ? 'Too long to type. Grade yourself'
               : sess.verdict.text) + '</div>' : '') +
         (c.n ? '<div class="note reveal' + (stacked(c.n) ? ' mathy' : '') + '">' + T.html(c.n) + '</div>' : '') +
         noteHTML(c) +
@@ -2285,7 +2292,7 @@
         '<div class="cardwrap"><div class="card' + (sess.revealed ? (fresh ? ' fresh' : '') : ' enter') + '" id="card"' +
           ' role="group" aria-live="polite" aria-atomic="false"' +
           ' aria-label="' + esc('Card ' + (sess.done + 1) + ' of ' + sess.planned) + '">' + body + '</div></div>' +
-      '</div><div class="morecue" aria-hidden="true">\u2304</div>' + footer + sessUtil(starred) + '</div>',
+      '</div><div class="morecue" aria-hidden="true">' + CHEV + '</div>' + footer + sessUtil(starred) + '</div>',
       { session: true }
     );
     wireCard();
@@ -2306,7 +2313,7 @@
         // long prose options drop a size so four of them still read as
         // options under the question, not four paragraphs over it
         var cls = (stacked(ch.text) ? ' mathy' : '') + (T.plain(ch.text).length > 110 ? ' small' : '');
-        return '<button class="choice' + cls + '" data-pick="' + n + '" style="--i:' + n + '"' + (state ? ' data-state="' + state + '"' : '') +
+        return '<button class="choice' + cls + '" data-pick="' + n + '" data-letter="' + 'ABCD'.charAt(n) + '" style="--i:' + n + '"' + (state ? ' data-state="' + state + '"' : '') +
           (sess.answered ? ' disabled' : '') + '>' + T.html(ch.text) + why + '</button>';
       }).join('') + '</div>';
 
@@ -2319,7 +2326,7 @@
       '<div class="cardstage"><div class="cardwrap"><div class="card' + (sess.answered ? '' : ' enter') + '" id="card"' +
         ' role="group" aria-live="polite" aria-atomic="false"' +
         ' aria-label="' + esc('Card ' + (sess.done + 1) + ' of ' + sess.planned) + '">' + body + '</div></div></div>' +
-      '<div class="morecue" aria-hidden="true">\u2304</div>' +
+      '<div class="morecue" aria-hidden="true">' + CHEV + '</div>' +
       footer + sessUtil(starred) + '</div>', { session: true, quiz: true });
     wireCard();
   }
@@ -2482,19 +2489,19 @@
     for (var i = 0; i < targets.length; i++) {
       var want = normalize(targets[i]);
       if (!want) continue;
-      if (got === want) return { ok: 'hit', text: 'exact' };
+      if (got === want) return { ok: 'hit', text: 'Exact' };
       // a prefix only counts when it covers most of the answer — two words
       // of a long sentence is not knowing it. Prefixes are judged HERE only,
       // never re-admitted by the looser substring rule below.
       if (want.indexOf(got) === 0) {
         if (got.length >= Math.min(want.length, Math.max(6, Math.ceil(want.length * 0.6)))) {
-          return { ok: 'hit', text: 'close enough' };
+          return { ok: 'hit', text: 'Close enough' };
         }
         continue;
       }
       if (got.indexOf(want) > -1 || want.indexOf(got) > 0) {
         var ratio = Math.min(got.length, want.length) / Math.max(got.length, want.length);
-        if (ratio > 0.55) return { ok: 'hit', text: 'close enough' };
+        if (ratio > 0.55) return { ok: 'hit', text: 'Close enough' };
       }
     }
     var t60 = typed.trim();
@@ -2518,7 +2525,7 @@
       var typed = input ? input.value : sess.typed;
       // typing nothing is not knowing it — the shortcut must never grade
       // an unattempted card as Good
-      sess.verdict = checkTyped(c, typed) || { ok: 'miss', text: 'nothing typed' };
+      sess.verdict = checkTyped(c, typed) || { ok: 'miss', text: 'Nothing typed' };
       if (input) try { input.blur(); } catch (e) {}
     }
     sess.revealed = true;
@@ -2748,7 +2755,7 @@
       // a tally is a fact, not a control — it used to be a focusable button
       // with its pointer events switched off, so a keyboard walked three
       // "buttons" that do nothing
-      return '<div class="ledger"><span class="lname">' + l[0] +
+      return '<div class="ledger' + (l[1] ? '' : ' done') + '"><span class="lname">' + l[0] +
         '</span><span class="lval num">' + (l[1] || 0).toLocaleString() + '</span></div>';
     }).join('');
     // "Keep going" must know what is left — a mixed review counts every deck
@@ -2789,7 +2796,7 @@
     var backRows = (tmrw || week)
       ? '<div class="k" style="margin:var(--s-4) 0 6px">Coming back</div><div class="done-rows">' +
         '<div class="ledger"><span class="lname">Tomorrow</span><span class="lval num">' + tmrw.toLocaleString() + '</span></div>' +
-        '<div class="ledger"><span class="lname">Within a week</span><span class="lval num">' + week.toLocaleString() + '</span></div></div>'
+        '<div class="ledger"><span class="lname">This week</span><span class="lval num">' + week.toLocaleString() + '</span></div></div>'
       : '';
     sess = null;
     // the session is over — a reload or a back gesture should land on the
@@ -2805,7 +2812,8 @@
           esc(moment) + '</div>' +
       '</div>' +
       '<div class="done-rows">' + rows + '</div>' + backRows +
-      (dueLeft ? '<button class="act" data-go="' + again + '">Keep going</button>' : '')
+      (dueLeft ? '<button class="act" data-go="' + again + '">Keep going</button>'
+               : '<button class="textbtn" data-go="#/">Courses</button>')
     );
     // the bar comes back with this screen but no hashchange fired — the
     // sliding pill was measured while hidden, so re-seat it once visible
@@ -2821,7 +2829,7 @@
      half-remember rarely comes with its course attached — but during one
      subject's revision the other four are noise. One cycling word, the same
      control the games and the settings use, narrows it. */
-  function scopeWord() { return searchState.deck ? nice(searchState.deck) : 'All decks'; }
+  function scopeWord() { return searchState.deck ? nice(searchState.deck) : 'All courses'; }
   function cycleScope() {
     var ids = (S.getIndex().courses || []).map(function (c) { return c.id; });
     var i = searchState.deck ? ids.indexOf(searchState.deck) : -1;
@@ -2841,7 +2849,7 @@
     // the field and the results — no hero, no scope chips, no instructions (skill §4.4)
     var many = (S.getIndex().courses || []).length > 1;
     mount(
-      '<div class="searchbar"><input id="q" type="search" aria-label="Search every card" placeholder="a term, a formula, a year" ' +
+      '<div class="searchbar"><input id="q" type="search" aria-label="Search every card" placeholder="A term, a formula, a year" ' +
         'autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" value="' + esc(searchState.q) + '"></div>' +
       (many ? '<div class="scoperow"><button class="textbtn quiet" data-search-scope>' +
         esc(scopeWord()) + '</button></div>' : '') +
@@ -2913,7 +2921,7 @@
     var q = fold(searchState.q.trim().toLowerCase());
     // one letter used to blank the screen, which looks like a crash
     if (!q) {
-      out.innerHTML = '<div class="empty">Searches every question, answer and note in every deck. ' +
+      out.innerHTML = '<div class="empty">Searches every question, answer and note in every course. ' +
         'A term, a year, a formula, a French word without its accents.</div>';
       return;
     }
@@ -3085,7 +3093,7 @@
     // to rewrite, and only this list can tell you which you have
     var stuck = stuckCards(), stuckBlock = '';
     if (stuck.length) {
-      stuckBlock = '<div class="k sec">Sticking points</div>' +
+      stuckBlock = '<div class="k sec">Trouble spots</div>' +
         '<ul class="list tight">' + stuck.slice(0, 3).map(function (c) {
           var d3 = S.getDeck(c.deck), u3 = d3.unitById[c.u], st3 = S.cs(c.i) || {};
           return '<li><button class="ledger mid" data-go="#/stuck">' +
@@ -3136,7 +3144,7 @@
       stuckBlock +
       spark +
       (totals.due ? '<div class="mt5"><button class="act" data-go="#/review">Review ' + totals.due.toLocaleString() + '</button></div>'
-        : !totals.seen ? '<button class="textbtn" data-go="#/">Decks</button>' : '')
+        : !totals.seen ? '<button class="textbtn" data-go="#/">Courses</button>' : '')
     );
   }
 
@@ -3177,7 +3185,7 @@
     var m = missingDecks();
     if (!m.length) return '';
     return '<div class="warnline soft">' + esc(m.join(' and ')) +
-      (m.length > 1 ? ' did not load' : ' did not load') + ' — ' + esc(what) + ' leaves ' +
+      ' did not load. ' + esc(what.charAt(0).toUpperCase() + what.slice(1)) + ' leaves ' +
       (m.length > 1 ? 'them' : 'it') + ' out.</div>';
   }
 
@@ -3230,7 +3238,7 @@
   }
   function starWord() {
     var ids = starDecks();
-    return starFilter && ids[starFilter - 1] ? nice(ids[starFilter - 1]) : 'All decks';
+    return starFilter && ids[starFilter - 1] ? nice(ids[starFilter - 1]) : 'All courses';
   }
 
   function viewStuck() {
@@ -3238,7 +3246,7 @@
     var all = stuckCards();
     if (!all.length) return mount(
       backbar('Progress') +
-      '<div class="head"><h1 class="uhead">Sticking points</h1>' +
+      '<div class="head"><h1 class="uhead">Trouble spots</h1>' +
       '<div class="sub">Nothing has been missed ' + STUCK_MIN + ' times. ' +
       'When a card starts beating you, it lands here.</div></div>' +
       // …and a course that did not load has no lapses to report, which at the
@@ -3248,7 +3256,7 @@
     var deal = Math.min(all.length, S.getSettings().sessionSize || 30);
     mount(
       backbar('Progress') +
-      '<div class="head"><h1 class="uhead">Sticking points</h1>' +
+      '<div class="head"><h1 class="uhead">Trouble spots</h1>' +
       '<div class="sub">' + esc(plural(all.length, 'card')) + ' missed ' +
       STUCK_MIN + ' times or more</div></div>' +
       missLine('this list') +
@@ -3298,7 +3306,7 @@
     // nothing starred is not an error — it is the state before the feature is
     // used, and it says what the star is for rather than showing an empty list
     if (!all.length) return mount(
-      backbar('Decks') +
+      backbar('Courses') +
       '<div class="head"><h1 class="uhead">Starred</h1>' +
       '<div class="sub">Nothing yet. In a session, tap the star or swipe the card up; ' +
       'anywhere a card row opens, tap Star. They all land here.</div></div>' +
@@ -3312,7 +3320,7 @@
     // a session is a session here too: the deal is capped like every other one
     var deal = Math.min(list.length, S.getSettings().sessionSize || 30);
     mount(
-      backbar('Decks') +
+      backbar('Courses') +
       '<div class="head"><h1 class="uhead">Starred</h1>' +
       '<div class="sub">' + esc(plural(all.length, 'card')) + '</div></div>' +
       missLine('this screen') +
@@ -3399,15 +3407,15 @@
     if (f === 'auth') return 'Token refused';
     if (f === 'off') {
       var w = S.account.offWhy ? S.account.offWhy() : '';
-      return w === 'store' ? 'Sync is off: no storage linked' : w === 'allowlist' ? 'Sync is off: no accounts allowed' : 'Sync is off here';
+      return 'Sync is off here';
     }
     if (f === 'net' && !at) return 'Cannot reach sync';
     if (!at) return 'Never';
     var m = (Date.now() - at) / 60000;
     if (m < 5) return 'Just now';
-    if (m < 120) return Math.round(m) + ' min ago';
-    if (m < 48 * 60) return Math.round(m / 60) + ' h ago';
-    return Math.round(m / 1440) + ' d ago';
+    if (m < 120) return plural(Math.round(m), 'minute') + ' ago';
+    if (m < 48 * 60) return plural(Math.round(m / 60), 'hour') + ' ago';
+    return plural(Math.round(m / 1440), 'day') + ' ago';
   }
   function viewSettings() {
     curDeckId = null;
@@ -3428,7 +3436,7 @@
               '<button class="cyc" data-acct-id>' + esc(S.account.ownerId()) + '</button></div>'
             : '')
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
-          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" aria-label="Account sync token" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
+          '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" aria-label="Account sync token" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Account token">' +
           '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
       '<div class="setrow"><div class="sname" id="set-remind">Reminder</div>' +
         '<button class="cyc" data-remind aria-labelledby="set-remind" ' +
@@ -3458,7 +3466,7 @@
       reqHTML('Request a feature') +
       // the keys, said once, where a keyboard exists — CSS hides this line on
       // coarse-pointer screens, where it would only be clutter
-      '<div class="keyline">Keyboard — space reveal · a s d f grade · * star · n note · ' +
+      '<div class="keyline">Keyboard · space reveal · a s d f grade · * star · n note · ' +
         '1–4 answer · enter next · / search · ← → tabs · esc back</div>' +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
@@ -3481,12 +3489,12 @@
       '<div class="head"><span class="k">Before you start</span><h1 class="uhead">How it works</h1></div>' +
       '<div class="how">' +
       sec('Each day', [
-        'Open a deck and tap ' + b('Study') + '. The deal is what is due today, then new cards: up to ' +
+        'Open a course and tap ' + b('Study') + '. The deal is what is due today, then new cards: up to ' +
           s.sessionSize + ' a session, ' + s.newPerSession + ' of them new. On a fresh deck that is ' + s.newPerSession + ' new cards. ' +
           'The line under the button counts the two halves.',
         'The line over a course name says when its exam is and whether this pace sees every card before it. ' +
           'Both numbers move under Settings.',
-        'The deck list adds it up: the big number is what is due across every deck, and ' + b('Start') + ' deals it. ' +
+        'The course list adds it up: the big number is what is due across every course, and ' + b('Start') + ' deals it. ' +
           b('Quick ten') + ' is the same deal cut to ten.'
       ]) +
       sec('Grading a card', [
@@ -3499,29 +3507,29 @@
         'On a phone each grade prints when it would bring the card back; with a keyboard it prints its key, and the day is in the button\'s tooltip. Nothing is ever scheduled past the exam.'
       ]) +
       sec('Keeping your place', [
-        'Leave a deal for another course and it waits for you, for the day: a ' + b('Continue') + ' line on the deck list and on every course page brings you back to the same card.',
+        'Leave a deal for another course and it waits for you, for the day: a ' + b('Continue') + ' line on the course list and on every course page brings you back to the same card.',
         'When a test is done, ' + b('Exam over') + ' on the course page stops its pile: nothing from it counts as due or is dealt by Review, and the reminder leaves it out. ' + b('Resume the schedule') + ' brings every card back as it was.',
         b('Reminder') + ', under Settings, sends one note a day to this device on the days something is due; tap it to land on Review. An iPhone or iPad sends it only to an app added to the Home Screen.',
         'Chemistry carries two tables, the polyatomic ions and the VSEPR shapes: drill either on its own or both together from the course page. They stay out of the daily deal until you have studied them.'
       ]) +
-      sec('Ways into a deck', [
-        b('High-yield') + ' — ' + esc(MODE_DESC.core) + '.',
-        b('Quiz') + ' — ' + esc(MODE_DESC.quiz) + '. The card\'s note appears under the right choice.',
-        b('Trouble spots') + ' — ' + esc(MODE_DESC.hard) + '.',
-        b('Shuffle') + ' — ' + esc(MODE_DESC.all) + '.',
+      sec('Ways into a course', [
+        b('High-yield') + ': ' + esc(MODE_DESC.core) + '.',
+        b('Quiz') + ': ' + esc(MODE_DESC.quiz) + '. The card\'s note appears under the right choice.',
+        b('Trouble spots') + ': ' + esc(MODE_DESC.hard) + '.',
+        b('Shuffle') + ': ' + esc(MODE_DESC.all) + '.',
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
-        b('Cram') + ', on a unit — ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
-        b('Print') + ', on a unit — ' + esc(MODE_DESC.print) + '.',
-        b('Plan') + ', on a course with an exam date — ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',
+        b('Cram') + ', on a unit: ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
+        b('Print') + ', on a unit: ' + esc(MODE_DESC.print) + '.',
+        b('Plan') + ', on a course with an exam date: ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',
         'A unit page opens with its key ideas, then its cards under their topics; ' + b('Study') + ' beside a topic deals that topic alone.'
       ]) +
       sec('Stars, notes and typing', [
-        'The ' + b('star') + ' keeps a card. Starred cards collect under Starred on the deck list and under Study starred on their deck; swiping a card up stars it.',
+        'The ' + b('star') + ' keeps a card. Starred cards collect under Starred on the course list and under Study starred on their course; swiping a card up stars it.',
         b('Note') + ' is your own words on a card: a mnemonic, the trap you keep hitting. It shows under the answer every time after.',
         b('Typing') + ', under Settings, asks you to type the answer before you turn the card. The app checks it against the answer and any accepted wording and recommends a grade; a miss recommends Again.'
       ]) +
       sec('Games', [
-        'Every game deals rounds built from a deck, so a round is practice on the same material. ' +
+        'Every game deals rounds built from a course, so a round is practice on the same material. ' +
           b('Match') + ' pairs two columns. ' + b('Order') + ' puts items in sequence. ' + b('Quiz') + ' is one prompt and four answers. ' +
           b('Board') + ' shows a prompt and a board of tiles; tap the one it names. ' + b('Circle') + ' is the unit circle. ' + b('Graph') + ' asks which trig function is drawn.',
         'Each game keeps a best, and the Games page says under every name what its round asks.'
@@ -3536,7 +3544,7 @@
         'The ID under Sync is derived from the token and is safe to share; the token is not.'
       ]) +
       (book ? sec('The Ladders', [
-        'The Ladders is a course, not only a deck. Its unit pages list the phases to read, each lesson at six reading levels, ' +
+        'The Ladders is a course with a book of its own. Its unit pages list the phases to read, each lesson at six reading levels, ' +
           'and the pages before Phase 0 lay the whole project out file by file. Tick a lesson done at its foot, and tick each line of a phase\'s Done when as you see it happen; both count on the unit page and sync with everything else. Every word the course uses is explained at six levels where it first appears, and all of them together under Every word, explained on the course page.'
       ]) : '') +
       sec('Keys and swipes', [
@@ -3553,7 +3561,7 @@
      owner's own login — the site itself holds no token at all */
   function reqHTML(label) {
     return '<div class="reqwrap"><button class="textbtn" data-req>' + esc(label) + '</button>' +
-      '<div class="reqbox" hidden><textarea rows="3" aria-label="Describe what you want" placeholder="a feature, a game, a fix"></textarea>' +
+      '<div class="reqbox" hidden><textarea rows="3" aria-label="Describe what you want" placeholder="A feature, a game, a fix"></textarea>' +
       '<button class="textbtn" data-req-send>Send</button></div></div>';
   }
   window.__reqHTML = reqHTML;   // the games hub renders the same line
@@ -3588,7 +3596,7 @@
     var word = document.querySelector('[data-unit-filter], [data-star-filter]');
     var cnt = document.querySelector('.scoperow .scount');
     var bits = [];
-    if (word && word.textContent.trim() !== 'All cards' && word.textContent.trim() !== 'All decks')
+    if (word && word.textContent.trim() !== 'All cards' && word.textContent.trim() !== 'All courses')
       bits.push(word.textContent.trim().toLowerCase() + (cnt ? ' · ' + cnt.textContent.trim() + ' cards' : ''));
     bits.push(S.dayKey(S.dayNum()));      // the local day, not UTC's
     stamp.textContent = bits.join(' · ');
@@ -3600,7 +3608,7 @@
     var standalone = window.navigator.standalone === true ||
       (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
     setTimeout(function () { if (stamp.parentNode) stamp.parentNode.removeChild(stamp); }, 1200);
-    if (!ok || standalone) toast('Open apdecks in Safari or Chrome to print');
+    if (!ok || standalone) toast('Open the app in Safari or Chrome to print');
   }
 
   function refocus(render, sel) {
@@ -3748,9 +3756,9 @@
       }
       if (rs === 'denied' || rs === 'unsupported') { toast(remindNote()); return; }
       S.remind.on().then(function (r) {
-        var word = r === 'on' ? 'Reminder on — one note a day when cards are due'
+        var word = r === 'on' ? 'Reminder on. One note a day when cards are due.'
           : r === 'denied' ? 'Notifications were not allowed'
-          : r === 'off-server' ? 'Reminders are off on this deployment'
+          : r === 'off-server' ? 'Reminders are not available here'
           : 'Could not turn the reminder on';
         announce(word); toast(word);
         refocus(viewSettings, '[data-remind]');
@@ -3761,7 +3769,7 @@
     if (overBtn) {
       var oid = overBtn.getAttribute('data-deck-over');
       S.setRetired(oid, true);
-      var ow = 'Exam over — ' + nice(oid) + ' no longer counts';
+      var ow = 'Exam over. ' + nice(oid) + ' no longer counts.';
       announce(ow); toast(ow);
       route(); return;
     }
@@ -3815,7 +3823,7 @@
         encodeURIComponent(subj) + '&body=' + encodeURIComponent(txt + '\n\n— sent from the app'),
         '_blank', 'noopener');
       ta.value = '';
-      toast('Finish on GitHub — it posts from your account');
+      toast('Finish on GitHub. It posts from your account.');
       return;
     }
     var cyc = t.closest('[data-cycle]');
@@ -4120,7 +4128,7 @@
     var wantsDeck = (p[0] === 'd' || p[0] === 'study' || p[0] === 'quiz' || p[0] === 'cram') && p[1];
     if (wantsDeck && !S.getDeck(p[1]) && S.deckPending && S.deckPending(p[1]) &&
         (S.getIndex().courses || []).some(function (c) { return c.id === p[1]; })) {
-      return mount('<div class="head"><span class="k">' + esc(nice(p[1])) + '</span><h1>Loading</h1></div>');
+      return mount('<div class="head"><h1>' + esc(nice(p[1])) + '</h1>' + RING + '</div>');
     }
     if (p[0] === 'd' && p[1] && p[2] === 'a' && p[3]) return viewAbout(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'w') return viewWords(p[1]);
@@ -4314,7 +4322,7 @@
   applyTheme();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
 
-  bare('<div class="head"><span class="k">AP Decks</span><h1>Loading</h1></div>');
+  bare('<div class="head"><span class="k">AP Decks</span>' + RING + '</div>');
   // the skip link's own hash used to be caught by the router and sent home
   var skipLink = document.querySelector('.skip');
   if (skipLink) skipLink.addEventListener('click', function (e) {

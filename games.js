@@ -337,10 +337,9 @@
     ctx.mount(
       ctx.backbar(GAMES[id].name) +
       '<div class="done-hero"><span class="k">' + esc(GAMES[id].name) + '</span>' +
-      '<div class="v">◌</div>' +
-      '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">This game needs its data — try again in a moment</div></div>' +
-      '<button class="act" data-gagain="' + id + '" aria-label="Try again">↻</button>' +
-      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games" aria-label="All games">☰</button></div>',
+      '<div class="sub done-sub">This game needs its data. Try again in a moment.</div></div>' +
+      '<button class="act" data-gagain="' + id + '">Try again</button>' +
+      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games" >All games</button></div>',
       { session: true }
     );
   }
@@ -458,7 +457,7 @@
   /* quiz modes, cycled by a header word exactly like the filter word.
      In-memory per game id, like FILT. */
   var MODE = {};
-  var MODE_NAMES = ['≡', '◷', '↑'];      // a fixed set · against the clock · until one is wrong
+  var MODE_NAMES = ['Untimed', 'Timed', 'Streak'];      // a fixed set · against the clock · until one is wrong
   function modeCtl(id) {
     if (GAMES[id].kind !== 'quiz') return '';
     return '<button class="textbtn quiet gfilt" data-gmode>' +
@@ -524,7 +523,7 @@
     presorder:  'Put presidents in the order they served',
     periodquiz: 'Which period does this event belong to?',
     yearquiz:   'Pick the year an event happened',
-    apterms:    'A description from the deck; tap the name it points to',
+    apterms:    'A description from the course; tap the name it points to',
     chemorder:  'Put elements in order by a property',
     chemformula:'Match compound names with their formulas',
     ionmatch:   'Match polyatomic ions with their formulas',
@@ -533,7 +532,7 @@
     moles:      'Moles, mass and particles, every option to three sig figs',
     econfig:    'Pick the electron configuration',
     langmatch:  'Match each rhetorical device with its meaning',
-    langboard:  'A definition from the deck; tap the term it defines',
+    langboard:  'A definition from the course; tap the term it defines',
     frmatch:    'Match French words with English',
     frconj:     'Person, verb, tense; tap the right form',
     frgender:   'Le or la, from the vocabulary itself',
@@ -549,7 +548,7 @@
     radmatch:   'Match degrees with radians',
     limitsquiz: 'Evaluate the limit',
     converge:   'Does the series converge, and by which test?',
-    blank:      'A sentence from the deck with its word missing; tap the word that fits'
+    blank:      'A sentence from the course with its word missing; tap the word that fits'
   };
   /* ---------------- hub ---------------------------------------------------- */
   function hub() {
@@ -568,7 +567,7 @@
       delete b[id]; dirty = true;
     });
     if (dirty) S.setSetting('gameBest', b);
-    var html = '<div class="head"><h1>Games</h1></div>';
+    var html = '<div class="head"><h1>Games</h1></div>', anyRows = false;
     ORDER_BY_DECK.forEach(function (deckId) {
       // a course that did not load has no games — offering them promises a
       // round the app cannot deal
@@ -581,16 +580,18 @@
         if (GAMES[id].deck !== deckId) return;
         var bs = shown(id);
         // the symbol says the kind; the line says what the round asks
-        var ask = (bs ? '★ ' + esc(bs.label) + ' · ' : '') + esc(DESC[id] || '');
+        var kind = CUE[GAMES[id].kind] || '', dsc = DESC[id] || '';
+        var ask = (kind && dsc.indexOf(kind) !== 0 ? kind + ' · ' : '') + (bs ? 'Best ' + esc(bs.label) + ' · ' : '') + esc(dsc);
+        anyRows = true;
         rows += '<li><button class="ledger mid" data-go="#/game/' + id + '">' +
           '<span class="lname">' + esc(GAMES[id].name) + '</span>' +
-          '<span class="lval word gkind">' + (CUE[GAMES[id].kind] || '') + '</span>' +
           (ask ? '<span class="lsub">' + ask + '</span>' : '') +
           '</button></li>';
       });
       if (rows) html += '<div class="ulabel">' + esc(ctx.nice(deckId)) + '</div><ul class="list" style="gap:0">' + rows + '</ul>';
     });
-    if (window.__reqHTML) html += '<div style="margin-top:var(--s-5)">' + window.__reqHTML('Request a game') + '</div>';
+    if (!anyRows) html += '<div class="empty">No games yet. A course that has not downloaded has no rounds; open it once with a connection.</div>';
+    if (window.__reqHTML) html += '<div class="mt5">' + window.__reqHTML('Request a game') + '</div>';
     ctx.mount(html);
   }
 
@@ -937,10 +938,10 @@
   /* The chrome says everything in symbols, so a round can be read before it can
      be read: ✓ right, ✗ wrong, ↑ in a row, ↻ tries, ◷ seconds left, ● a question
      answered, ○ one still to come, and a cue showing what this game asks of you. */
-  var CUE = { quiz: '? ▢', match: '▢ ↔ ▢', order: '▢ ↕', board: '? ▢', circle: '? ◯', graph: '? ∿' };
+  var CUE = { quiz: 'Quiz', match: 'Match', order: 'Order', board: 'Quiz', circle: 'Circle', graph: 'Graph' };
   function cue(id) {
     var k = GAMES[id] && GAMES[id].kind;
-    return CUE[k] ? '<span class="cue">' + CUE[k] + '</span>' : '';
+    return '';
   }
   function right(n) { return '<span class="tick">✓</span> ' + n; }
   function straight(n) { return '<span class="tick">↑</span> ' + n; }
@@ -979,8 +980,8 @@
       ctx.backbar(GAMES[id].name) +
       '<div class="done-hero"><span class="k">Done</span>' +
       '<div class="v num">' + esc(label) + '</div></div>' +
-      '<button class="act" data-gagain="' + id + '" aria-label="Play again">↻</button>' +
-      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games" aria-label="All games">☰</button></div>',
+      '<button class="act" data-gagain="' + id + '" >Play again</button>' +
+      '<div style="margin-top:var(--s-3)"><button class="textbtn" data-go="#/games" >All games</button></div>',
       { session: true }
     );
   }
@@ -1114,7 +1115,7 @@
   }
 
   /* ==========================================================================
-     MATCH — two columns of text; pair them up. Boards come from the decks
+     MATCH — two columns of text; pair them up. Boards come from the courses
      themselves or from symbolic generators — a fresh board every round.
      ========================================================================== */
   function deckPairs(deckId, unitId) {
@@ -2298,9 +2299,9 @@
     var id = st.id, mode = st.mode;
     var key = mode === 'sprint' ? id + '!sprint' : mode === 'streak' ? id + '!streak' : id;
     var n, label;
-    if (mode === 'sprint') { n = st.score; label = st.score + ' ◷'; }
-    else if (mode === 'streak') { n = st.score; label = st.score + ' ↑'; }
-    else { n = st.total > 0 ? st.score / st.total : 0; label = st.score + ' / ' + st.total; }
+    if (mode === 'sprint') { n = st.score; label = st.score + ' timed'; }
+    else if (mode === 'streak') { n = st.score; label = st.score + ' straight'; }
+    else { n = st.total > 0 ? st.score / st.total : 0; label = st.score + ' of ' + st.total; }
     // a filtered round plays a different game than the best describes — and a
     // miss replay is a fraction of one; neither ever earns a best
     if (!FILT[id] && !st.noBest) saveBest(key, n, label);
@@ -2314,14 +2315,14 @@
       // the name is already in the back bar directly above — the eyebrow says
       // what gameDone's says, plus the mode mark when there is one
       '<div class="done-hero"><span class="k">Done' +
-        (mode === 'classic' ? '' : ' ' + (mode === 'sprint' ? '◷' : '↑')) + '</span>' +
+        (mode === 'classic' ? '' : ' · ' + (mode === 'sprint' ? 'Timed' : 'Streak')) + '</span>' +
       '<div class="v num">' + esc(label) + '</div>' +
-      (bb ? '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">★ ' + esc(bb.label) + '</div>' : '') +
+      (bb ? '<div class="sub done-sub">Best ' + esc(bb.label) + '</div>' : '') +
       '</div>' +
-      '<button class="act" data-gagain="' + id + '" aria-label="Play again">↻</button>' +
+      '<button class="act" data-gagain="' + id + '" >Play again</button>' +
       '<div style="margin-top:var(--s-3)">' +
-        (lastMiss ? '<button class="textbtn" data-gmiss style="margin-right:18px" aria-label="Replay the ones you missed">✗ ↻</button>' : '') +
-        '<button class="textbtn" data-go="#/games" aria-label="All games">☰</button></div>',
+        (lastMiss ? '<button class="textbtn" data-gmiss style="margin-right:18px" >Replay the misses</button>' : '') +
+        '<button class="textbtn" data-go="#/games" >All games</button></div>',
       { session: true }
     );
   }

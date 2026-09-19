@@ -136,6 +136,8 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   .pane-l .head h1{ font-size:clamp(30px, 2.3vw, 38px); }
   .pane-l .ledger .lname,.pane-l .ledger .lval{ font-size:clamp(22px, 1.8vw, 28px); }
 
+  /* the rail is an index: its names stay quiet and the open course is the ink one */
+  .pane-l .ledger .lname{ color:var(--ink-soft); }
   .pane-l .ledger.on .lname{ color:var(--ink); }
   /* the rail is the only navigation on a wide screen — the tab bar is hidden
      there — so it sticks to the bottom of the rail instead of scrolling off
@@ -164,6 +166,7 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
     --t-option:clamp(22px, 1.6vw, 26px); --t-lead:clamp(20px, 1.3vw, 22px);
     --t-body:clamp(17px, 1.1vw, 19px); --t-label:clamp(14px, .95vw, 16px); --t-caption:clamp(13px, .85vw, 14px); }
   .pane-r .head h1{ font-size:clamp(64px, 5vw, 92px); }
+  .pane-r .session{ padding-top:clamp(0px, 5vh, 56px); }
   /* .uhead is the phone-sized utility heading and simply comes later in the
      file, so Settings and Weak spots stayed at 40px beside a 92px Games */
   .pane-r .head h1.uhead{ font-size:clamp(48px, 3.6vw, 64px); }
@@ -248,11 +251,11 @@ button.hero-tap:active{ opacity:.5; }
   font-size:var(--t-title); font-weight:460; letter-spacing:-.035em; line-height:1.16; text-align:left;
   transition:opacity var(--d-fast) ease; }
 .dhero .dn:active,.dhero .dv:active{ opacity:.5; }
-.dhero .dn{ position:relative; color:var(--ink-soft); min-width:0; }   /* the title always shows in full */
+.dhero .dn{ position:relative; color:var(--ink); min-width:0; }   /* the title always shows in full */
 /* the name IS the back control here, so it gets the expander the other quiet
    control words have: 33px of live region at 280px becomes 49px */
 .dhero .dn::after{ content:""; position:absolute; inset:-8px -12px; }
-.dhero .dv{ color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.dhero .dv{ color:var(--ink-soft); font-variant-numeric:tabular-nums; white-space:nowrap; }
 /* a wrapped name doesn't shrink — the number grows to the height of the text */
 .dhero.tallval{ align-items:center; }
 .dhero.tallval .dv{ line-height:1; letter-spacing:-.04em; }
@@ -344,11 +347,11 @@ button.hero-tap:active{ opacity:.5; }
   /* the name and its count read as two unrelated things a screen apart */
   .dhero{ max-width:460px; }
 }
-.ledger .lname{ font-size:var(--t-row); font-weight:460; color:var(--ink-soft); letter-spacing:-.03em; line-height:1.2;
+.ledger .lname{ font-size:var(--t-row); font-weight:460; color:var(--ink); letter-spacing:-.03em; line-height:1.2;
   min-width:0; overflow-wrap:anywhere; overflow:hidden; text-overflow:ellipsis;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
 .ledger .lname small{ display:none; }   /* taglines are gone; the row is name + number */
-.ledger .lval{ font-size:var(--t-row); font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-.03em;
+.ledger .lval{ font-size:var(--t-row); font-weight:500; color:var(--ink-soft); font-variant-numeric:tabular-nums; letter-spacing:-.03em;
   color:var(--ink); white-space:nowrap; }
 .ledger .lsub{ grid-column:1 / -1; font-size:var(--t-label); font-weight:500; color:var(--muted); margin-top:-2px; }
 .ledger.done .lname,.ledger.done .lval{ color:var(--muted); }
@@ -398,7 +401,9 @@ button.hero-tap:active{ opacity:.5; }
 .modes{ display:flex; flex-direction:column; align-items:stretch; margin-top:var(--s-2); }
 .modes .textbtn{ text-align:left; }
 /* a mode's word, and under it the one line that says what it deals */
-.modes .textbtn.mode{ display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px 0; }
+.modes .textbtn.mode{ display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:var(--s-2) 0; }
+.modes .textbtn.mode + .textbtn.mode{ border-top:1px solid var(--hair-soft); }
+.modes .textbtn.mode .mlab{ color:var(--ink); }
 .modes .mdesc{ font-size:var(--t-label); font-weight:500; color:var(--muted); letter-spacing:0; line-height:1.3; }
 .actsub{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:-2px 0 var(--s-1); }
 .ledger .ublurb{ font-weight:400; line-height:1.35; white-space:normal; margin-top:3px; }
@@ -413,7 +418,7 @@ button.hero-tap:active{ opacity:.5; }
 .keys{ margin:0 0 var(--s-3); padding:0 0 0 1.4em; display:flex; flex-direction:column; gap:8px; max-width:62ch; }
 .keys li{ font-size:var(--t-body); line-height:1.45; color:var(--ink); padding-left:4px; }
 .keys li::marker{ color:var(--muted); font-variant-numeric:tabular-nums; }
-.dblurb{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:-4px 0 var(--s-2); }
+.dblurb{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:var(--s-1) 0 var(--s-2); }
 /* how it works: label, then prose in the reading size */
 .how .k{ margin:var(--s-5) 0 8px; }
 .how p{ margin:0 0 10px; font-size:var(--t-body); line-height:1.5; color:var(--ink); max-width:62ch; }
@@ -491,8 +496,8 @@ button.hero-tap:active{ opacity:.5; }
 
 .cardstage{ position:relative; display:flex; align-items:flex-start; padding:0 0 var(--s-3); }
 /* there is more card below: a hairline and a chevron on the ground, no gradient */
-.morecue{ display:none; text-align:center; font-size:var(--t-label); line-height:1; color:var(--muted);
-  padding:7px 0 2px; border-top:1px solid var(--hair-soft); }
+.morecue{ display:none; text-align:center; line-height:0; color:var(--muted); padding:4px 0 0; }
+.morecue svg{ width:20px; height:20px; }
 .session.more .morecue{ display:block; }
 /* the browser claimed the horizontal drag for its own scroll and cancelled
    the pointer at ~28px, so swipe-to-grade never fired on a phone at all */
@@ -647,6 +652,10 @@ button.hero-tap:active{ opacity:.5; }
 .choice.small{ font-size:var(--t-body); line-height:1.45; font-weight:460; letter-spacing:-.005em; }
 /* answered: three shades, no decoration — a rule through seven wrapped lines
    reads as a rendering fault. Right is ink, your miss is soft, the rest fade. */
+/* the letter names the key that picks it — a choice reads as a choice */
+.choice[data-letter]{ padding-left:34px; }
+.choice[data-letter]::before{ content:attr(data-letter); position:absolute; left:0; top:calc(var(--s-3) + .36em);
+  font-size:var(--t-label); font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums; }
 .choice[data-state="right"]{ color:var(--ink); }
 .choice[data-state="wrong"]{ color:var(--ink-soft); }
 .choice[data-state="mute"]{ color:var(--muted); }
@@ -702,11 +711,23 @@ button.hero-tap:active{ opacity:.5; }
 .searchbar input::-webkit-search-cancel-button{ -webkit-appearance:none; appearance:none; display:none; }
 
 /* --- empty / done ---------------------------------------------------------- */
-.empty{ padding:var(--s-4) 0; color:var(--ink-soft); font-size:var(--t-title); font-weight:460; letter-spacing:-.03em; line-height:1.2; }
+.empty{ padding:var(--s-3) 0; color:var(--ink-soft); font-size:var(--t-body); font-weight:460; letter-spacing:0; line-height:1.5; max-width:62ch; }
+/* the one place colour lives (skill §7.9): a thin rainbow ring while something
+   is genuinely loading, gone the instant it is in */
+.loadring{ display:inline-block; width:28px; height:28px; border-radius:50%; margin-top:6px; flex:none;
+  background:conic-gradient(#ff3b30,#ff9500,#ffcc00,#34c759,#00c7be,#30b0ff,#5856d6,#ff2d55,#ff3b30);
+  -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+          mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation:ringSpin 1s linear infinite; }
+@keyframes ringSpin{ to{ transform:rotate(1turn); } }
+.dhero .loadring{ align-self:center; }
 .empty.cap{ font-size:var(--t-label); font-weight:500; color:var(--muted); letter-spacing:0; }
 .done-hero{ padding:var(--s-4) 0 var(--s-3); }
 .done-hero .v{ font-size:var(--t-hero); font-weight:460; letter-spacing:-.035em; line-height:1.1; color:var(--ink); }
 .done-rows{ margin:var(--s-4) 0 var(--s-5); }
+/* the tallies are facts under the one big number, not four more of it */
+.done-rows .ledger .lname,.done-rows .ledger .lval{ font-size:var(--t-mid); }
+.done-rows .ledger{ padding:4px 0; }
 .done-hero .done-sub{ margin-top:8px; color:var(--ink-soft); font-size:var(--t-label); }
 
 /* --- math ------------------------------------------------------------------
@@ -745,6 +766,9 @@ sub,sup{ font-size:max(.68em, 11px); }
   color:var(--ink); padding:12px 0 13px; min-height:44px; margin:0 0 var(--s-3); letter-spacing:-.005em; }
 /* the same line at a quieter weight: a count that is missing a course says so
    without shouting, because the rest of the screen is still true */
+/* the alert that matters — progress is not being saved — is the one inverted
+   block a screen may carry: maximum contrast, never a hue */
+.warnline:not(.soft){ background:var(--ink); color:var(--ground); border:0; border-radius:16px; padding:14px 18px; }
 .warnline.soft{ color:var(--muted); border-bottom-color:var(--hair-soft); font-weight:400; }
 /* the coverage forecast sits under the countdown, one shade quieter — and the
    rate that would fix it is a control, not a suggestion */
@@ -876,7 +900,7 @@ sub,sup{ font-size:max(.68em, 11px); }
 
 /* minmax(0,…) or one long term sets the column width and shoves its
    partner off the screen, on a board that cannot scroll sideways */
-.mcols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0 24px; align-items:start; }
+.mcols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--s-1) var(--s-4); align-items:start; }
 /* break a word only when the word itself will not fit — `anywhere` also
    shrinks the column's min-content, which split "parentheses" in two */
 .mcols .mrow{ overflow-wrap:break-word; }
@@ -884,7 +908,7 @@ sub,sup{ font-size:max(.68em, 11px); }
 .mcols.prose{ grid-template-columns:minmax(0,.74fr) minmax(0,1.26fr); }
 .mhead{ margin:0 0 12px; align-self:end; }
 .mrow{ display:block; width:100%; text-align:left; background:none; border:0; padding:17px 0; min-height:52px;
-  border-top:1px solid var(--hair-soft); font:inherit; font-size:var(--t-lead); font-weight:460; line-height:1.32;
+  font:inherit; font-size:var(--t-lead); font-weight:460; line-height:1.32;
   color:var(--ink-soft); cursor:pointer; transition:opacity var(--d-fast) ease; }
 /* the two columns are one grid now, so a pair shares a row band and the
    sixth definition sits beside the sixth term instead of 519px below it */
