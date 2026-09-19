@@ -37,9 +37,11 @@ so two devices reviewing offline both keep their work.
 
 Setting it up once, in the Vercel dashboard:
 
-1. **Storage → Create → Blob**, connected to this project for Production
-   (this injects `BLOB_READ_WRITE_TOKEN`; without it the API answers 503
-   and the app shows *Sync is off here*).
+1. **Storage → Create → Blob**, connected to this project for Production.
+   The connection injects `BLOB_STORE_ID`, and the function authenticates
+   with the deployment's own OIDC token (a `BLOB_READ_WRITE_TOKEN`, if one
+   is set, is used instead). Without a connected store the API answers 503
+   and the app shows *Sync is off: no storage linked*.
 2. Decide which tokens are allowed. Any one of these works:
    - the token's **owner id** (`sha256("apdecks-owner:" + token)` first 16
      hex digits, shown under Settings → Sync → ID) appears as an `owner`

@@ -43,19 +43,29 @@ try {
 // What a 503 lacks, named, so the app and whoever reads the response can
 // say so instead of guessing: 'store' = no Blob store is linked to this
 // deployment, 'allowlist' = no token would be accepted anyway.
-// Connecting a Blob store injects BLOB_READ_WRITE_TOKEN; a store connected
-// under a custom prefix injects <PREFIX>_READ_WRITE_TOKEN instead. Either
-// is the store, and it is handed to every Blob call explicitly so the
-// library never has to guess the name.
+// A connected Blob store reaches the function one of two ways. The older
+// connection injects BLOB_READ_WRITE_TOKEN (or <PREFIX>_READ_WRITE_TOKEN
+// under a custom prefix); the current one injects only BLOB_STORE_ID and
+// lets the SDK authenticate with the deployment's own OIDC token. Either is
+// the store. A read-write token is passed explicitly when there is one;
+// otherwise the call is left to the SDK, which pairs BLOB_STORE_ID with the
+// OIDC token on its own.
 function storeToken() {
   if (process.env.BLOB_READ_WRITE_TOKEN) return process.env.BLOB_READ_WRITE_TOKEN;
   var k = Object.keys(process.env).filter(function (x) { return /_READ_WRITE_TOKEN$/.test(x) && process.env[x]; }).sort()[0];
   return k ? process.env[k] : '';
 }
+function storeReady() { return !!(storeToken() || process.env.BLOB_STORE_ID); }
+function blobOpts(extra) {
+  var o = extra || {};
+  var t = storeToken();
+  if (t) o.token = t;
+  return o;
+}
 function missing() {
   var m = [];
   if (!(split(process.env.SYNC_TOKEN).length + split(process.env.SYNC_TOKEN_HASH).length + owners.length)) m.push('allowlist');
-  if (!storeToken()) m.push('store');
+  if (!storeReady()) m.push('store');
   return m;
 }
 function configured() { return missing().length === 0; }
@@ -86,7 +96,7 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      var meta = await blob.head(pathname, { token: storeToken() });
+      var meta = await blob.head(pathname, blobOpts());
       if (!meta || !meta.url) return send(res, 200, { updatedAt: 0, state: null });
       // the public blob URL rides a CDN — a unique query skips its cache so
       // a pull right after a push on another device sees the fresh write
@@ -109,17 +119,19 @@ module.exports = async function handler(req, res) {
   var text = JSON.stringify({ updatedAt: +body.updatedAt || Date.now(), state: body.state });
   if (Buffer.byteLength(text, 'utf8') > MAX_BYTES) return send(res, 413, { error: 'too big' });
   try {
-    await blob.put(pathname, text, {
-      token: storeToken(),
+    await blob.put(pathname, text, blobOpts({
       access: 'public',
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType: 'application/json',
       cacheControlMaxAge: 60,
-    });
+    }));
     return send(res, 200, { ok: true, updatedAt: +body.updatedAt || Date.now() });
   } catch (e) {
-    return send(res, 500, { error: 'store failed' });
+    // the SDK's message names what is wrong with the store ("No blob
+    // credentials found", "OIDC is enabled ... not for this environment"),
+    // and none of it is secret; without it a failed push is a shrug
+    return send(res, 500, { error: 'store failed', why: String(e && e.message || e).slice(0, 200) });
   }
 };
 
