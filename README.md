@@ -1,17 +1,21 @@
 # Junior Year Flashcards
 
-A home-screen web app for five AP courses. **2,277 cards**, written unit by unit
-against the current College Board Course and Exam Descriptions.
+A home-screen web app for five AP courses, plus SAT and PSAT vocabulary.
+**5,151 cards** on every account, written unit by unit against the current
+College Board Course and Exam Descriptions and the digital SAT.
 
 **Live:** https://myfleshcards.vercel.app  (Vercel — the same project serves the app and the account API)
 
 | Deck | Cards | Organised by |
 |---|---|---|
-| AP English Language | 320 | the four Big Ideas + exam craft |
-| AP Chemistry | 434 | Units 1–9 |
-| AP French | 572 | the six 2026–27 themes + grammar, verbs, exam |
-| AP Calculus BC | 435 | Units 1–10 |
-| AP U.S. History | 516 | Periods 1–9 |
+| AP English Language | 670 | the four Big Ideas + exam craft |
+| AP Chemistry | 867 | Units 1–9 + exam craft |
+| AP French | 1,019 | the six 2026–27 themes + grammar, verbs, exam |
+| AP Calculus BC | 891 | Units 1–10 + exam craft |
+| AP U.S. History | 994 | Periods 1–9 + exam craft |
+| SAT and PSAT Vocab | 710 | word parts; the words the test uses, by what they do; transitions |
+
+Six Ladders (429 cards and its book) ships only to the account that owns it.
 
 ## Deploying
 
