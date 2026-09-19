@@ -49,22 +49,46 @@
     if (el) try { el.focus({ preventScroll: true }); } catch (e) {}
   }
 
+  /* Arrival is the only cue. A screen that re-renders under your hands — a
+     grade, a star, a tick, a toggle, a filter, the decks landing — is the same
+     screen, so its rows stay put instead of rising in again. The hash says
+     which screen this is; the done screen clears the memory to count as new. */
+  var lastMountHash = null;
+  /* The rail as last drawn. On a wide screen it stands across mounts and is
+     patched only when a number on it moved: it used to be rebuilt, and its
+     rows re-run their entrance, on every card graded beside it. */
+  var railHTML = '';
   function mount(html, opts) {
     var keepFocus = opts && opts.session ? focusKey() : '';
     var dir = opts && opts.session ? '' : pendingDir;
     pendingDir = '';
+    var here = location.hash || '#/';
+    var still = here === lastMountHash && !dir;
+    lastMountHash = here;
     // a device that cannot write is a device losing every grade you give it —
     // the store has known this all along and nothing ever said so
     var warn = S.storageFailed && S.storageFailed()
       ? '<div class="warnline">Not saving — this browser is refusing to store progress.</div>' : '';
-    var shell = '<div class="screen' + (dir ? ' ' + dir : '') + '">' + warn + html + '</div>';
+    var shell = '<div class="screen' + (dir ? ' ' + dir : '') + (still ? ' still' : '') + '">' + warn + html + '</div>';
     if (isWide()) {
       // Two full-height panes: the deck list lives on the left, every view on
       // the right — the same content as the phone, never extra chrome.
-      app.innerHTML = '<div class="pane-l">' + decksListHTML() + '</div>' +
-        '<div class="pane-r"><div class="inner">' + shell + '</div></div>';
+      var pl = app.querySelector('.pane-l'), inner = app.querySelector('.pane-r > .inner');
+      var rail = decksListHTML();
+      if (!pl || !inner) {
+        app.innerHTML = '<div class="pane-l">' + rail + '</div>' +
+          '<div class="pane-r"><div class="inner">' + shell + '</div></div>';
+      } else {
+        // the rail is furniture: patched when a count on it moved, keeping
+        // its scroll; left alone otherwise
+        if (rail !== railHTML) { var y = pl.scrollTop; pl.innerHTML = rail; pl.scrollTop = y; }
+        inner.innerHTML = shell;
+      }
+      railHTML = rail;
+      markRail();
     } else {
       app.innerHTML = shell;
+      railHTML = '';
     }
     app.classList.toggle('is-wide', isWide());
     app.classList.toggle('is-session', !!(opts && opts.session));
@@ -152,7 +176,7 @@
       var d = S.getDeck(c.id);
       var st = d ? S.deckStats(d) : { due: 0 };
       due += st.due; seen += st.seen || 0;
-      return '<li><button class="ledger' + (c.id === curDeckId ? ' on' : '') + '" data-go="#/d/' + c.id + '">' +
+      return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
         (st.due ? '<span class="lsub">' + st.due.toLocaleString() + ' due</span>' : '') +
@@ -170,7 +194,7 @@
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
         (note.length ? '<div class="sub">' + esc(note.join(' · ')) + '</div>' : '') + '</div>' +
-      '<ul class="list tight">' + rows + '</ul>' +
+      '<ul class="list tight still">' + rows + '</ul>' +
       backupNudge(seen) +
       '<div class="lnav">' +
         '<button class="textbtn" data-go="#/review">Review</button>' +
@@ -182,6 +206,18 @@
         '<button class="textbtn" data-go="#/games">Games</button>' +
         '<button class="textbtn" data-go="#/settings">Settings</button>' +
       '</div>';
+  }
+
+  /* The row for the deck the right pane is about — set on the standing rail,
+     never by redrawing it. */
+  function markRail() {
+    var pl = app.querySelector('.pane-l');
+    if (!pl) return;
+    pl.querySelectorAll('.ledger').forEach(function (b) {
+      var on = !!curDeckId && b.getAttribute('data-go') === '#/d/' + curDeckId;
+      b.classList.toggle('on', on);
+      if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
   }
 
   /* Spoken, not shown. The toast is a visual object with visual timing; this
@@ -2061,6 +2097,12 @@
         metaHTML(c);
     }
 
+    // the answer rises in once, when it is first shown; a star, a hint or a
+    // note typed under it re-renders the card and used to run it again
+    var visit = sess.done + ':' + c.i;
+    var fresh = sess.revealed && sess.revealDrawn !== visit;
+    if (sess.revealed) sess.revealDrawn = visit;
+
     // grades in the flow, as text; the recommended grade is the heavier ink —
     // and after a scored miss the recommendation is Again, not Good
     var footer = sess.revealed
@@ -2084,7 +2126,7 @@
         '<span class="swipehint r" aria-hidden="true">Good</span>' +
         // only a NEW card enters; revealing used to re-run the animation, so
         // the question you were reading blinked out and jumped 10px
-        '<div class="cardwrap"><div class="card' + (sess.revealed ? '' : ' enter') + '" id="card"' +
+        '<div class="cardwrap"><div class="card' + (sess.revealed ? (fresh ? ' fresh' : '') : ' enter') + '" id="card"' +
           ' role="group" aria-live="polite" aria-atomic="false"' +
           ' aria-label="' + esc('Card ' + (sess.done + 1) + ' of ' + sess.planned) + '">' + body + '</div></div>' +
       '</div><div class="morecue" aria-hidden="true">\u2304</div>' + footer + sessUtil(starred) + '</div>',
@@ -2579,6 +2621,8 @@
     // the session is over — a reload or a back gesture should land on the
     // deck, not silently deal a brand-new session (no hashchange fires here)
     try { history.replaceState(null, '', location.href.replace(/#.*$/, '') + (d ? '#/d/' + d.id : '#/')); } catch (e) {}
+    // a stop between screens: it arrives, and so does whatever comes after it
+    lastMountHash = null;
     mount(
       '<div class="done-hero">' +
         '<span class="k">Session complete</span>' +
