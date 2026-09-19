@@ -74,6 +74,10 @@
     newPerSession: 20,    // unseen cards allowed into one session
     coreFirst: false,     // prioritise the high-yield cards
     glass: true,          // liquid glass material on/off
+    // A course whose exam is over: its due pile stops counting, the deal
+    // stops dealing it and no reminder names it. The schedule underneath is
+    // untouched, so taking the flag off brings every card back where it was.
+    retired: {},          // deck id -> the day it was marked over
     // written by the app rather than by a settings row, and listed here so a
     // sync merge knows them: an unknown key is no longer copied in
     ladderDone: {},       // the Six Ladders lessons ticked off
@@ -127,8 +131,8 @@
   }
   function save(now) {
     if (saveTimer) clearTimeout(saveTimer);
-    if (now) { flagSave(write(stateKey(), state)); schedulePush(); return; }
-    saveTimer = setTimeout(function () { flagSave(write(stateKey(), state)); schedulePush(); }, 120);
+    if (now) { flagSave(write(stateKey(), state)); schedulePush(); scheduleRemind(); return; }
+    saveTimer = setTimeout(function () { flagSave(write(stateKey(), state)); schedulePush(); scheduleRemind(); }, 120);
   }
 
   /* ---- account: sync ----------------------------------------------------
@@ -625,7 +629,17 @@
     return shuffle(out);
   }
 
-  function deckStats(deck) {
+  function retiredDeck(id) { var r = state.settings.retired; return !!(id && plain(r) && r[id]); }
+  function setRetired(id, on) {
+    var r = plain(state.settings.retired) ? state.settings.retired : {};
+    if (on) r[id] = dayNum(); else delete r[id];
+    state.settings.retired = r; save(true);
+  }
+  /* `due` is what the app counts and deals; on a course whose exam is over
+     it is zero and the real pile sits in `paused`, for the course page to
+     name. A deck object carries no id when it is a unit's slice, so the
+     caller says which course it belongs to. */
+  function deckStats(deck, deckId) {
     var today = dayNum(), total = deck.cards.length, seen = 0, known = 0, due = 0, starred = 0;
     deck.cards.forEach(function (c) {
       var s = state.cards[c.i];
@@ -636,12 +650,123 @@
       if (s.r >= 2 && s.i >= 7) known++;
       if (s.d <= today) due++;
     });
-    return { total: total, seen: seen, known: known, due: due, starred: starred,
+    var off = retiredDeck(deckId || deck.id);
+    return { total: total, seen: seen, known: known, due: off ? 0 : due, paused: off ? due : 0, starred: starred,
              fresh: total - seen, pct: total ? known / total : 0 };
   }
   function unitStats(deck, unitId) {
     var sub = { cards: deck.cards.filter(function (c) { return c.u === unitId; }) };
-    return deckStats(sub);
+    return deckStats(sub, deck.id);
+  }
+
+  /* ---- the daily reminder -----------------------------------------------
+     A push subscription on this device and, beside it, the days ahead: for
+     each of the next few weeks' dates, how many cards will be due by then if
+     nothing is reviewed in between. The server keeps that list and sends one
+     note a day, so it never needs to read a card — and a retired course is
+     left out here, where the decks are known. */
+  var REM_DAYS = 45;
+  function dueProjection() {
+    var today = dayNum(), counts = [], k;
+    for (k = 0; k < REM_DAYS; k++) counts.push(0);
+    ((index && index.courses) || []).forEach(function (c) {
+      var d = decks[c.id]; if (!d || retiredDeck(c.id)) return;
+      d.cards.forEach(function (card) {
+        var st = state.cards[card.i];
+        if (!st || !(st.r || st.t || st.l)) return;
+        var n = st.d - today; if (n < 0) n = 0;
+        if (n < REM_DAYS) counts[n]++;
+      });
+    });
+    var out = {}, run = 0;
+    for (k = 0; k < REM_DAYS; k++) { run += counts[k]; out[dayKey(today + k)] = run; }
+    return out;
+  }
+  var PUSH_API = '/api/push';
+  function remindRec() { return read('remind', null); }
+  function pushable() {
+    return !!(global.navigator && 'serviceWorker' in global.navigator && 'PushManager' in global && 'Notification' in global);
+  }
+  function remindStatus() {
+    if (!pushable()) return 'unsupported';
+    if (global.Notification.permission === 'denied') return 'denied';
+    return remindRec() ? 'on' : 'off';
+  }
+  function b64ToBytes(b64) {
+    var pad = '='.repeat((4 - b64.length % 4) % 4);
+    var raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+    var out = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+  function subscription() {
+    return global.navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); });
+  }
+  /* post this device's subscription and the days ahead; the account token
+     rides along when there is one, so every device of one account can be
+     told the truth the last-studied device knows */
+  var remTimer = null;
+  function remindSync(sub) {
+    if (!remindRec() || !pushable()) return Promise.resolve(false);
+    var got = sub ? Promise.resolve(sub) : subscription();
+    return got.then(function (s) {
+      if (!s) return false;
+      var hdr = { 'content-type': 'application/json' };
+      if (token()) hdr.Authorization = 'Bearer ' + token();
+      var tz = '';
+      try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+      return fetch(PUSH_API, {
+        method: 'POST', headers: hdr,
+        body: JSON.stringify({ sub: s.toJSON(), tz: tz, dueOn: dueProjection() })
+      }).then(function (r) { if (r.ok) write('remindat', Date.now()); return r.ok; });
+    }).catch(function () { return false; });
+  }
+  function scheduleRemind() {
+    if (!remindRec()) return;
+    if (remTimer) clearTimeout(remTimer);
+    remTimer = setTimeout(function () { remindSync(); }, 4000);   // one POST per burst of reviews
+  }
+  /* Turn the reminder on. The permission is asked for FIRST, inside the tap
+     that asked for it — Safari refuses the question once anything has been
+     awaited — and only then is the key fetched and the subscription made.
+     Resolves to 'on', 'denied', 'unsupported', 'off-server' or 'failed'. */
+  function remindOn() {
+    if (!pushable()) return Promise.resolve('unsupported');
+    var ask;
+    try { ask = global.Notification.requestPermission(); } catch (e) { ask = null; }
+    if (!ask || typeof ask.then !== 'function') {
+      ask = new Promise(function (res) { global.Notification.requestPermission(res); });
+    }
+    return ask.then(function (perm) {
+      if (perm !== 'granted') return 'denied';
+      return fetch(PUSH_API, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (cfg) {
+        if (!cfg || !cfg.publicKey) return 'off-server';
+        return global.navigator.serviceWorker.ready.then(function (reg) {
+          return reg.pushManager.getSubscription().then(function (have) {
+            return have || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(cfg.publicKey) });
+          });
+        }).then(function (sub) {
+          write('remind', { endpoint: sub.endpoint, at: Date.now() });
+          return remindSync(sub).then(function (ok) {
+            if (ok) return 'on';
+            write('remind', null);
+            return 'failed';
+          });
+        });
+      });
+    }).catch(function () { return 'failed'; });
+  }
+  function remindOff() {
+    write('remind', null);
+    if (!pushable()) return Promise.resolve(true);
+    return subscription().then(function (sub) {
+      if (!sub) return true;
+      var ep = sub.endpoint;
+      return sub.unsubscribe().catch(function () { return true; }).then(function () {
+        return fetch(PUSH_API, { method: 'DELETE', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ endpoint: ep }) }).then(function () { return true; }, function () { return true; });
+      });
+    }).catch(function () { return true; });
   }
 
   /* ---- streak ----------------------------------------------------------- */
@@ -757,6 +882,9 @@
     toggleStar: toggleStar, grade: grade, preview: preview, next: nextInterval, reschedule: reschedule, commit: commit,
     noteOf: noteOf, setNote: setNote, NOTE_MAX: NOTE_MAX,
     pool: pool, buildSession: buildSession, deckStats: deckStats, unitStats: unitStats,
+    retired: retiredDeck, setRetired: setRetired, dueProjection: dueProjection,
+    remind: { status: remindStatus, on: remindOn, off: remindOff, sync: remindSync,
+              lastAt: function () { return read('remindat', 0); } },
     streak: streak, studiedToday: studiedToday, history: history,
     setSetting: setSetting, getSettings: getSettings, save: save,
     listProfiles: listProfiles, activeProfile: activeProfile, switchProfile: switchProfile,

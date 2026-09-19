@@ -3,6 +3,7 @@
   "private": true,
   "description": "AP Decks — static PWA plus one serverless sync function",
   "dependencies": {
-    "@vercel/blob": "*"
+    "@vercel/blob": "*",
+    "web-push": "^3.6.7"
   }
 }

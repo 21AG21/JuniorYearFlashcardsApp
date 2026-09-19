@@ -143,8 +143,12 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   /* on a tall monitor half the rail was empty ground between six 45px rows and
      five 40px links — the rows take the air instead */
   @media (min-height:1000px){ .pane-l .list.tight{ gap:22px; } }
-  /* the rail is furniture — it never re-animates */
+  /* the rail is furniture — it never re-animates. Every rule that rises a
+     heading, a row or a link into a screen is named here, and the blanket
+     under them catches anything added later: nothing inside the rail may run
+     an animation, whatever a shared class says. */
   .pane-l .head, .pane-l .list > li, .pane-l .lnav .textbtn{ animation:none; }
+  .pane-l, .pane-l *{ animation:none !important; }
   /* the right pane scales up — same content, bigger type */
   .pane-r .head h1{ font-size:clamp(64px, 5vw, 92px); }
   /* .uhead is the phone-sized utility heading and simply comes later in the
@@ -508,12 +512,17 @@ button.hero-tap:active{ opacity:.55; }
    buttons only about a third of the row was live, and 107px of the gap between
    "Again" and "Good" did nothing at all */
 .rate{ display:flex; align-items:baseline; justify-content:space-between; gap:0; margin-top:var(--s-4); }
-.rate button{ flex:1 1 0; min-width:0; background:none; border:0; padding:10px 0; min-height:44px; cursor:pointer; font:inherit;
+/* Every button starts at its own word's width and the free space is dealt
+   out in six shares: one to each end button, two to each middle one. An end
+   word sits on the row's edge with its share inside it; a middle word sits
+   centred with a share either side. So the three gaps between the four words
+   come out identical, and the whole row is still live to the finger. Four
+   equal columns looked even and were not: the middle words were centred in
+   theirs, the end words flush, and the two outer gaps ran half again as wide
+   as the one between Hard and Good. */
+.rate button{ flex:1 1 auto; min-width:0; background:none; border:0; padding:10px 0; min-height:44px; cursor:pointer; font:inherit;
   display:flex; flex-direction:column; align-items:flex-start; gap:2px; transition:opacity .12s ease; }
-/* each grade keeps the position it always had — only the dead space between
-   them now belongs to the nearest word. Four of them: the two in the middle
-   centre on their own share, so no word drifts under its neighbour. */
-.rate button:not(:first-child):not(:last-child){ align-items:center; text-align:center; }
+.rate button:not(:first-child):not(:last-child){ flex-grow:2; align-items:center; text-align:center; }
 .rate button:last-child:not(:first-child){ align-items:flex-end; text-align:right; }
 /* four words on a 320px screen: the labels hold, the intervals step down */
 @media (max-width:400px){
@@ -536,6 +545,17 @@ button.hero-tap:active{ opacity:.55; }
 .rate .when.kbd{ display:none; }
 @media (hover:hover) and (pointer:fine){ .rate .when.kbd{ display:block; } .rate .when.ivl{ display:none; } }
 
+/* "Continue · Chemistry · 12 of 30": the way back to a deal left mid-way.
+   The wrapper is always in the markup, empty or not, so the rail's rows keep
+   their places when it appears — a node that changes kind is rebuilt. */
+.resumewrap:empty{ display:none; }
+.resumewrap{ margin:2px 0 var(--s-3); }
+.resume{ display:flex; align-items:baseline; gap:10px; width:100%; background:none; border:0; padding:8px 0;
+  font:inherit; text-align:left; cursor:pointer; color:var(--ink); transition:opacity .12s ease; }
+.resume:active{ opacity:.5; }
+.resume .rl{ font-size:17px; font-weight:500; }
+.resume .rv{ font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.pane-l .resume .rl{ font-size:16px; }
 /* quiet utilities under a card: Done · Undo · Star as small text */
 .sess-util{ display:flex; align-items:center; gap:10px; margin-top:var(--s-4); margin-left:-11px; }
 .sess-util .iconbtn{ margin-left:0; }

@@ -1,5 +1,5 @@
 /* AP Decks service worker — precache the shell and every deck, serve offline. */
-var VERSION = 'apdecks-v102';
+var VERSION = 'apdecks-v103';
 var ASSETS = [
   './', './index.html', './app.css', './app.js', './store.js', './tex.js', './games.js',
   './liquid-glass.css', './liquid-glass.js',
@@ -88,4 +88,35 @@ self.addEventListener('fetch', function (e) {
       return hit || net;
     })
   );
+});
+
+/* ---- the daily reminder -------------------------------------------------
+   One push a day from /api/push-send, on a day something is due. The payload
+   is JSON — title, body, url — and a note that cannot be parsed still shows,
+   as words, rather than being dropped. */
+self.addEventListener('push', function (e) {
+  var data = {};
+  try { data = e.data ? e.data.json() : {}; } catch (x) { data = { body: e.data ? e.data.text() : '' }; }
+  e.waitUntil(self.registration.showNotification(data.title || 'Cards due', {
+    body: data.body || 'Tap to review',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    tag: data.tag || 'due',          // one note per day replaces the last, never stacks
+    data: { url: data.url || './index.html#/review' }
+  }));
+});
+/* Tapping it lands on Review: the open app is brought forward and sent
+   there; with none open, one is opened. */
+self.addEventListener('notificationclick', function (e) {
+  e.notification.close();
+  var url = new URL((e.notification.data && e.notification.data.url) || './index.html#/review', self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (cs) {
+    for (var i = 0; i < cs.length; i++) {
+      if ('focus' in cs[i]) {
+        cs[i].postMessage({ go: url.slice(url.indexOf('#')) });
+        return cs[i].focus();
+      }
+    }
+    return self.clients.openWindow(url);
+  }));
 });

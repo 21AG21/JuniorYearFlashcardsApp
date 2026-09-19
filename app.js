@@ -20,6 +20,7 @@
   // set by the router when the active tab changes; the next mount slides in
   // from the direction of travel, then the hint is spent
   var pendingDir = '';
+  var shellStale = false;          // a newer worker took over while this page ran
   /* A session re-renders on every reveal, grade, star and mode flip, and
      mount() replaces the whole screen — so the keyboard landed on <body> and
      a desktop user tabbed thirteen times to get back to the grades. Remember
@@ -95,6 +96,7 @@
     var dir = opts && opts.session ? '' : pendingDir;
     pendingDir = '';
     var here = location.hash || '#/';
+    if (opts && opts.session && sess && !sess.h) sess.h = here.replace(/^#/, '') || '/';
     var still = here === lastMountHash && !dir;
     lastMountHash = here;
     // a device that cannot write is a device losing every grade you give it —
@@ -213,7 +215,8 @@
       return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + c.count.toLocaleString() + '</span>' +
-        (st.due ? '<span class="lsub">' + st.due.toLocaleString() + ' due</span>' : '') +
+        (st.due ? '<span class="lsub">' + st.due.toLocaleString() + ' due</span>'
+                : S.retired(c.id) ? '<span class="lsub">exam over</span>' : '') +
         '</button></li>';
     }).join('');
     var hero = due ? plural(due, 'card') + ' due' : ix.total.toLocaleString() + ' cards';
@@ -228,6 +231,7 @@
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
         (note.length ? '<div class="sub">' + esc(note.join(' · ')) + '</div>' : '') + '</div>' +
+      resumeHTML() +
       '<ul class="list tight still">' + rows + '</ul>' +
       backupNudge(seen) +
       '<div class="lnav">' +
@@ -404,7 +408,7 @@
   function coverRun(perDay) {
     var decks = [], out = {};
     S.getIndex().courses.forEach(function (c) {
-      var dk = S.getDeck(c.id); if (!dk) return;
+      var dk = S.getDeck(c.id); if (!dk || S.retired(c.id)) return;
       decks.push({ id: c.id, left: S.deckStats(dk).fresh });
     });
     decks.forEach(function (x) { if (!x.left) out[x.id] = 0; });
@@ -767,13 +771,19 @@
     var limit = (opts && opts.limit) || set.sessionSize;
     var decks = opts && opts.deck ? [opts.deck]
       : S.getIndex().courses.map(function (c) { return S.getDeck(c.id); }).filter(Boolean);
+    // a course whose exam is over is not dealt: its pile is paused, not owed
+    decks = decks.filter(function (d) { return !S.retired(d.id); });
     var due = [], fresh = [];
     decks.forEach(function (d) {
       S.pool(d, (opts && opts.unit) || null, null).forEach(function (c) {
         var s = S.cs(c.i);
         var studied = s && (s.r || s.t || s.l);
         c._sc = cardScore(c, d, today);
-        if (S.isNew(c.i) || !studied) fresh.push(c);
+        // a table (the ions, the shapes) is drilled on purpose from its own
+        // buttons, never dealt as the day's new cards; once studied, its
+        // cards come back due like any other
+        var table = d.unitById && d.unitById[c.u] && d.unitById[c.u].table;
+        if (S.isNew(c.i) || !studied) { if (!table || (opts && opts.unit)) fresh.push(c); }
         else if (S.isDue(c.i, today)) due.push(c);
       });
     });
@@ -856,6 +866,7 @@
       // that carries a book counts its pages read on the same line
       var bits = [];
       if (st.due) bits.push(st.due.toLocaleString() + ' due');
+      else if (S.retired(c.id)) bits.push('exam over');
       var bk = d && bookOf(c.id);
       if (bk && bk.order.length) {
         var dn = bookDone(), rd = bk.order.filter(function (id) { return dn[id]; }).length;
@@ -889,6 +900,7 @@
              : '<h1>' + esc(hero) + '</h1>') +
         (note0.length ? '<div class="sub">' + esc(note0.join(' · ')) + '</div>' : '') +
       '</div>' +
+      resumeHTML() +
       (deal0 ? '<button class="act" data-go="#/review">Start · ' + deal0 + ' cards</button>' : '') +
       '<ul class="list tight">' + rows + '</ul>' +
       // these three are navigation, not modes: as a stack of 26px words they
@@ -964,6 +976,9 @@
     var anySeen = st.seen > 0;
     // a course that carries a book counts its pages read beside its cards
     var bk = bookOf(deckId), done = bk ? bookDone() : {};
+    var over = S.retired(deckId);
+    var examPast = !!examDayNum(deckId) && examDayNum(deckId) < S.dayNum();
+    var tables = d.units.filter(function (u) { return u.table; });
     var units = d.units.map(function (u) {
       var us = S.unitStats(d, u.id);
       if (!us.total) return '';
@@ -981,7 +996,7 @@
                                      : 'not started · ' + us.total.toLocaleString() + ' cards');
       if (us.due) bits.push(us.due.toLocaleString() + ' due');
       return '<li>' +
-        '<div class="ulabel">Unit ' + u.n + '</div>' +
+        '<div class="ulabel">' + (u.table ? 'Table' : 'Unit ' + u.n) + '</div>' +
         '<button class="ledger mid' + (us.pct >= 0.9 ? ' done' : '') + '" data-go="#/d/' + deckId + '/u/' + u.id + '">' +
         '<span class="lname">' + esc(u.title) + '</span>' +
         '<span class="lval num">' + (anySeen ? pct(us.pct) : us.total.toLocaleString()) + '</span>' +
@@ -994,7 +1009,23 @@
     // the app knows when the exam is — the countdown sits over the course name
     var pl = paceLine(d);
     var cl = coverLine(deckId);
-    var deal = buildDaily({ deck: d }), dealNow = deal.length;
+    var deal = over ? [] : buildDaily({ deck: d }), dealNow = deal.length;
+    // the tables: each on its own, or both in one deal — every card, the
+    // least-known first, the way a cram deals
+    var tableBlock = '';
+    if (tables.length) {
+      var tAll = 0;
+      tableBlock = '<div class="ulabel" style="margin-top:var(--s-4)">Tables</div><div class="modes">' +
+        tables.map(function (u) {
+          var n = S.unitStats(d, u.id).total; tAll += n;
+          return modeBtn('#/cram/' + deckId + '/' + u.id, u.title + ' · ' + n, u.blurb || 'Every card, the least-known first.');
+        }).join('') +
+        (tables.length > 1
+          ? modeBtn('#/cram/' + deckId + '/' + tables.map(function (u) { return u.id; }).join('+'),
+              'Both · ' + tAll, 'The tables together, shuffled into one deal, the least-known first.')
+          : '') +
+        '</div>';
+    }
     // a course that carries its book has pages before its first unit: the
     // rules, the project laid out file by file, how to study
     var about = aboutPages(d).map(function (a) {
@@ -1033,20 +1064,34 @@
     }
 
     // the name is the way back; the number is a fact, not a hidden link
+    // the line over the name: the countdown while the exam is ahead; once it
+    // has passed, the way to stop the pile — and once stopped, what is paused
+    var topLine = over
+      ? '<div class="ulabel" style="margin-top:0">' + esc('Exam over' + (st.paused ? ' · ' + plural(st.paused, 'card') + ' paused' : '')) + '</div>'
+      : examPast
+      ? '<div class="ulabel" style="margin-top:0">' + esc('Exam was ' + examName(deckId) + ' · ') +
+        '<button class="pace" data-deck-over="' + deckId + '">clear what\'s due</button></div>'
+      : (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '');
     mount(
-      (pl ? '<div class="ulabel" style="margin-top:0">' + esc(pl) + '</div>' : '') +
+      topLine +
       cl +
       '<div class="dhero">' +
         '<h1 class="dnh"><button class="dn" data-back>' + esc(nice(d)) + '</button></h1>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
       '</div>' +
+      resumeHTML() +
       (d.blurb ? '<div class="dblurb">' + esc(d.blurb) + '</div>' : '') +
-      // "Review 20" used to name the DUE count and then deal thirty, because
-      // the deal is due cards plus the day's new ones. It names the deal.
-      '<button class="act" data-go="#/study/' + deckId + '/smart">' +
-        (dealNow ? (st.due && dealNow === st.due ? 'Review ' : 'Study ') + dealNow.toLocaleString()
-                 : 'Study') + '</button>' +
-      dealLine(deal) +
+      (over
+        // the pile is paused; the one action is to take the pause off
+        ? '<button class="act" data-deck-resume="' + deckId + '">Resume the schedule</button>' +
+          '<div class="actsub">' + esc(st.paused ? plural(st.paused, 'card') + ' waiting, due as they were; nothing was lost.'
+                                                 : 'Its cards come back due as they fall; nothing was lost.') + '</div>'
+        // "Review 20" used to name the DUE count and then deal thirty, because
+        // the deal is due cards plus the day's new ones. It names the deal.
+        : '<button class="act" data-go="#/study/' + deckId + '/smart">' +
+            (dealNow ? (st.due && dealNow === st.due ? 'Review ' : 'Study ') + dealNow.toLocaleString()
+                     : 'Study') + '</button>' +
+          dealLine(deal)) +
       '<div class="modes">' +
         modeBtn('#/study/' + deckId + '/core', 'High-yield', MODE_DESC.core) +
         modeBtn('#/quiz/' + deckId + '/smart', 'Quiz', MODE_DESC.quiz) +
@@ -1059,9 +1104,14 @@
         (window.Games && window.Games.linksFor(deckId).length
           ? modeBtn('#/games', 'Games', MODE_DESC.games) : '') +
       '</div>' +
+      tableBlock +
       where +
       (about ? '<ul class="list" style="margin-top:var(--s-4);gap:0"><li><div class="ulabel">Before you start</div></li>' + about + '</ul>' : '') +
-      '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
+      '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>' +
+      // when the test is done the pile has to be stoppable from here, exam
+      // date or none — a course with no date on file (the SAT) has one too
+      (over ? '' : '<div class="data-list"><button class="textbtn quiet" data-deck-over="' + deckId + '">' +
+        esc('Exam over' + (st.due ? ' · clear ' + plural(st.due, 'due card') : '')) + '</button></div>')
     );
   }
 
@@ -1794,11 +1844,35 @@
      tallies and the route are written on every grade and read back when the
      same route is opened again on the same day. */
   var SESS_KEY = 'apdecks.v1.sess';
-  function saveSess() {
+  /* Every deal left mid-way is kept for the rest of the day, keyed by its
+     route: a Chemistry unit paused to open History is where it was when you
+     come back, and so is the History deal if you leave that one too. Only
+     today's are kept — a deal from yesterday is stale by definition. The
+     single slot this replaces held one session and lost it the moment
+     another course was opened. */
+  function hereHash() { return location.hash.replace(/^#/, '') || '/'; }
+  function sessMap() {
+    var raw; try { raw = localStorage.getItem(SESS_KEY); } catch (e) { return {}; }
+    if (!raw) return {};
+    var j; try { j = JSON.parse(raw); } catch (e) { return {}; }
+    if (!j || typeof j !== 'object') return {};
+    if (typeof j.h === 'string') { var one = {}; one[j.h] = j; j = one; }   // the old single slot
+    var today = S.dayNum(), out = {};
+    for (var k in j) if (j[k] && j[k].day === today && j[k].ids && j[k].ids.length) out[k] = j[k];
+    return out;
+  }
+  function writeSessMap(m) {
     try {
-      if (!sess || !sess.queue.length) { localStorage.removeItem(SESS_KEY); return; }
-      localStorage.setItem(SESS_KEY, JSON.stringify({
-        h: location.hash.replace(/^#/, '') || '/',
+      if (!Object.keys(m).length) localStorage.removeItem(SESS_KEY);
+      else localStorage.setItem(SESS_KEY, JSON.stringify(m));
+    } catch (e) {}
+  }
+  function saveSess() {
+    var m = sessMap(), h = (sess && sess.h) || hereHash();
+    try {
+      if (!sess || !sess.queue.length) { delete m[h]; writeSessMap(m); return; }
+      m[h] = {
+        h: h,
         day: S.dayNum(),
         ids: sess.queue.map(function (c) { return c.i; }),
         done: sess.done, planned: sess.planned, lapsed: sess.lapsed || {},
@@ -1806,11 +1880,44 @@
         right: sess.right, wrong: sess.wrong,
         quiz: !!sess.quiz, typing: !!sess.typing, cram: !!sess.cram,
         mixed: !!sess.mixed, mode: sess.mode, unitId: sess.unitId || null,
-        deck: sess.deck ? sess.deck.id : null, back: sess.back || null
-      }));
+        deck: sess.deck ? sess.deck.id : null, back: sess.back || null,
+        // grades given: Again re-queues and leaves done where it was, so done
+        // alone cannot tell an untouched deal from one a card into it
+        graded: sess.history ? sess.history.length : 0
+      };
+      writeSessMap(m);
     } catch (e) {}
   }
-  function clearSess() { try { localStorage.removeItem(SESS_KEY); } catch (e) {} }
+  function clearSess() { var m = sessMap(); delete m[(sess && sess.h) || hereHash()]; writeSessMap(m); }
+  /* the deals waiting today, other than the one on screen: what the
+     Continue line offers */
+  function pausedSessions() {
+    var m = sessMap(), here = hereHash(), out = [];
+    for (var h in m) {
+      if (h === here) continue;
+      var j = m[h], p = h.split('/').filter(Boolean);
+      // a deal opened and left untouched is not a place to go back to
+      if (!j.done && !j.graded) continue;
+      var deck = j.deck ? S.getDeck(j.deck) : null;
+      var unit = deck && j.unitId ? deck.unitById[j.unitId] : null;
+      var name = p[0] === 'review' ? 'Review' : p[0] === 'ten' ? 'Quick ten'
+        : p[0] === 'starred' ? 'Starred' : p[0] === 'stuck' ? 'Stuck cards'
+        : deck ? nice(deck) + (unit ? ' · ' + unit.title : j.unitId && j.unitId.indexOf('+') > -1 ? ' · both tables' : '')
+        : 'Session';
+      if (j.cram) name += ' · cram'; else if (j.quiz) name += ' · quiz';
+      out.push({ h: h, name: name, done: j.done || 0, planned: j.planned || j.ids.length });
+    }
+    return out;
+  }
+  /* always in the markup, empty or not, so a standing rail keeps its rows in
+     place when a line appears */
+  function resumeHTML() {
+    return '<div class="resumewrap">' + pausedSessions().map(function (x) {
+      return '<button class="resume" data-go="#' + esc(x.h) + '">' +
+        '<span class="rl">Continue · ' + esc(x.name) + '</span>' +
+        '<span class="rv">' + x.done + ' of ' + x.planned + '</span></button>';
+    }).join('') + '</div>';
+  }
   var byId = null;
   // a deck arriving adds cards the map has never seen
   window.addEventListener('apdecks-deck', function () { byId = null; });
@@ -1834,19 +1941,12 @@
   /* is there a saved deal for this route that we simply cannot read yet? */
   function savedPending() {
     if (!decksInFlight()) return false;
-    var raw; try { raw = localStorage.getItem(SESS_KEY); } catch (e) { return false; }
-    if (!raw) return false;
-    var j; try { j = JSON.parse(raw); } catch (e) { return false; }
-    return !!j && j.day === S.dayNum() && j.h === (location.hash.replace(/^#/, '') || '/');
+    return !!sessMap()[hereHash()];
   }
   /* the saved deal for THIS route, if it is still today's */
   function savedSess() {
-    var raw;
-    try { raw = localStorage.getItem(SESS_KEY); } catch (e) { return null; }
-    if (!raw) return null;
-    var j; try { j = JSON.parse(raw); } catch (e) { return null; }
-    if (!j || j.day !== S.dayNum()) { clearSess(); return null; }
-    if (j.h !== (location.hash.replace(/^#/, '') || '/')) return null;
+    var j = sessMap()[hereHash()];
+    if (!j) return null;
     var q = (j.ids || []).map(cardById).filter(Boolean);
     if (q.length !== (j.ids || []).length) {
       // a deck that has not arrived is not a corrupt blob — never delete on it
@@ -1923,7 +2023,7 @@
       // say when the next card comes back, and where — not just that none are due
       var today = S.dayNum(), next = null, nextDeck = null;
       S.getIndex().courses.forEach(function (c) {
-        var d = S.getDeck(c.id); if (!d) return;
+        var d = S.getDeck(c.id); if (!d || S.retired(c.id)) return;
         d.cards.forEach(function (card) {
           var st = S.cs(card.i);
           if (st && st.d > today && (!next || st.d < next)) { next = st.d; nextDeck = d; }
@@ -1962,13 +2062,16 @@
     if (!d) return go('#/');
     if (savedPending()) return waitingScreen();
     if (resume()) return;
-    if (unitId && !d.unitById[unitId]) return go('#/d/' + deckId);
-    var cards = d.cards.filter(function (c) { return !unitId || c.u === unitId; });
+    // "ions+vsepr": more than one unit in the same deal, for the tables
+    var set = unitId ? unitId.split('+') : [];
+    if (set.some(function (id) { return !d.unitById[id]; })) return go('#/d/' + deckId);
+    var cards = d.cards.filter(function (c) { return !set.length || set.indexOf(c.u) > -1; });
     if (!cards.length) return go('#/d/' + deckId);
     S.shuffle(cards);
     cards.sort(function (a, b) { return cramRank(a) - cramRank(b); });
     sess = {
       deck: d, unitId: unitId || null, mode: 'cram', cram: true, quiz: false,
+      back: set.length > 1 ? '#/d/' + deckId : null,
       typing: S.getSettings().typing,
       queue: cards, done: 0, planned: cards.length, redo: 0,
       revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0, history: [], answered: false, typed: ''
@@ -3261,6 +3364,20 @@
      ========================================================================== */
   /* the sync word tells the truth: when data last actually moved, not
      whether a token string happens to exist */
+  /* the reminder row: one word for its state, and a line that says what the
+     word means on this device — "Not here" on an iPhone is the app not yet
+     added to the Home Screen, which is the one thing worth telling */
+  function remindWord() {
+    var st = S.remind.status();
+    return st === 'on' ? 'On' : st === 'denied' ? 'Blocked' : st === 'unsupported' ? 'Not here' : 'Off';
+  }
+  function remindNote() {
+    var st = S.remind.status();
+    if (st === 'on') return 'One note a day on this device, on the days something is due. Tap it to land on Review.';
+    if (st === 'denied') return 'Notifications are blocked for this site in the browser\'s settings; allow them there, then turn the reminder on.';
+    if (st === 'unsupported') return 'Reminders reach installed apps: add this to the Home Screen first, or open it in a browser that allows notifications.';
+    return 'One note a day with the cards due, on this device, on the days something is due.';
+  }
   function syncWord() {
     var at = S.account.lastSyncAt();
     // a failure that says nothing is worse than one that says so: the row used
@@ -3300,6 +3417,10 @@
         : '<div class="setrow stack"><div class="sname">Sync</div>' +
           '<div class="searchbar" style="margin-top:6px"><input id="acct-tok" type="text" aria-label="Account sync token" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="account token">' +
           '<button class="textbtn quiet" data-tok-paste>Paste</button></div></div>') +
+      '<div class="setrow"><div class="sname" id="set-remind">Reminder</div>' +
+        '<button class="cyc" data-remind aria-labelledby="set-remind" ' +
+        'aria-label="Reminder ' + remindWord() + '">' + remindWord() + '</button></div>' +
+      '<div class="setnote">' + esc(remindNote()) + '</div>' +
       '<div class="setrow"><div class="sname" id="set-typing">Typing</div>' +
         '<button class="cyc" data-typing-cycle aria-labelledby="set-typing" ' +
         'aria-label="Typing ' + (s.typing ? 'On' : 'Off') + '">' + (s.typing ? 'On' : 'Off') + '</button></div>' +
@@ -3363,6 +3484,12 @@
         b('Good') + ': the normal step. A new card goes 3 days, then each step multiplies by the card\'s ease, about two and a half: 3, 8, 20, 50.',
         b('Easy') + ': half again as far as Good would send it, a week for a new card, and the ease grows so later steps stretch further.',
         'On a phone each grade prints when it would bring the card back; with a keyboard it prints its key, and the day is in the button\'s tooltip. Nothing is ever scheduled past the exam.'
+      ]) +
+      sec('Keeping your place', [
+        'Leave a deal for another course and it waits for you, for the day: a ' + b('Continue') + ' line on the deck list and on every course page brings you back to the same card.',
+        'When a test is done, ' + b('Exam over') + ' on the course page stops its pile: nothing from it counts as due or is dealt by Review, and the reminder leaves it out. ' + b('Resume the schedule') + ' brings every card back as it was.',
+        b('Reminder') + ', under Settings, sends one note a day to this device on the days something is due; tap it to land on Review. An iPhone or iPad sends it only to an app added to the Home Screen.',
+        'Chemistry carries two tables, the polyatomic ions and the VSEPR shapes: drill either on its own or both together from the course page. They stay out of the daily deal until you have studied them.'
       ]) +
       sec('Ways into a deck', [
         b('High-yield') + ' — ' + esc(MODE_DESC.core) + '.',
@@ -3599,6 +3726,37 @@
       peek.setAttribute('aria-expanded', a.hidden ? 'false' : 'true');
       if (peek.parentNode) peek.parentNode.classList.toggle('open', !a.hidden);
       return;
+    }
+    if (t.closest('[data-remind]')) {
+      var rs = S.remind.status();
+      if (rs === 'on') {
+        S.remind.off().then(function () { announce('Reminder off'); toast('Reminder off'); refocus(viewSettings, '[data-remind]'); });
+        return;
+      }
+      if (rs === 'denied' || rs === 'unsupported') { toast(remindNote()); return; }
+      S.remind.on().then(function (r) {
+        var word = r === 'on' ? 'Reminder on — one note a day when cards are due'
+          : r === 'denied' ? 'Notifications were not allowed'
+          : r === 'off-server' ? 'Reminders are off on this deployment'
+          : 'Could not turn the reminder on';
+        announce(word); toast(word);
+        refocus(viewSettings, '[data-remind]');
+      });
+      return;
+    }
+    var overBtn = t.closest('[data-deck-over]');
+    if (overBtn) {
+      var oid = overBtn.getAttribute('data-deck-over');
+      S.setRetired(oid, true);
+      var ow = 'Exam over — ' + nice(oid) + ' no longer counts';
+      announce(ow); toast(ow);
+      route(); return;
+    }
+    var resBtn = t.closest('[data-deck-resume]');
+    if (resBtn) {
+      S.setRetired(resBtn.getAttribute('data-deck-resume'), false);
+      announce('Back on the schedule'); toast('Back on the schedule');
+      route(); return;
     }
     if (t.closest('[data-typing-cycle]')) {
       S.setSetting('typing', !S.getSettings().typing);
@@ -3919,8 +4077,12 @@
     }
     syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root
       : (p[0] === 'weak' || p[0] === 'stuck') ? '/stats' : '/');   // starred hangs off the deck list
-    sess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' ||
-            p[0] === 'ten' || ((p[0] === 'starred' || p[0] === 'stuck') && p[1] === 'go')) ? sess : null;
+    var onSess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' ||
+                  p[0] === 'ten' || ((p[0] === 'starred' || p[0] === 'stuck') && p[1] === 'go'));
+    // a deal left for another screen, or for another deal, is kept for the
+    // day and offered back as a Continue line — it used to be dropped the
+    // moment another course was opened
+    if (sess && (!onSess || (sess.h && sess.h !== h))) { saveSess(); sess = null; }
     // leaving the unit page drops its filter, so coming back is always the
     // whole unit — the word lives in memory, and that memory ends with the
     // screen. This sits above every early return, or "#/" would slip past it.
@@ -4164,14 +4326,32 @@
       // Re-shelve now, not on the next visit — unless a session is running,
       // in which case it waits for the screen to change.
       navigator.serviceWorker.addEventListener('controllerchange', function () {
+        // the shell this page is running is now the OLD one: the new worker
+        // has cached a newer app.js and app.css that this page will never
+        // execute until it is loaded again. An open PWA on a desk stays on
+        // last week's code for as long as nobody closes it, so a fix that
+        // shipped days ago looks unshipped. The page reloads itself the next
+        // time it is out of sight — never under the reader's hands, and a
+        // session in progress is saved on every grade and resumes.
+        shellStale = true;
         if (sess) { swRefreshDue = true; return; }
         S.refreshIndex();
+      });
+      document.addEventListener('visibilitychange', function () {
+        if (shellStale && document.visibilityState === 'hidden') { saveSess(); location.reload(); }
+      });
+      // a tap on the day's note: the worker brings this page forward and
+      // says where to land
+      navigator.serviceWorker.addEventListener('message', function (e) {
+        var to = e && e.data && e.data.go;
+        if (typeof to === 'string' && /^#\//.test(to)) location.hash = to;
       });
     }
     return S.loadAll();
   }).then(function () {
     if (!sess) route();                    // counts and due numbers settle
     warmSearch();
+    S.remind.sync();                       // the days ahead, as this device now sees them
   }).catch(function (err) {
     app.innerHTML = '<div class="head"><span class="k">AP Decks</span><h1>Could not load the decks</h1>' +
       '<div class="sub">' + esc(err.message) + '</div></div>' +
