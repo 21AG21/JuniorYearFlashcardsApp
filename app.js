@@ -530,14 +530,21 @@
       var take = Math.min(due.length, Math.max(0, size - Math.min(fresh, newLeft)));
       for (var q = 0; q < take; q++) {
         var cd = due[q];
-        cd.r += 1;
-        cd.i = cd.r === 1 ? 1 : cd.r === 2 ? 3 : Math.max(1, Math.round(cd.i * cd.e));
+        // the store's own ladder, not a copy of it: this walk once carried
+        // its own 1 · 3 · ×ease while the grades had moved on to 2 · 3, and
+        // then to 3 · 8, and a week-ahead built on the wrong rungs is wrong
+        var nx = S.next(cd, 2);
+        cd.r = nx.r; cd.i = nx.i; cd.e = nx.e;
         cd.d = day + cd.i;
       }
-      // and the new cards it introduces, which come back tomorrow
+      // and the new cards it introduces, which come back when a first Good
+      // says — a new card is not seen again tomorrow
       var got = Math.min(fresh, newLeft, Math.max(0, size - take));
       newLeft -= got;
-      for (var g = 0; g < got; g++) sched.push({ d: day + 1, i: 1, e: 2.5, r: 1 });
+      for (var g = 0; g < got; g++) {
+        var fn = S.next({}, 2);
+        sched.push({ d: day + fn.i, i: fn.i, e: fn.e, r: fn.r });
+      }
     }
     return out;
   }
@@ -2144,10 +2151,10 @@
           // Four grades, the standard set. There was no honest button for
           // "I got it, but only just": Again buries a card you did know and
           // Good sends one you half-knew a fortnight away.
-          '<button class="r-again" data-grade="0"><span class="lab">Again</span><span class="when">' + S.preview(c.i, 0) + '</span></button>' +
-          '<button class="r-hard" data-grade="1"><span class="lab">Hard</span><span class="when">' + esc(passWord(c, 1)) + '</span></button>' +
-          '<button class="r-good" data-grade="2"><span class="lab">Good</span><span class="when">' + esc(passWord(c, 2)) + '</span></button>' +
-          '<button class="r-easy" data-grade="3"><span class="lab">Easy</span><span class="when">' + esc(passWord(c, 3)) + '</span></button>' +
+          gradeBtn(c, 0, 'again', 'Again', 'A') +
+          gradeBtn(c, 1, 'hard', 'Hard', 'S') +
+          gradeBtn(c, 2, 'good', 'Good', 'D') +
+          gradeBtn(c, 3, 'easy', 'Easy', 'F') +
         '</div>'
       : '<div class="rate"><button class="r-good" data-reveal><span class="lab">Show answer</span><span class="when kbd">space</span></button></div>';
 
@@ -2414,6 +2421,23 @@
   function passWord(c, g) {
     if (sess && sess.cram && !S.isNew(c.i) && !S.isDue(c.i)) return 'stays';
     return S.preview(c.i, g, examCap(c));
+  }
+  /* One grade button. The line under the word is the key on a keyboard and
+     the day the card comes back on a phone — the same slot, and only one of
+     them shows: "1 d" under four words meant nothing to anyone, and where a
+     keyboard exists the home row is the fast way through a session. The day
+     still rides along, in the tooltip and in the name a screen reader says. */
+  function backWord(w) {
+    return w === 'now' ? 'back in this session' : w === 'today' ? 'back today'
+      : w === 'stays' ? 'stays where it is' : 'back in ' + w;
+  }
+  function gradeBtn(c, g, cls, word, key) {
+    var when = g === 0 ? S.preview(c.i, 0) : passWord(c, g);
+    return '<button class="r-' + cls + '" data-grade="' + g + '" title="' + esc(word + ' \u2014 ' + backWord(when)) + '"' +
+      ' aria-label="' + esc(word + ', ' + backWord(when) + ', key ' + key) + '">' +
+      '<span class="lab">' + word + '</span>' +
+      '<span class="when ivl">' + esc(when) + '</span>' +
+      '<span class="when kbd">' + key + '</span></button>';
   }
 
   function doGrade(g) {
@@ -2753,10 +2777,10 @@
      card in the future. Lateness is the number that decides what to open. */
   function dueWord(st, today) {
     if (!st || !(st.r || st.t || st.l)) return 'new';
-    var late = today - st.d;
-    if (late > 0) return late + ' d late';
+    var late = today - st.d, n = Math.abs(late), days = n + (n === 1 ? ' day' : ' days');
+    if (late > 0) return days + ' late';
     if (late === 0) return 'due';
-    return 'in ' + (-late) + ' d';
+    return 'in ' + days;
   }
 
   function rowActs(c, goHref) {
@@ -3300,7 +3324,7 @@
       reqHTML('Request a feature') +
       // the keys, said once, where a keyboard exists — CSS hides this line on
       // coarse-pointer screens, where it would only be clutter
-      '<div class="keyline">Keyboard — space reveal · 1 2 3 4 grade · s star · n note · ' +
+      '<div class="keyline">Keyboard — space reveal · a s d f grade · * star · n note · ' +
         '1–4 answer · enter next · / search · ← → tabs · esc back</div>' +
       '<div class="foot">' + S.getIndex().total.toLocaleString() + ' cards</div>'
     );
@@ -3335,10 +3359,10 @@
         'Read the question, answer it in your head, then turn the card. ' + b('Hint') + ' shows the shape of the answer, only when you tap it. ' +
           'After the answer, the grey note is the trap or the reason, from the card itself.',
         b('Again') + ': you did not have it. The card comes back this session and its ladder starts over.',
-        b('Hard') + ': you had it, but only just. It keeps its place, comes back sooner, and each step grows by a fifth instead of the usual multiple.',
-        b('Good') + ': the normal step. A new card goes 2 days, then 3, then each step multiplies by the card\'s ease, about two and a half.',
-        b('Easy') + ': a longer step, 3 days then 6, and the ease grows so later steps stretch further.',
-        'Every button prints the day it would bring the card back, and nothing is ever scheduled past the exam.'
+        b('Hard') + ': you had it, but only just. It keeps its place and comes back sooner: a new card in a day, a known one a fifth further than last time, and its ease slips so the steps after stay short.',
+        b('Good') + ': the normal step. A new card goes 3 days, then each step multiplies by the card\'s ease, about two and a half: 3, 8, 20, 50.',
+        b('Easy') + ': half again as far as Good would send it, a week for a new card, and the ease grows so later steps stretch further.',
+        'On a phone each grade prints when it would bring the card back; with a keyboard it prints its key, and the day is in the button\'s tooltip. Nothing is ever scheduled past the exam.'
       ]) +
       sec('Ways into a deck', [
         b('High-yield') + ' — ' + esc(MODE_DESC.core) + '.',
@@ -3376,8 +3400,8 @@
           'and the pages before Phase 0 lay the whole project out file by file. Tick a lesson done at its foot, and tick each line of a phase\'s Done when as you see it happen; both count on the unit page and sync with everything else. Every word the course uses is explained at six levels where it first appears, and all of them together under Every word, explained on the course page.'
       ]) : '') +
       sec('Keys and swipes', [
-        'In a session: ' + b('space') + ' or ' + b('→') + ' turns the card, ' + b('1 2 3 4') + ' grade it, ' + b('←') + ' takes the last grade back, ' +
-          b('s') + ' stars, ' + b('n') + ' opens the note, ' + b('esc') + ' leaves. In a quiz, 1 to 4 pick and enter moves on.',
+        'In a session: ' + b('space') + ' or ' + b('→') + ' turns the card, ' + b('a s d f') + ' (or 1 2 3 4) grade it Again, Hard, Good, Easy, ' + b('←') + ' takes the last grade back, ' +
+          b('*') + ' stars, ' + b('n') + ' opens the note, ' + b('esc') + ' leaves. In a quiz, 1 to 4 pick and enter moves on.',
         'Anywhere: ' + b('/') + ' searches, ' + b('← →') + ' move between tabs, ' + b('esc') + ' goes back. In a Ladders lesson, ← → turn its pages.',
         'On a phone: swipe a card left for Again, right for Good, up to star it.'
       ]) +
@@ -3812,15 +3836,17 @@
       // the exit control's own path — never a raw hash jump
       if (e.key === 'Escape') return exitSession();
       if (!sess.quiz && sess.revealed) {
-        // grading the last card ends the session and nulls sess — return, never fall through
-        if (e.key === '1') return doGrade(0);
-        if (e.key === '2') return doGrade(1);
-        if (e.key === '3') return doGrade(2);
-        if (e.key === '4') return doGrade(3);
+        // the home row, one finger per grade, and the numbers still count;
+        // grading the last card ends the session and nulls sess — return,
+        // never fall through
+        var gk = { '1': 0, '2': 1, '3': 2, '4': 3, a: 0, s: 1, d: 2, f: 3 }[e.key.toLowerCase()];
+        if (gk != null) return doGrade(gk);
       }
       if (sess.quiz && !sess.answered && /^[1-4]$/.test(e.key)) return pickChoice(parseInt(e.key, 10) - 1);
+      // * is the star itself; s is Hard now, and a key that stars a card face
+      // down and grades it face up would be a trap
+      if (e.key === '*') { e.preventDefault(); starCurrent(); return; }
       // without this the shortcut's own letter lands in the note it just opened
-      if (e.key === 's') { e.preventDefault(); starCurrent(); return; }
       if (e.key === 'n') { e.preventDefault(); openNote(); return; }
       // A BARE ARROW NEVER LEAVES A SESSION. It used to switch tabs, which on
       // a laptop meant the most obvious "next card" key silently destroyed the

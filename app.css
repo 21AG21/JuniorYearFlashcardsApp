@@ -531,9 +531,10 @@ button.hero-tap:active{ opacity:.55; }
 .rate.miss .r-good .lab{ color:var(--ink-soft); }
 .rate.miss .r-again .lab{ color:var(--ink); }
 .rate .when{ font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--muted); }
-/* the keyboard hint exists only where a keyboard does */
+/* the keyboard hint exists only where a keyboard does — and there it takes
+   the slot the interval had: one line under each word, never two */
 .rate .when.kbd{ display:none; }
-@media (hover:hover) and (pointer:fine){ .rate .when.kbd{ display:block; } }
+@media (hover:hover) and (pointer:fine){ .rate .when.kbd{ display:block; } .rate .when.ivl{ display:none; } }
 
 /* quiet utilities under a card: Done · Undo · Star as small text */
 .sess-util{ display:flex; align-items:center; gap:10px; margin-top:var(--s-4); margin-left:-11px; }

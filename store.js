@@ -502,44 +502,43 @@
     var s = state.cards[id] || blank();
     var i = nextInterval(s, grade).i;
     if (capDay) i = Math.min(i, Math.max(1, capDay - dayNum()));   // never past the exam
+    // in words: "3 d" was read as anything but three days. A week band,
+    // because 52 and 68 days both printed "2 months" — two different
+    // outcomes reading as the same promise — and months stop before a year.
     if (grade === 0) return 'now';
     if (i < 1) return 'today';
-    if (i === 1) return '1 d';
-    // a week band, because 52 d and 68 d both printed "2 mo" — two different
-    // outcomes reading as the same promise — and months stop before a year
-    if (i < 14) return i + ' d';
-    if (i < 60) return Math.round(i / 7) + ' w';
-    if (i < 330) return Math.round(i / 30) + ' mo';
-    return (i / 365).toFixed(1) + ' y';
+    if (i < 14) return i + (i === 1 ? ' day' : ' days');
+    if (i < 60) { var w = Math.round(i / 7); return w + (w === 1 ? ' week' : ' weeks'); }
+    if (i < 330) { var m = Math.round(i / 30); return m + (m === 1 ? ' month' : ' months'); }
+    var y = (i / 365).toFixed(1).replace(/\.0$/, '');
+    return y + (y === '1' ? ' year' : ' years');
   }
 
   /* 0 again · 1 hard · 2 good · 3 easy.
-     Hard is the grade the app was missing: you got it, but only just, and
-     neither of the other two tells the truth about that. It keeps the streak
-     — the card counts as answered — but grows the interval by a fifth instead
-     of by the ease factor, and takes a little ease with it, so a card you keep
-     scraping comes back sooner and sooner rather than drifting away. */
+     One ladder, read off the card's last interval, so the four captions are
+     four different promises on every card. A card met for the first time
+     (or one that just came back from Again) reads now · 1 d · 3 d · 7 d:
+     each grade roughly doubles the one before it, the way the schedule keeps
+     doing from then on. It used to read now · 1 d · 2 d · 3 d, a countdown
+     rather than a judgement — Easy was two days better than Hard.
+       Hard   you had it, only just. A fifth more than last time, never less
+              than a day more, and the ease slips so the steps after stay
+              short; the card keeps its place instead of starting over.
+       Good   the interval times the ease, about two and a half: 3 · 8 · 20 · 50.
+       Easy   half again as far as Good would send it, and the ease grows so
+              the later steps stretch further still.
+     Whatever the ease, Hard < Good < Easy holds — a leech at the bottom of
+     its ease with a two-day interval would otherwise print 3 d twice. */
   function nextInterval(s, grade) {
     var e = s.e || 2.5, r = s.r || 0, i = s.i || 0;
     if (grade === 0) { return { e: Math.max(1.3, e - 0.2), r: 0, i: 0 }; }
-    if (grade === 1) {
-      r += 1;
-      i = r === 1 ? 1 : Math.max(1, Math.round(Math.max(i, 1) * 1.2));
-      return { e: Math.max(1.3, e - 0.15), r: r, i: i };
-    }
-    if (grade === 2) {
-      r += 1;
-      // A first pass on a new card gave Hard and Good the same single day, so
-      // the two buttons printed the same interval on every card of a first
-      // session — a fourth grade that carried no information at the moment it
-      // was most needed. Good's first step is two days; the ladder now reads
-      // now · 1 d · 2 d · 3 d.
-      i = r === 1 ? 2 : r === 2 ? 3 : Math.round(i * e);
-      return { e: e, r: r, i: Math.max(1, i) };
-    }
-    r += 1;
-    i = r === 1 ? 3 : r === 2 ? 6 : Math.round(i * e * 1.3);
-    return { e: Math.min(3.0, e + 0.1), r: r, i: Math.max(1, i) };
+    var first = r < 1 || i < 1;
+    var hard = first ? 1 : Math.max(i + 1, Math.round(i * 1.2));
+    var good = first ? 3 : Math.max(hard + 1, Math.round(i * e));
+    var easy = first ? 7 : Math.max(good + 1, Math.round(good * 1.5));
+    if (grade === 1) return { e: Math.max(1.3, e - 0.15), r: r + 1, i: hard };
+    if (grade === 2) return { e: e, r: r + 1, i: good };
+    return { e: Math.min(3.0, e + 0.1), r: r + 1, i: easy };
   }
 
   /* grade: 0 again, 1 good, 2 easy */
@@ -755,7 +754,7 @@
     deckPending: function (id) { return !!loading[id]; },
     cs: cs, isNew: isNew, isDue: isDue, isSeen: isSeen, isKnown: isKnown, isStarred: isStarred,
     ivl: ivl,
-    toggleStar: toggleStar, grade: grade, preview: preview, reschedule: reschedule, commit: commit,
+    toggleStar: toggleStar, grade: grade, preview: preview, next: nextInterval, reschedule: reschedule, commit: commit,
     noteOf: noteOf, setNote: setNote, NOTE_MAX: NOTE_MAX,
     pool: pool, buildSession: buildSession, deckStats: deckStats, unitStats: unitStats,
     streak: streak, studiedToday: studiedToday, history: history,
