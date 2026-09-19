@@ -144,6 +144,20 @@
       if (pr) pr.scrollTop = 0; else app.scrollTop = 0;
     }
     restoreFocus(keepFocus);
+    // a new screen hands the keyboard its start — focus used to stay on
+    // <body>, so a screen reader heard nothing change and a keyboard began
+    // every screen from the top of the document
+    if (!keepFocus && !still && !(opts && opts.keepScroll)) { try { app.focus({ preventScroll: true }); } catch (e) {} }
+  }
+  /* a screen with no rail: boot, and the failure to boot. On two panes it
+     still takes the right pane's measure and padding — it inherited the flex
+     row instead, and its heading and button sat side by side, flush with the
+     window's corner. */
+  function bare(html) {
+    var shell = '<div class="screen">' + html + '</div>';
+    app.innerHTML = isWide() ? '<div class="pane-r"><div class="inner">' + shell + '</div></div>' : shell;
+    app.classList.toggle('is-wide', isWide());
+    railHTML = '';
   }
 
   /* When a row's name wraps tall, its number grows to match the text block —
@@ -227,13 +241,13 @@
     var note = [];
     if (didToday) note.push(plural(didToday, 'review') + ' today');
     if (S.streak() > 1) note.push(S.streak().toLocaleString() + '-day streak');
-    return '<div class="head">' +
+    return '<div class="rail"><div class="head">' +
         (due ? '<button class="hero-tap" data-go="#/review"><h1>' + esc(hero) + '</h1></button>'
              : '<h1>' + esc(hero) + '</h1>') +
         (note.length ? '<div class="sub">' + esc(note.join(' · ')) + '</div>' : '') + '</div>' +
       resumeHTML() +
       '<ul class="list tight still">' + rows + '</ul>' +
-      backupNudge(seen) +
+      backupNudge(seen) + '</div>' +
       '<div class="lnav">' +
         '<button class="textbtn" data-go="#/review">Review</button>' +
         '<button class="textbtn" data-go="#/search">Search</button>' +
@@ -458,7 +472,7 @@
     if (cv.need <= cv.days) {
       var spare = cv.days - cv.need;
       return '<div class="ulabel cover">' + esc('Every card seen by ' + dateWord(S.dayNum() + cv.need) +
-        (spare > 0 ? ' · ' + spare + ' days spare' : '')) + '</div>';
+        (spare > 0 ? ' · ' + plural(spare, 'day') + ' spare' : '')) + '</div>';
     }
     // the honest version: name the shortfall, and make the rate that closes it
     // one tap away — a forecast you cannot act on is just bad news. The rate
@@ -468,12 +482,12 @@
     if (!want) return '<div class="ulabel cover">' +
       esc('Not every card before the exam at ' + cv.perDay + ' new a day') + '</div>';
     return '<div class="ulabel cover">' +
-      esc('Not every card before the exam at ' + cv.perDay + ' new a day · ') +
-      '<button class="pace" data-pace="' + want + '">' + want + ' a day covers it</button></div>';
+      esc('Not every card before the exam at ' + cv.perDay + ' new a day') +
+      '<span class="nowrap"> · <button class="pace" data-pace="' + want + '">' + want + ' a day covers it</button></span></div>';
   }
   function dateWord(dayN) {
     var dt = new Date(S.dayKey(dayN) + 'T12:00:00Z');
-    return dt.getUTCDate() + ' ' + MONTHS[dt.getUTCMonth() + 1];   // MONTHS is 1-indexed
+    return MONTHS[dt.getUTCMonth() + 1] + ' ' + dt.getUTCDate();   // MONTHS is 1-indexed; month first, as the exam date reads
   }
 
   function paceLine(d) {
@@ -481,7 +495,7 @@
     if (!p) return '';
     // "May 3 · 241 days" in grey above the title read as a date with no
     // subject — it could have been a goal, or when the deck was written
-    var out = 'Exam ' + examName(d.id) + ' · ' + p.days + ' days';
+    var out = 'Exam ' + examName(d.id) + ' · ' + plural(p.days, 'day');
     if (!p.left) return out + ' · core done';
     if (!p.sure) return out;                       // the countdown, no verdict yet
     if (p.drift <= -20) return out + ' · ' + (-p.drift) + ' days behind · ' + p.rate + ' a day';
@@ -844,11 +858,9 @@
     // `theme` field and the CSS [data-theme] ladders stay for the viewer that
     // pins a theme around us; nothing in here ever writes one.
     document.documentElement.removeAttribute('data-theme');
-    var dark = matchMedia('(prefers-color-scheme: dark)').matches;
-    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
-    var m = document.createElement('meta');
-    m.name = 'theme-color'; m.content = dark ? '#000000' : '#f2f2f4';
-    document.head.appendChild(m);
+    // the status-bar colour comes from the two media-scoped <meta> tags in
+    // index.html, which are right before first paint; rewriting them from
+    // here flashed the wrong colour on every cold start
   }
 
   /* ==========================================================================
@@ -901,7 +913,7 @@
         (note0.length ? '<div class="sub">' + esc(note0.join(' · ')) + '</div>' : '') +
       '</div>' +
       resumeHTML() +
-      (deal0 ? '<button class="act" data-go="#/review">Start · ' + deal0 + ' cards</button>' : '') +
+      (deal0 ? '<button class="act" data-go="#/review">Start · ' + plural(deal0, 'card') + '</button>' : '') +
       '<ul class="list tight">' + rows + '</ul>' +
       // these three are navigation, not modes: as a stack of 26px words they
       // pushed themselves 92px below the fold, under the tab bar, where the
@@ -1008,7 +1020,7 @@
 
     // the app knows when the exam is — the countdown sits over the course name
     var pl = paceLine(d);
-    var cl = coverLine(deckId);
+    var cl = (over || examPast) ? '' : coverLine(deckId);
     var deal = over ? [] : buildDaily({ deck: d }), dealNow = deal.length;
     // the tables: each on its own, or both in one deal — every card, the
     // least-known first, the way a cram deals
@@ -1060,7 +1072,7 @@
         (nx ? '<button class="act" data-go="#/d/' + deckId + '/l/' + nx.id + '">' + (read ? 'Continue' : 'Start reading') + '</button>' +
               '<div class="actsub">' + esc('Phase ' + nx.pn + ' · ' + lessonWord(nx) + ' · ') + mdT(nx.title) +
               (read ? esc(' · ' + read + ' of ' + bk.order.length + ' read') : '') + esc(dCk ? ckWord : '') + '</div>'
-            : '<div class="actsub">All ' + bk.order.length + ' lessons read' + esc(ckWord) + '</div>');
+            : '<div class="actsub">All ' + plural(bk.order.length, 'lesson') + ' read' + esc(ckWord) + '</div>');
     }
 
     // the name is the way back; the number is a fact, not a hidden link
@@ -1162,10 +1174,10 @@
       '<span class="dv num">' + (plan.over || !plan.left ? '' : plan.left.toLocaleString()) + '</span></div>';
     if (plan.over) return mount(head + '<div class="sub">The exam has passed. Review what is due, and the deck is still here.</div>');
     if (!plan.left) return mount(head +
-      '<div class="how"><p>Every card has been seen. The ' + plan.days + ' days left are for what is due, Trouble spots and High-yield.</p></div>' +
+      '<div class="how"><p>Every card has been seen. The ' + plural(plan.days, 'day') + ' left ' + (plan.days === 1 ? 'is' : 'are') + ' for what is due, Trouble spots and High-yield.</p></div>' +
       '<div class="modes">' + modeBtn('#/study/' + deckId + '/smart', 'Study', 'What is due today') + modeBtn('#/study/' + deckId + '/hard', 'Trouble spots', MODE_DESC.hard) + '</div>');
     var rate = plan.perDay, mine = set.newPerSession;
-    var rateLine = rate + ' new a day sees every card ' + plan.buffer + ' days before the exam';
+    var rateLine = rate + ' new a day sees every card ' + plural(plan.buffer, 'day') + ' before the exam';
     var setLine = mine >= rate
       ? 'Your setting is ' + mine + ' new a session, which is enough.'
       : 'Your setting is ' + mine + ' new a session. <button class="pace" data-pace="' + rate + '">Set it to ' + rate + '</button>';
@@ -1181,7 +1193,7 @@
     mount(head +
       '<div class="how" style="margin-bottom:var(--s-3)"><p>' + esc(plan.left.toLocaleString() + ' cards not yet seen. ' + rateLine + '. ') + setLine + '</p></div>' +
       '<ul class="list" style="gap:0">' + rows +
-      '<li><div class="ledger mid"><span class="lname">Last ' + plan.buffer + ' days</span><span class="lval num"></span>' +
+      '<li><div class="ledger mid"><span class="lname">Last ' + plural(plan.buffer, 'day') + '</span><span class="lval num"></span>' +
       '<span class="lsub">Nothing new. What is due each day, then Trouble spots, then High-yield.</span></div></li></ul>');
   }
 
@@ -1715,7 +1727,7 @@
     }).join('');
     var html = toplineHTML('#/d/' + deckId, nice(d) + ' · Every word') +
       '<section class="page phase stack-l"><div class="stack"><div class="eyebrow">Every word the course uses</div>' +
-      '<h2>Words</h2><p class="lede">' + n + ' words in ' + order.length + ' groups. Tap one for its six levels; the reading level you chose is the dark one.</p>' +
+      '<h2>Words</h2><p class="lede">' + plural(n, 'word') + ' in ' + plural(order.length, 'group') + '. Tap one for its six levels; the reading level you chose is the dark one.</p>' +
       '<div class="searchbar"><input id="wq" type="search" aria-label="Find a word" placeholder="find a word" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></div>' +
       '</div>' + rows + '</section>';
     bookMount(html);
@@ -2115,7 +2127,7 @@
     var scope = d ? nice(d) + (unit ? ' · ' + unit.title : '') + ced : 'Review';
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
-      '<span class="pos num">' + Math.min(sess.done + 1, sess.planned) + ' of ' + sess.planned +
+      '<span class="pos num">' + Math.min(sess.done + 1, sess.planned).toLocaleString() + ' of ' + sess.planned.toLocaleString() +
         (redoLeft() ? '<span class="redo"> · ' + redoLeft() + ' to redo</span>' : '') + '</span>' +
       '</div>';
   }
@@ -2736,7 +2748,7 @@
       // with its pointer events switched off, so a keyboard walked three
       // "buttons" that do nothing
       return '<div class="ledger"><span class="lname">' + l[0] +
-        '</span><span class="lval num">' + l[1] + '</span></div>';
+        '</span><span class="lval num">' + (l[1] || 0).toLocaleString() + '</span></div>';
     }).join('');
     // "Keep going" must know what is left — a mixed review counts every deck
     // …and "what is left" is due cards plus cards never seen. Counting only
@@ -2775,8 +2787,8 @@
     else S.getIndex().courses.forEach(function (c) { var dk = S.getDeck(c.id); if (dk) addBack(dk); });
     var backRows = (tmrw || week)
       ? '<div class="k" style="margin:var(--s-4) 0 6px">Coming back</div><div class="done-rows">' +
-        '<div class="ledger"><span class="lname">Tomorrow</span><span class="lval num">' + tmrw + '</span></div>' +
-        '<div class="ledger"><span class="lname">Within a week</span><span class="lval num">' + week + '</span></div></div>'
+        '<div class="ledger"><span class="lname">Tomorrow</span><span class="lval num">' + tmrw.toLocaleString() + '</span></div>' +
+        '<div class="ledger"><span class="lname">Within a week</span><span class="lval num">' + week.toLocaleString() + '</span></div></div>'
       : '';
     sess = null;
     // the session is over — a reload or a back gesture should land on the
@@ -2787,7 +2799,7 @@
     mount(
       '<div class="done-hero">' +
         '<span class="k">Session complete</span>' +
-        '<div class="v">' + total + '</div>' +
+        '<div class="v">' + total.toLocaleString() + '</div>' +
         '<div class="sub" style="margin-top:8px;color:var(--ink-soft);font-size:14.5px">' +
           esc(moment) + '</div>' +
       '</div>' +
@@ -2997,7 +3009,7 @@
       return '<li><button class="ledger mid" data-go="#/d/' + c.id + '/plan">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval word">' + esc(w) + '</span>' +
-        '<span class="lsub">' + esc(examName(c.id) + ' · ' + (examDayNum(c.id) - S.dayNum()) + ' days · the plan') + '</span>' +
+        '<span class="lsub">' + esc(examName(c.id) + ' · ' + plural(examDayNum(c.id) - S.dayNum(), 'day') + ' · the plan') + '</span>' +
         '</button></li>';
     }).join('');
     var paceBlock = paceRows
@@ -3024,8 +3036,8 @@
         '<ul class="list tight"><li><div class="ledger mid">' +
         '<span class="lname">Overdue</span>' +
         '<span class="lval num">' + over.toLocaleString() + '</span>' +
-        '<span class="lsub">' + esc(when + ' · ' + reviewSlots() +
-          ' reviews a session · ' + sizeNow + ' cards, ' + (S.getSettings().newPerSession || 0) + ' new') +
+        '<span class="lsub">' + esc(when + ' · ' + plural(reviewSlots(), 'review') +
+          ' a session · ' + sizeNow + ' cards, ' + (S.getSettings().newPerSession || 0) + ' new') +
         '</span></div></li></ul>' +
         // the way out, next to the number that needs one
         '<button class="textbtn quiet" data-spread>Spread · ' + reviewSlots() + ' a day</button>' +
@@ -3039,7 +3051,7 @@
       var ref = Math.max(sizeNow, Math.max.apply(null, fc));
       fcBlock = '<div class="k" style="margin:var(--s-5) 0 var(--s-3)">The week ahead</div>' +
         '<ul class="list tight">' + fc.map(function (n, i) {
-          return '<li><div class="ledger mid fc"' +
+          return '<li><div class="ledger mid fc' + (n ? '' : ' zero') + '"' +
             ' style="--fc:' + Math.round((n / ref) * 100) + '%">' +
             '<span class="lname">' + esc(dayWord(i)) + '</span>' +
             '<span class="lval num">' + n.toLocaleString() + '</span></div></li>';
@@ -3240,7 +3252,7 @@
       STUCK_MIN + ' times or more</div></div>' +
       missLine('this list') +
       '<button class="act" data-go="#/stuck/go">Study ' +
-        (deal < all.length ? deal + ' of ' + all.length.toLocaleString() : 'these') + '</button>' +
+        (deal < all.length ? deal.toLocaleString() + ' of ' + all.length.toLocaleString() : 'these') + '</button>' +
       // the remedy, said once — and where it lives: the note control is on
       // the card in a session, not on this screen
       '<div class="empty cap">A card at this count usually needs saying in your ' +
@@ -3304,7 +3316,7 @@
       '<div class="sub">' + esc(plural(all.length, 'card')) + '</div></div>' +
       missLine('this screen') +
       '<button class="act" data-go="#/starred/go">Study ' +
-        (deal < list.length ? deal + ' of ' + list.length.toLocaleString() : 'these') + '</button>' +
+        (deal < list.length ? deal.toLocaleString() + ' of ' + list.length.toLocaleString() : 'these') + '</button>' +
       // the filter word, its count, and the sheet — one quiet line, not three
       '<div class="scoperow unit">' +
         (ids.length > 1
@@ -3577,7 +3589,7 @@
     var bits = [];
     if (word && word.textContent.trim() !== 'All cards' && word.textContent.trim() !== 'All decks')
       bits.push(word.textContent.trim().toLowerCase() + (cnt ? ' · ' + cnt.textContent.trim() + ' cards' : ''));
-    bits.push(new Date().toISOString().slice(0, 10));
+    bits.push(S.dayKey(S.dayNum()));      // the local day, not UTC's
     stamp.textContent = bits.join(' · ');
     var host = app.querySelector('.pane-r .inner') || app.querySelector('.screen') || app;
     host.insertBefore(stamp, host.firstChild);
@@ -4301,7 +4313,12 @@
   applyTheme();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
 
-  app.innerHTML = '<div class="head"><span class="k">AP Decks</span><h1>Loading</h1></div>';
+  bare('<div class="head"><span class="k">AP Decks</span><h1>Loading</h1></div>');
+  // the skip link's own hash used to be caught by the router and sent home
+  var skipLink = document.querySelector('.skip');
+  if (skipLink) skipLink.addEventListener('click', function (e) {
+    e.preventDefault(); try { app.focus(); } catch (x) {}
+  });
 
   /* The deck list needs the 6 KB index, not the 2.8 MB of decks behind it.
      Holding the whole app until the last deck landed meant 16.5 s of a blank
@@ -4353,8 +4370,9 @@
     warmSearch();
     S.remind.sync();                       // the days ahead, as this device now sees them
   }).catch(function (err) {
-    app.innerHTML = '<div class="head"><span class="k">AP Decks</span><h1>Could not load the decks</h1>' +
-      '<div class="sub">' + esc(err.message) + '</div></div>' +
-      '<button class="act" onclick="location.reload()">Try again</button>';
+    try { console.error(err); } catch (x) {}
+    bare('<div class="head"><span class="k">AP Decks</span><h1>Could not load the decks</h1>' +
+      '<div class="sub">Check the connection and try again.</div></div>' +
+      '<button class="act" onclick="location.reload()">Try again</button>');
   });
 })();

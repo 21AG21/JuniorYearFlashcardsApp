@@ -11,7 +11,7 @@
   --ground:#f4f4f5;
   --wall:#ffffff;
   --ink:#0a0a0b;
-  --ink-soft:#6a6a70;
+  --ink-soft:#57575e;   /* 6.5:1 — a full step above --muted, which it used to sit four units from */
   --muted:#6e6e76;   /* 4.60:1 on the light ground — #7e7e86 measured 3.66 and failed AA */
   --hair:rgba(10,10,12,.13);
   --hair-soft:rgba(10,10,12,.07);
@@ -107,15 +107,18 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   /* two full-height panes, each its own scroller (skill §5.6) */
   #app{ max-width:none; height:100dvh; padding:0; display:flex; flex-direction:row; overflow:hidden; margin:0; }
   /* the list is an index, not a co-star: a slim rail, the work fills the rest */
-  .pane-l{ flex:0 0 26%; min-width:280px; max-width:360px; height:100%; overflow-y:auto; overscroll-behavior-y:none;
+  .pane-l{ flex:0 0 26%; min-width:280px; max-width:360px; height:100%; overflow:hidden;
     display:flex; flex-direction:column;
-    border-right:1px solid var(--hair-soft);
-    padding:42px 36px 40px calc(env(safe-area-inset-left, 0px) + 40px);
-    /* the rail is an index that just overflows a short window; a classic
-       scrollbar drew a fat grey bar down the middle of the screen for the
-       sake of forty pixels, so it scrolls without showing one */
+    border-right:1px solid var(--hair-soft); }
+  /* the index scrolls in its own box above a fixed nav — a sticky nav used
+     to paint over whichever course it had scrolled past, slicing a row in the
+     pane's own colour. Its scrollbar stays hidden: a classic scrollbar drew a
+     fat grey bar down the middle of the screen for forty pixels of overflow. */
+  .pane-l .rail{ flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior-y:none;
+    display:flex; flex-direction:column;
+    padding:42px 36px 20px calc(env(safe-area-inset-left, 0px) + 40px);
     scrollbar-width:none; }
-  .pane-l::-webkit-scrollbar{ display:none; width:0; height:0; }
+  .pane-l .rail::-webkit-scrollbar{ display:none; width:0; height:0; }
   .pane-r{ flex:1 1 auto; height:100%; overflow-y:auto; overscroll-behavior-y:none;
     scroll-padding-bottom:32px; scroll-padding-top:24px;
     padding:46px calc(env(safe-area-inset-right, 0px) + 72px) 80px 72px; }
@@ -129,21 +132,13 @@ input,textarea{ -webkit-user-select:text; user-select:text; }
   /* the rail is the only navigation on a wide screen — the tab bar is hidden
      there — so it sticks to the bottom of the rail instead of scrolling off
      it. At 1024x700 "Settings" was simply below the fold. */
-  .pane-l .lnav{ margin-top:auto; position:sticky; bottom:0; z-index:2;
-    background:var(--ground); border-top:1px solid var(--hair-soft);
-    padding:10px 0 calc(env(safe-area-inset-bottom, 0px) + 12px);
+  .pane-l .lnav{ flex:none; border-top:1px solid var(--hair-soft);
+    padding:10px 36px calc(env(safe-area-inset-bottom, 0px) + 12px) calc(env(safe-area-inset-left, 0px) + 40px);
     display:flex; flex-direction:column; align-items:flex-start; gap:0; }
   .pane-l .lnav .textbtn{ font-size:16px; padding:8px 0; min-height:40px; }
-  /* a short window gives the sticky rail nav less room to take */
+  /* a short window gives the rail nav less room to take */
   @media (max-height:720px){
     .pane-l .lnav .textbtn{ font-size:15px; padding:5px 0; min-height:34px; }
-  }
-  /* …and on a REALLY short one it must stop sticking altogether. At 900x500 —
-     this breakpoint's own corner — the opaque nav sat over Calc BC, US History
-     and Ladders, slicing "Calc BC 891" through the middle in the pane's own
-     colour, so three of six courses were simply gone. */
-  @media (max-height:660px){
-    .pane-l .lnav{ position:static; margin-top:var(--s-4); }
   }
   /* on a tall monitor half the rail was empty ground between six 45px rows and
      five 40px links — the rows take the air instead */
@@ -327,6 +322,11 @@ button.hero-tap:active{ opacity:.55; }
     --t-answer:clamp(17px,4.4vh,20px);
     --tabh:calc(env(safe-area-inset-bottom, 0px) + 52px + 14px);
   }
+  /* the reserve above says 52px, so the bar IS 52px — at 66 the last row
+     could never scroll clear of it */
+  .lg-tabbar{ height:52px; }
+  .lg-tab svg{ width:22px; height:22px; }
+  .lg-tab span{ font-size:11px; }
   #app{ padding-top:calc(env(safe-area-inset-top, 0px) + 14px); }
   /* the name and its count read as two unrelated things a screen apart */
   .dhero{ max-width:460px; }
@@ -345,7 +345,10 @@ button.hero-tap:active{ opacity:.55; }
 .ledger.fc{ position:relative; cursor:default; padding:7px 0 15px; }
 .ledger.fc::before, .ledger.fc::after{ content:""; position:absolute; left:0; bottom:5px; height:2px; }
 .ledger.fc::before{ right:0; background:var(--hair-soft); }
-.ledger.fc::after{ width:var(--fc); background:var(--ink-soft); }
+.ledger.fc::after{ width:var(--fc); background:var(--ink); }
+/* a day with nothing due draws no bar, and its zero goes quiet */
+.ledger.fc.zero::after{ display:none; }
+.ledger.fc.zero .lname,.ledger.fc.zero .lval{ color:var(--muted); }
 
 /* smaller ledger for unit lists and summary rows */
 .ledger.mid{ padding:7px 0; }
@@ -357,6 +360,7 @@ button.hero-tap:active{ opacity:.55; }
 .ledger .lval.word, .ledger.mid .lval.word{ font-size:17px; font-weight:500; letter-spacing:-.01em; }
 .ulabel{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:var(--s-3) 0 2px; }
 .ulabel:first-child{ margin-top:0; }
+.nowrap{ white-space:nowrap; }
 
 /* --- actions: one compact pill at most, text buttons for the rest --------- */
 /* nowhere in this app is there a button shape — an action is a line of text,
@@ -724,32 +728,30 @@ sub,sup{ font-size:max(.68em, 11px); }
 .ulabel.cover .pace::after{ content:""; position:absolute; inset:-13px -10px; }
 .ulabel.cover .pace:active{ opacity:.5; }
 /* --- toast ------------------------------------------------------------------ */
-#toast{ position:fixed; z-index:60; left:calc(env(safe-area-inset-left,0px) + var(--gutter));
-  right:calc(env(safe-area-inset-right,0px) + var(--gutter));
-  bottom:calc(env(safe-area-inset-bottom, 0px) + 108px);
-  background:var(--ground); padding:2px 0;
-  color:var(--ink-soft); font-size:17px; font-weight:430; letter-spacing:-.01em; line-height:1.35;
-  opacity:0; pointer-events:none; transform:translateY(6px);
+/* a message floats in a neutral glass capsule — the same material as the
+   tab bar, tuned as thick — so it rides over a list instead of printing
+   across it, which a line on the bare ground did over every busy screen */
+#toast{ position:fixed; z-index:60; left:50%; bottom:calc(env(safe-area-inset-bottom, 0px) + 108px);
+  width:max-content; max-width:min(calc(100vw - 48px), 520px); min-height:44px;
+  display:flex; align-items:center; justify-content:center; padding:10px 20px;
+  --lg-blur:30px; --lg-tint-a:0.62;
+  color:var(--ink); font-size:15px; font-weight:500; letter-spacing:-.01em; line-height:1.35; text-align:center;
+  opacity:0; pointer-events:none; transform:translate(-50%, 8px);
   transition:opacity .2s ease, transform .24s cubic-bezier(.32,.72,0,1); }
-#toast.show{ opacity:1; transform:none; }
-/* in a game the board fills the screen, so a floating line 108px up lands in
-   the middle of the tiles — there the message becomes a strip on the bottom
-   edge instead, over nothing but its own ground */
-/* a study session's controls live at the bottom, so its message goes to the
-   top edge — the band used to paint straight over Again / Good / Easy */
-#app.is-session:not(.is-game):not(.is-wide) ~ #toast{ left:0; right:0; top:0; bottom:auto;
-  border-bottom:1px solid var(--hair-soft); transform:translateY(-6px);
-  padding:calc(env(safe-area-inset-top,0px) + 12px) calc(env(safe-area-inset-right,0px) + var(--gutter))
-          12px calc(env(safe-area-inset-left,0px) + var(--gutter)); }
-#app.is-session:not(.is-game):not(.is-wide) ~ #toast.show{ transform:none; }
-#app.is-game:not(.is-wide) ~ #toast{ left:0; right:0; bottom:0;
-  border-top:1px solid var(--hair-soft);
-  padding:14px calc(env(safe-area-inset-right,0px) + var(--gutter))
-          calc(env(safe-area-inset-bottom,0px) + 14px)
-          calc(env(safe-area-inset-left,0px) + var(--gutter)); }
-/* two-pane layouts: the toast lives in the right pane, never over the rail */
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) #toast{ --lg-tint-a:0.74; } }
+:root[data-theme="dark"] #toast{ --lg-tint-a:0.74; }
+#toast.show{ opacity:1; transform:translate(-50%, 0); }
+/* a study session's controls live at the bottom, so its message drops in
+   from the top edge; a game's board fills the screen, so its message rides
+   the bottom edge */
+#app.is-session:not(.is-game):not(.is-wide) ~ #toast{ top:calc(env(safe-area-inset-top, 0px) + 14px); bottom:auto;
+  transform:translate(-50%, -8px); }
+#app.is-session:not(.is-game):not(.is-wide) ~ #toast.show{ transform:translate(-50%, 0); }
+#app.is-game:not(.is-wide) ~ #toast{ bottom:calc(env(safe-area-inset-bottom, 0px) + 16px); }
+/* two panes: centred over the right pane, at its top, never over the rail */
 @media (min-width:900px) and (min-height:500px){
-  #toast{ left:calc(clamp(280px, 26vw, 360px) + 72px); right:96px; bottom:56px; }
+  #toast{ left:calc(50% + clamp(280px, 26vw, 360px) / 2); top:24px; bottom:auto; transform:translate(-50%, -8px); }
+  #toast.show{ transform:translate(-50%, 0); }
 }
 /* small control words carry an invisible, finger-sized hit area */
 .sizebtn, .backbar .bk, .backbar .gfilt, .cyc, .textbtn.quiet{ position:relative; }
@@ -942,6 +944,15 @@ sub,sup{ font-size:max(.68em, 11px); }
   .card .a{ font-size:clamp(16px,min(5.6vw,5.4vh),20px); }
   .rate{ margin-top:var(--s-3); }
   .sess-top{ margin-bottom:var(--s-3); }
+}
+/* a phone on its side, continued: the action line and every row answer the
+   short side like the hero does, in the hero's order — it used to be the
+   one line on the screen smaller than the line under it. This sits after
+   the rules it overrides; the landscape block above comes before them. */
+@media (orientation:landscape) and (max-height:500px){
+  .ledger .lname,.ledger .lval{ font-size:clamp(20px,6.2vh,26px); }
+  .act{ font-size:clamp(22px,6.6vh,28px); }
+  .ledger.mid .lname,.ledger.mid .lval{ font-size:clamp(18px,5vh,22px); }
 }
 
 
@@ -1335,4 +1346,10 @@ sub,sup{ font-size:max(.68em, 11px); }
     padding-top:0; margin:0 0 var(--s-4); pointer-events:auto; }
   .book .topline{ order:-2; }
   .book .segwrap .lg-seg{ width:min(380px,100%); }
+}
+
+/* the app tunes its glass thinner than the kit ships it; a request for less
+   transparency has to beat that tuning, not lose to it on order */
+@media (prefers-reduced-transparency:reduce){
+  .lg-tabbar, .book .segwrap .lg-seg, #toast{ --lg-tint-a:.94; --lg-blur:0px; }
 }
