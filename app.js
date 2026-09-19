@@ -935,11 +935,24 @@
       var read = bk.order.filter(function (id) { return done[id]; }).length, nextId = null;
       for (var oi = 0; oi < bk.order.length; oi++) if (!done[bk.order[oi]]) { nextId = bk.order[oi]; break; }
       var nx = nextId && bk.items[nextId];
+      var ck = bookChecks(), nCk = 0, dCk = 0;
+      bk.phaseList.forEach(function (ph) {
+        (ph.after || []).forEach(function (s) {
+          if (s.k !== 'done-when') return;
+          (s.b || []).forEach(function (b) { if (b.t === 'ul' || b.t === 'ol') b.items.forEach(function (x, i) { nCk++; }); });
+        });
+        var i2 = 0;
+        (ph.after || []).forEach(function (s) {
+          if (s.k !== 'done-when') return;
+          (s.b || []).forEach(function (b) { if (b.t === 'ul' || b.t === 'ol') b.items.forEach(function () { if (ck['p' + ph.n + '-' + i2]) dCk++; i2++; }); });
+        });
+      });
+      var ckWord = nCk ? ' · ' + dCk + ' of ' + nCk + ' checks' : '';
       where = '<div class="ulabel" style="margin-top:var(--s-4)">Reading</div>' +
         (nx ? '<button class="act" data-go="#/d/' + deckId + '/l/' + nx.id + '">' + (read ? 'Continue' : 'Start reading') + '</button>' +
               '<div class="actsub">' + esc('Phase ' + nx.pn + ' · ' + lessonWord(nx) + ' · ') + mdT(nx.title) +
-              (read ? esc(' · ' + read + ' of ' + bk.order.length + ' read') : '') + '</div>'
-            : '<div class="actsub">All ' + bk.order.length + ' lessons read</div>');
+              (read ? esc(' · ' + read + ' of ' + bk.order.length + ' read') : '') + esc(dCk ? ckWord : '') + '</div>'
+            : '<div class="actsub">All ' + bk.order.length + ' lessons read' + esc(ckWord) + '</div>');
     }
 
     // the name is the way back; the number is a fact, not a hidden link
@@ -1475,7 +1488,9 @@
     var done = bookDone();
     var lis = bk.byUnit[unitId].map(function (ph) {
       var n = ph.items.length, dn = ph.items.filter(function (it) { return done[it.id]; }).length;
-      return '<li><button class="ph" data-go="#/d/' + deckId + '/b/' + ph.n + '"><span class="n"><span>Phase ' + ph.n + '</span><span class="pct">' + dn + ' / ' + n + '</span></span>' +
+      // the hours the phase asks for, from its own meta line ("≈40 h")
+      var hm = /≈\s*(\d+)\s*h/.exec(ph.meta || ''), hrs = hm ? ' · ≈' + hm[1] + ' h' : '';
+      return '<li><button class="ph" data-go="#/d/' + deckId + '/b/' + ph.n + '"><span class="n"><span>Phase ' + ph.n + esc(hrs) + '</span><span class="pct">' + dn + ' / ' + n + '</span></span>' +
         '<span class="t">' + esc(ph.title) + '</span><span class="bar"><i style="width:' + (n ? Math.round(dn / n * 100) : 0) + '%"></i></span></button>' +
         '<ul>' + ph.items.map(function (it) {
           return '<li><button class="' + (done[it.id] ? 'done' : '') + '" data-go="#/d/' + deckId + '/l/' + it.id + '"><span class="n">' + esc(lessonWord(it)) + '</span><span class="t">' + mdT(it.title) + '</span></button></li>';
@@ -2773,10 +2788,11 @@
       var d2 = S.getDeck(c.id); if (!d2) return '';
       var w = paceWord(d2);
       if (!w) return '';
-      return '<li><button class="ledger mid" data-go="#/d/' + c.id + '">' +
+      // the row opens the course's Plan: the verdict, then what to do about it
+      return '<li><button class="ledger mid" data-go="#/d/' + c.id + '/plan">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval word">' + esc(w) + '</span>' +
-        '<span class="lsub">' + esc(examName(c.id) + ' · ' + (examDayNum(c.id) - S.dayNum()) + ' days') + '</span>' +
+        '<span class="lsub">' + esc(examName(c.id) + ' · ' + (examDayNum(c.id) - S.dayNum()) + ' days · the plan') + '</span>' +
         '</button></li>';
     }).join('');
     var paceBlock = paceRows

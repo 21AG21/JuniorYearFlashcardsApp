@@ -77,7 +77,7 @@ Settings), with the numbers read from your own Settings. In short:
 - A course page shows each unit's blurb; a unit page opens with its **key
   ideas** and lists its cards under their topics, each topic a session of its
   own.
-- **Review** mixes everything due across all 7 decks; **Quick ten** is the
+- **Review** mixes everything due across every deck on the shelf; **Quick ten** is the
   same deal cut to ten.
 - **Multiple choice** builds distractors from other answers in the same unit.
 - **Typing mode** (Settings) makes you write the answer first, graded leniently.
