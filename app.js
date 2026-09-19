@@ -226,7 +226,7 @@
     var p = h.replace(/^#/, '').split('/').filter(Boolean);
     if (p[0] === 'game') return '#/games';
     if (p[0] === 'games') return '#/';
-    if (p[0] === 'd' && (p[2] === 'u' || p[2] === 'w' || p[2] === 'a')) return '#/d/' + p[1];
+    if (p[0] === 'd' && (p[2] === 'u' || p[2] === 'w' || p[2] === 'a' || p[2] === 'plan')) return '#/d/' + p[1];
     if (p[0] === 'd' && p[2] === 'l') { var bi = bookOf(p[1]), it = bi && bi.items[p[3]]; return '#/d/' + p[1] + (it ? '/u/' + it.u : ''); }
     if (p[0] === 'd' && p[2] === 'r') { var br = bookOf(p[1]), rp = br && br.resPhase[p[3]]; return '#/d/' + p[1] + (rp ? '/b/' + rp.n : ''); }
     if (p[0] === 'd' && p[2] === 'b') { var bp = bookOf(p[1]), ph = bp && bp.phases[p[3]]; return '#/d/' + p[1] + (ph ? '/u/' + ph.u : ''); }
@@ -842,6 +842,7 @@
     hard: 'Cards missed twice, or missed the last time',
     all: 'A session\'s worth, shuffled from the whole deck',
     games: 'Rounds built from this deck',
+    plan: 'The units week by week to the exam, from what is left',
     cram: 'Every card in the unit, one pass, nothing rescheduled',
     print: 'Questions and answers on paper, two columns'
   };
@@ -964,6 +965,7 @@
           ? modeBtn('#/study/' + deckId + '/due', 'Catch up · ' + st.due.toLocaleString(), MODE_DESC.due) : '') +
         modeBtn('#/study/' + deckId + '/hard', 'Trouble spots', MODE_DESC.hard) +
         modeBtn('#/study/' + deckId + '/all', 'Shuffle', MODE_DESC.all) +
+        (examDayNum(deckId) ? modeBtn('#/d/' + deckId + '/plan', 'Plan', MODE_DESC.plan) : '') +
         (window.Games && window.Games.linksFor(deckId).length
           ? modeBtn('#/games', 'Games', MODE_DESC.games) : '') +
       '</div>' +
@@ -971,6 +973,76 @@
       (about ? '<ul class="list" style="margin-top:var(--s-4);gap:0"><li><div class="ulabel">Before you start</div></li>' + about + '</ul>' : '') +
       '<ul class="list" style="margin-top:var(--s-4);gap:0">' + units + '</ul>'
     );
+  }
+
+  /* ==========================================================================
+     VIEW · the plan — the deck's units laid across the weeks to the exam,
+     from what is still unseen, at the rate that gets there with days to spare
+     for review. The pace line said "21 a day covers it"; this says which
+     unit that means this week, and next.
+     ========================================================================== */
+  function planFor(d) {
+    var exam = examDayNum(d.id), today = S.dayNum();
+    if (!exam) return null;
+    var days = exam - today;
+    if (days <= 0) return { over: true };
+    var units = d.units.map(function (u) {
+      var us = S.unitStats(d, u.id);
+      return { u: u, total: us.total, left: Math.max(0, us.total - us.seen) };
+    }).filter(function (x) { return x.total; });
+    var left = units.reduce(function (n, x) { return n + x.left; }, 0);
+    // a review buffer before the exam: two weeks when there is room, a
+    // seventh of the time when there is not
+    var buffer = days > 28 ? 14 : Math.floor(days / 7);
+    var studyDays = Math.max(1, days - buffer);
+    var perDay = Math.ceil(left / studyDays);
+    var weeks = [], cursor = 0, carried = 0;
+    for (var w = 0; w * 7 < studyDays && cursor < units.length && left; w++) {
+      var cap = perDay * Math.min(7, studyDays - w * 7), got = 0, items = [];
+      while (cursor < units.length && got < cap) {
+        var x = units[cursor], take = Math.min(x.left - carried, cap - got);
+        if (x.left === 0) { cursor++; continue; }
+        items.push({ u: x.u, n: take, cont: carried > 0, whole: take === x.left });
+        got += take; carried += take;
+        if (carried >= x.left) { cursor++; carried = 0; } else break;
+      }
+      weeks.push({ start: today + w * 7, items: items, n: got });
+    }
+    return { days: days, left: left, buffer: buffer, perDay: perDay, weeks: weeks, exam: exam };
+  }
+  function viewPlan(deckId) {
+    var d = S.getDeck(deckId);
+    if (!d) return go('#/');
+    var plan = planFor(d);
+    if (!plan) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
+    var set = S.getSettings();
+    var head = '<div class="ulabel" style="margin-top:0">' + esc(nice(d) + ' · Exam ' + examName(deckId) + (plan.over ? '' : ' · in ' + plural(plan.days, 'day'))) + '</div>' +
+      '<div class="dhero"><h1 class="dnh"><button class="dn" data-back>Plan</button></h1>' +
+      '<span class="dv num">' + (plan.over || !plan.left ? '' : plan.left.toLocaleString()) + '</span></div>';
+    if (plan.over) return mount(head + '<div class="sub">The exam has passed. Review what is due, and the deck is still here.</div>');
+    if (!plan.left) return mount(head +
+      '<div class="how"><p>Every card has been seen. The ' + plan.days + ' days left are for what is due, Trouble spots and High-yield.</p></div>' +
+      '<div class="modes">' + modeBtn('#/study/' + deckId + '/smart', 'Study', 'What is due today') + modeBtn('#/study/' + deckId + '/hard', 'Trouble spots', MODE_DESC.hard) + '</div>');
+    var rate = plan.perDay, mine = set.newPerSession;
+    var rateLine = rate + ' new a day sees every card ' + plan.buffer + ' days before the exam';
+    var setLine = mine >= rate
+      ? 'Your setting is ' + mine + ' new a session, which is enough.'
+      : 'Your setting is ' + mine + ' new a session. <button class="pace" data-pace="' + rate + '">Set it to ' + rate + '</button>';
+    var rows = plan.weeks.map(function (w, i) {
+      var name = i === 0 ? 'This week' : i === 1 ? 'Next week' : 'Week of ' + dateWord(w.start);
+      var parts = w.items.map(function (it) {
+        return 'Unit ' + it.u.n + ' · ' + T.plain(it.u.title) + (it.cont ? ' · continued' : (it.whole ? '' : ' · the first ' + it.n));
+      });
+      return '<li><button class="ledger mid' + (i === 0 ? ' now' : '') + '" data-go="#/d/' + deckId + '/u/' + w.items[0].u.id + '">' +
+        '<span class="lname">' + esc(name) + '</span><span class="lval num">' + w.n.toLocaleString() + '</span>' +
+        '<span class="lsub">' + esc(parts.join(' · ')) + '</span></button></li>';
+    }).join('');
+    mount(head +
+      '<div class="how" style="margin-bottom:var(--s-3)"><p>' + esc(plan.left.toLocaleString() + ' cards not yet seen. ' + rateLine + '. ') + setLine + '</p></div>' +
+      '<ul class="list" style="gap:0">' + rows +
+      '<li><div class="ledger mid"><span class="lname">Last ' + plan.buffer + ' days</span><span class="lval num"></span>' +
+      '<span class="lsub">Nothing new. What is due each day, then Trouble spots, then High-yield.</span></div></li></ul>');
   }
 
   /* ==========================================================================
@@ -3176,7 +3248,8 @@
         b('Shuffle') + ' — ' + esc(MODE_DESC.all) + '.',
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
         b('Cram') + ', on a unit — ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
-        b('Print') + ', on a unit — ' + esc(MODE_DESC.print) + '.'
+        b('Print') + ', on a unit — ' + esc(MODE_DESC.print) + '.',
+        b('Plan') + ', on a course with an exam date — ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.'
       ]) +
       sec('Stars, notes and typing', [
         'The ' + b('star') + ' keeps a card. Starred cards collect under Starred on the deck list and under Study starred on their deck; swiping a card up stars it.',
@@ -3750,6 +3823,7 @@
     }
     if (p[0] === 'd' && p[1] && p[2] === 'a' && p[3]) return viewAbout(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'w') return viewWords(p[1]);
+    if (p[0] === 'd' && p[1] && p[2] === 'plan') return viewPlan(p[1]);
     if (p[0] === 'd' && p[1] && p[2] === 'b' && p[3]) return viewPhase(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
