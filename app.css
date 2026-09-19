@@ -374,6 +374,7 @@ button.hero-tap:active{ opacity:.55; }
 .list .tsep{ list-style:none; }
 .list .tsep .ulabel{ margin:var(--s-4) 0 4px; display:flex; gap:8px; align-items:baseline; }
 .list .tsep .ulabel .num{ color:var(--muted); font-variant-numeric:tabular-nums; }
+.list .tsep .tstudy{ margin-left:auto; padding:0 0 0 12px; min-height:0; }
 .list .tsep:first-child .ulabel{ margin-top:var(--s-2); }
 .keys{ margin:0 0 var(--s-3); padding:0 0 0 1.4em; display:flex; flex-direction:column; gap:8px; max-width:62ch; }
 .keys li{ font-size:16.5px; line-height:1.45; color:var(--ink); padding-left:4px; }

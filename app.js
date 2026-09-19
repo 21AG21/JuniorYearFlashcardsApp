@@ -1086,7 +1086,8 @@
       if (grouped && c.t !== lastTopic) {
         lastTopic = c.t;
         var tl = /^\d+\.\d+$/.test(c.t || '') ? 'CED ' + c.t : (c.t || 'Other');
-        sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' + byTopic[c.t].length + '</span></div></li>';
+        sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' + byTopic[c.t].length + '</span>' +
+          '<button class="textbtn quiet tstudy" data-go="#/study/' + deckId + '/t:' + encodeURIComponent(c.t || '') + '/' + unitId + '">Study</button></div></li>';
       }
       return sep + '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
         '<span class="qq' + (known ? ' dim' : '') + '">' + T.html(c.q) + '</span>' +
@@ -1791,7 +1792,11 @@
     if (resume()) return;
     // the daily path deals the chosen queue; fixed modes stay literal
     var lesson = (mode || '').indexOf('l:') === 0 ? mode.slice(2) : null;
-    var queue = lesson ? lessonQueue(d, lesson)
+    // one topic of a unit, every card of it, shuffled: the drill a topic
+    // heading offers
+    var topic = (mode || '').indexOf('t:') === 0 ? decodeURIComponent(mode.slice(2)) : null;
+    var queue = topic ? S.shuffle(d.cards.filter(function (c) { return (!unitId || c.u === unitId) && (c.t || '') === topic; }))
+      : lesson ? lessonQueue(d, lesson)
       : (mode || 'smart') === 'smart'
       ? buildDaily({ deck: d, unit: unitId || null })
       // "Catch up" is the other half of the trade the coverage line names:
