@@ -3254,7 +3254,8 @@
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
         b('Cram') + ', on a unit — ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
         b('Print') + ', on a unit — ' + esc(MODE_DESC.print) + '.',
-        b('Plan') + ', on a course with an exam date — ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.'
+        b('Plan') + ', on a course with an exam date — ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',
+        'A unit page opens with its key ideas, then its cards under their topics; ' + b('Study') + ' beside a topic deals that topic alone.'
       ]) +
       sec('Stars, notes and typing', [
         'The ' + b('star') + ' keeps a card. Starred cards collect under Starred on the deck list and under Study starred on their deck; swiping a card up stars it.',

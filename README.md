@@ -59,27 +59,50 @@ provisioned by hand or by owning a deck.
 
 ## How studying works
 
-- Tap the card to reveal. **Again / Good / Easy** schedules it — SM-2 style,
-  with the next interval printed on each button.
-- **Swipe** left for Again, right for Good, up to star.
-- **Keyboard**: space reveals, `1` `2` `3` grade, `s` stars.
-- **Review** mixes everything due across all five decks.
-- **Multiple choice** builds distractors from other answers in the same unit.
-- **Typing mode** (Settings) makes you write the answer first, graded leniently —
-  case, accents, and punctuation are ignored.
-- **High-yield only** filters to the ~30% of each deck marked core.
-- **Trouble spots** collects whatever has been missed twice or more.
-- Search runs over all 2,277 cards; any unit can be browsed with tap-to-peek.
+The app explains itself on its **How it works** page (from the deck list or
+Settings), with the numbers read from your own Settings. In short:
 
-Progress lives in the phone's local storage. No account, no server, nothing
-uploaded. Settings → *Copy backup to clipboard* exports it as JSON; *Restore*
-takes it back.
+- Open a deck and tap **Study**. The deal is what is due today, then new
+  cards; the line under the button counts the two halves.
+- Tap the card to reveal. **Again / Hard / Good / Easy** schedules it, SM-2
+  style, with the next interval printed on each button; under the answer the
+  card's note names the trap, and a line says the card's own history (first
+  time, 3 in a row, missed twice).
+- **Swipe** left for Again, right for Good, up to star.
+- **Keyboard**: space or → reveals, `1` `2` `3` `4` grade, ← undoes, `s`
+  stars, `n` opens your note, `/` searches, esc goes back.
+- Every way into a deck says what it deals: **High-yield**, **Quiz**,
+  **Trouble spots**, **Shuffle**, **Catch up**, and on a unit **Cram** and
+  **Print**. **Plan** lays a course's unseen cards across the weeks to its exam.
+- A course page shows each unit's blurb; a unit page opens with its **key
+  ideas** and lists its cards under their topics, each topic a session of its
+  own.
+- **Review** mixes everything due across all 7 decks; **Quick ten** is the
+  same deal cut to ten.
+- **Multiple choice** builds distractors from other answers in the same unit.
+- **Typing mode** (Settings) makes you write the answer first, graded leniently.
+- After a session, **Coming back** says how many cards return tomorrow and
+  within the week.
+- Search runs over all 4,726 cards; any unit can be browsed with tap-to-peek.
+
+A course that carries its book (the Six Ladders) adds: a **Reading** block
+with Continue to the next unread lesson, lessons-read counts, each phase's
+**Done when** as tickable lines, an **Every word, explained** glossary of all
+its terms at six reading levels, an on-this-page jumps line on long pages,
+and on every lesson what it builds on, where it comes up again, and how long
+it reads at the chosen level. Lesson ticks and Done-when ticks sync with the
+rest of your progress.
+
+Progress lives in the phone's local storage until an account token is pasted
+under Settings → Sync (see *Accounts*). Settings → *Backup* exports it as
+JSON; *Restore* takes it back.
 
 ## The cards
 
 Each card carries a verb (DEFINE, CONTRAST, DATE, CONJUGATE, INTEGRATE…), a
-prompt, an answer, an optional hint at the *shape* of the answer, an exam note
-naming the classic trap, and its CED topic code.
+prompt, an answer, a hint at the *shape* of the answer, an exam note naming
+the classic trap, and its topic. Each unit carries a blurb and five to eight
+key ideas, drawn from its own cards, in teaching order.
 
 Two things here are newer than most study material:
 
