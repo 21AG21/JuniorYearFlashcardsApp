@@ -942,9 +942,13 @@
     return '<span class="dots"' + at + '>' + out + '</span>';
   }
   function gameTop(id, leftHtml, posHtml) {
+    // on the first prompt of a round, one line says what the round asks; it
+    // leaves with the first move, so a round in progress is not lectured
+    var first = /data-done="0"/.test(posHtml || '') && DESC[id];
     return '<div class="sess-top">' + cue(id) +
       '<span class="scope">' + leftHtml + '</span>' +
-      '<span class="pos">' + posHtml + '</span></div>';
+      '<span class="pos">' + posHtml + '</span></div>' +
+      (first ? '<div class="gask">' + esc(DESC[id]) + '</div>' : '');
   }
   var doneAt = 0;   // the ghost half of a double tap must not dismiss the score
   /* a clock that steps backwards makes a plain delta negative, and a guard

@@ -371,6 +371,7 @@ button.hero-tap:active{ opacity:.55; }
 .actsub{ font-size:var(--t-label); font-weight:500; color:var(--muted); margin:-2px 0 var(--s-1); }
 .ledger .ublurb{ font-weight:400; line-height:1.35; white-space:normal; margin-top:3px; }
 .ledger.now .lname{ color:var(--ink); }
+.gask{ font-size:14.5px; font-weight:500; color:var(--muted); margin:-4px 0 12px; line-height:1.35; }
 .list .tsep{ list-style:none; }
 .list .tsep .ulabel{ margin:var(--s-4) 0 4px; display:flex; gap:8px; align-items:baseline; }
 .list .tsep .ulabel .num{ color:var(--muted); font-variant-numeric:tabular-nums; }
