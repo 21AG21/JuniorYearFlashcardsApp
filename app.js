@@ -316,12 +316,13 @@
     var p = h.replace(/^#/, '').split('/').filter(Boolean);
     if (p[0] === 'game') return '#/games';
     if (p[0] === 'games') return '#/';
-    if (p[0] === 'd' && (p[2] === 'u' || p[2] === 'w' || p[2] === 'a' || p[2] === 'plan')) return '#/d/' + p[1];
+    if (p[0] === 'd' && (p[2] === 'u' || p[2] === 'w' || p[2] === 'a' || p[2] === 'g' || p[2] === 'plan')) return '#/d/' + p[1];
     if (p[0] === 'd' && p[2] === 'l') { var bi = bookOf(p[1]), it = bi && bi.items[p[3]]; return '#/d/' + p[1] + (it ? '/u/' + it.u : ''); }
     if (p[0] === 'd' && p[2] === 'r') { var br = bookOf(p[1]), rp = br && br.resPhase[p[3]]; return '#/d/' + p[1] + (rp ? '/b/' + rp.n : ''); }
     if (p[0] === 'd' && p[2] === 'b') { var bp = bookOf(p[1]), ph = bp && bp.phases[p[3]]; return '#/d/' + p[1] + (ph ? '/u/' + ph.u : ''); }
     if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1] + (p[3] ? '/u/' + p[3] : '');
-    if (p[0] === 'cram' && p[1]) return p[2] ? '#/d/' + p[1] + '/u/' + p[2] : '#/d/' + p[1];
+    // a grammar point's cram goes back to the list of points
+    if (p[0] === 'cram' && p[1]) return !p[2] ? '#/d/' + p[1] : p[2].indexOf('g:') === 0 ? '#/d/' + p[1] + '/g' : '#/d/' + p[1] + '/u/' + p[2];
     if (p[0] === 'weak' || p[0] === 'stuck') return '#/stats';
     return '#/';
   }
@@ -948,6 +949,7 @@
     games: 'Rounds built from this course',
     plan: 'The units week by week to the exam, from what is left',
     cram: 'Every card in the unit, one pass, nothing rescheduled',
+    focus: 'One point at a time: the subjonctif, the passé composé, the pronouns',
     print: 'Questions and answers on paper, two columns'
   };
   function modeBtn(go, label, desc) {
@@ -963,6 +965,17 @@
     if (due) bits.push(due.toLocaleString() + ' due');
     if (fresh) bits.push(fresh.toLocaleString() + ' new');
     return '<div class="actsub">' + esc(bits.join(' · ')) + (due && fresh ? ', due first' : '') + '</div>';
+  }
+  /* a course whose grammar is spread over units can name its points — the
+     subjonctif, the pronouns — each drawn by topic from whichever units hold
+     it. "g:subj" in a cram route is one of them. */
+  function focusPoints(d) { return (d && d.focus) || []; }
+  function focusOf(d, id) {
+    if (!id || id.indexOf('g:') !== 0) return null;
+    return focusPoints(d).filter(function (f) { return f.id === id.slice(2); })[0] || null;
+  }
+  function focusCards(d, f) {
+    return d.cards.filter(function (c) { return f.topics.indexOf(c.t || '') > -1; });
   }
 
   /* ==========================================================================
@@ -1115,6 +1128,8 @@
           ? modeBtn('#/study/' + deckId + '/due', 'Catch up · ' + st.due.toLocaleString(), MODE_DESC.due) : '') +
         modeBtn('#/study/' + deckId + '/hard', 'Trouble spots', MODE_DESC.hard) +
         modeBtn('#/study/' + deckId + '/all', 'Shuffle', MODE_DESC.all) +
+        // the grammar by point, on a course that names its points
+        (focusPoints(d).length ? modeBtn('#/d/' + deckId + '/g', 'Grammar', MODE_DESC.focus) : '') +
         (examDayNum(deckId) ? modeBtn('#/d/' + deckId + '/plan', 'Plan', MODE_DESC.plan) : '') +
         (window.Games && window.Games.linksFor(deckId).length
           ? modeBtn('#/games', 'Games', MODE_DESC.games) : '') +
@@ -1201,6 +1216,44 @@
   }
 
   /* ==========================================================================
+     VIEW · the grammar by point — the subjonctif on its own, drawn from
+     whichever units hold it. A row deals every card on the point, the
+     least-known first, the way a cram does.
+     ========================================================================== */
+  function viewFocus(deckId) {
+    var d = S.getDeck(deckId);
+    if (!d || !focusPoints(d).length) return go('#/d/' + deckId);
+    curDeckId = lastDeckId = deckId;
+    var rows = focusPoints(d).map(function (f) { return { f: f, st: S.deckStats({ cards: focusCards(d, f) }, deckId) }; });
+    var all = 0, anySeen = false;
+    rows.forEach(function (r) { all += r.st.total; if (r.st.seen) anySeen = true; });
+    var list = rows.map(function (r) {
+      var st = r.st, bits = [];
+      if (!st.total) return '';
+      // the column flips to mastery once anything here is studied, all rows
+      // at once, the way the course page does
+      if (anySeen) bits.push(st.seen ? st.seen.toLocaleString() + ' of ' + st.total.toLocaleString() + ' seen'
+                                     : 'not started · ' + plural(st.total, 'card'));
+      if (st.due) bits.push(st.due.toLocaleString() + ' due');
+      return '<li><button class="ledger mid' + (st.pct >= 0.9 ? ' done' : '') +
+        '" data-go="#/cram/' + deckId + '/g:' + esc(r.f.id) + '">' +
+        '<span class="lname">' + esc(r.f.title) + '</span>' +
+        '<span class="lval num">' + (anySeen ? pct(st.pct) : st.total.toLocaleString()) + '</span>' +
+        (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
+        (r.f.blurb ? '<span class="lsub ublurb">' + esc(r.f.blurb) + '</span>' : '') +
+        '</button></li>';
+    }).join('');
+    mount(
+      '<div class="ulabel mt0">' + esc(nice(d)) + ' · Grammar</div>' +
+      '<div class="dhero"><h1 class="dnh"><button class="dn" data-back>Points de grammaire</button></h1>' +
+        '<span class="dv num">' + all.toLocaleString() + '</span></div>' +
+      '<div class="dblurb">One point at a time, from whichever units hold it. A point deals every card on it, the least-known first, and nothing the schedule owns moves.</div>' +
+      resumeHTML() +
+      '<ul class="list mt4 gap0">' + list + '</ul>'
+    );
+  }
+
+  /* ==========================================================================
      VIEW · one unit
      ========================================================================== */
   function viewUnit(deckId, unitId) {
@@ -1269,6 +1322,9 @@
           ? modeBtn('#/study/' + deckId + '/core/' + unitId, 'High-yield', MODE_DESC.core) : '') +
         modeBtn('#/quiz/' + deckId + '/smart/' + unitId, 'Quiz', MODE_DESC.quiz) +
         modeBtn('#/cram/' + deckId + '/' + unitId, 'Cram', MODE_DESC.cram) +
+        // the grammar by point, when this unit's topics feed one
+        (focusPoints(d).some(function (f) { return cards.some(function (c) { return f.topics.indexOf(c.t || '') > -1; }); })
+          ? modeBtn('#/d/' + deckId + '/g', 'Grammar', MODE_DESC.focus) : '') +
         // the print sheet has existed in the stylesheet for months with no way
         // in: two columns, questions and answers, no chrome
         '<button class="textbtn mode" data-print><span class="mlab">Print</span><span class="mdesc">' + MODE_DESC.print + '</span></button>' +
@@ -1922,9 +1978,10 @@
       if (!j.done && !j.graded) continue;
       var deck = j.deck ? S.getDeck(j.deck) : null;
       var unit = deck && j.unitId ? deck.unitById[j.unitId] : null;
+      var fp = deck ? focusOf(deck, j.unitId) : null;
       var name = p[0] === 'review' ? 'Review' : p[0] === 'ten' ? 'Quick ten'
         : p[0] === 'starred' ? 'Starred' : p[0] === 'stuck' ? 'Trouble spots'
-        : deck ? nice(deck) + (unit ? ' · ' + unit.title : j.unitId && j.unitId.indexOf('+') > -1 ? ' · both tables' : '')
+        : deck ? nice(deck) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : j.unitId && j.unitId.indexOf('+') > -1 ? ' · both tables' : '')
         : 'Session';
       if (j.cram) name += ' · cram'; else if (j.quiz) name += ' · quiz';
       out.push({ h: h, name: name, done: j.done || 0, planned: j.planned || j.ids.length });
@@ -2087,16 +2144,18 @@
     if (!d) return go('#/');
     if (savedPending()) return waitingScreen();
     if (resume()) return;
+    // "g:subj": one grammar point, its cards from whichever units hold them
+    var fp = focusOf(d, unitId);
     // "ions+vsepr": more than one unit in the same deal, for the tables
-    var set = unitId ? unitId.split('+') : [];
+    var set = unitId && !fp ? unitId.split('+') : [];
     if (set.some(function (id) { return !d.unitById[id]; })) return go('#/d/' + deckId);
-    var cards = d.cards.filter(function (c) { return !set.length || set.indexOf(c.u) > -1; });
+    var cards = fp ? focusCards(d, fp) : d.cards.filter(function (c) { return !set.length || set.indexOf(c.u) > -1; });
     if (!cards.length) return go('#/d/' + deckId);
     S.shuffle(cards);
     cards.sort(function (a, b) { return cramRank(a) - cramRank(b); });
     sess = {
       deck: d, unitId: unitId || null, mode: 'cram', cram: true, quiz: false,
-      back: set.length > 1 ? '#/d/' + deckId : null,
+      back: fp ? '#/d/' + deckId + '/g' : set.length > 1 ? '#/d/' + deckId : null,
       typing: S.getSettings().typing,
       queue: cards, done: 0, planned: cards.length, redo: 0,
       revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0, history: [], answered: false, typed: ''
@@ -2135,9 +2194,11 @@
     // One small label line: scope on the left, position on the right (skill §4.3).
     var d = c ? cardDeckOf(c) : sess.deck;
     var unit = c && d ? d.unitById[c.u] : null;
+    // a grammar point's deal is named for the point, not for the unit each card sits in
+    var fp = sess.deck && !sess.mixed ? focusOf(sess.deck, sess.unitId) : null;
     // never truncated, and it names the CED topic the card comes from
     var ced = c && c.t && /^\d+\.\d+$/.test(c.t) ? ' · CED ' + c.t : '';
-    var scope = d ? nice(d) + (unit ? ' · ' + unit.title : '') + ced : 'Review';
+    var scope = d ? nice(d) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + ced : 'Review';
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
       '<span class="pos num">' + Math.min(sess.done + 1, sess.planned).toLocaleString() + ' of ' + sess.planned.toLocaleString() +
@@ -3525,6 +3586,7 @@
         b('Shuffle') + ': ' + esc(MODE_DESC.all) + '.',
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
         b('Cram') + ', on a unit: ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
+        b('Grammar') + ', on French: ' + esc(MODE_DESC.focus) + '. A point deals every card on it, from both grammar units, the least-known first, like Cram.',
         b('Print') + ', on a unit: ' + esc(MODE_DESC.print) + '.',
         b('Plan') + ', on a course with an exam date: ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',
         'A unit page opens with its key ideas, then its cards under their topics; ' + b('Study') + ' beside a topic deals that topic alone.'
@@ -4148,6 +4210,7 @@
     if (p[0] === 'd' && p[1] && p[2] === 'b' && p[3]) return viewPhase(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
+    if (p[0] === 'd' && p[1] && p[2] === 'g') return viewFocus(p[1]);
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3]) return viewUnit(p[1], p[3]);
     if (p[0] === 'd' && p[1]) return viewCourse(p[1]);
     if (p[0] === 'study') return startSession(p[1], p[2] || 'smart', p[3], false);
