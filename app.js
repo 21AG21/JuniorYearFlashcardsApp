@@ -316,6 +316,8 @@
     var p = h.replace(/^#/, '').split('/').filter(Boolean);
     if (p[0] === 'game') return '#/games';
     if (p[0] === 'games') return '#/';
+    // a unit's free-response page goes back to the unit
+    if (p[0] === 'd' && p[2] === 'u' && p[3] && p[4] === 'frq') return '#/d/' + p[1] + '/u/' + p[3];
     if (p[0] === 'd' && (p[2] === 'u' || p[2] === 'w' || p[2] === 'a' || p[2] === 'g' || p[2] === 'plan')) return '#/d/' + p[1];
     if (p[0] === 'd' && p[2] === 'l') { var bi = bookOf(p[1]), it = bi && bi.items[p[3]]; return '#/d/' + p[1] + (it ? '/u/' + it.u : ''); }
     if (p[0] === 'd' && p[2] === 'r') { var br = bookOf(p[1]), rp = br && br.resPhase[p[3]]; return '#/d/' + p[1] + (rp ? '/b/' + rp.n : ''); }
@@ -950,6 +952,8 @@
     plan: 'The units week by week to the exam, from what is left',
     cram: 'Every card in the unit, one pass, nothing rescheduled',
     focus: 'One point at a time: the subjonctif, the passé composé, the pronouns',
+    justify: 'Every explain-why in the unit: the chain, the argument, what loses the point',
+    frq: 'Long and short questions in the exam\'s own format, model answers by point',
     print: 'Questions and answers on paper, two columns'
   };
   function modeBtn(go, label, desc) {
@@ -976,6 +980,34 @@
   }
   function focusCards(d, f) {
     return d.cards.filter(function (c) { return f.topics.indexOf(c.t || '') > -1; });
+  }
+  /* the CED frame a unit carries, when it does: its topics in order, each
+     with a title and a suggested skill, the exclusion statements, the
+     progress-check format and the free-response set */
+  function topicOf(u, code) {
+    var ts = (u && u.topics) || [];
+    for (var i = 0; i < ts.length; i++) if (ts[i].c === code) return ts[i];
+    return null;
+  }
+  function topicTitle(u, code) {
+    var t = topicOf(u, code);
+    if (t) return 'CED ' + t.c + ' · ' + t.t + (t.s ? ' · Skill ' + t.s : '');
+    return /^\d+\.\d+$/.test(code || '') ? 'CED ' + code : (code || 'Other');
+  }
+  function unitFrame(u) {
+    var bits = [];
+    if (u.topics && u.topics.length) bits.push(plural(u.topics.length, 'topic'));
+    if (u.check) bits.push(u.check);
+    return bits.join(' · ');
+  }
+  function frqLine(u) {
+    var n = { long: 0, short: 0 }, other = 0;
+    (u.frq || []).forEach(function (f) { if (n[f.kind] != null) n[f.kind]++; else other++; });
+    var bits = [];
+    if (n.long) bits.push(plural(n.long, 'long'));
+    if (n.short) bits.push(plural(n.short, 'short'));
+    if (other) bits.push(plural(other, 'question'));
+    return bits.join(', ') + ' · ' + MODE_DESC.frq;
   }
 
   /* ==========================================================================
@@ -1256,6 +1288,53 @@
   /* ==========================================================================
      VIEW · one unit
      ========================================================================== */
+  /* VIEW · a unit's free-response set: the exam's own format, each part's
+     model answer a tap away, point splits marked as estimates. Essays are
+     laid out by rubric row instead of by part. */
+  function viewFRQ(deckId, unitId) {
+    var d = S.getDeck(deckId), u = d && d.unitById[unitId];
+    if (!d || !u || !u.frq || !u.frq.length) return go('#/d/' + deckId + (u ? '/u/' + unitId : ''));
+    var KIND = { long: 'Long', short: 'Short', saq: 'Short answer', dbq: 'Document-based', leq: 'Long essay',
+                 synthesis: 'Synthesis', rhetorical: 'Rhetorical analysis', argument: 'Argument' };
+    var counts = {};
+    var list = u.frq.map(function (f, i) {
+      counts[f.kind] = (counts[f.kind] || 0) + 1;
+      var kind = (KIND[f.kind] || f.kind || 'Question') + ' ' + counts[f.kind];
+      var label = [kind, f.pts ? plural(f.pts, 'point') : '',
+        f.b ? 'Borrows from ' + (d.unitById[f.b] ? 'Unit ' + d.unitById[f.b].n : f.b) : ''].filter(Boolean).join(' · ');
+      var parts = (f.parts || []).map(function (pt, n) {
+        var id = 'fp-' + i + '-' + n;
+        return '<li><button class="fpart" data-fp aria-expanded="false" aria-controls="' + id + '">' +
+          '<span class="fpl">' + esc(pt.l ? '(' + pt.l + ')' : '') + '</span>' +
+          '<span class="fpq">' + T.html(pt.q) + '</span>' +
+          '<span class="fpp num">' + (pt.p != null ? esc(String(pt.p)) + ' pt' + (pt.p === 1 ? '' : 's') : '') + '</span></button>' +
+          '<div class="fpa" id="' + id + '" hidden>' + T.html(pt.a) +
+          (pt.n ? '<div class="fnote">' + T.html(pt.n) + '</div>' : '') + '</div></li>';
+      }).join('');
+      var rows = (f.rows || []).map(function (r) {
+        return '<li class="frow"><div class="frn">' + esc(r.r) + (r.p != null ? ' · ' + esc(String(r.p)) + ' pt' + (r.p === 1 ? '' : 's') : '') + '</div>' +
+          (r.earns ? '<div class="fre">' + T.html(r.earns) + '</div>' : '') +
+          (r.loses ? '<div class="frl">' + T.html(r.loses) + '</div>' : '') + '</li>';
+      }).join('');
+      return '<section class="frq">' +
+        '<div class="ulabel">' + esc(label) + '</div>' +
+        '<h2 class="ftitle">' + esc(f.title || '') + '</h2>' +
+        (f.stem ? '<div class="fstem">' + T.html(f.stem) + '</div>' : '') +
+        (parts ? '<ul class="fparts">' + parts + '</ul>' : '') +
+        (rows ? '<ul class="fparts">' + rows + '</ul>' : '') +
+        '</section>';
+    }).join('');
+    mount(
+      '<div class="ulabel mt0">' + esc(nice(d)) + ' · Unit ' + u.n + ' · Free response</div>' +
+      '<div class="dhero">' +
+        '<h1 class="dnh"><button class="dn" data-back>' + esc(u.title) + '</button></h1>' +
+        '<span class="dv num">' + u.frq.length + '</span>' +
+      '</div>' +
+      '<div class="dblurb">' + esc(frqLine(u).split(' · ')[0]) + ', in the exam\'s own format. Tap a part for its model answer. Point splits are estimates.</div>' +
+      list
+    );
+  }
+
   function viewUnit(deckId, unitId) {
     var d = S.getDeck(deckId);
     if (!d || !d.unitById[unitId]) return go('#/d/' + deckId);
@@ -1293,7 +1372,7 @@
       var sep = '';
       if (grouped && c.t !== lastTopic) {
         lastTopic = c.t;
-        var tl = /^\d+\.\d+$/.test(c.t || '') ? 'CED ' + c.t : (c.t || 'Other');
+        var tl = topicTitle(u, c.t);
         sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' + byTopic[c.t].length + '</span>' +
           '<button class="textbtn quiet tstudy" data-go="#/study/' + deckId + '/t:' + encodeURIComponent(c.t || '') + '/' + unitId + '">Study</button></div></li>';
       }
@@ -1314,6 +1393,8 @@
         '<span class="dv num">' + us.total.toLocaleString() + '</span>' +
       '</div>' +
       (u.blurb ? '<div class="dblurb">' + esc(u.blurb) + '</div>' : '') +
+      // the unit as the CED frames it: how many topics, and what its progress check asks
+      (unitFrame(u) ? '<div class="dblurb frame">' + esc(unitFrame(u)) + '</div>' : '') +
       '<button class="act" data-go="#/study/' + deckId + '/smart/' + unitId + '">' + (us.due ? 'Review ' + us.due.toLocaleString() : 'Study') + '</button>' +
       dealLine(buildDaily({ deck: d, unit: unitId })) +
       '<div class="modes">' +
@@ -1322,6 +1403,12 @@
           ? modeBtn('#/study/' + deckId + '/core/' + unitId, 'High-yield', MODE_DESC.core) : '') +
         modeBtn('#/quiz/' + deckId + '/smart/' + unitId, 'Quiz', MODE_DESC.quiz) +
         modeBtn('#/cram/' + deckId + '/' + unitId, 'Cram', MODE_DESC.cram) +
+        // the unit's explain-whys on their own, dealt like Cram
+        (cards.some(function (c) { return c.y === 'j'; })
+          ? modeBtn('#/cram/' + deckId + '/' + unitId + '/j', 'Justify', MODE_DESC.justify) : '') +
+        // the exam's own question format, with model answers by point
+        (u.frq && u.frq.length
+          ? modeBtn('#/d/' + deckId + '/u/' + unitId + '/frq', 'Free response', frqLine(u)) : '') +
         // the grammar by point, when this unit's topics feed one
         (focusPoints(d).some(function (f) { return cards.some(function (c) { return f.topics.indexOf(c.t || '') > -1; }); })
           ? modeBtn('#/d/' + deckId + '/g', 'Grammar', MODE_DESC.focus) : '') +
@@ -1335,6 +1422,13 @@
       (u.keys && u.keys.length
         ? '<div class="ulabel mt4">Key ideas</div><ol class="keys">' +
           u.keys.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join('') + '</ol>'
+        : '') +
+      // what the CED says is not assessed — so it is not over-studied
+      (u.excl && u.excl.length
+        ? '<div class="ulabel mt4">Not on the exam</div><ul class="excl">' +
+          u.excl.map(function (x) {
+            return '<li>' + (x.c ? '<span class="ec">' + esc(x.c) + '</span> · ' : '') + esc(x.s) + '</li>';
+          }).join('') + '</ul>'
         : '') +
       bookUnitHTML(deckId, unitId) +
       '<div class="scoperow unit"><button class="textbtn quiet" data-unit-filter>' +
@@ -1956,7 +2050,7 @@
         done: sess.done, planned: sess.planned, lapsed: sess.lapsed || {},
         again: sess.again, hard: sess.hard || 0, good: sess.good, easy: sess.easy,
         right: sess.right, wrong: sess.wrong,
-        quiz: !!sess.quiz, typing: !!sess.typing, cram: !!sess.cram,
+        quiz: !!sess.quiz, typing: !!sess.typing, cram: !!sess.cram, just: !!sess.just,
         mixed: !!sess.mixed, mode: sess.mode, unitId: sess.unitId || null,
         deck: sess.deck ? sess.deck.id : null, back: sess.back || null,
         // grades given: Again re-queues and leaves done where it was, so done
@@ -1983,7 +2077,7 @@
         : p[0] === 'starred' ? 'Starred' : p[0] === 'stuck' ? 'Trouble spots'
         : deck ? nice(deck) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : j.unitId && j.unitId.indexOf('+') > -1 ? ' · both tables' : '')
         : 'Session';
-      if (j.cram) name += ' · cram'; else if (j.quiz) name += ' · quiz';
+      if (j.cram) name += j.just ? ' · justify' : ' · cram'; else if (j.quiz) name += ' · quiz';
       out.push({ h: h, name: name, done: j.done || 0, planned: j.planned || j.ids.length });
     }
     return out;
@@ -2038,7 +2132,7 @@
     if (!q.length) { clearSess(); return null; }
     return {
       deck: j.deck ? S.getDeck(j.deck) : null, unitId: j.unitId, mode: j.mode,
-      quiz: j.quiz, cram: j.cram, mixed: j.mixed, typing: j.typing, back: j.back,
+      quiz: j.quiz, cram: j.cram, just: j.just, mixed: j.mixed, typing: j.typing, back: j.back,
       queue: q, done: j.done || 0, planned: j.planned || q.length, lapsed: j.lapsed || {},
       again: j.again || 0, hard: j.hard || 0, good: j.good || 0, easy: j.easy || 0,
       right: j.right || 0, wrong: j.wrong || 0,
@@ -2139,22 +2233,25 @@
 
   /* cram a unit before a test: every card, least-known first, and the
      schedule stays honest — a pass never pushes a well-timed card away */
-  function startCram(deckId, unitId) {
+  function startCram(deckId, unitId, kind) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
     if (savedPending()) return waitingScreen();
     if (resume()) return;
+    // "…/j": only the unit's explain-whys
+    var just = kind === 'j';
     // "g:subj": one grammar point, its cards from whichever units hold them
     var fp = focusOf(d, unitId);
     // "ions+vsepr": more than one unit in the same deal, for the tables
     var set = unitId && !fp ? unitId.split('+') : [];
     if (set.some(function (id) { return !d.unitById[id]; })) return go('#/d/' + deckId);
     var cards = fp ? focusCards(d, fp) : d.cards.filter(function (c) { return !set.length || set.indexOf(c.u) > -1; });
+    if (just) cards = cards.filter(function (c) { return c.y === 'j'; });
     if (!cards.length) return go('#/d/' + deckId);
     S.shuffle(cards);
     cards.sort(function (a, b) { return cramRank(a) - cramRank(b); });
     sess = {
-      deck: d, unitId: unitId || null, mode: 'cram', cram: true, quiz: false,
+      deck: d, unitId: unitId || null, mode: 'cram', cram: true, just: just, quiz: false,
       back: fp ? '#/d/' + deckId + '/g' : set.length > 1 ? '#/d/' + deckId : null,
       typing: S.getSettings().typing,
       queue: cards, done: 0, planned: cards.length, redo: 0,
@@ -2198,7 +2295,7 @@
     var fp = sess.deck && !sess.mixed ? focusOf(sess.deck, sess.unitId) : null;
     // never truncated, and it names the CED topic the card comes from
     var ced = c && c.t && /^\d+\.\d+$/.test(c.t) ? ' · CED ' + c.t : '';
-    var scope = d ? nice(d) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + ced : 'Review';
+    var scope = d ? nice(d) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + (sess.just ? ' · Justify' : '') + ced : 'Review';
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
       '<span class="pos num">' + Math.min(sess.done + 1, sess.planned).toLocaleString() + ' of ' + sess.planned.toLocaleString() +
@@ -2273,8 +2370,30 @@
     return st.l ? 'Missed ' + st.l + (st.l === 1 ? ' time' : ' times') : '';
   }
   function metaHTML(c) {
-    var bits = [topicLabel(c), histWord(c)].filter(Boolean);
+    var bits = [topicLabel(c), codeLabel(c), histWord(c)].filter(Boolean);
     return bits.length ? '<div class="meta reveal">' + esc(bits.join(' · ')) + '</div>' : '';
+  }
+  /* the CED codes a card answers to, its suggested skill, and the unit it
+     borrows from when the question leans on another unit */
+  function codeLabel(c) {
+    var bits = (c.k || []).slice();
+    if (c.s) bits.push('Skill ' + c.s);
+    if (c.b) {
+      var d = cardDeckOf(c), bu = d && d.unitById[c.b];
+      bits.push('Borrows from ' + (bu ? 'Unit ' + bu.n : c.b));
+    }
+    return bits.join(' · ');
+  }
+  /* an explain-why card carries, under its answer, the other valid ways to
+     argue the point and the answers that earn nothing */
+  function jxHTML(c) {
+    if (c.y !== 'j') return '';
+    var out = '';
+    if (c.o && c.o.length) out += '<div class="jx reveal"><div class="jl">Other ways to argue it</div><ul>' +
+      c.o.map(function (t) { return '<li>' + T.html(t) + '</li>'; }).join('') + '</ul></div>';
+    if (c.w && c.w.length) out += '<div class="jx reveal"><div class="jl">Loses the point</div><ul>' +
+      c.w.map(function (x) { return '<li>' + T.html(x.a || x) + (x.why ? ' <span class="jw">' + T.html(x.why) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
+    return out;
   }
   function topicLabel(c) {
     if (!c.t) return c.c ? 'High-yield' : '';
@@ -2323,6 +2442,7 @@
           esc(sess.verdict.ok === 'miss' && !typeable(c) ? 'Too long to type. Grade yourself'
               : sess.verdict.text) + '</div>' : '') +
         (c.n ? '<div class="note reveal' + (stacked(c.n) ? ' mathy' : '') + '">' + T.html(c.n) + '</div>' : '') +
+        jxHTML(c) +
         noteHTML(c) +
         metaHTML(c);
     }
@@ -2421,6 +2541,13 @@
     return n / Math.sqrt(a.length * b.length);
   }
   function makeChoices(c, d) {
+    // an explain-why card knows its own wrong answers: the ones that earn
+    // nothing on the rubric are better distractors than any other card's answer
+    if (c.y === 'j' && c.w && c.w.length >= 3) {
+      var weak = S.shuffle(c.w.slice()).slice(0, 3).map(function (x) { return { text: trim(x.a || x), correct: false }; });
+      weak.push({ text: trim(c.a), correct: true });
+      return S.shuffle(weak);
+    }
     var pool = d.cards.filter(function (x) { return x.u === c.u && x.i !== c.i && x.v === c.v; });
     if (pool.length < 3) pool = d.cards.filter(function (x) { return x.u === c.u && x.i !== c.i; });
     if (pool.length < 3) pool = d.cards.filter(function (x) { return x.i !== c.i; });
@@ -2944,7 +3071,7 @@
      in slices short enough not to drop a frame. */
   function hayOf(card) {
     return card._hay || (card._hay = fold(
-      (T.plain(card.q) + ' ' + T.plain(card.a) + ' ' + (card.n || '') + ' ' + (card.t || '')).toLowerCase()));
+      (T.plain(card.q) + ' ' + T.plain(card.a) + ' ' + (card.n || '') + ' ' + (card.t || '') + ' ' + (card.k || []).join(' ') + ' ' + (card.s || '')).toLowerCase()));
   }
   function warmSearch() {
     var all = [];
@@ -3586,6 +3713,8 @@
         b('Shuffle') + ': ' + esc(MODE_DESC.all) + '.',
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
         b('Cram') + ', on a unit: ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
+        b('Justify') + ', on a unit of an AP course: ' + esc(MODE_DESC.justify) + '. Dealt like Cram. In Quiz, the wrong choices are the answers that earn nothing.',
+        b('Free response') + ', on a unit of an AP course: ' + esc(MODE_DESC.frq) + '. Point splits are estimates; the essays are laid out by rubric row.',
         b('Grammar') + ', on French: ' + esc(MODE_DESC.focus) + '. A point deals every card on it, from both grammar units, the least-known first, like Cram.',
         b('Print') + ', on a unit: ' + esc(MODE_DESC.print) + '.',
         b('Plan') + ', on a course with an exam date: ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',
@@ -3803,6 +3932,16 @@
       if (li) li.classList.toggle('dropped', !onNow2);
       un.textContent = onNow2 ? 'Unstar' : 'Star again';
       bumpCount(onNow2 ? 1 : -1);
+      return;
+    }
+    var fp = t.closest('[data-fp]');
+    if (fp) {
+      var fa = fp.nextElementSibling;
+      if (fa && fa.classList.contains('fpa')) {
+        fa.hidden = !fa.hidden;
+        fp.setAttribute('aria-expanded', fa.hidden ? 'false' : 'true');
+        fp.classList.toggle('open', !fa.hidden);
+      }
       return;
     }
     var peek = t.closest('[data-peek]');
@@ -4211,13 +4350,14 @@
     if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'g') return viewFocus(p[1]);
+    if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3] && p[4] === 'frq') return viewFRQ(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3]) return viewUnit(p[1], p[3]);
     if (p[0] === 'd' && p[1]) return viewCourse(p[1]);
     if (p[0] === 'study') return startSession(p[1], p[2] || 'smart', p[3], false);
     if (p[0] === 'quiz') return startSession(p[1], p[2] || 'smart', p[3], true);
     if (p[0] === 'review') return startReview();
     if (p[0] === 'ten') return startReview(10);
-    if (p[0] === 'cram') return startCram(p[1], p[2]);
+    if (p[0] === 'cram') return startCram(p[1], p[2], p[3]);
     if (p[0] === 'weak') return viewWeak();
     if (p[0] === 'stuck') return p[1] === 'go' ? startStuck() : viewStuck();
     if (p[0] === 'starred') return p[1] === 'go' ? startStarred() : viewStarred();
