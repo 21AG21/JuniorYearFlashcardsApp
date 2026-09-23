@@ -8,6 +8,9 @@ d = json.load(open(f'{ROOT}/data/{course}.json', encoding='utf-8'))
 u = [x for x in d['units'] if x['id'] == unit][0]
 su = [x for x in sk['units'] if x['id'] == unit][0]
 existing = [{k: c[k] for k in ('t','v','q','a','h','n','c','x') if k in c} for c in d['cards'] if c['u'] == unit]
+# cards another unit's rebuild moved here (their ids follow the question, so progress survives)
+rr = f'{G}/reroute/{course}-{unit}.json'
+if os.path.exists(rr): existing += [{k: c[k] for k in ('t','v','q','a','h','n','c','x') if k in c} for c in json.load(open(rr, encoding='utf-8'))]
 out = {'course': course, 'unit': {k: u.get(k) for k in ('id','n','title','weight','blurb')},
        'units': [{'id': x['id'], 'n': x['n'], 'title': x['title']} for x in d['units']],
        'edition': sk.get('edition'), 'exam': sk.get('exam'), 'skills': sk.get('skills'),

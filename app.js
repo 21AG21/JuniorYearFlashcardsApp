@@ -991,9 +991,13 @@
   }
   function topicTitle(u, code) {
     var t = topicOf(u, code);
-    if (t) return 'CED ' + t.c + ' · ' + t.t + (t.s ? ' · Skill ' + t.s : '');
+    if (t) return [cedCode(t.c), t.t, cedCode(t.c) ? skillWord(t.s) : ''].filter(Boolean).join(' · ');
     return /^\d+\.\d+$/.test(code || '') ? 'CED ' + code : (code || 'Other');
   }
+  /* a topic's own code is worth showing when it is the CED's (3.4, RHS-1.A);
+     a French context's slug is not */
+  function cedCode(c) { return /^\d+\.\d+$|^[A-Z]{3}-\d/.test(c || '') ? 'CED ' + c : ''; }
+  function skillWord(s) { return !s ? '' : /^\d\.[A-Z]$/.test(s) ? 'Skill ' + s : s; }
   function unitFrame(u) {
     var bits = [];
     if (u.topics && u.topics.length) bits.push(plural(u.topics.length, 'topic'));
@@ -2376,8 +2380,9 @@
   /* the CED codes a card answers to, its suggested skill, and the unit it
      borrows from when the question leans on another unit */
   function codeLabel(c) {
-    var bits = (c.k || []).slice();
-    if (c.s) bits.push('Skill ' + c.s);
+    // the topic already names an EK when the topic is one (Lang's RHS-1.A)
+    var bits = (c.k || []).filter(function (k) { return k !== c.t; });
+    if (c.s) bits.push(skillWord(c.s));
     if (c.b) {
       var d = cardDeckOf(c), bu = d && d.unitById[c.b];
       bits.push('Borrows from ' + (bu ? 'Unit ' + bu.n : c.b));
@@ -2398,6 +2403,9 @@
   function topicLabel(c) {
     if (!c.t) return c.c ? 'High-yield' : '';
     var t = /^\d+\.\d+$/.test(c.t) ? 'CED ' + c.t : c.t;
+    // a unit that carries its CED topics names a context by its title, not its slug
+    var d = cardDeckOf(c), tp = d && d.unitById && topicOf(d.unitById[c.u], c.t);
+    if (tp && !/^\d+\.\d+$/.test(c.t)) t = cedCode(c.t) ? c.t + ' · ' + tp.t : tp.t;
     return t + (c.c ? ' · High-yield' : '');
   }
   function sizeClass(s) {
