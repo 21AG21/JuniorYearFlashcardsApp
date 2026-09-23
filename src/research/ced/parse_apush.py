@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """parse_apush.py — apush.skeleton.json from the AP U.S. History CED (Effective Fall 2026) text."""
 import re, json, collections, os
-CED = os.environ.get('CED_DIR', os.path.dirname(os.path.abspath(__file__)))
 raw = open(os.path.join(CED, 'us-history.txt'), encoding='utf-8').read().replace('￾', '-')
 raw = re.sub(r'(?<=[A-Za-z])f f(?=[a-z])', 'ff', raw)
 P = {int(p.split('>>>', 1)[0]): p.split('>>>', 1)[1] for p in raw.split('<<<PAGE ')[1:]}
@@ -97,15 +96,14 @@ CATS = {'1': 'Developments and Processes', '2': 'Sourcing and Situation', '3': '
 for k, v in skills.items(): v['category'] = CATS.get(k[0], v.get('category'))
 # progress checks
 checks = {}
-for m in re.finditer(r'(?=Progress Check Unit (\d+)([\s\S]{0,320}))', raw):
-    u = int(m.group(1)); b = m.group(2)
+for m in re.finditer(r'(?=Progress Check Unit (\d+)([\s\S]{0,420}))', raw):
+    u = int(m.group(1)); b = re.split(r'\n(?:Period \d|UNIT|~?\d+\s*\n?Class|Return to|Progress Check)', m.group(2))[0]
     mc = re.search(r'Multiple-choice:\s*~?(\d+)', b); sa = re.search(r'Short-answer:\s*(\d+)', b); fr = re.search(r'Free-?response:\s*(\d+)', b)
     if mc and sa and fr and u not in checks:
-        seen = set(); bullets = []
-        for x in re.findall(r'[§•]\s*([^\n]+)', b[:fr.end() + 200]):
-            x = x.strip()
-            if x and x not in seen: seen.add(x); bullets.append(x)
-        checks[u] = f'Progress check · {mc.group(1)} multiple choice · {sa.group(1)} short answer · {fr.group(1)} free response' + (' (' + ', '.join(bullets) + ')' if bullets else '')
+        sab = [x.strip().lower() for x in re.findall(r'[§•]\s*([^\n]+)', b[sa.end():fr.start()]) if x.strip()]
+        frb = [x.strip().lower() for x in re.findall(r'[§•]\s*([^\n]+)', b[fr.end():]) if x.strip()]
+        checks[u] = (f'Progress check · {mc.group(1)} multiple choice · {sa.group(1)} short answer' + (' (' + ', '.join(sab) + ')' if sab else '')
+                     + f' · {fr.group(1)} free response' + (' (' + ', '.join(frb) + ')' if frb else ''))
 # exam and rubrics
 e0 = [n for n in sorted(P) if P[n].lstrip().startswith('Exam Overview')][0]
 exam_raw = '\n'.join(P[k] for k in range(e0, e0 + 5))
@@ -124,7 +122,7 @@ for u in range(1, 10):
     out['units'].append({'id': f'u{u}', 'n': u, 'title': ui.get('title'), 'weight': ui.get('weight'), 'check': checks.get(u),
         'topics': [{**t, 'verified': 'ced'} for t in ts],
         'excl': [{'text': note_opt, 'topic': None, 'verified': 'ced'}], 'borrow': [], 'notes': ''})
-json.dump(out, open(os.path.join(CED, 'apush.skeleton.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+json.dump(out, open('apush.skeleton.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(out['edition'], '· skills', len(skills), '· themes', sorted(themes))
 for U in out['units']:
     print(f"\nU{U['n']} {U['title']!r} {U['weight']} · {U['check']} · {len(U['topics'])} topics · {sum(len(t['lo']) for t in U['topics'])} LO · {sum(len(t['ek']) for t in U['topics'])} KC")

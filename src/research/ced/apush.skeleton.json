@@ -148,7 +148,7 @@
    "n": 1,
    "title": "Period 1: 1491–1607",
    "weight": "4–6%",
-   "check": "Progress check · 15 multiple choice · 2 short answer · 1 free response (Primary source (partial), Long essay (partial), Primary source, Long essay (partia)",
+   "check": "Progress check · 15 multiple choice · 2 short answer (primary source (partial), primary source (partial)) · 1 free response (long essay (partial))",
    "topics": [
     {
      "code": "1.1",
@@ -410,7 +410,7 @@
    "n": 2,
    "title": "Period 2: 1607–1754",
    "weight": "6–8%",
-   "check": "Progress check · 20 multiple choice · 2 short answer · 1 free response (Primary source, Long essay (partial))",
+   "check": "Progress check · 20 multiple choice · 2 short answer (primary source, primary source) · 1 free response (long essay (partial))",
    "topics": [
     {
      "code": "2.1",
@@ -734,7 +734,7 @@
    "n": 3,
    "title": "Period 3: 1754–1800",
    "weight": "10–17%",
-   "check": "Progress check · 30 multiple choice · 2 short answer · 1 free response (Primary source, Long essay (partial), Secondary source)",
+   "check": "Progress check · 30 multiple choice · 2 short answer (primary source, primary source) · 1 free response (long essay (partial))",
    "topics": [
     {
      "code": "3.1",
@@ -1231,7 +1231,7 @@
    "n": 4,
    "title": "Period 4: 1800–1848",
    "weight": "10–17%",
-   "check": "Progress check · 35 multiple choice · 2 short answer · 1 free response (Primary source, Secondary source, Long essay (partial), Secondary source (2 sources), No stimulus, Long essay (pa)",
+   "check": "Progress check · 35 multiple choice · 2 short answer (primary source, secondary source) · 1 free response (long essay (partial))",
    "topics": [
     {
      "code": "4.1",
@@ -1741,7 +1741,7 @@
    "n": 5,
    "title": "Period 5: 1844–1877",
    "weight": "10–17%",
-   "check": "Progress check · 30 multiple choice · 2 short answer · 2 free response (Secondary source (2 sources), No stimulus, Long essay (partial), Document-based (partial))",
+   "check": "Progress check · 30 multiple choice · 2 short answer (secondary source (2 sources), no stimulus) · 2 free response (long essay (partial), document-based (partial))",
    "topics": [
     {
      "code": "5.1",
@@ -2176,7 +2176,7 @@
    "n": 6,
    "title": "Period 6: 1865–1898",
    "weight": "10–17%",
-   "check": "Progress check · 35 multiple choice · 2 short answer · 1 free response (No stimulus, Primary source, Document-based (partial))",
+   "check": "Progress check · 35 multiple choice · 2 short answer (no stimulus, primary source) · 1 free response (document-based (partial))",
    "topics": [
     {
      "code": "6.1",
@@ -2682,7 +2682,7 @@
    "n": 7,
    "title": "Period 7: 1890–1945",
    "weight": "10–17%",
-   "check": "Progress check · 40 multiple choice · 2 short answer · 1 free response (Secondary source, No stimulus, Document-based)",
+   "check": "Progress check · 40 multiple choice · 2 short answer (secondary source, no stimulus) · 1 free response (document-based)",
    "topics": [
     {
      "code": "7.1",
@@ -3238,7 +3238,7 @@
    "n": 8,
    "title": "Period 8: 1945–1980",
    "weight": "10–17%",
-   "check": "Progress check · 40 multiple choice · 2 short answer · 1 free response (No stimulus, Primary source, Long essay)",
+   "check": "Progress check · 40 multiple choice · 2 short answer (no stimulus, primary source) · 1 free response (long essay)",
    "topics": [
     {
      "code": "8.1",
@@ -3796,7 +3796,7 @@
    "n": 9,
    "title": "Period 9: 1980–Present",
    "weight": "4–6%",
-   "check": "Progress check · 20 multiple choice · 2 short answer · 1 free response (Secondary source, No stimulus, Document-based)",
+   "check": "Progress check · 20 multiple choice · 2 short answer (secondary source, no stimulus) · 1 free response (document-based)",
    "topics": [
     {
      "code": "9.1",

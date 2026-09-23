@@ -12,7 +12,7 @@ VERBS = set("""CALCULATE IDENTIFY EXPLAIN JUSTIFY PREDICT DESCRIBE DETERMINE REP
 CONSTRUCT ESTIMATE INTERPRET ARGUE SUPPORT WRITE APPROXIMATE FIND SHOW VERIFY CLASSIFY EVALUATE DERIVE STATE DEFINE NAME RANK
 BALANCE DATE DECIDE APPLY RECALL COMPUTE DIFFERENTIATE INTEGRATE TRANSLATE CONJUGATE""".split())
 KINDS = {'long','short','saq','dbq','leq','synthesis','rhetorical','argument','presentation','qa','essay','mc'}
-TEX_OK = set("frac sqrt int sum lim pi theta Delta infty to pm le ge ne cdot times approx ln log sin cos tan sec csc cot arcsin arctan left right , ;".split())
+TEX_OK = set('Bigl Bigr Delta Gamma Lambda Omega Phi Pi Rightarrow Sigma Theta alpha approx arcsin arctan ast beta bigl bigr cap cdot cdots chi circ cos cot csc cup deg degree delta dfrac displaystyle div dots ell emptyset epsilon equiv eta exists forall frac gamma ge geq gg iff implies in inf infty int kappa lambda ldots le left leftarrow leftrightarrow leq lim limits ll ln log longrightarrow mapsto mathit mathrm max min mp mu nabla ne neq notin nu omega operatorname partial phi pi pm prime propto psi rho right rightarrow rightleftharpoons sec sigma sim sin sqrt subset subseteq sum sup tan tau text tfrac therefore theta times to varepsilon varphi vdots xi zeta'.split()) | {',', ';'}
 CARD_KEYS = {'t','v','q','a','h','n','c','x','k','s','b','y','o','w'}
 
 try:

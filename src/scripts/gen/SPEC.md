@@ -46,7 +46,7 @@ The existing cards are decent. Where an existing question fits a topic, REUSE IT
 ### Exclusions, borrowing, style
 - Never write a card or a part that tests something an exclusion statement rules out. If a card sits near an exclusion, say so in `n`.
 - Say when you are unsure instead of inventing a fact, a number or a scoring rule — in the card's `n` or in the file's `notes`.
-- Math: prefer Unicode (² ³ ⁻ ⁺ × · ÷ √ π Δ → ⇌ ≈ ≤ ≥ ≠ ∞ ∫ Σ). For a real fraction, a bounded operator or a subscript expression use inline `$...$` with ONLY this subset: `\frac{a}{b} \sqrt{x} x^{2} a_{n} \int_{a}^{b} \sum_{n=1}^{\infty} \lim_{x \to a} \pi \theta \Delta \infty \to \pm \le \ge \ne \cdot \times \approx \ln \log \sin \cos \tan \sec \csc \cot \arcsin \arctan \left( \right) \, \;`. Nothing else: no `\text`, no `\begin`, no `\mathrm`, no `\displaystyle`, no matrices.
+- Math: prefer Unicode (² ³ ⁻ ⁺ × · ÷ √ π Δ → ⇌ ≈ ≤ ≥ ≠ ∞ ∫ Σ). For a real fraction, a bounded operator or a subscript expression use inline `$...$` with ONLY this subset: `\frac{a}{b} \sqrt{x} x^{2} a_{n} \int_{a}^{b} \sum_{n=1}^{\infty} \lim_{x \to a} \pi \theta \Delta \infty \to \pm \le \ge \ne \cdot \times \approx \ln \log \sin \cos \tan \sec \csc \cot \arcsin \arctan \left( \right) \, \; \rightleftharpoons \rightarrow \leftrightarrow`, plus the Greek letters and arrows tex.js renders (the validator knows the full list). Nothing else: no `\text`, no `\begin`, no `\mathrm`, no `\displaystyle`, no matrices.
 - Plain ASCII quotes inside JSON strings, `\n` for a line break, valid UTF-8, no trailing commas.
 - No two cards with the same question, in this unit or elsewhere in the course (the validator checks the other units).
 
