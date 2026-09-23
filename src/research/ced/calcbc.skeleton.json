@@ -1,0 +1,2957 @@
+{
+ "course": "calcbc",
+ "edition": "AP Calculus AB and BC Course and Exam Description, Effective Fall 2020, with the Clarifications and Corrections to be implemented for Fall 2026",
+ "exam": {
+  "format": "<0 characters of the CED, kept out of the repository>",
+  "task_verbs": "<2346 characters of the CED, kept out of the repository>",
+  "verified": "ced"
+ },
+ "skills": [
+  {
+   "code": "1.A",
+   "name": "Identify the question to be answered or problem to be solved (not assessed).",
+   "practice": "Implementing Mathematical Processes"
+  },
+  {
+   "code": "1.B",
+   "name": "Identify key and relevant information to answer a question or solve a problem (not assessed).",
+   "practice": "Implementing Mathematical Processes"
+  },
+  {
+   "code": "1.C",
+   "name": "Identify an appropriate mathematical rule or procedure based on the classification of a given expression. ILLUSTRATIVE EXAMPLES",
+   "practice": "Implementing Mathematical Processes"
+  },
+  {
+   "code": "1.D",
+   "name": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems. Communication and Notation",
+   "practice": "Implementing Mathematical Processes"
+  },
+  {
+   "code": "1.E",
+   "name": "Apply appropriate mathematical rules or procedures, with and without technology.",
+   "practice": "Implementing Mathematical Processes"
+  },
+  {
+   "code": "1.F",
+   "name": "Explain how an approximated value relates to the actual value.",
+   "practice": "Implementing Mathematical Processes"
+  },
+  {
+   "code": "2.A",
+   "name": "Identify common underlying structures in problems involving different contextual situations.",
+   "practice": "Connecting Representations"
+  },
+  {
+   "code": "2.B",
+   "name": "Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.",
+   "practice": "Connecting Representations"
+  },
+  {
+   "code": "2.C",
+   "name": "Identify a re-expression of mathematical information presented in a given representation.",
+   "practice": "Connecting Representations"
+  },
+  {
+   "code": "2.D",
+   "name": "Identify how mathematical characteristics or properties offunctions are related in different representations.",
+   "practice": "Connecting Representations"
+  },
+  {
+   "code": "2.E",
+   "name": "Describe the relationships among different representations offunctions and their derivatives.",
+   "practice": "Connecting Representations"
+  },
+  {
+   "code": "3.A",
+   "name": "Apply technology to develop claims and conjectures (not assessed).",
+   "practice": "Justification"
+  },
+  {
+   "code": "3.B",
+   "name": "Identify an appropriate mathematical definition, theorem, or test to apply.",
+   "practice": "Justification"
+  },
+  {
+   "code": "3.C",
+   "name": "Confirm whether hypotheses or conditions of a selected definition, theorem, or test have been satisfied.",
+   "practice": "Justification"
+  },
+  {
+   "code": "3.D",
+   "name": "Apply an appropriate mathematical definition, theorem, or test.",
+   "practice": "Justification"
+  },
+  {
+   "code": "3.E",
+   "name": "Provide reasons or rationales for solutions or conclusions.",
+   "practice": "Justification"
+  },
+  {
+   "code": "3.F",
+   "name": "Explain the meaning of mathematical solutions in context.",
+   "practice": "Justification"
+  },
+  {
+   "code": "3.G",
+   "name": "Confirm that solutions are accurate and appropriate.",
+   "practice": "Justification"
+  },
+  {
+   "code": "4.A",
+   "name": "Use precise mathematical language.",
+   "practice": "Communication and Notation"
+  },
+  {
+   "code": "4.B",
+   "name": "Use appropriate units of measure.",
+   "practice": "Communication and Notation"
+  },
+  {
+   "code": "4.C",
+   "name": "Use appropriate mathematical symbols and notation.",
+   "practice": "Communication and Notation"
+  },
+  {
+   "code": "4.D",
+   "name": "Use appropriate graphing techniques.",
+   "practice": "Communication and Notation"
+  },
+  {
+   "code": "4.E",
+   "name": "Apply appropriate rounding procedures.",
+   "practice": "Communication and Notation"
+  }
+ ],
+ "units": [
+  {
+   "id": "u1",
+   "n": 1,
+   "title": "Limits and Continuity",
+   "weight": "5–10%",
+   "check": "Progress check · 45 multiple choice · 3 free response",
+   "intro": "Limits introduce the subtle distinction between evaluating a function at a point and considering what value the function is approaching, if any, as x approaches a point. This distinction allows us to extend understanding of asymptotes and holes in graphs with formal definitions of continuity. Consider reviewing rational functions when introducing limits, rather than beginning the year with a full review of precalculus topics. Limits are the foundation for differentiation (Unit 2), integration (Unit 6), and infinite series (Unit 10) bc only. They are the basis for important definitions and for theorems that are used to solve realistic problems involving change and to justify conclusions.",
+   "topics": [
+    {
+     "code": "1.1",
+     "title": "Introducing Calculus: Can Change Occur at an Instant?",
+     "skill": "2.B",
+     "skill_text": "Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.",
+     "lo": [
+      {
+       "code": "CHA-1.A",
+       "text": "Interpret the rate of change at an instant in terms of average rates of change over intervals containing that instant."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-1.A.1",
+       "text": "Calculus uses limits to understand and model dynamic change."
+      },
+      {
+       "code": "CHA-1.A.2",
+       "text": "Because an average rate of change divides the change in one variable by the change in another, the average rate of change is undefined at a point where the change in the independent variable would be zero."
+      },
+      {
+       "code": "CHA-1.A.3",
+       "text": "The limit concept allows us to define instantaneous rate of change in terms of average rates of change."
+      }
+     ],
+     "bc": false,
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "1.2",
+     "title": "Defining Limits and Using Limit Notation",
+     "skill": "2.B",
+     "skill_text": "Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.",
+     "lo": [
+      {
+       "code": "LIM-1.A",
+       "text": "Represent limits analytically using correct notation."
+      },
+      {
+       "code": "LIM-1.B",
+       "text": "Interpret limits expressed in analytic notation."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-1.A.1",
+       "text": ""
+      },
+      {
+       "code": "LIM-1.B.1",
+       "text": "A limit can be expressed in multiple ways, including graphically, numerically, and analytically."
+      }
+     ],
+     "bc": false,
+     "p": 39,
+     "verified": "ced"
+    },
+    {
+     "code": "1.3",
+     "title": "Estimating Limit Values from Graphs",
+     "skill": "2.B",
+     "skill_text": "Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.",
+     "lo": [
+      {
+       "code": "LIM-1.C",
+       "text": "Estimate limits offunctions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-1.C.1",
+       "text": "The concept of a limit includes one sided limits."
+      },
+      {
+       "code": "LIM-1.C.2",
+       "text": "Graphical information about a function can be used to estimate limits."
+      },
+      {
+       "code": "LIM-1.C.3",
+       "text": "Because of issues of scale, graphical representations offunctions may miss important function behavior."
+      },
+      {
+       "code": "LIM-1.C.4",
+       "text": "A limit might not exist for some functions at particular values of x. Some ways that the limit might not exist are if the function is unbounded, if the function is oscillating near this value, or if the limit from the left does not equal the limit from the right."
+      }
+     ],
+     "bc": false,
+     "p": 40,
+     "verified": "ced"
+    },
+    {
+     "code": "1.4",
+     "title": "Estimating Limit Values from Tables",
+     "skill": "2.B",
+     "skill_text": "Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.",
+     "lo": [
+      {
+       "code": "LIM-1.C",
+       "text": "Estimate limits offunctions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-1.C.5",
+       "text": "Numerical information can be used to estimate limits."
+      }
+     ],
+     "bc": false,
+     "p": 41,
+     "verified": "ced"
+    },
+    {
+     "code": "1.5",
+     "title": "Determining Limits Using Algebraic Properties of Limits",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "LIM-1.D",
+       "text": "Determine the limits offunctions using limit theorems."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-1.D.1",
+       "text": "One-sided limits can be determined analytically or graphically."
+      },
+      {
+       "code": "LIM-1.D.2",
+       "text": "Limits of sums, differences, products, quotients, and composite functions can be found using limit theorems."
+      }
+     ],
+     "bc": false,
+     "p": 42,
+     "verified": "ced"
+    },
+    {
+     "code": "1.6",
+     "title": "Determining Limits Using Algebraic Manipulation",
+     "skill": "1.C",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the classification of a given expression. ILLUSTRATIVE EXAMPLES",
+     "lo": [
+      {
+       "code": "LIM-1.E",
+       "text": "Determine the limits of functions using equivalent expressions for the function or the squeeze theorem."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-1.E.1",
+       "text": "It may be necessary or helpful to rearrange expressions into equivalent forms before evaluating limits."
+      }
+     ],
+     "bc": false,
+     "p": 43,
+     "verified": "ced"
+    },
+    {
+     "code": "1.7",
+     "title": "Selecting Procedures for Determining Limits",
+     "skill": "1.C",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the classification of a given expression.",
+     "lo": [],
+     "ek": [],
+     "bc": false,
+     "p": 44,
+     "note": "This topic is intended to focus on the skill of selecting an appropriate procedure for determining limits. Students should be given opportunities to practice when and how to apply all learning objectives relating to determining limits.",
+     "verified": "ced"
+    },
+    {
+     "code": "1.8",
+     "title": "Determining Limits Using the Squeeze Theorem",
+     "skill": "3.C",
+     "skill_text": "Confirm whether hypotheses or conditions of a selected definition, theorem, or test have been satisfied.",
+     "lo": [
+      {
+       "code": "LIM-1.E",
+       "text": "Determine the limits of functions using equivalent expressions for the function or the squeeze theorem."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-1.E.2",
+       "text": "The limit of a function may be found by using the squeeze theorem."
+      }
+     ],
+     "bc": false,
+     "p": 45,
+     "verified": "ced"
+    },
+    {
+     "code": "1.9",
+     "title": "Connecting Multiple Representations of Limits",
+     "skill": "2.C",
+     "skill_text": "Identify a re-expression of mathematical information presented in a given representation.",
+     "lo": [],
+     "ek": [],
+     "bc": false,
+     "p": 46,
+     "note": "This topic is intended to focus on connecting representations. Students should be given opportunities to practice when and how to apply all learning objectives relating to limits and translating mathematical information from a single representation or across multiple representations.",
+     "verified": "ced"
+    },
+    {
+     "code": "1.10",
+     "title": "Exploring Types of Discontinuities",
+     "skill": "3.B",
+     "skill_text": "Identify an appropriate mathematical definition, theorem, or test to apply.",
+     "lo": [
+      {
+       "code": "LIM-2.A",
+       "text": "Justify conclusions about continuity at a point using the definition."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-2.A.1",
+       "text": "Types of discontinuities include removable discontinuities, jump discontinuities, and discontinuities due to vertical asymptotes."
+      }
+     ],
+     "bc": false,
+     "p": 47,
+     "verified": "ced"
+    },
+    {
+     "code": "1.11",
+     "title": "Defining Continuity at a Point",
+     "skill": "3.C",
+     "skill_text": "Confirm whether hypotheses or conditions of a selected definition, theorem, or test have been satisfied.",
+     "lo": [
+      {
+       "code": "LIM-2.A",
+       "text": "Justify conclusions about continuity at a point using the definition."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-2.A.2",
+       "text": "A function f is continuous at x = c provided that f(c) exists, limxc fx → () exists, and limxc fx fc → () = ()"
+      }
+     ],
+     "bc": false,
+     "p": 48,
+     "verified": "ced"
+    },
+    {
+     "code": "1.12",
+     "title": "Confirming Continuity over an Interval",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "LIM-2.B",
+       "text": "Determine intervals over which a function is continuous."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-2.B.1",
+       "text": "A function is continuous on an interval if the function is continuous at each point in the interval."
+      },
+      {
+       "code": "LIM-2.B.2",
+       "text": "Polynomial, rational, power, exponential, logarithmic, and trigonometric functions are continuous on all points in their domains."
+      }
+     ],
+     "bc": false,
+     "p": 49,
+     "verified": "ced"
+    },
+    {
+     "code": "1.13",
+     "title": "Removing Discontinuities",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "LIM-2.C",
+       "text": "Determine values of x or solve for parameters that make discontinuous functions continuous, if possible."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-2.C.1",
+       "text": "If the limit of a function exists at a discontinuity in its graph, then it is possible to remove the discontinuity by defining or redefining the value of the function at that point, so it equals the value of the limit of the function as x approaches that point."
+      },
+      {
+       "code": "LIM-2.C.2",
+       "text": "In order for a piecewise-defined function to be continuous at a boundary to the partition of its domain, the value of the expression defining the function on one side of the boundary must equal the value of the expression defining the other side of the boundary, as well as the value of the function at the boundary."
+      }
+     ],
+     "bc": false,
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "1.14",
+     "title": "Connecting Infinite Limits and Vertical Asymptotes",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-2.D",
+       "text": "Interpret the behavior offunctions using limits involving infinity."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-2.D.1",
+       "text": "The concept of a limit can be extended to include infinite limits."
+      },
+      {
+       "code": "LIM-2.D.2",
+       "text": "Asymptotic and unbounded behavior offunctions can be described and explained using limits."
+      }
+     ],
+     "bc": false,
+     "p": 51,
+     "verified": "ced"
+    },
+    {
+     "code": "1.15",
+     "title": "Connecting Limits at Infinity and Horizontal Asymptotes",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties offunctions are related in different representations.",
+     "lo": [
+      {
+       "code": "LIM-2.D",
+       "text": "Interpret the behavior offunctions using limits involving infinity."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-2.D.3",
+       "text": "The concept of a limit can be extended to include limits at infinity."
+      },
+      {
+       "code": "LIM-2.D.4",
+       "text": "Limits at infinity describe end behavior."
+      },
+      {
+       "code": "LIM-2.D.5",
+       "text": "Relative magnitudes offunctions and their rates of change can be compared using limits."
+      }
+     ],
+     "bc": false,
+     "p": 52,
+     "verified": "ced"
+    },
+    {
+     "code": "1.16",
+     "title": "Working with the Intermediate Value Theorem (IVT)",
+     "skill": "3.E",
+     "skill_text": "Provide reasons or rationales for solutions or conclusions.",
+     "lo": [
+      {
+       "code": "FUN-1.A",
+       "text": "Explain the behavior of a function on an interval using the Intermediate Value Theorem."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-1.A.1",
+       "text": "If f is a continuous function on the closed interval [a, b] and d is a number between f (a) and f (b), then the Intermediate Value Theorem guarantees that there is at least one number c between a and b, such that f(c) = d."
+      }
+     ],
+     "bc": false,
+     "p": 53,
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "The epsilon-delta definition of a limit is not assessed on the AP Calculus AB or BC Exam. However, teachers may include this topic in the course if time permits.",
+     "topic": "1.2",
+     "p": 39,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u2",
+   "n": 2,
+   "title": "Differentiation: Definition and Fundamental Properties",
+   "weight": "5–10%",
+   "check": "Progress check · 30 multiple choice · 3 free response",
+   "intro": "Derivatives allow us to determine instantaneous rates of change. To develop understanding of how the definition of the derivative applies limits to average rates of change, create opportunities for students to explore average rates of change over increasingly small intervals. Graphing calculator explorations of how various operations affect slopes of tangent lines help students to make sense of basic rules and properties of differentiation. Encourage students to apply the order of operations as they select differentiation rules. Developing differentiation skills will allow students to model realistic instantaneous rates of change in Unit 4 and to analyze graphs in Unit 5.",
+   "topics": [
+    {
+     "code": "2.1",
+     "title": "Defining Average and Instantaneous Rates of Change at a Point",
+     "skill": "2.B",
+     "skill_text": "Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.",
+     "lo": [
+      {
+       "code": "CHA-2.A",
+       "text": "Determine average rates of change using difference quotients."
+      },
+      {
+       "code": "CHA-2.B",
+       "text": "Represent the derivative of a function as the limit of a difference quotient."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-2.A.1",
+       "text": "The difference quotients fa hf a h () +- () and fx fa xa ()- () - express the average rate of change of a function over an interval."
+      },
+      {
+       "code": "CHA-2.B.1",
+       "text": "The instantaneous rate of change of a function at xa = can be expressed by h fa hf a → h +-"
+      }
+     ],
+     "bc": false,
+     "p": 60,
+     "verified": "ced"
+    },
+    {
+     "code": "2.2",
+     "title": "Defining the Derivative of a Function and Using Derivative Notation",
+     "skill": "1.D",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems. Communication and Notation",
+     "lo": [
+      {
+       "code": "CHA-2.B",
+       "text": "Represent the derivative of a function as the limit of a difference quotient."
+      },
+      {
+       "code": "CHA-2.C",
+       "text": "Determine the equation of a line tangent to a curve at a given point."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-2.B.2",
+       "text": "The derivative of f is the function whose value at x is h fx hf x → h +-"
+      },
+      {
+       "code": "CHA-2.B.3",
+       "text": "For y fx = (), notations for the derivative include dy dx, fx ′(), and y′."
+      },
+      {
+       "code": "CHA-2.B.4",
+       "text": "The derivative can be represented graphically, numerically, analytically, and verbally."
+      },
+      {
+       "code": "CHA-2.C.1",
+       "text": "The derivative of a function at a point is the slope of the line tangent to a graph of the function at that point."
+      }
+     ],
+     "bc": false,
+     "p": 61,
+     "verified": "ced"
+    },
+    {
+     "code": "2.3",
+     "title": "Estimating Derivatives of a Function at a Point",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "CHA-2.D",
+       "text": "Estimate derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-2.D.1",
+       "text": "The derivative at a point can be estimated from information given in tables or graphs."
+      },
+      {
+       "code": "CHA-2.D.2",
+       "text": "Technology can be used to calculate or estimate the value of a derivative of a function at a point."
+      }
+     ],
+     "bc": false,
+     "p": 62,
+     "verified": "ced"
+    },
+    {
+     "code": "2.4",
+     "title": "Connecting Differentiability and Continuity: Determining When Derivatives Do and Do Not Exist",
+     "skill": "3.E",
+     "skill_text": "Provide reasons or rationales for solutions and conclusions. ILLUSTRATIVE EXAMPLES For FUN-2.A.2:",
+     "lo": [
+      {
+       "code": "FUN-2.A",
+       "text": "Explain the relationship between differentiability and continuity."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-2.A.1",
+       "text": "If a function is differentiable at a point, then it is continuous at that point. In particular, if a point is not in the domain of f, then it is not in the domain of f '."
+      },
+      {
+       "code": "FUN-2.A.2",
+       "text": "A continuous function may fail to be differentiable at a point in its domain."
+      }
+     ],
+     "bc": false,
+     "p": 63,
+     "verified": "ced"
+    },
+    {
+     "code": "2.5",
+     "title": "Applying the Power Rule",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.A",
+       "text": "Calculate derivatives of familiar functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.A.1",
+       "text": "Direct application of the definition of the derivative and specific rules can be used to calculate the derivative for functions of the form fx x () = r ."
+      }
+     ],
+     "bc": false,
+     "p": 64,
+     "verified": "ced"
+    },
+    {
+     "code": "2.6",
+     "title": "Derivative Rules: Constant, Sum, Difference, and Constant Multiple",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.A",
+       "text": "Calculate derivatives of familiar functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.A.2",
+       "text": "Sums, differences, and constant multiples offunctions can be differentiated using derivative rules."
+      },
+      {
+       "code": "FUN-3.A.3",
+       "text": "The power rule combined with sum, difference, and constant multiple properties can be used to find the derivatives for polynomial functions."
+      }
+     ],
+     "bc": false,
+     "p": 65,
+     "verified": "ced"
+    },
+    {
+     "code": "2.7",
+     "title": "Derivatives of cos x, sin x, ex, and ln x",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.A",
+       "text": "Calculate derivatives of familiar functions."
+      },
+      {
+       "code": "LIM-3.A",
+       "text": "Interpret a limit as a definition of a derivative."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.A.4",
+       "text": "Specific rules can be used to find the derivatives for sine, cosine, exponential, and logarithmic functions."
+      },
+      {
+       "code": "LIM-3.A.1",
+       "text": "In some cases, recognizing an expression for the definition of the derivative of a function whose derivative is known offers a strategy for determining a limit."
+      }
+     ],
+     "bc": false,
+     "p": 66,
+     "verified": "ced"
+    },
+    {
+     "code": "2.8",
+     "title": "The Product Rule",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.B",
+       "text": "Calculate derivatives of products and quotients of differentiable functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.B.1",
+       "text": "Derivatives of products of differentiable functions can be found using the product rule."
+      }
+     ],
+     "bc": false,
+     "p": 67,
+     "verified": "ced"
+    },
+    {
+     "code": "2.9",
+     "title": "The Quotient Rule",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.B",
+       "text": "Calculate derivatives of products and quotients of differentiable functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.B.2",
+       "text": "Derivatives of quotients of differentiable functions can be found using the quotient rule."
+      }
+     ],
+     "bc": false,
+     "p": 68,
+     "verified": "ced"
+    },
+    {
+     "code": "2.10",
+     "title": "Finding the Derivatives of Tangent, Cotangent, Secant, and/or Cosecant Functions",
+     "skill": "1.D",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems.",
+     "lo": [
+      {
+       "code": "FUN-3.B",
+       "text": "Calculate derivatives of products and quotients of differentiable functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.B.3",
+       "text": "Rearranging tangent, cotangent, secant, and cosecant functions using identities allows differentiation using derivative rules."
+      }
+     ],
+     "bc": false,
+     "p": 69,
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u3",
+   "n": 3,
+   "title": "Differentiation: Composite, Implicit, and Inverse Functions",
+   "weight": "5–10%",
+   "check": "Progress check · 15 multiple choice · 3 free response",
+   "intro": "In this unit, students learn how to differentiate composite functions using the chain rule and apply that understanding to determine derivatives of implicit and inverse functions. Students need to understand that for composite functions, y is a function of u while u is a function of x. Leibniz notation for the chain rule, dy dx dy du du dx =., accounts for these relationships. Units analysis can strengthen the connection, as in psi min psi m m min =. . Saying, “times the derivative of what’s inside,” every time we apply the chain rule reminds students to avoid a common error. Mastering the chain rule is essential to success in all future units.",
+   "topics": [
+    {
+     "code": "3.1",
+     "title": "The Chain Rule",
+     "skill": "1.C",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the classification of a given expression.",
+     "lo": [
+      {
+       "code": "FUN-3.C",
+       "text": "Calculate derivatives of compositions of differentiable functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.C.1",
+       "text": "The chain rule provides a way to differentiate composite functions."
+      }
+     ],
+     "bc": false,
+     "p": 75,
+     "verified": "ced"
+    },
+    {
+     "code": "3.2",
+     "title": "Implicit Differentiation",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.D",
+       "text": "Calculate derivatives of implicitly defined functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.D.1",
+       "text": "The chain rule is the basis for implicit differentiation."
+      }
+     ],
+     "bc": false,
+     "p": 76,
+     "verified": "ced"
+    },
+    {
+     "code": "3.3",
+     "title": "Differentiating Inverse Functions",
+     "skill": "3.G",
+     "skill_text": "Confirm that solutions are accurate and appropriate.",
+     "lo": [
+      {
+       "code": "FUN-3.E",
+       "text": "Calculate derivatives of inverse and inverse trigonometric functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.E.1",
+       "text": "The chain rule and definition of an inverse function can be used to find the derivative of an inverse function, provided the derivative exists."
+      }
+     ],
+     "bc": false,
+     "p": 77,
+     "verified": "ced"
+    },
+    {
+     "code": "3.4",
+     "title": "Differentiating Inverse Trigonometric Functions",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.E",
+       "text": "Calculate derivatives of inverse and inverse trigonometric functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.E.2",
+       "text": "The chain rule applied with the definition of an inverse function, or the formula for the derivative of an inverse function, can be used to find the derivatives of inverse trigonometric functions."
+      }
+     ],
+     "bc": false,
+     "p": 78,
+     "verified": "ced"
+    },
+    {
+     "code": "3.5",
+     "title": "Selecting Procedures for Calculating Derivatives",
+     "skill": "1.C",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the classification of a given expression. This topic is intended to focus on the skill of selecting an appropriate procedure for calculating derivatives. Students should be given opportunities to practice when and how to apply all learning objectives relating to calculating derivatives.",
+     "lo": [],
+     "ek": [],
+     "bc": false,
+     "p": 79,
+     "verified": "ced"
+    },
+    {
+     "code": "3.6",
+     "title": "Calculating Higher - Order Derivatives",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-3.F",
+       "text": "Determine higher order derivatives of a function."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.F.1",
+       "text": "Differentiating f ′ produces the second derivative f ″, provided the derivative of f ′ exists; repeating this process produces higher-order derivatives of f ."
+      },
+      {
+       "code": "FUN-3.F.2",
+       "text": "Higher-order derivatives are represented with a variety of notations. For y = f (x), notations for the second derivative include dy2 dx2 f ″(x),, and y ″. Higher-order derivatives can be denoted dyn dxn or f (n) (x)."
+      }
+     ],
+     "bc": false,
+     "p": 80,
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u4",
+   "n": 4,
+   "title": "Contextual Applications of Differentiation",
+   "weight": "5–10%",
+   "check": "Progress check · 15 multiple choice · 3 free response",
+   "intro": "Unit 4 begins by developing understanding of average and instantaneous rates of change in problems involving motion. The unit then identifies differentiation as a common underlying structure on which to build understanding of change in a variety of contexts. Students’ understanding of units of measure often reinforces their understanding of contextual applications of differentiation. In problems involving related rates, identifying the independent variable common to related functions may help students to correctly apply the chain rule. When applying differentiation to determine limits of certain indeterminate forms using L’Hospital’s rule, students must show that the rule applies.",
+   "topics": [
+    {
+     "code": "4.1",
+     "title": "Interpreting the Meaning of the Derivative in Context",
+     "skill": "1.D",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems.",
+     "lo": [
+      {
+       "code": "CHA-3.A",
+       "text": "Interpret the meaning of a derivative in context."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.A.1",
+       "text": "The derivative of a function can be interpreted as the instantaneous rate of change with respect to its independent variable."
+      },
+      {
+       "code": "CHA-3.A.2",
+       "text": "The derivative can be used to express information about rates of change in applied contexts."
+      },
+      {
+       "code": "CHA-3.A.3",
+       "text": "The unit for f'(x) is the unit for f divided by the unit for x."
+      }
+     ],
+     "bc": false,
+     "p": 87,
+     "verified": "ced"
+    },
+    {
+     "code": "4.2",
+     "title": "Straight-Line Motion: Connecting Position, Velocity, and Acceleration",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "CHA-3.B",
+       "text": "Calculate rates of change in applied contexts."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.B.1",
+       "text": "The derivative can be used to solve rectilinear motion problems involving position, speed, velocity, and acceleration."
+      }
+     ],
+     "bc": false,
+     "p": 88,
+     "verified": "ced"
+    },
+    {
+     "code": "4.3",
+     "title": "Rates of Change in Applied Contexts Other Than Motion",
+     "skill": "2.A",
+     "skill_text": "Identify common underlying structures in problems involving different contextual situations.",
+     "lo": [
+      {
+       "code": "CHA-3.C",
+       "text": "Interpret rates of change in applied contexts."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.C.1",
+       "text": "The derivative can be used to solve problems involving rates of change in applied contexts."
+      }
+     ],
+     "bc": false,
+     "p": 89,
+     "verified": "ced"
+    },
+    {
+     "code": "4.4",
+     "title": "Introduction to Related Rates",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "CHA-3.D",
+       "text": "Calculate related rates in applied contexts."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.D.1",
+       "text": "The chain rule is the basis for differentiating variables in a related rates problem with respect to the same independent variable."
+      },
+      {
+       "code": "CHA-3.D.2",
+       "text": "Other differentiation rules, such as the product rule and the quotient rule, may also be necessary to differentiate all variables with respect to the same independent variable."
+      }
+     ],
+     "bc": false,
+     "p": 90,
+     "verified": "ced"
+    },
+    {
+     "code": "4.5",
+     "title": "Solving Related Rates Problems",
+     "skill": "3.F",
+     "skill_text": "Explain the meaning of mathematical solutions in context.",
+     "lo": [
+      {
+       "code": "CHA-3.E",
+       "text": "Interpret related rates in applied contexts."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.E.1",
+       "text": "The derivative can be used to solve related rates problems; that is, finding a rate at which one quantity is changing by relating it to other quantities whose rates of change are known."
+      }
+     ],
+     "bc": false,
+     "p": 91,
+     "verified": "ced"
+    },
+    {
+     "code": "4.6",
+     "title": "Approximating Values of a Function Using Local Linearity and Linearization",
+     "skill": "1.F",
+     "skill_text": "Explain how an approximated value relates to the actual value.",
+     "lo": [
+      {
+       "code": "CHA-3.F",
+       "text": "Approximate a value on a curve using the equation of a tangent line."
+      },
+      {
+       "code": "LIM-4.A",
+       "text": "Determine limits offunctions that result in indeterminate forms."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.F.1",
+       "text": "The tangent line is the graph of a locally linear approximation of the function near the point of tangency."
+      },
+      {
+       "code": "CHA-3.F.2",
+       "text": "For a tangent line approximation, the function’s behavior near the point of tangency may determine whether a tangent line value is an underestimate or an overestimate of the corresponding function value."
+      },
+      {
+       "code": "LIM-4.A.1",
+       "text": "When the ratio of two functions tends to"
+      },
+      {
+       "code": "LIM-4.A.2",
+       "text": "Limits of the indeterminate forms"
+      }
+     ],
+     "bc": false,
+     "p": 92,
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "There are many other indeterminate forms, such as ∞ -∞, for example, but these will not be assessed on either the AP Calculus AB or BC Exam. However, teachers may include these topics, if time permits.",
+     "topic": "4.6",
+     "p": 93,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u5",
+   "n": 5,
+   "title": "Analytical Applications of Differentiation",
+   "weight": "10–15%",
+   "check": "Progress check · 35 multiple choice · 3 free response",
+   "intro": "In this unit, the superficial details of contextual applications of differentiation are stripped away to focus on abstract structures and formal conclusions. Reasoning with definitions and theorems establishes that answers and conclusions are more than conjectures; they have been analytically determined. As when students showed supporting work for answers in previous units, students will learn to present justifications for their conclusions about the behavior offunctions over certain intervals or the locations of extreme values or points of inflection. The unit concludes this study of differentiation by applying abstract reasoning skills to justify solutions for realistic optimization problems.",
+   "topics": [
+    {
+     "code": "5.1",
+     "title": "Using the Mean Value Theorem",
+     "skill": "3.E",
+     "skill_text": "Provide reasons or rationales for solutions and conclusions.",
+     "lo": [
+      {
+       "code": "FUN-1.B",
+       "text": "Justify conclusions about functions by applying the Mean Value Theorem over an interval."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-1.B.1",
+       "text": "If a function f is continuous over the interval [a, b] and differentiable over the interval (a, b), then the Mean Value Theorem guarantees a point within that open interval where the instantaneous rate of change equals the average rate of change over the interval."
+      }
+     ],
+     "bc": false,
+     "p": 99,
+     "verified": "ced"
+    },
+    {
+     "code": "5.2",
+     "title": "Extreme Value Theorem, Global Versus Local Extrema, and Critical Points",
+     "skill": "3.E",
+     "skill_text": "Provide reasons or rationales for solutions and conclusions.",
+     "lo": [
+      {
+       "code": "FUN-1.C",
+       "text": "Justify conclusions about functions by applying the Extreme Value Theorem."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-1.C.1",
+       "text": "If a function f is continuous over the interval [a, b], then the Extreme Value Theorem guarantees that f has at least one minimum value and at least one maximum value on [a, b]."
+      },
+      {
+       "code": "FUN-1.C.2",
+       "text": "A point on a function where the first derivative equals zero or fails to exist is a critical point of the function."
+      },
+      {
+       "code": "FUN-1.C.3",
+       "text": "All local (relative) extrema occur at critical points of a function, though not all critical points are local extrema."
+      }
+     ],
+     "bc": false,
+     "p": 100,
+     "verified": "ced"
+    },
+    {
+     "code": "5.3",
+     "title": "Determining Intervals on Which a Function Is Increasing or Decreasing",
+     "skill": "2.E",
+     "skill_text": "Describe the relationships among different representations offunctions and their derivatives.",
+     "lo": [
+      {
+       "code": "FUN-4.A",
+       "text": "Justify conclusions about the behavior of a function based on the behavior of its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.A.1",
+       "text": "The first derivative of a function can provide information about the function and its graph, including intervals where the function is increasing or decreasing."
+      }
+     ],
+     "bc": false,
+     "p": 101,
+     "verified": "ced"
+    },
+    {
+     "code": "5.4",
+     "title": "Using the First Derivative Test to Determine Relative (Local) Extrema",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "FUN-4.A",
+       "text": "Justify conclusions about the behavior of a function based on the behavior of its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.A.2",
+       "text": "The first derivative of a function can determine the location of relative (local) extrema of the function."
+      }
+     ],
+     "bc": false,
+     "p": 102,
+     "verified": "ced"
+    },
+    {
+     "code": "5.5",
+     "title": "Using the Candidates Test to Determine Absolute (Global) Extrema",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-4.A",
+       "text": "Justify conclusions about the behavior of a function based on the behavior of its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.A.3",
+       "text": "Absolute (global) extrema of a function on a closed interval can only occur at critical points or at endpoints."
+      }
+     ],
+     "bc": false,
+     "p": 103,
+     "verified": "ced"
+    },
+    {
+     "code": "5.6",
+     "title": "Determining Concavity of Functions over Their Domains",
+     "skill": "2.E",
+     "skill_text": "Describe the relationships among different representations offunctions and their derivatives.",
+     "lo": [
+      {
+       "code": "FUN-4.A",
+       "text": "Justify conclusions about the behavior of a function based on the behavior of its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.A.4",
+       "text": "The graph of a function is concave up (down) on an open interval if the function’s derivative is increasing (decreasing) on that interval."
+      },
+      {
+       "code": "FUN-4.A.5",
+       "text": "The second derivative of a function provides information about the function and its graph, including intervals of upward or downward concavity."
+      },
+      {
+       "code": "FUN-4.A.6",
+       "text": "The second derivative of a function may be used to locate points of inflection for the graph of the original function."
+      }
+     ],
+     "bc": false,
+     "p": 104,
+     "verified": "ced"
+    },
+    {
+     "code": "5.7",
+     "title": "Using the Second Derivative Test to Determine Extrema",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "FUN-4.A",
+       "text": "Justify conclusions about the behavior of a function based on the behavior of its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.A.7",
+       "text": "The second derivative of a function may determine whether a critical point is the location of a relative (local) maximum or minimum."
+      },
+      {
+       "code": "FUN-4.A.8",
+       "text": "When a continuous function has only one critical point on an interval on its domain and the critical point corresponds to a relative (local) extremum of the function on the interval, then that critical point also corresponds to the absolute (global) extremum of the function on the interval."
+      }
+     ],
+     "bc": false,
+     "p": 105,
+     "verified": "ced"
+    },
+    {
+     "code": "5.8",
+     "title": "Sketching Graphs of Functions and Their Derivatives",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties offunctions are related in different representations.",
+     "lo": [
+      {
+       "code": "FUN-4.A",
+       "text": "Justify conclusions about the behavior of a function based on the behavior of its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.A.9",
+       "text": "Key features offunctions and their derivatives can be identified and related to their graphical, numerical, and analytical representations."
+      },
+      {
+       "code": "FUN-4.A.10",
+       "text": "Graphical, numerical, and analytical information from f' and f\" can be used to predict and explain the behavior of f."
+      }
+     ],
+     "bc": false,
+     "p": 106,
+     "verified": "ced"
+    },
+    {
+     "code": "5.9",
+     "title": "Connecting a Function, Its First Derivative, and Its Second Derivative",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties offunctions are related in different representations.",
+     "lo": [
+      {
+       "code": "FUN-4.A",
+       "text": "Justify conclusions about the behavior of a function based on the behavior of its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.A.11",
+       "text": "Key features of the graphs of f, f', and f\" are related to one another."
+      }
+     ],
+     "bc": false,
+     "p": 107,
+     "verified": "ced"
+    },
+    {
+     "code": "5.10",
+     "title": "Introduction to Optimization Problems",
+     "skill": "2.A",
+     "skill_text": "Identify common underlying structures in problems involving different contextual situations.",
+     "lo": [
+      {
+       "code": "FUN-4.B",
+       "text": "Calculate minimum and maximum values in applied contexts or analysis of functions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.B.1",
+       "text": "The derivative can be used to solve optimization problems; that is, finding a minimum or maximum value of a function on a given interval."
+      }
+     ],
+     "bc": false,
+     "p": 108,
+     "verified": "ced"
+    },
+    {
+     "code": "5.11",
+     "title": "Solving Optimization Problems",
+     "skill": "3.F",
+     "skill_text": "Explain the meaning of mathematical solutions in context.",
+     "lo": [
+      {
+       "code": "FUN-4.C",
+       "text": "Interpret minimum and maximum values calculated in applied contexts."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.C.1",
+       "text": "Minimum and maximum values of a function take on specific meanings in applied contexts."
+      }
+     ],
+     "bc": false,
+     "p": 109,
+     "verified": "ced"
+    },
+    {
+     "code": "5.12",
+     "title": "Exploring Behaviors of Implicit Relations",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology. Justification",
+     "lo": [
+      {
+       "code": "FUN-4.D",
+       "text": "Determine critical points of implicit relations."
+      },
+      {
+       "code": "FUN-4.E",
+       "text": "Justify conclusions about the behavior of an implicitly defined function based on evidence from its derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-4.D.1",
+       "text": "A point on an implicit relation where the first derivative equals zero or does not exist is a critical point of the function."
+      },
+      {
+       "code": "FUN-4.E.1",
+       "text": "Applications of derivatives can be extended to implicitly defined functions."
+      },
+      {
+       "code": "FUN-4.E.2",
+       "text": "Second derivatives involving implicit differentiation may be relations of x, y, and dy dx."
+      }
+     ],
+     "bc": false,
+     "p": 110,
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u6",
+   "n": 6,
+   "title": "Integration and Accumulation of Change",
+   "weight": "15–20%",
+   "check": "Progress check · 25 multiple choice · 3 free response",
+   "intro": "This unit establishes the relationship between differentiation and integration using the Fundamental Theorem of Calculus. Students begin by exploring the contextual meaning of areas of certain regions bounded by rate functions. Integration determines accumulation of change over an interval, just as differentiation determines instantaneous rate of change at a point. Students need to understand that integration is a limiting case of a sum of products (areas) in the same way that differentiation is a limiting case of a quotient of differences (slopes). Future units will apply the idea of accumulation of change to a variety of realistic and geometric applications.",
+   "topics": [
+    {
+     "code": "6.1",
+     "title": "Exploring Accumulations of Change",
+     "skill": "4.B",
+     "skill_text": "Use appropriate units of measure.",
+     "lo": [
+      {
+       "code": "CHA-4.A",
+       "text": "Interpret the meaning of areas associated with the graph of a rate of change in context."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-4.A.1",
+       "text": "The area of the region between the graph of a rate of change function and the x axis gives the accumulation of change."
+      },
+      {
+       "code": "CHA-4.A.2",
+       "text": "In some cases, accumulation of change can be evaluated by using geometry."
+      },
+      {
+       "code": "CHA-4.A.3",
+       "text": "If a rate of change is positive (negative) over an interval, then the accumulated change is positive (negative)."
+      },
+      {
+       "code": "CHA-4.A.4",
+       "text": "The unit for the area of a region defined by rate of change is the unit for the rate of change multiplied by the unit for the independent variable."
+      }
+     ],
+     "bc": false,
+     "p": 118,
+     "verified": "ced"
+    },
+    {
+     "code": "6.2",
+     "title": "Approximating Areas with Riemann Sums",
+     "skill": "1.F",
+     "skill_text": "Explain how an approximated value relates to the actual value.",
+     "lo": [
+      {
+       "code": "LIM-5.A",
+       "text": "Approximate a definite integral using geometric and numerical methods."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-5.A.1",
+       "text": "Definite integrals can be approximated for functions that are represented graphically, numerically, analytically, and verbally."
+      },
+      {
+       "code": "LIM-5.A.2",
+       "text": "Definite integrals can be approximated using a left Riemann sum, a right Riemann sum, a midpoint Riemann sum, or a trapezoidal sum; approximations can be computed using either uniform or nonuniform partitions."
+      },
+      {
+       "code": "LIM-5.A.3",
+       "text": "Definite integrals can be approximated using numerical methods, with or without technology."
+      },
+      {
+       "code": "LIM-5.A.4",
+       "text": "Depending on the behavior of a function, it may be possible to determine whether an approximation for a definite integral is an underestimate or overestimate for the value of the definite integral."
+      }
+     ],
+     "bc": false,
+     "p": 119,
+     "verified": "ced"
+    },
+    {
+     "code": "6.3",
+     "title": "Riemann Sums, Summation Notation, and Definite Integral Notation",
+     "skill": "2.C",
+     "skill_text": "Identify a re-expression of mathematical information presented in a given representation.",
+     "lo": [
+      {
+       "code": "LIM-5.B",
+       "text": "Interpret the limiting case of the Riemann sum as a definite integral."
+      },
+      {
+       "code": "LIM-5.C",
+       "text": "Represent the limiting case of the Riemann sum as a definite integral."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-5.B.1",
+       "text": "The limit of an approximating Riemann sum can be interpreted as a definite integral."
+      },
+      {
+       "code": "LIM-5.B.2",
+       "text": "A Riemann sum, which requires a partition of an interval I, is the sum of products, each of which is the value of the function at a point in a subinterval multiplied by the length of that subinterval of the partition."
+      },
+      {
+       "code": "LIM-5.C.1",
+       "text": "The definite integral of a continuous function f over the interval [a, b], denoted by fx dx a b ∫ (), is the limit of Riemann sums as the widths of the subintervals approach 0. That is, fx dx a b ∫ () = max * lim () Δ→ = ∑ Δ x ii i n i fx x 0 1, where n is the number of subintervals, ∆xi is the width of the ith subinterval, and xi * is a value in the ith subinterval."
+      },
+      {
+       "code": "LIM-5.C.2",
+       "text": "A definite integral can be translated into the limit of a related Riemann sum, and the limit of a Riemann sum can be written as a definite integral."
+      }
+     ],
+     "bc": false,
+     "p": 120,
+     "verified": "ced"
+    },
+    {
+     "code": "6.4",
+     "title": "The Fundamental Theorem of Calculus and Accumulation Functions",
+     "skill": "1.D",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems. ILLUSTRATIVE EXAMPLES For FUN-5.A.1: f x x t () = ∫ -",
+     "lo": [
+      {
+       "code": "FUN-5.A",
+       "text": "Represent accumulation functions using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-5.A.1",
+       "text": "The definite integral can be used to define new functions."
+      },
+      {
+       "code": "FUN-5.A.2",
+       "text": "If f is a continuous function on an interval containing a, then d dx ft dt fx a x () () ∫ { { | } } | =, where x is in the interval."
+      }
+     ],
+     "bc": false,
+     "p": 121,
+     "verified": "ced"
+    },
+    {
+     "code": "6.5",
+     "title": "Interpreting the Behavior of Accumulation Functions Involving Area",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties offunctions are related in different representations.",
+     "lo": [
+      {
+       "code": "FUN-5.A",
+       "text": "Represent accumulation functions using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-5.A.3",
+       "text": "Graphical, numerical, analytical, and verbal representations of a function f provide information about the function g defined as g xf tdt a x () = () ∫ ."
+      }
+     ],
+     "bc": false,
+     "p": 122,
+     "verified": "ced"
+    },
+    {
+     "code": "6.6",
+     "title": "Applying Properties of Definite Integrals",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "FUN-6.A",
+       "text": "Calculate a definite integral using areas and properties of definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-6.A.1",
+       "text": "In some cases, a definite integral can be evaluated by using geometry and the connection between the definite integral and area."
+      },
+      {
+       "code": "FUN-6.A.2",
+       "text": "Properties of definite integrals include the integral of a constant times a function, the integral of the sum of two functions, reversal of limits of integration, and the integral of a function over adjacent intervals."
+      },
+      {
+       "code": "FUN-6.A.3",
+       "text": "The definition of the definite integral may be extended to functions with removable or jump discontinuities."
+      }
+     ],
+     "bc": false,
+     "p": 123,
+     "verified": "ced"
+    },
+    {
+     "code": "6.7",
+     "title": "The Fundamental Theorem of Calculus and Definite Integrals",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "FUN-6.B",
+       "text": "Evaluate definite integrals analytically using the Fundamental Theorem of Calculus."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-6.B.1",
+       "text": "An antiderivative of a function f is a function g whose derivative is f."
+      },
+      {
+       "code": "FUN-6.B.2",
+       "text": "If a function f is continuous on an interval containing a, the function defined by F x t a x () = ( ∫ f )dt is an antiderivative of f for x in the interval."
+      },
+      {
+       "code": "FUN-6.B.3",
+       "text": "If f is continuous on the interval [a, b] and F is an antiderivative of f, then fx dx a b () ∫ =F() bF - () a ."
+      }
+     ],
+     "bc": false,
+     "p": 124,
+     "verified": "ced"
+    },
+    {
+     "code": "6.8",
+     "title": "Finding Antiderivatives and Indefinite Integrals: Basic Rules and Notation",
+     "skill": "4.C",
+     "skill_text": "Use appropriate mathematical symbols and notation.",
+     "lo": [
+      {
+       "code": "FUN-6.C",
+       "text": "Determine antiderivatives offunctions and indefinite integrals, using knowledge of derivatives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-6.C.1",
+       "text": "fx()dx ∫ is an indefinite integral of the function f and can be expressed as fx() () dx =+ Fx C ∫, where F'() () xf = x and C is any constant."
+      },
+      {
+       "code": "FUN-6.C.2",
+       "text": "Differentiation rules provide the foundation for finding antiderivatives."
+      },
+      {
+       "code": "FUN-6.C.3",
+       "text": "Many functions do not have closed-form antiderivatives."
+      }
+     ],
+     "bc": false,
+     "p": 125,
+     "verified": "ced"
+    },
+    {
+     "code": "6.9",
+     "title": "Integrating Using Substitution",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-6.D",
+       "text": "For integrands requiring substitution or rearrangements into equivalent forms: (a) Determine indefinite integrals. (b) Evaluate definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-6.D.1",
+       "text": "Substitution of variables is a technique for finding antiderivatives."
+      },
+      {
+       "code": "FUN-6.D.2",
+       "text": "For a definite integral, substitution of variables requires corresponding changes to the limits of integration."
+      }
+     ],
+     "bc": false,
+     "p": 126,
+     "verified": "ced"
+    },
+    {
+     "code": "6.10",
+     "title": "Integrating Functions Using Long Division and Completing the Square",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-6.D",
+       "text": "For integrands requiring substitution or rearrangements into equivalent forms: (a) Determine indefinite integrals. (b) Evaluate definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-6.D.3",
+       "text": "Techniques for finding antiderivatives include rearrangements into equivalent forms, such as long division and completing the square."
+      }
+     ],
+     "bc": false,
+     "p": 127,
+     "verified": "ced"
+    },
+    {
+     "code": "6.11",
+     "title": "Integrating Using Integration by Parts",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-6.E",
+       "text": "For integrands requiring integration by parts: (a) Determine indefinite integrals. bc only (b) Evaluate definite integrals. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-6.E.1",
+       "text": "Integration by parts is a technique for finding antiderivatives. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 128,
+     "verified": "ced"
+    },
+    {
+     "code": "6.12",
+     "title": "Integrating Using Linear Partial Fractions",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-6.F",
+       "text": "For integrands requiring integration by linear partial fractions: (a) Determine indefinite integrals. bc only (b) Evaluate definite integrals. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-6.F.1",
+       "text": "Some rational functions can be decomposed into sums of ratios of linear, nonrepeating factors to which basic integration techniques can be applied. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 129,
+     "verified": "ced"
+    },
+    {
+     "code": "6.13",
+     "title": "Evaluating Improper Integrals",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "LIM-6.A",
+       "text": "Evaluate an improper integral or determine that the integral diverges. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-6.A.1",
+       "text": "An improper integral is an integral that has one or both limits infinite or has an integrand that is unbounded in the interval of integration.",
+       "bc": true
+      },
+      {
+       "code": "LIM-6.A.2",
+       "text": "Improper integrals can be determined using limits of definite integrals. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 130,
+     "verified": "ced"
+    },
+    {
+     "code": "6.14",
+     "title": "Selecting Techniques for Antidifferentiation",
+     "skill": "1.C",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the classification of a given expression.",
+     "lo": [],
+     "ek": [],
+     "bc": false,
+     "p": 131,
+     "note": "This topic is intended to focus on the skill of selecting an appropriate procedure for antidifferentiation. Students should be given opportunities to practice when and how to apply all learning objectives relating to antidifferentiation.",
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u7",
+   "n": 7,
+   "title": "Differential Equations",
+   "weight": "5–10%",
+   "check": "Progress check · 15 multiple choice · 3 free response",
+   "intro": "In this unit, students will learn to set up and solve separable differential equations. Slope fields can be used to represent solution curves to a differential equation and build understanding that there are infinitely many general solutions to a differential equation, varying only by a constant of integration. Students can locate a unique solution relevant to a particular situation, provided they can locate a point on the solution curve. By writing and solving differential equations leading to models for exponential growth and decay and logistic growth bc only, students build understanding of topics introduced in Algebra II and other courses.",
+   "topics": [
+    {
+     "code": "7.1",
+     "title": "Modeling Situations with Differential Equations",
+     "skill": "2.C",
+     "skill_text": "Identify a re-expression of mathematical information presented in a given representation.",
+     "lo": [
+      {
+       "code": "FUN-7.A",
+       "text": "Interpret verbal statements of problems as differential equations involving a derivative expression."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.A.1",
+       "text": "Differential equations relate a function of an independent variable and the function’s derivatives."
+      }
+     ],
+     "bc": false,
+     "p": 137,
+     "verified": "ced"
+    },
+    {
+     "code": "7.2",
+     "title": "Verifying Solutions for Differential Equations",
+     "skill": "3.G",
+     "skill_text": "Confirm that solutions are accurate and appropriate.",
+     "lo": [
+      {
+       "code": "FUN-7.B",
+       "text": "Verify solutions to differential equations."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.B.1",
+       "text": "Derivatives can be used to verify that a function is a solution to a given differential equation."
+      },
+      {
+       "code": "FUN-7.B.2",
+       "text": "There may be infinitely many solutions to a differential equation."
+      }
+     ],
+     "bc": false,
+     "p": 138,
+     "verified": "ced"
+    },
+    {
+     "code": "7.3",
+     "title": "Sketching Slope Fields",
+     "skill": "2.C",
+     "skill_text": "Identify a re-expression of mathematical information presented in a given representation.",
+     "lo": [
+      {
+       "code": "FUN-7.C",
+       "text": "Estimate solutions to differential equations."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.C.1",
+       "text": "A slope field is a graphical representation of a differential equation on a finite set of points in the plane."
+      },
+      {
+       "code": "FUN-7.C.2",
+       "text": "Slope fields provide information about the behavior of solutions to first-order differential equations."
+      }
+     ],
+     "bc": false,
+     "p": 139,
+     "verified": "ced"
+    },
+    {
+     "code": "7.4",
+     "title": "Reasoning Using Slope Fields",
+     "skill": "4.D",
+     "skill_text": "Use appropriate graphing techniques.",
+     "lo": [
+      {
+       "code": "FUN-7.C",
+       "text": "Estimate solutions to differential equations."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.C.3",
+       "text": "Solutions to differential equations are functions or families offunctions."
+      }
+     ],
+     "bc": false,
+     "p": 140,
+     "verified": "ced"
+    },
+    {
+     "code": "7.5",
+     "title": "Approximating Solutions Using Euler’s Method",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-7.C",
+       "text": "Estimate solutions to differential equations."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.C.4",
+       "text": "Euler’s method provides a procedure for approximating a solution to a differential equation or a point on a solution curve. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 141,
+     "verified": "ced"
+    },
+    {
+     "code": "7.6",
+     "title": "Finding General Solutions Using Separation of Variables",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-7.D",
+       "text": "Determine general solutions to differential equations."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.D.1",
+       "text": "Some differential equations can be solved by separation of variables."
+      },
+      {
+       "code": "FUN-7.D.2",
+       "text": "Antidifferentiation can be used to find general solutions to differential equations."
+      }
+     ],
+     "bc": false,
+     "p": 142,
+     "verified": "ced"
+    },
+    {
+     "code": "7.7",
+     "title": "Finding Particular Solutions Using Initial Conditions and Separation of Variables",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-7.E",
+       "text": "Determine particular solutions to differential equations."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.E.1",
+       "text": "A general solution may describe infinitely many solutions to a differential equation. There is only one particular solution passing through a given point."
+      },
+      {
+       "code": "FUN-7.E.2",
+       "text": "The function F defined by F xy ft dt a x () =+ () 0 ∫ is a particular solution to the differential equation dy dx = fx(), satisfying F() ay = 0."
+      },
+      {
+       "code": "FUN-7.E.3",
+       "text": "Solutions to differential equations may be subject to domain restrictions."
+      }
+     ],
+     "bc": false,
+     "p": 143,
+     "verified": "ced"
+    },
+    {
+     "code": "7.8",
+     "title": "Exponential Models with Differential Equations",
+     "skill": "3.G",
+     "skill_text": "Confirm that solutions are accurate and appropriate.",
+     "lo": [
+      {
+       "code": "FUN-7.G",
+       "text": "Determine general and particular solutions for problems involving differential equations in context."
+      },
+      {
+       "code": "FUN-7.F",
+       "text": "Interpret the meaning of a differential equation and its variables in context."
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.G.1",
+       "text": "The exponential growth and decay model, dy dt = ky, with initial condition y = y0 when t = 0, has solutions of the form yy e kt = 0 ."
+      },
+      {
+       "code": "FUN-7.F.1",
+       "text": "Specific applications offinding general and particular solutions to differential equations include motion along a line and exponential growth and decay."
+      },
+      {
+       "code": "FUN-7.F.2",
+       "text": "The model for exponential growth and decay that arises from the statement “The rate of change of a quantity is proportional to the size of the quantity” is dy dt = ky."
+      }
+     ],
+     "bc": false,
+     "p": 144,
+     "verified": "ced"
+    },
+    {
+     "code": "7.9",
+     "title": "Logistic Models with Differential Equations",
+     "skill": "3.F",
+     "skill_text": "Explain the meaning of mathematical solutions in context.",
+     "lo": [
+      {
+       "code": "FUN-7.H",
+       "text": "Interpret the meaning of the logistic growth model in context. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-7.H.1",
+       "text": "The model for logistic growth that arises from the statement “The rate of change of a quantity is jointly proportional to the size of the quantity and the difference between the quantity and the carrying capacity” is dy dt =- ky() ay . bc only"
+      },
+      {
+       "code": "FUN-7.H.2",
+       "text": "The logistic differential equation and initial conditions can be interpreted without solving the differential equation. bc only"
+      },
+      {
+       "code": "FUN-7.H.3",
+       "text": "The limiting value (carrying capacity) of a logistic differential equation as the independent variable approaches infinity can be determined using the logistic growth model and initial conditions. bc only"
+      },
+      {
+       "code": "FUN-7.H.4",
+       "text": "The value of the dependent variable in a logistic differential equation at the point when it is changing fastest can be determined using the logistic growth model and initial conditions.",
+       "bc": true
+      }
+     ],
+     "bc": true,
+     "p": 145,
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u8",
+   "n": 8,
+   "title": "Applications of Integration",
+   "weight": "5–10%",
+   "check": "Progress check · 30 multiple choice · 3 free response",
+   "intro": "In this unit, students will learn how to find the average value of a function, model particle motion and net change, and determine areas, volumes, and lengths bc only defined by the graphs offunctions. Students will develop an understanding of integration that can be transferred across these and many other applications. Understanding that the area, volume, and length bc only problems studied in this unit are limiting cases of Riemann sums of rectangle areas, prism volumes, or segment lengths bc only saves students from memorizing a long list of seemingly unrelated formulas and develops meaningful understanding of integration.",
+   "topics": [
+    {
+     "code": "8.1",
+     "title": "Finding the Average Value of a Function on an Interval",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "CHA-4.B",
+       "text": "Determine the average value of a function using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-4.B.1",
+       "text": "The average value of a continuous function f over an interval [a, b] is"
+      }
+     ],
+     "bc": false,
+     "p": 152,
+     "verified": "ced"
+    },
+    {
+     "code": "8.2",
+     "title": "Connecting Position, Velocity, and Acceleration of Functions Using Integrals",
+     "skill": "1.D",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems.",
+     "lo": [
+      {
+       "code": "CHA-4.C",
+       "text": "Determine values for positions and rates of change using definite integrals in problems involving rectilinear motion."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-4.C.1",
+       "text": "For a particle in rectilinear motion over an interval of time, the definite integral of velocity represents the particle’s displacement over the interval of time, and the definite integral of speed represents the particle’s total distance traveled over the interval of time."
+      }
+     ],
+     "bc": false,
+     "p": 153,
+     "verified": "ced"
+    },
+    {
+     "code": "8.3",
+     "title": "Using Accumulation Functions and Definite Integrals in Applied Contexts",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "CHA-4.D",
+       "text": "Interpret the meaning of a definite integral in accumulation problems."
+      },
+      {
+       "code": "CHA-4.E",
+       "text": "Determine net change using definite integrals in applied contexts."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-4.D.1",
+       "text": "A function defined as an integral represents an accumulation of a rate of change."
+      },
+      {
+       "code": "CHA-4.D.2",
+       "text": "The definite integral of the rate of change of a quantity over an interval gives the net change of that quantity over that interval."
+      },
+      {
+       "code": "CHA-4.E.1",
+       "text": "The definite integral can be used to express information about accumulation and net change in many applied contexts."
+      }
+     ],
+     "bc": false,
+     "p": 154,
+     "verified": "ced"
+    },
+    {
+     "code": "8.4",
+     "title": "Finding the Area Between Curves Expressed as Functions of x",
+     "skill": "4.C",
+     "skill_text": "Use appropriate mathematical symbols and notation.",
+     "lo": [
+      {
+       "code": "CHA-5.A",
+       "text": "Calculate areas in the plane using the definite integral."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.A.1",
+       "text": "Areas of regions in the plane can be calculated with definite integrals."
+      }
+     ],
+     "bc": false,
+     "p": 155,
+     "verified": "ced"
+    },
+    {
+     "code": "8.5",
+     "title": "Finding the Area Between Curves Expressed as Functions of y",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "CHA-5.A",
+       "text": "Calculate areas in the plane using the definite integral."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.A.2",
+       "text": "Areas of regions in the plane can be calculated using functions of either x or y."
+      }
+     ],
+     "bc": false,
+     "p": 156,
+     "verified": "ced"
+    },
+    {
+     "code": "8.6",
+     "title": "Finding the Area Between Curves That Intersect at More Than Two Points",
+     "skill": "2.B",
+     "skill_text": "Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.",
+     "lo": [
+      {
+       "code": "CHA-5.A",
+       "text": "Calculate areas in the plane using the definite integral."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.A.3",
+       "text": "Areas of certain regions in the plane may be calculated using a sum of two or more definite integrals or by evaluating a definite integral of the absolute value of the difference of two functions."
+      }
+     ],
+     "bc": false,
+     "p": 157,
+     "verified": "ced"
+    },
+    {
+     "code": "8.7",
+     "title": "Volumes with Cross Sections: Squares and Rectangles",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "CHA-5.B",
+       "text": "Calculate volumes of solids with known cross sections using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.B.1",
+       "text": "Volumes of solids with square and rectangular cross sections can be found using definite integrals and the area formulas for these shapes."
+      }
+     ],
+     "bc": false,
+     "p": 158,
+     "verified": "ced"
+    },
+    {
+     "code": "8.8",
+     "title": "Volumes with Cross Sections: Triangles and Semicircles",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "CHA-5.B",
+       "text": "Calculate volumes of solids with known cross sections using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.B.2",
+       "text": "Volumes of solids with triangular cross sections can be found using definite integrals and the area formulas for these shapes."
+      },
+      {
+       "code": "CHA-5.B.3",
+       "text": "Volumes of solids with semicircular and other geometrically defined cross sections can be found using definite integrals and the area formulas for these shapes."
+      }
+     ],
+     "bc": false,
+     "p": 159,
+     "verified": "ced"
+    },
+    {
+     "code": "8.9",
+     "title": "Volume with Disc Method: Revolving Around the x- or y-Axis",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "CHA-5.C",
+       "text": "Calculate volumes of solids of revolution using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.C.1",
+       "text": "Volumes of solids of revolution around the x- or y-axis may be found by using definite integrals with the disc method."
+      }
+     ],
+     "bc": false,
+     "p": 160,
+     "verified": "ced"
+    },
+    {
+     "code": "8.10",
+     "title": "Volume with Disc Method: Revolving Around Other Axes",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties of functions are related in different representations.",
+     "lo": [
+      {
+       "code": "CHA-5.C",
+       "text": "Calculate volumes of solids of revolution using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.C.2",
+       "text": "Volumes of solids of revolution around any horizontal or vertical line in the plane may be found by using definite integrals with the disc method."
+      }
+     ],
+     "bc": false,
+     "p": 161,
+     "verified": "ced"
+    },
+    {
+     "code": "8.11",
+     "title": "Volume with Washer Method: Revolving Around the x- or y-Axis",
+     "skill": "4.E",
+     "skill_text": "Apply appropriate rounding procedures.",
+     "lo": [
+      {
+       "code": "CHA-5.C",
+       "text": "Calculate volumes of solids of revolution using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.C.3",
+       "text": "Volumes of solids of revolution around the x- or y-axis whose cross sections are ring shaped may be found using definite integrals with the washer method."
+      }
+     ],
+     "bc": false,
+     "p": 162,
+     "verified": "ced"
+    },
+    {
+     "code": "8.12",
+     "title": "Volume with Washer Method: Revolving Around Other Axes",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties of functions are related in different representations.",
+     "lo": [
+      {
+       "code": "CHA-5.C",
+       "text": "Calculate volumes of solids of revolution using definite integrals."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.C.4",
+       "text": "Volumes of solids of revolution around any horizontal or vertical line whose cross sections are ring shaped may be found using definite integrals with the washer method."
+      }
+     ],
+     "bc": false,
+     "p": 163,
+     "verified": "ced"
+    },
+    {
+     "code": "8.13",
+     "title": "The Arc Length of a Smooth, Planar Curve and Distance Traveled",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "CHA-6.A",
+       "text": "Determine the length of a curve in the plane defined by a function, using a definite integral. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-6.A.1",
+       "text": "The length of a planar curve defined by a function can be calculated using a definite integral. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 164,
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u9",
+   "n": 9,
+   "title": "Parametric Equations, Polar Coordinates, and Vector-Valued Functions",
+   "weight": "10–15%",
+   "check": "Progress check · 25 multiple choice · 3 free response",
+   "intro": "In this unit, students will build on their understanding of straight-line motion to solve problems in which particles are moving along curves in the plane. Students will define parametric equations and vector-valued functions to describe planar motion and apply calculus to solve motion problems. Students will learn that polar equations are a special case of parametric equations and will apply calculus to analyze graphs and determine lengths and areas. Have students treat this unit as an opportunity to reinforce past learning and transfer knowledge and skills to new situations, rather than as a new list offacts or strategies to memorize.",
+   "topics": [
+    {
+     "code": "9.1",
+     "title": "Defining and Differentiating Parametric Equations",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties offunctions are related in different representations.",
+     "lo": [
+      {
+       "code": "CHA-3.G",
+       "text": "Calculate derivatives of parametric functions.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.G.1",
+       "text": "Methods for calculating derivatives of real-valued functions can be extended to parametric functions. bc only"
+      },
+      {
+       "code": "CHA-3.G.2",
+       "text": "For a curve defined parametrically, the value of dy dx at a point on the curve is the slope of the line tangent to the curve at that point. dy dx, the slope of the line tangent to a curve defined using parametric equations, can be determined by dividing dy dt by dx dt, provided dx dt does not equal zero. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 171,
+     "verified": "ced"
+    },
+    {
+     "code": "9.2",
+     "title": "Second Derivatives of Parametric Equations",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "CHA-3.G",
+       "text": "Calculate derivatives of parametric functions.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.G.3",
+       "text": "dy dx"
+      }
+     ],
+     "bc": true,
+     "p": 172,
+     "verified": "ced"
+    },
+    {
+     "code": "9.3",
+     "title": "Finding Arc Lengths of Curves Given by Parametric Equations",
+     "skill": "1.D",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems.",
+     "lo": [
+      {
+       "code": "CHA-6.B",
+       "text": "Determine the length of a curve in the plane defined by parametric functions, using a definite integral.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-6.B.1",
+       "text": "The length of a parametrically defined curve can be calculated using a definite integral.",
+       "bc": true
+      }
+     ],
+     "bc": true,
+     "p": 173,
+     "verified": "ced"
+    },
+    {
+     "code": "9.4",
+     "title": "Defining and Differentiating Vector-Valued Functions",
+     "skill": "1.D",
+     "skill_text": "Identify an appropriate mathematical rule or procedure based on the relationship between concepts or processes to solve problems.",
+     "lo": [
+      {
+       "code": "CHA-3.H",
+       "text": "Calculate derivatives of vector-valued functions.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-3.H.1",
+       "text": "Methods for calculating derivatives of real-valued functions can be extended to vector-valued functions. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 174,
+     "verified": "ced"
+    },
+    {
+     "code": "9.5",
+     "title": "Integrating Vector-Valued Functions",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-8.A",
+       "text": "Determine a particular solution given a rate vector and initial conditions.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-8.A.1",
+       "text": "Methods for calculating integrals of real-valued functions can be extended to parametric or vector-valued functions. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 175,
+     "verified": "ced"
+    },
+    {
+     "code": "9.6",
+     "title": "Solving Motion Problems Using Parametric and Vector-Valued Functions",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "FUN-8.B",
+       "text": "Determine values for positions and rates of change in problems involving planar motion. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-8.B.1",
+       "text": "Derivatives can be used to determine velocity, speed, and acceleration for a particle moving along a curve in the plane defined using parametric or vector-valued functions.",
+       "bc": true
+      },
+      {
+       "code": "FUN-8.B.2",
+       "text": "For a particle in planar motion over an interval of time, the definite integral of the velocity vector represents the particle’s displacement (net change in position) over the interval of time, from which we might determine its position. The definite integral of speed represents the particle’s total distance traveled over the interval of time. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 176,
+     "verified": "ced"
+    },
+    {
+     "code": "9.7",
+     "title": "Defining Polar Coordinates and Differentiating in Polar Form",
+     "skill": "2.D",
+     "skill_text": "Identify how mathematical characteristics or properties offunctions are related in different representations.",
+     "lo": [
+      {
+       "code": "FUN-3.G",
+       "text": "Calculate derivatives of functions written in polar coordinates. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "FUN-3.G.1",
+       "text": "Methods for calculating derivatives of real-valued functions can be extended to functions in polar coordinates. bc only"
+      },
+      {
+       "code": "FUN-3.G.2",
+       "text": "For a curve given by a polar equation r = f(θ), derivatives of r, x, and y with respect to θ, and first and second derivatives of y with respect to x can provide information about the curve.",
+       "bc": true
+      }
+     ],
+     "bc": true,
+     "p": 177,
+     "verified": "ced"
+    },
+    {
+     "code": "9.8",
+     "title": "Find the Area of a Polar Region or the Area Bounded by a Single Polar Curve",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "CHA-5.D",
+       "text": "Calculate areas of regions defined by polar curves using definite integrals. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.D.1",
+       "text": "The concept of calculating areas in rectangular coordinates can be extended to polar coordinates. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 178,
+     "verified": "ced"
+    },
+    {
+     "code": "9.9",
+     "title": "Finding the Area of the Region Bounded by Two Polar Curves",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "CHA-5.D",
+       "text": "Calculate areas of regions defined by polar curves using definite integrals. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "CHA-5.D.2",
+       "text": "Areas of regions bounded by polar curves can be calculated with definite integrals. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 179,
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u10",
+   "n": 10,
+   "title": "Infinite Sequences and Series",
+   "weight": "15–20%",
+   "check": "Progress check · 45 multiple choice · 3 free response",
+   "intro": "In this unit, students need to understand that a sum of infinitely many terms may converge to a finite value. They can develop intuition by exploring graphs, tables, and symbolic expressions for series that converge and diverge and for Taylor polynomials. Students should build connections to past learning, such as how evaluating improper integrals relates to the integral test or how using limiting cases of power series to represent continuous functions relates to differentiation and integration. Students who rely solely on memorizing a long list of tests and procedures typically find little success achieving a lasting conceptual understanding of series.",
+   "topics": [
+    {
+     "code": "10.1",
+     "title": "Defining Convergent and Divergent Infinite Series",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.1",
+       "text": "The nth partial sum is defined as the sum of the first n terms of a series. bc only"
+      },
+      {
+       "code": "LIM-7.A.2",
+       "text": "An infinite series of numbers converges to a real number S (or has sum S), if and only if the limit of its sequence of partial sums exists and equals S. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 186,
+     "verified": "ced"
+    },
+    {
+     "code": "10.2",
+     "title": "Working with Geometric Series",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.3",
+       "text": "A geometric series is a series with a constant ratio between successive terms. bc only"
+      },
+      {
+       "code": "LIM-7.A.4",
+       "text": "If a is a real number and r is a real number such that |r|, then the geometric series <1 ar a r n n= ∞ ∑ = 0 1- . bc only"
+      }
+     ],
+     "bc": true,
+     "p": 187,
+     "verified": "ced"
+    },
+    {
+     "code": "10.3",
+     "title": "The nth Term Test for Divergence",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.5",
+       "text": "The nth term test is a test for divergence of a series. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 188,
+     "verified": "ced"
+    },
+    {
+     "code": "10.4",
+     "title": "Integral Test for Convergence",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.6",
+       "text": "The integral test is a method to determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "bc": true,
+     "p": 189,
+     "verified": "ced"
+    },
+    {
+     "code": "10.5",
+     "title": "Harmonic Series and p-Series",
+     "skill": "3.B",
+     "skill_text": "Identify an appropriate mathematical definition, theorem, or test to apply.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.7",
+       "text": "In addition to geometric series, common series of numbers include the harmonic series, the alternating harmonic series, and p-series.",
+       "bc": true
+      }
+     ],
+     "bc": true,
+     "p": 190,
+     "verified": "ced"
+    },
+    {
+     "code": "10.6",
+     "title": "Comparison Tests for Convergence",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.8",
+       "text": "The comparison test is a method to determine whether a series converges or diverges. bc only"
+      },
+      {
+       "code": "LIM-7.A.9",
+       "text": "The limit comparison test is a method to determine whether a series converges or diverges. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 191,
+     "verified": "ced"
+    },
+    {
+     "code": "10.7",
+     "title": "Alternating Series Test for Convergence",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.10",
+       "text": "The alternating series test is a method to determine whether an alternating series converges. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 192,
+     "verified": "ced"
+    },
+    {
+     "code": "10.8",
+     "title": "Ratio Test for Convergence",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.11",
+       "text": "The ratio test is a method to determine whether a series of numbers converges or diverges.",
+       "bc": true
+      }
+     ],
+     "bc": true,
+     "p": 193,
+     "verified": "ced"
+    },
+    {
+     "code": "10.9",
+     "title": "Determining Absolute or Conditional Convergence",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-7.A",
+       "text": "Determine whether a series converges or diverges.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.A.12",
+       "text": "A series may be absolutely convergent, conditionally convergent, or divergent.",
+       "bc": true
+      },
+      {
+       "code": "LIM-7.A.13",
+       "text": "If a series converges absolutely, then it converges. bc only"
+      },
+      {
+       "code": "LIM-7.A.14",
+       "text": "If a series converges absolutely, then any series obtained from it by regrouping or rearranging the terms has the same value. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 194,
+     "verified": "ced"
+    },
+    {
+     "code": "10.10",
+     "title": "Alternating Series Error Bound",
+     "skill": "1.E",
+     "skill_text": "Apply appropriate mathematical rules or procedures, with and without technology.",
+     "lo": [
+      {
+       "code": "LIM-7.B",
+       "text": "Approximate the sum of a series. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-7.B.1",
+       "text": "If an alternating series converges by the alternating series test, then the alternating series error bound can be used to bound how far a partial sum is from the value of the infinite series. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 195,
+     "verified": "ced"
+    },
+    {
+     "code": "10.11",
+     "title": "Finding Taylor Polynomial Approximations of Functions",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test. Connecting Representations",
+     "lo": [
+      {
+       "code": "LIM-8.B",
+       "text": "Approximate function values using a Taylor polynomial. bc only"
+      },
+      {
+       "code": "LIM-8.A",
+       "text": "Represent a function at a point as a Taylor polynomial.",
+       "bc": true
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-8.B.1",
+       "text": "Taylor polynomials for a function f centered at x = a can be used to approximate function values of f near x = a. bc only"
+      },
+      {
+       "code": "LIM-8.A.1",
+       "text": "The coefficient of the nth degree term in a Taylor polynomial for a function f centered at x = a is fa n () n () ! . bc only"
+      },
+      {
+       "code": "LIM-8.A.2",
+       "text": "In many cases, as the degree of a Taylor polynomial increases, the nth degree polynomial will approach the original function over some interval. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 196,
+     "verified": "ced"
+    },
+    {
+     "code": "10.12",
+     "title": "Lagrange Error Bound",
+     "skill": "1.F",
+     "skill_text": "Explain how an approximated value relates to the actual value.",
+     "lo": [
+      {
+       "code": "LIM-8.C",
+       "text": "Determine the error bound associated with a Taylor polynomial approximation. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-8.C.1",
+       "text": "The Lagrange error bound can be used to determine a maximum interval for the error of a Taylor polynomial approximation to a function.",
+       "bc": true
+      },
+      {
+       "code": "LIM-8.C.2",
+       "text": "In some situations, the alternating series error bound can be used to bound the error of a Taylor polynomial approximation to the value of a function. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 197,
+     "verified": "ced"
+    },
+    {
+     "code": "10.13",
+     "title": "Radius and Interval of Convergence of Power Series",
+     "skill": "2.C",
+     "skill_text": "Identify a re-expression of mathematical information presented in a given representation.",
+     "lo": [
+      {
+       "code": "LIM-8.D",
+       "text": "Determine the radius of convergence and interval of convergence for a power series. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-8.D.1",
+       "text": "A power series is a series of the form an n () = ∞ ∑0 x r n -, where n is a non-negative integer, a{}n is a sequence of real numbers, and r is a real number. bc only"
+      },
+      {
+       "code": "LIM-8.D.2",
+       "text": "If a power series converges, it either converges at a single point or has an interval of convergence.",
+       "bc": true
+      },
+      {
+       "code": "LIM-8.D.3",
+       "text": "The ratio test can be used to determine the radius of convergence of a power series. bc only"
+      },
+      {
+       "code": "LIM-8.D.4",
+       "text": "The radius of convergence of a power series can be used to identify an open interval on which the series converges, but it is necessary to test both endpoints of the interval to determine the interval of convergence. bc only"
+      },
+      {
+       "code": "LIM-8.D.5",
+       "text": "If a power series has a positive radius of convergence, then the power series is the Taylor series of the function to which it converges over the open interval. bc only"
+      },
+      {
+       "code": "LIM-8.D.6",
+       "text": "The radius of convergence of a power series obtained by term-by-term differentiation or term-by-term integration is the same as the radius of convergence of the original power series. bc only"
+      }
+     ],
+     "bc": true,
+     "p": 198,
+     "verified": "ced"
+    },
+    {
+     "code": "10.14",
+     "title": "Finding Taylor or Maclaurin Series for a Function",
+     "skill": "2.C",
+     "skill_text": "Identify a re-expression of mathematical information presented in a given representation.",
+     "lo": [
+      {
+       "code": "LIM-8.F",
+       "text": "Interpret Taylor series and Maclaurin series. bc only"
+      },
+      {
+       "code": "LIM-8.E",
+       "text": "Represent a function as a Taylor series or a Maclaurin series. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-8.F.1",
+       "text": "The Maclaurin series for"
+      },
+      {
+       "code": "LIM-8.F.2",
+       "text": "The Maclaurin series for sin x, cos x, and ex provides the foundation for constructing the Maclaurin series for other functions. bc only"
+      },
+      {
+       "code": "LIM-8.E.1",
+       "text": "A Taylor polynomial for f (x) is a partial sum of the Taylor series for f (x). bc only"
+      }
+     ],
+     "bc": true,
+     "p": 199,
+     "verified": "ced"
+    },
+    {
+     "code": "10.15",
+     "title": "Representing Functions as Power Series",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-8.G",
+       "text": "Represent a given function as a power series. bc only"
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-8.G.1",
+       "text": "Using a known series, a power series for a given function can be derived using operations such as term-by-term differentiation or term-by-term integration, and by various methods (e.g., algebraic processes, substitutions, or using properties of geometric series). bc only"
+      }
+     ],
+     "bc": true,
+     "p": 200,
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "The nth term test for divergence, and the integral test, comparison test, limit comparison test, alternating series test, and ratio test for convergence are assessed on the AP Calculus BC Exam. Other methods are not assessed on the exam. However, teachers may include additional methods in the course, if time permits.",
+     "topic": "10.8",
+     "p": 193,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  }
+ ]
+}

@@ -1,0 +1,4643 @@
+{
+ "course": "french",
+ "edition": "AP French Language and Culture Course and Exam Description, Effective Fall 2026",
+ "exam": {
+  "format": "<10057 characters of the CED, kept out of the repository>",
+  "scoring": "<36912 characters of the CED, kept out of the repository>",
+  "project": "<28866 characters of the CED, kept out of the repository>",
+  "verified": "ced"
+ },
+ "skills": [
+  {
+   "code": "1",
+   "name": "Comprehend written texts, audio, and visualizations of data.",
+   "kind": "category"
+  },
+  {
+   "code": "2",
+   "name": "Speak and write in interpersonal and presentational contexts.",
+   "kind": "category"
+  },
+  {
+   "code": "3",
+   "name": "Demonstrate cultural understanding. AP French Language and Culture Course and Exam Description Course Framework | 48",
+   "kind": "category"
+  },
+  {
+   "code": "1.A",
+   "name": "Recognize explicit meaning.",
+   "kind": "skill"
+  },
+  {
+   "code": "1.B",
+   "name": "Interpret meaning.",
+   "kind": "skill"
+  },
+  {
+   "code": "1.C",
+   "name": "Synthesize and infer meaning.",
+   "kind": "skill"
+  },
+  {
+   "code": "2.A",
+   "name": "Use language that aligns with the communicative purpose and context.",
+   "kind": "skill"
+  },
+  {
+   "code": "2.B",
+   "name": "Make communication comprehensible for the intended audience.",
+   "kind": "skill"
+  },
+  {
+   "code": "2.C",
+   "name": "Share ideas, information, and opinions about familiar and researched topics.",
+   "kind": "skill"
+  },
+  {
+   "code": "2.D",
+   "name": "Apply organizational and rhetorical strategies.",
+   "kind": "skill"
+  },
+  {
+   "code": "3.A",
+   "name": "Make connections within and across cultures.",
+   "kind": "skill"
+  },
+  {
+   "code": "1.A.1",
+   "name": ": Identify supporting or",
+   "kind": "lo"
+  },
+  {
+   "code": "1.A.2",
+   "name": ": Identify data points,",
+   "kind": "lo"
+  },
+  {
+   "code": "1.B.1",
+   "name": ": Determine the main",
+   "kind": "lo"
+  },
+  {
+   "code": "1.B.2",
+   "name": ": Determine the",
+   "kind": "lo"
+  },
+  {
+   "code": "1.B.3",
+   "name": ": Determine the point(s)",
+   "kind": "lo"
+  },
+  {
+   "code": "1.B.4",
+   "name": ": Identify organizing",
+   "kind": "lo"
+  },
+  {
+   "code": "1.B.5",
+   "name": ": Determine the",
+   "kind": "lo"
+  },
+  {
+   "code": "1.C.1",
+   "name": ": Connect information",
+   "kind": "lo"
+  },
+  {
+   "code": "1.C.2",
+   "name": ": Synthesize meaning",
+   "kind": "lo"
+  },
+  {
+   "code": "1.C.3",
+   "name": ": Infer implied meaning",
+   "kind": "lo"
+  },
+  {
+   "code": "2.A.1",
+   "name": ": Use a variety of grammatical",
+   "kind": "lo"
+  },
+  {
+   "code": "2.A.2",
+   "name": ": Use a variety of vocabulary.",
+   "kind": "lo"
+  },
+  {
+   "code": "2.A.3",
+   "name": ": Use idiomatic and culturally",
+   "kind": "lo"
+  },
+  {
+   "code": "2.A.4",
+   "name": ": Adopt an appropriate register for",
+   "kind": "lo"
+  },
+  {
+   "code": "2.B.1",
+   "name": ": Use communication strategies",
+   "kind": "lo"
+  },
+  {
+   "code": "2.B.2",
+   "name": ": Monitor language production;",
+   "kind": "lo"
+  },
+  {
+   "code": "2.B.3",
+   "name": ": Use pronunciation that is",
+   "kind": "lo"
+  },
+  {
+   "code": "2.B.4",
+   "name": ": Use an appropriate rate of speech",
+   "kind": "lo"
+  },
+  {
+   "code": "2.B.5",
+   "name": ": Use standard conventions of",
+   "kind": "lo"
+  },
+  {
+   "code": "2.C.1",
+   "name": ": Express ideas, preferences, and",
+   "kind": "lo"
+  },
+  {
+   "code": "2.C.2",
+   "name": ": Use research strategies to gather",
+   "kind": "lo"
+  },
+  {
+   "code": "2.C.3",
+   "name": ": Use examples to provide advice",
+   "kind": "lo"
+  },
+  {
+   "code": "2.C.4",
+   "name": ": Integrate information from",
+   "kind": "lo"
+  },
+  {
+   "code": "2.C.5",
+   "name": ": Reference and cite sources",
+   "kind": "lo"
+  },
+  {
+   "code": "2.D.1",
+   "name": ": Apply an appropriate",
+   "kind": "lo"
+  },
+  {
+   "code": "2.D.2",
+   "name": ": Use a variety of cohesive",
+   "kind": "lo"
+  },
+  {
+   "code": "3.A.1",
+   "name": ": Describe cultural",
+   "kind": "lo"
+  },
+  {
+   "code": "3.A.2",
+   "name": ": Compare cultural",
+   "kind": "lo"
+  },
+  {
+   "code": "3.A.3",
+   "name": ": Reflect on the",
+   "kind": "lo"
+  }
+ ],
+ "units": [
+  {
+   "id": "t1",
+   "n": 1,
+   "title": "Les familles et les communautés",
+   "en": "Families and Communities",
+   "weight": "no unit weighting; every unit feeds all three free-response tasks and both multiple-choice parts",
+   "check": "Progress check · 15 multiple choice",
+   "pages": [
+    30,
+    39
+   ],
+   "questions": [
+    {
+     "en": "What constitutes a family in French-speaking societies?",
+     "fr": "Qu’est-ce qui constitue une famille dans les sociétés francophones ?"
+    },
+    {
+     "en": "What are some important aspects of family values and family life in French-speaking societies?",
+     "fr": "Quels sont quelques aspects importants des valeurs familiales et de la vie de famille dans les sociétés francophones ?"
+    },
+    {
+     "en": "How do families and communities experience today’s world?",
+     "fr": "Comment les familles et les communautés vivent-elles le monde d’aujourd’hui ?"
+    }
+   ],
+   "contexts": [
+    {
+     "en": "Community Activities",
+     "fr": "Les activités dans la communauté"
+    },
+    {
+     "en": "Family Relationships",
+     "fr": "Les relations familiales"
+    },
+    {
+     "en": "Social Interactions and Relationships",
+     "fr": "Les interactions et les relations sociales"
+    },
+    {
+     "en": "Urban and Rural Communities",
+     "fr": "Les communautés urbaines et rurales"
+    }
+   ],
+   "other_contexts": [
+    {
+     "en": "Customs and Celebrations",
+     "fr": "Les coutumes et les fêtes"
+    },
+    {
+     "en": "Linguistics",
+     "fr": "La linguistique"
+    },
+    {
+     "en": "French in the World",
+     "fr": "Le français dans le monde"
+    },
+    {
+     "en": "Education and Career",
+     "fr": "L’éducation et le monde du travail"
+    },
+    {
+     "en": "Food and Health",
+     "fr": "La nourriture et la santé"
+    },
+    {
+     "en": "Pop Culture",
+     "fr": "La culture populaire"
+    },
+    {
+     "en": "Global Communication",
+     "fr": "La communication mondiale"
+    },
+    {
+     "en": "History",
+     "fr": "L’histoire"
+    },
+    {
+     "en": "Policy and Planning",
+     "fr": "La réglementation et la planification"
+    }
+   ],
+   "intro": "Unit 1 explores themes related to families in French-speaking communities that provide a meaningful context for students in which to acquire and develop a variety of language and cultural concepts. While the primary focus is on the theme of Families and Communities, teachers should interweave other recommended instructional contexts. For example, students could: § Explore how families shape values and traditions, as well as personal beliefs and interests § Examine the experiences faced by families in modern society § Consider the evolving role of the community in contemporary societies Using a thematic approach helps teachers integrate language, content, and culture into lessons that build skills in the three modes of communication—Interpretive, Interpersonal, and Presentational. The development of skills in each of these modes forms the core of this and all subsequent units.",
+   "modes": [
+    "Interpretive Listening and Reading",
+    "Presentational Speaking"
+   ],
+   "task_types": [
+    "ARTICLE",
+    "AUDIO AND CHART",
+    "PROJECT PRESENTATION",
+    "PROMOTIONAL MATERIAL"
+   ],
+   "lo": [
+    {
+     "code": "1.A.1",
+     "text": ": Identify"
+    },
+    {
+     "code": "1.B.1",
+     "text": ": Determine the"
+    },
+    {
+     "code": "2.A.1",
+     "text": "Use a variety of grammatical structures."
+    },
+    {
+     "code": "2.A.2",
+     "text": "Use a variety of vocabulary."
+    },
+    {
+     "code": "2.B.1",
+     "text": "Use communication strategies such as circumlocution and paraphrasing."
+    },
+    {
+     "code": "2.B.2",
+     "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+    },
+    {
+     "code": "2.B.3",
+     "text": "Use pronunciation that is comprehensible to a variety of the target language."
+    },
+    {
+     "code": "2.C.1",
+     "text": "Express ideas, preferences, and opinions."
+    }
+   ],
+   "topics": [
+    {
+     "code": "t1-community-activities",
+     "title": "Les activités dans la communauté",
+     "en": "Community Activities",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t1-family-relationships",
+     "title": "Les relations familiales",
+     "en": "Family Relationships",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t1-social-interactions-and-",
+     "title": "Les interactions et les relations sociales",
+     "en": "Social Interactions and Relationships",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t1-urban-and-rural-communit",
+     "title": "Les communautés urbaines et rurales",
+     "en": "Urban and Rural Communities",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": ": Identify"
+      },
+      {
+       "code": "1.B.1",
+       "text": ": Determine the"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      }
+     ],
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": "",
+   "verified": "ced"
+  },
+  {
+   "id": "t2",
+   "n": 2,
+   "title": "La langue et la culture",
+   "en": "Language and Culture",
+   "weight": "no unit weighting; every unit feeds all three free-response tasks and both multiple-choice parts",
+   "check": "Progress check · 15 multiple choice · 1 free response",
+   "pages": [
+    40,
+    49
+   ],
+   "questions": [
+    {
+     "en": "How do language and culture influence each other?",
+     "fr": "Comment la langue et la culture s’influencent-elles mutuellement ?"
+    },
+    {
+     "en": "How do language and culture evolve over time?",
+     "fr": "En quoi langue et culture évoluent-elles au fil du temps ?"
+    },
+    {
+     "en": "How does technology influence language and culture?",
+     "fr": "Comment la technologie influence-t-elle la langue et la culture ?"
+    }
+   ],
+   "contexts": [
+    {
+     "en": "Customs and Celebrations",
+     "fr": "Les coutumes et les fêtes"
+    },
+    {
+     "en": "Linguistics",
+     "fr": "La linguistique"
+    },
+    {
+     "en": "French in the World",
+     "fr": "Le français dans le monde"
+    }
+   ],
+   "other_contexts": [
+    {
+     "en": "Artistic Heritage",
+     "fr": "Le patrimoine artistique"
+    },
+    {
+     "en": "Beauty and Aesthetics",
+     "fr": "L’esthétique"
+    },
+    {
+     "en": "Literature",
+     "fr": "La littérature"
+    },
+    {
+     "en": "Visual and Performing Arts",
+     "fr": "Les arts visuels et du spectacle"
+    },
+    {
+     "en": "Education and Career",
+     "fr": "L’éducation et le monde du travail"
+    },
+    {
+     "en": "Entertainment and Media",
+     "fr": "Le divertissement et les médias"
+    },
+    {
+     "en": "Pop Culture",
+     "fr": "La culture populaire"
+    },
+    {
+     "en": "Travel and Tourism",
+     "fr": "Les voyages et le tourisme"
+    },
+    {
+     "en": "Innovations and Emerging Technologies",
+     "fr": "Les innovations et les nouvelles technologies"
+    },
+    {
+     "en": "Personal Technology and Communication",
+     "fr": "Produits de technologie et de communication personnels"
+    },
+    {
+     "en": "Societal Impacts of Science and Technology",
+     "fr": "L’impact de la science et de la technologie dans la société Language and Culture"
+    }
+   ],
+   "intro": "",
+   "modes": [
+    "Interpretive Listening and Reading",
+    "Presentational Writing"
+   ],
+   "task_types": [
+    "ARGUMENTATIVE ESSAY",
+    "ARTICLE AND CHART",
+    "AUDIO REPORT",
+    "LITERARY TEXT"
+   ],
+   "lo": [
+    {
+     "code": "1.B.2",
+     "text": "Determine the intended audience."
+    },
+    {
+     "code": "1.B.3",
+     "text": ": Determine"
+    },
+    {
+     "code": "2.A.1",
+     "text": "Use a variety of grammatical structures."
+    },
+    {
+     "code": "2.A.2",
+     "text": ": Use a variety of"
+    },
+    {
+     "code": "2.A.3",
+     "text": ": Use idiomatic"
+    },
+    {
+     "code": "2.B.1",
+     "text": "Use communication strategies such as circumlocution and paraphrasing."
+    },
+    {
+     "code": "2.B.5",
+     "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+    },
+    {
+     "code": "2.C.1",
+     "text": "Express ideas, preferences, and opinions."
+    },
+    {
+     "code": "2.C.4",
+     "text": "Integrate information from multiple sources to develop and support a position or"
+    },
+    {
+     "code": "2.D.1",
+     "text": "Apply an appropriate organizational structure."
+    }
+   ],
+   "topics": [
+    {
+     "code": "t2-customs-and-celebrations",
+     "title": "Les coutumes et les fêtes",
+     "en": "Customs and Celebrations",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": ": Determine"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": ": Use idiomatic"
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.4",
+       "text": "Integrate information from multiple sources to develop and support a position or"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": ": Determine"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": ": Use idiomatic"
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.4",
+       "text": "Integrate information from multiple sources to develop and support a position or"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t2-linguistics",
+     "title": "La linguistique",
+     "en": "Linguistics",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": ": Determine"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": ": Use idiomatic"
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.4",
+       "text": "Integrate information from multiple sources to develop and support a position or"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": ": Determine"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": ": Use idiomatic"
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.4",
+       "text": "Integrate information from multiple sources to develop and support a position or"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t2-french-in-the-world",
+     "title": "Le français dans le monde",
+     "en": "French in the World",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": ": Determine"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": ": Use idiomatic"
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.4",
+       "text": "Integrate information from multiple sources to develop and support a position or"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": ": Determine"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": ": Use idiomatic"
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.4",
+       "text": "Integrate information from multiple sources to develop and support a position or"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      }
+     ],
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": "",
+   "verified": "ced"
+  },
+  {
+   "id": "t3",
+   "n": 3,
+   "title": "L'art et la créativité",
+   "en": "Art and Creativity",
+   "weight": "no unit weighting; every unit feeds all three free-response tasks and both multiple-choice parts",
+   "check": "Progress check · 15 multiple choice",
+   "pages": [
+    50,
+    61
+   ],
+   "questions": [
+    {
+     "en": "How can art and creativity influence daily life?",
+     "fr": "Comment l’art et la créativité peuvent-ils influencer la vie quotidienne ?"
+    },
+    {
+     "en": "How does art both challenge and reflect cultural perspectives?",
+     "fr": "Comment l’art peut-il à la fois défier et refléter les perspectives culturelles ?"
+    },
+    {
+     "en": "How do communities value art and creativity?",
+     "fr": "Comment les communautés valorisent-elles l’art et la créativité ?"
+    },
+    {
+     "en": "How is art used to record history?",
+     "fr": "Comment l’art est-il utilisé pour raconter ou documenter l’histoire ?"
+    }
+   ],
+   "contexts": [
+    {
+     "en": "Architecture",
+     "fr": "L’architecture"
+    },
+    {
+     "en": "Artistic Heritage",
+     "fr": "Le patrimoine artistique"
+    },
+    {
+     "en": "Beauty and Aesthetics",
+     "fr": "L’esthétique"
+    },
+    {
+     "en": "Fashion and Design",
+     "fr": "La mode et le design"
+    },
+    {
+     "en": "Literature",
+     "fr": "La littérature"
+    },
+    {
+     "en": "Visual and Performing Arts",
+     "fr": "Les arts visuels et du spectacle"
+    }
+   ],
+   "other_contexts": [
+    {
+     "en": "Entertainment and Media",
+     "fr": "Le divertissement et les médias"
+    },
+    {
+     "en": "Pop Culture",
+     "fr": "La culture populaire"
+    },
+    {
+     "en": "Sports and Leisure",
+     "fr": "Le sport et les loisirs"
+    },
+    {
+     "en": "Travel and Tourism",
+     "fr": "Les voyages et le tourisme"
+    },
+    {
+     "en": "Community Activities",
+     "fr": "Les activités dans la communauté"
+    },
+    {
+     "en": "Family Relationships",
+     "fr": "Les relations familiales"
+    },
+    {
+     "en": "Urban and Rural Communities",
+     "fr": "Les communautés urbaines et rurales Art and Creativity"
+    }
+   ],
+   "intro": "",
+   "modes": [
+    "Interpersonal Speaking",
+    "Interpretive Listening and Reading",
+    "Presentational Speaking"
+   ],
+   "task_types": [
+    "ARTICLE",
+    "AUDIO AND CHART",
+    "LITERARY TEXT",
+    "PROJECT PRESENTATION",
+    "PROJECT Q&A"
+   ],
+   "lo": [
+    {
+     "code": "1.A.2",
+     "text": ": Identify data"
+    },
+    {
+     "code": "1.B.4",
+     "text": "Identify organizing and/or rhetorical structures and/or strategies."
+    },
+    {
+     "code": "2.A.3",
+     "text": "Use idiomatic and culturally relevant expressions."
+    },
+    {
+     "code": "2.A.4",
+     "text": "Adopt an appropriate register for the intended audience and situation."
+    },
+    {
+     "code": "2.B.1",
+     "text": "Use communication strategies such as circumlocution and paraphrasing."
+    },
+    {
+     "code": "2.B.4",
+     "text": "Use an appropriate rate of speech and effective intonation patterns."
+    },
+    {
+     "code": "2.C.2",
+     "text": "Use research strategies to gather information and evidence."
+    },
+    {
+     "code": "2.C.3",
+     "text": "Use examples to provide advice or information and to explain opinions or emotions."
+    },
+    {
+     "code": "2.D.2",
+     "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+    },
+    {
+     "code": "3.A.1",
+     "text": "Describe cultural products, practices, and perspectives."
+    }
+   ],
+   "topics": [
+    {
+     "code": "t3-architecture",
+     "title": "L’architecture",
+     "en": "Architecture",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t3-artistic-heritage",
+     "title": "Le patrimoine artistique",
+     "en": "Artistic Heritage",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t3-beauty-and-aesthetics",
+     "title": "L’esthétique",
+     "en": "Beauty and Aesthetics",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t3-fashion-and-design",
+     "title": "La mode et le design",
+     "en": "Fashion and Design",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t3-literature",
+     "title": "La littérature",
+     "en": "Literature",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t3-visual-and-performing-ar",
+     "title": "Les arts visuels et du spectacle",
+     "en": "Visual and Performing Arts",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.2",
+       "text": ": Identify data"
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.2",
+       "text": "Use research strategies to gather information and evidence."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": "",
+   "verified": "ced"
+  },
+  {
+   "id": "t4",
+   "n": 4,
+   "title": "La science et la technologie",
+   "en": "Science and Technology",
+   "weight": "no unit weighting; every unit feeds all three free-response tasks and both multiple-choice parts",
+   "check": "Progress check · 15 multiple choice · 1 free response",
+   "pages": [
+    62,
+    71
+   ],
+   "questions": [
+    {
+     "en": "What factors drive innovation and discovery in the fields of science and technology?",
+     "fr": "Quels facteurs favorisent l’innovation et la découverte dans les sciences et la technologie ?"
+    },
+    {
+     "en": "How does technology enhance global communication?",
+     "fr": "Comment la technologie peut-elle aider la communication mondiale ?"
+    },
+    {
+     "en": "What is the societal impact of scientific or technological advancements?",
+     "fr": "Quel est l’impact des avancements scientifiques ou technologiques sur la société ?"
+    }
+   ],
+   "contexts": [
+    {
+     "en": "Innovations and Emerging Technologies",
+     "fr": "Les innovations et les nouvelles technologies"
+    },
+    {
+     "en": "Personal Technology and Communication",
+     "fr": "Produits de technologie et de communication personnels"
+    },
+    {
+     "en": "Science in Everyday Life",
+     "fr": "La science dans la vie quotidienne"
+    },
+    {
+     "en": "Societal Impacts of Science and Technology",
+     "fr": "L’impact de la science et de la technologie dans la société"
+    }
+   ],
+   "other_contexts": [
+    {
+     "en": "Global Communication",
+     "fr": "La communication mondiale"
+    },
+    {
+     "en": "Policy and Planning",
+     "fr": "La réglementation et la planification"
+    },
+    {
+     "en": "Transportation",
+     "fr": "Les transports"
+    },
+    {
+     "en": "Education and Career",
+     "fr": "L’éducation et le monde du travail"
+    },
+    {
+     "en": "Food and Health",
+     "fr": "La nourriture et la santé"
+    },
+    {
+     "en": "Travel and Tourism",
+     "fr": "Les voyages et le tourisme"
+    },
+    {
+     "en": "Community Activities",
+     "fr": "Les activités dans la communauté"
+    },
+    {
+     "en": "Social Interactions and Relationships",
+     "fr": "Les interactions et les relations sociales"
+    },
+    {
+     "en": "Urban and Rural Communities",
+     "fr": "Les communautés urbaines et rurales"
+    }
+   ],
+   "intro": "Unit 4 explores the effects of science and technology on people’s lives in French-speaking communities. This unit encourages students to work with more complex academic vocabulary and content as they continue to develop linguistic and cultural concepts from previous units. While Science and Technology is the primary thematic focus of the unit, teachers are encouraged to integrate other recommended instructional contexts. For example, students could: § Explore how developments in science can both create and resolve challenges in contemporary society § Investigate how technology creates new ways to connect with others and how it impacts and shapes language and culture.",
+   "modes": [
+    "Interpretive Listening and Reading",
+    "Presentational Writing"
+   ],
+   "task_types": [
+    "ARGUMENTATIVE ESSAY",
+    "INSTRUCTIONAL GUIDANCE",
+    "INTERVIEW",
+    "PRESENTATION"
+   ],
+   "lo": [
+    {
+     "code": "1.B.5",
+     "text": ": Determine the"
+    },
+    {
+     "code": "1.C.1",
+     "text": "Connect information within or across sources."
+    },
+    {
+     "code": "2.A.3",
+     "text": "Use idiomatic and culturally relevant expressions."
+    },
+    {
+     "code": "2.B.1",
+     "text": "Use communication strategies such as circumlocution and paraphrasing."
+    },
+    {
+     "code": "2.B.5",
+     "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+    },
+    {
+     "code": "2.C.3",
+     "text": ": Use examples"
+    },
+    {
+     "code": "2.C.4",
+     "text": ": Integrate"
+    },
+    {
+     "code": "2.D.1",
+     "text": ": Apply"
+    },
+    {
+     "code": "2.D.2",
+     "text": ": Use a variety of"
+    },
+    {
+     "code": "3.A.1",
+     "text": "Describe cultural products, practices, and perspectives."
+    }
+   ],
+   "topics": [
+    {
+     "code": "t4-innovations-and-emerging",
+     "title": "Les innovations et les nouvelles technologies",
+     "en": "Innovations and Emerging Technologies",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t4-personal-technology-and-",
+     "title": "Produits de technologie et de communication personnels",
+     "en": "Personal Technology and Communication",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t4-science-in-everyday-life",
+     "title": "La science dans la vie quotidienne",
+     "en": "Science in Everyday Life",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t4-societal-impacts-of-scie",
+     "title": "L’impact de la science et de la technologie dans la société",
+     "en": "Societal Impacts of Science and Technology",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.B.5",
+       "text": ": Determine the"
+      },
+      {
+       "code": "1.C.1",
+       "text": "Connect information within or across sources."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": "",
+   "verified": "ced"
+  },
+  {
+   "id": "t5",
+   "n": 5,
+   "title": "La vie contemporaine",
+   "en": "Contemporary Life",
+   "weight": "no unit weighting; every unit feeds all three free-response tasks and both multiple-choice parts",
+   "check": "Progress check · 20 multiple choice",
+   "pages": [
+    72,
+    83
+   ],
+   "questions": [
+    {
+     "en": "How has contemporary life changed in the last 20 years?",
+     "fr": "Comment la vie contemporaine a-t-elle changé au cours des vingt dernières années ?"
+    },
+    {
+     "en": "What impact do cultural values and traditions have on contemporary life?",
+     "fr": "Quel impact les valeurs et les traditions culturelles ont-elles sur la vie contemporaine ?"
+    },
+    {
+     "en": "What influences one’s interpretation and perception of what is valued in contemporary life?",
+     "fr": "Qu’est-ce qui influence l’interprétation et la perception de ce qui est valorisé dans la vie contemporaine ?"
+    }
+   ],
+   "contexts": [
+    {
+     "en": "Education and Career",
+     "fr": "L’éducation et le monde du travail"
+    },
+    {
+     "en": "Entertainment and Media",
+     "fr": "Le divertissement et les médias"
+    },
+    {
+     "en": "Food and Health",
+     "fr": "La nourriture et la santé"
+    },
+    {
+     "en": "Pop Culture",
+     "fr": "La culture populaire"
+    },
+    {
+     "en": "Sports and Leisure",
+     "fr": "Le sport et les loisirs"
+    },
+    {
+     "en": "Travel and Tourism",
+     "fr": "Les voyages et le tourisme"
+    }
+   ],
+   "other_contexts": [
+    {
+     "en": "Innovations and Emerging Technologies",
+     "fr": "Les innovations et les nouvelles technologies"
+    },
+    {
+     "en": "Personal Technology and Communication",
+     "fr": "Produits de technologie et de communication personnels"
+    },
+    {
+     "en": "Science in Everyday Life",
+     "fr": "La science dans la vie quotidienne"
+    },
+    {
+     "en": "Societal Impacts of Science and Technology",
+     "fr": "L’impact de la science et de la technologie dans la société"
+    },
+    {
+     "en": "Beauty and Aesthetics",
+     "fr": "L’esthétique"
+    },
+    {
+     "en": "Fashion and Design",
+     "fr": "La mode et le design"
+    },
+    {
+     "en": "Visual and Performing Arts",
+     "fr": "Les arts visuels et du spectacle Contemporary Life"
+    }
+   ],
+   "intro": "",
+   "modes": [
+    "Interpersonal Speaking",
+    "Interpretive Listening and Reading",
+    "Presentational Speaking"
+   ],
+   "task_types": [
+    "AUDIO AND CHART",
+    "INSTRUCTIONAL GUIDANCE",
+    "PROJECT PRESENTATION",
+    "PROJECT Q&A"
+   ],
+   "lo": [
+    {
+     "code": "1.C.2",
+     "text": ": Synthesize"
+    },
+    {
+     "code": "1.C.3",
+     "text": ": Infer implied"
+    },
+    {
+     "code": "2.A.1",
+     "text": "Use a variety of grammatical structures."
+    },
+    {
+     "code": "2.A.2",
+     "text": ": Use a variety of"
+    },
+    {
+     "code": "2.A.3",
+     "text": "Use idiomatic and culturally relevant expressions."
+    },
+    {
+     "code": "2.A.4",
+     "text": "Adopt an appropriate register for the intended audience and situation."
+    },
+    {
+     "code": "2.B.1",
+     "text": "Use communication strategies such as circumlocution and paraphrasing."
+    },
+    {
+     "code": "2.B.2",
+     "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+    },
+    {
+     "code": "2.B.3",
+     "text": "Use pronunciation that is comprehensible to a variety of the target language."
+    },
+    {
+     "code": "2.B.4",
+     "text": "Use an appropriate rate of speech and effective intonation patterns."
+    },
+    {
+     "code": "2.C.1",
+     "text": "Express ideas, preferences, and opinions."
+    },
+    {
+     "code": "2.C.2",
+     "text": ": Use research"
+    },
+    {
+     "code": "2.C.3",
+     "text": ": Use examples"
+    },
+    {
+     "code": "2.C.4",
+     "text": ": Integrate"
+    },
+    {
+     "code": "2.C.5",
+     "text": ": Reference"
+    },
+    {
+     "code": "2.D.1",
+     "text": ": Apply"
+    },
+    {
+     "code": "2.D.2",
+     "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+    },
+    {
+     "code": "3.A.1",
+     "text": "Describe cultural products, practices, and perspectives."
+    },
+    {
+     "code": "3.A.2",
+     "text": "Compare cultural products, practices, and perspectives among distinct communities."
+    },
+    {
+     "code": "3.A.3",
+     "text": "Reflect on the significance of cultural products, practices, and perspectives."
+    }
+   ],
+   "topics": [
+    {
+     "code": "t5-education-and-career",
+     "title": "L’éducation et le monde du travail",
+     "en": "Education and Career",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t5-entertainment-and-media",
+     "title": "Le divertissement et les médias",
+     "en": "Entertainment and Media",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t5-food-and-health",
+     "title": "La nourriture et la santé",
+     "en": "Food and Health",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t5-pop-culture",
+     "title": "La culture populaire",
+     "en": "Pop Culture",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t5-sports-and-leisure",
+     "title": "Le sport et les loisirs",
+     "en": "Sports and Leisure",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t5-travel-and-tourism",
+     "title": "Les voyages et le tourisme",
+     "en": "Travel and Tourism",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.A.4",
+       "text": "Adopt an appropriate register for the intended audience and situation."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.2",
+       "text": "Monitor language production; recognize errors and attempt self-correction in spoken"
+      },
+      {
+       "code": "2.B.3",
+       "text": "Use pronunciation that is comprehensible to a variety of the target language."
+      },
+      {
+       "code": "2.B.4",
+       "text": "Use an appropriate rate of speech and effective intonation patterns."
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.2",
+       "text": ": Use research"
+      },
+      {
+       "code": "2.C.3",
+       "text": ": Use examples"
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.C.5",
+       "text": ": Reference"
+      },
+      {
+       "code": "2.D.1",
+       "text": ": Apply"
+      },
+      {
+       "code": "2.D.2",
+       "text": "Use a variety of cohesive devices (e.g., relative pronouns, pronoun referents,"
+      },
+      {
+       "code": "3.A.1",
+       "text": "Describe cultural products, practices, and perspectives."
+      },
+      {
+       "code": "3.A.2",
+       "text": "Compare cultural products, practices, and perspectives among distinct communities."
+      },
+      {
+       "code": "3.A.3",
+       "text": "Reflect on the significance of cultural products, practices, and perspectives."
+      }
+     ],
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": "",
+   "verified": "ced"
+  },
+  {
+   "id": "t6",
+   "n": 6,
+   "title": "Les contextes mondiaux",
+   "en": "Global Contexts",
+   "weight": "no unit weighting; every unit feeds all three free-response tasks and both multiple-choice parts",
+   "check": "Progress check · 20 multiple choice · 1 free response",
+   "pages": [
+    84,
+    95
+   ],
+   "questions": [
+    {
+     "en": "How do global phenomena impact French-speaking communities?",
+     "fr": "Comment les phénomènes mondiaux influencent-ils les communautés francophones ?"
+    },
+    {
+     "en": "What role do individuals play in understanding and responding to global phenomena?",
+     "fr": "Quel rôle les individus jouent-ils dans la compréhension et la réponse aux phénomènes mondiaux ?"
+    },
+    {
+     "en": "How do complex issues affect a society’s culture?",
+     "fr": "En quoi les enjeux complexes affectent-ils la culture d’une société ?"
+    }
+   ],
+   "contexts": [
+    {
+     "en": "Global Communication",
+     "fr": "La communication mondiale"
+    },
+    {
+     "en": "Natural World",
+     "fr": "Le monde naturel"
+    },
+    {
+     "en": "History",
+     "fr": "L’histoire"
+    },
+    {
+     "en": "Policy and Planning",
+     "fr": "La réglementation et la planification"
+    },
+    {
+     "en": "Transportation",
+     "fr": "Les transports"
+    }
+   ],
+   "other_contexts": [
+    {
+     "en": "Education and Career",
+     "fr": "L’éducation et le monde du travail"
+    },
+    {
+     "en": "Entertainment and Media",
+     "fr": "Le divertissement et les médias"
+    },
+    {
+     "en": "Food and Health",
+     "fr": "La nourriture et la santé"
+    },
+    {
+     "en": "Innovations and Emerging Technologies",
+     "fr": "Les innovations et les nouvelles technologies"
+    },
+    {
+     "en": "Personal Technology and Communication",
+     "fr": "Produits de technologie et de communication personnels"
+    },
+    {
+     "en": "Societal Impacts of Science and Technology",
+     "fr": "L’impact de la science et de la technologie dans la société"
+    },
+    {
+     "en": "Community Activities",
+     "fr": "Les activités dans la communauté"
+    },
+    {
+     "en": "Family Relationships",
+     "fr": "Les relations familiales"
+    },
+    {
+     "en": "Social Interactions and Relationships",
+     "fr": "Les interactions et les relations sociales Global Contexts"
+    }
+   ],
+   "intro": "",
+   "modes": [
+    "Interpretive Listening and Reading",
+    "Presentational Writing"
+   ],
+   "task_types": [
+    "ARGUMENTATIVE ESSAY",
+    "ARTICLE AND CHART",
+    "AUDIO REPORT",
+    "PRESENTATION"
+   ],
+   "lo": [
+    {
+     "code": "1.A.1",
+     "text": "Identify supporting or relevant details."
+    },
+    {
+     "code": "1.A.2",
+     "text": "Identify data points, patterns, and trends."
+    },
+    {
+     "code": "1.B.1",
+     "text": "Determine the main idea, theme, or purpose."
+    },
+    {
+     "code": "1.B.2",
+     "text": "Determine the intended audience."
+    },
+    {
+     "code": "1.B.3",
+     "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+    },
+    {
+     "code": "1.B.4",
+     "text": "Identify organizing and/or rhetorical structures and/or strategies."
+    },
+    {
+     "code": "1.B.5",
+     "text": "Determine the meaning of words and phrases using textual cues."
+    },
+    {
+     "code": "1.C.1",
+     "text": ": Connect"
+    },
+    {
+     "code": "1.C.2",
+     "text": ": Synthesize"
+    },
+    {
+     "code": "1.C.3",
+     "text": ": Infer implied"
+    },
+    {
+     "code": "2.A.1",
+     "text": "Use a variety of grammatical structures."
+    },
+    {
+     "code": "2.A.2",
+     "text": "Use a variety of vocabulary."
+    },
+    {
+     "code": "2.A.3",
+     "text": "Use idiomatic and culturally relevant expressions."
+    },
+    {
+     "code": "2.B.1",
+     "text": "Use communication strategies such as circumlocution and paraphrasing."
+    },
+    {
+     "code": "2.B.5",
+     "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+    },
+    {
+     "code": "2.C.1",
+     "text": "Express ideas, preferences, and opinions."
+    },
+    {
+     "code": "2.C.3",
+     "text": "Use examples to provide advice or information and to explain opinions or emotions."
+    },
+    {
+     "code": "2.C.4",
+     "text": ": Integrate"
+    },
+    {
+     "code": "2.D.1",
+     "text": "Apply an appropriate organizational structure."
+    },
+    {
+     "code": "2.D.2",
+     "text": ": Use a variety of"
+    },
+    {
+     "code": "3.A.1",
+     "text": ": Describe"
+    },
+    {
+     "code": "3.A.2",
+     "text": ": Compare"
+    },
+    {
+     "code": "3.A.3",
+     "text": ": Reflect on the"
+    }
+   ],
+   "topics": [
+    {
+     "code": "t6-global-communication",
+     "title": "La communication mondiale",
+     "en": "Global Communication",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t6-natural-world",
+     "title": "Le monde naturel",
+     "en": "Natural World",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t6-history",
+     "title": "L’histoire",
+     "en": "History",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t6-policy-and-planning",
+     "title": "La réglementation et la planification",
+     "en": "Policy and Planning",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "verified": "ced"
+    },
+    {
+     "code": "t6-transportation",
+     "title": "Les transports",
+     "en": "Transportation",
+     "skill": "Interpretive",
+     "lo": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "ek": [
+      {
+       "code": "1.A.1",
+       "text": "Identify supporting or relevant details."
+      },
+      {
+       "code": "1.A.2",
+       "text": "Identify data points, patterns, and trends."
+      },
+      {
+       "code": "1.B.1",
+       "text": "Determine the main idea, theme, or purpose."
+      },
+      {
+       "code": "1.B.2",
+       "text": "Determine the intended audience."
+      },
+      {
+       "code": "1.B.3",
+       "text": "Determine the point(s) of view, perspective(s), tone, or attitude."
+      },
+      {
+       "code": "1.B.4",
+       "text": "Identify organizing and/or rhetorical structures and/or strategies."
+      },
+      {
+       "code": "1.B.5",
+       "text": "Determine the meaning of words and phrases using textual cues."
+      },
+      {
+       "code": "1.C.1",
+       "text": ": Connect"
+      },
+      {
+       "code": "1.C.2",
+       "text": ": Synthesize"
+      },
+      {
+       "code": "1.C.3",
+       "text": ": Infer implied"
+      },
+      {
+       "code": "2.A.1",
+       "text": "Use a variety of grammatical structures."
+      },
+      {
+       "code": "2.A.2",
+       "text": "Use a variety of vocabulary."
+      },
+      {
+       "code": "2.A.3",
+       "text": "Use idiomatic and culturally relevant expressions."
+      },
+      {
+       "code": "2.B.1",
+       "text": "Use communication strategies such as circumlocution and paraphrasing."
+      },
+      {
+       "code": "2.B.5",
+       "text": "Use standard conventions of written language (e.g., capitalization, orthography,"
+      },
+      {
+       "code": "2.C.1",
+       "text": "Express ideas, preferences, and opinions."
+      },
+      {
+       "code": "2.C.3",
+       "text": "Use examples to provide advice or information and to explain opinions or emotions."
+      },
+      {
+       "code": "2.C.4",
+       "text": ": Integrate"
+      },
+      {
+       "code": "2.D.1",
+       "text": "Apply an appropriate organizational structure."
+      },
+      {
+       "code": "2.D.2",
+       "text": ": Use a variety of"
+      },
+      {
+       "code": "3.A.1",
+       "text": ": Describe"
+      },
+      {
+       "code": "3.A.2",
+       "text": ": Compare"
+      },
+      {
+       "code": "3.A.3",
+       "text": ": Reflect on the"
+      }
+     ],
+     "verified": "ced"
+    }
+   ],
+   "excl": [],
+   "borrow": [],
+   "notes": "",
+   "verified": "ced"
+  }
+ ]
+}

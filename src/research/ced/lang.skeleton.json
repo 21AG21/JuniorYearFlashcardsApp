@@ -1,0 +1,2494 @@
+{
+ "course": "lang",
+ "edition": "AP English Language and Composition Course and Exam Description, Effective Fall 2024",
+ "exam": {
+  "format": "<6952 characters of the CED, kept out of the repository>",
+  "rubrics": "<8960 characters of the CED, kept out of the repository>",
+  "verified": "ced"
+ },
+ "skills": [
+  {
+   "code": "1.A",
+   "name": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+   "units": "Units 1, 4, 7",
+   "category": "Rhetorical Situation – Reading",
+   "category_text": "Explain how writers’ choices reflect the components of the rhetorical situation."
+  },
+  {
+   "code": "1.B",
+   "name": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+   "units": "Units 2, 8",
+   "category": "Rhetorical Situation – Reading",
+   "category_text": "Explain how writers’ choices reflect the components of the rhetorical situation."
+  },
+  {
+   "code": "2.A",
+   "name": "Write introductions and conclusions appropriate to the purpose and context of the rhetorical situation.",
+   "units": "Units 4, 7",
+   "category": "Rhetorical Situation – Writing",
+   "category_text": "Make strategic choices in a text to address a rhetorical situation."
+  },
+  {
+   "code": "2.B",
+   "name": "Demonstrate an understanding of an audience’s beliefs, values, or needs.",
+   "units": "Units 2, 8",
+   "category": "Rhetorical Situation – Writing",
+   "category_text": "Make strategic choices in a text to address a rhetorical situation."
+  },
+  {
+   "code": "3.A",
+   "name": "Identify and explain claims and evidence within an argument.",
+   "units": "Units 1, 2, 3, 6",
+   "category": "Claims and Evidence – Reading",
+   "category_text": "Identify and describe the claims and evidence of an argument."
+  },
+  {
+   "code": "3.B",
+   "name": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure.",
+   "units": "Units 2, 4, 6",
+   "category": "Claims and Evidence – Reading",
+   "category_text": "Identify and describe the claims and evidence of an argument."
+  },
+  {
+   "code": "3.C",
+   "name": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives.",
+   "units": "Units 7, 9",
+   "category": "Claims and Evidence – Reading",
+   "category_text": "Identify and describe the claims and evidence of an argument."
+  },
+  {
+   "code": "4.A",
+   "name": "Develop a paragraph that includes a claim and evidence supporting the claim.",
+   "units": "Units 1, 2, 3, 6",
+   "category": "Claims and Evidence – Writing",
+   "category_text": "Analyze and select evidence to develop and refine a claim."
+  },
+  {
+   "code": "4.B",
+   "name": "Write a thesis statement that requires proof or defense and that may preview the structure of the argument.",
+   "units": "Unit 2, 4, 6",
+   "category": "Claims and Evidence – Writing",
+   "category_text": "Analyze and select evidence to develop and refine a claim."
+  },
+  {
+   "code": "4.C",
+   "name": "Qualify a claim using modifiers, counterarguments, or alternative perspectives.",
+   "units": "Units 7, 9",
+   "category": "Claims and Evidence – Writing",
+   "category_text": "Analyze and select evidence to develop and refine a claim."
+  },
+  {
+   "code": "5.A",
+   "name": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+   "units": "Unit 3, 5",
+   "category": "Reasoning and Organization – Reading",
+   "category_text": "Describe the reasoning, organization, and development of an argument."
+  },
+  {
+   "code": "5.B",
+   "name": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning.",
+   "units": "Unit 5",
+   "category": "Reasoning and Organization – Reading",
+   "category_text": "Describe the reasoning, organization, and development of an argument."
+  },
+  {
+   "code": "5.C",
+   "name": "Recognize and explain the use of methods of development to accomplish a purpose.",
+   "units": "Units 3, 4",
+   "category": "Reasoning and Organization – Reading",
+   "category_text": "Describe the reasoning, organization, and development of an argument."
+  },
+  {
+   "code": "6.A",
+   "name": "Develop a line of reasoning and commentary that explains it throughout an argument.",
+   "units": "Units 3, 5",
+   "category": "Reasoning and Organization – Writing",
+   "category_text": "Use organization and commentary to illuminate the line of reasoning in an argument."
+  },
+  {
+   "code": "6.B",
+   "name": "Use transitional elements to guide the reader through the line of reasoning of an argument.",
+   "units": "Unit 5",
+   "category": "Reasoning and Organization – Writing",
+   "category_text": "Use organization and commentary to illuminate the line of reasoning in an argument."
+  },
+  {
+   "code": "6.C",
+   "name": "Use appropriate methods of development to advance an argument.",
+   "units": "Units 3, 4",
+   "category": "Reasoning and Organization – Writing",
+   "category_text": "Use organization and commentary to illuminate the line of reasoning in an argument."
+  },
+  {
+   "code": "7.A",
+   "name": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+   "units": "Units 5, 6, 8",
+   "category": "Style – Reading",
+   "category_text": "Explain how writers’ stylistic choices contribute to the purpose of an argument."
+  },
+  {
+   "code": "7.B",
+   "name": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+   "units": "Units 7, 8",
+   "category": "Style – Reading",
+   "category_text": "Explain how writers’ stylistic choices contribute to the purpose of an argument."
+  },
+  {
+   "code": "7.C",
+   "name": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument.",
+   "units": "Unit 7",
+   "category": "Style – Reading",
+   "category_text": "Explain how writers’ stylistic choices contribute to the purpose of an argument."
+  },
+  {
+   "code": "8.A",
+   "name": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument.",
+   "units": "Units 5, 6, 8",
+   "category": "Style – Writing",
+   "category_text": "Select words and use elements of composition to advance an argument."
+  },
+  {
+   "code": "8.B",
+   "name": "Write sentences that clearly convey ideas and arguments.",
+   "units": "Units 7, 8",
+   "category": "Style – Writing",
+   "category_text": "Select words and use elements of composition to advance an argument."
+  },
+  {
+   "code": "8.C",
+   "name": "Use established conventions of grammar and mechanics to communicate clearly and effectively.",
+   "units": "Unit 7",
+   "category": "Style – Writing",
+   "category_text": "Select words and use elements of composition to advance an argument."
+  }
+ ],
+ "units": [
+  {
+   "id": "rhs",
+   "n": 1,
+   "title": "Rhetorical Situation",
+   "weight": "no per-unit weighting; skill categories 1 and 2 in the multiple-choice section",
+   "check": "Progress checks belong to the nine CED units: Unit 1: Progress check · 10 multiple choice · 1 free response; Unit 2: Progress check · 20 multiple choice · 1 free response; Unit 3: Progress check · 20 multiple choice · 1 free response; Unit 4: Progress check · 20 multiple choice · 1 free response; Unit 5: Progress check · 20 multiple choice · 1 free response; Unit 6: Progress check · 20 multiple choice · 1 free response; Unit 7: Progress check · 20 multiple choice · 1 free response; Unit 8: Progress check · 20 multiple choice · 1 free response; Unit 9: Progress check · 5 multiple choice · 1 free response",
+   "eu": [
+    {
+     "code": "RHS-1",
+     "text": "Individuals write within a particular situation and make strategic writing choices based on that situation."
+    }
+   ],
+   "skills": [
+    {
+     "code": "1.A",
+     "name": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "units": "Units 1, 4, 7",
+     "category": "Rhetorical Situation – Reading",
+     "category_text": "Explain how writers’ choices reflect the components of the rhetorical situation."
+    },
+    {
+     "code": "1.B",
+     "name": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "units": "Units 2, 8",
+     "category": "Rhetorical Situation – Reading",
+     "category_text": "Explain how writers’ choices reflect the components of the rhetorical situation."
+    },
+    {
+     "code": "2.A",
+     "name": "Write introductions and conclusions appropriate to the purpose and context of the rhetorical situation.",
+     "units": "Units 4, 7",
+     "category": "Rhetorical Situation – Writing",
+     "category_text": "Make strategic choices in a text to address a rhetorical situation."
+    },
+    {
+     "code": "2.B",
+     "name": "Demonstrate an understanding of an audience’s beliefs, values, or needs.",
+     "units": "Units 2, 8",
+     "category": "Rhetorical Situation – Writing",
+     "category_text": "Make strategic choices in a text to address a rhetorical situation."
+    }
+   ],
+   "topics": [
+    {
+     "code": "RHS-1.A",
+     "title": "The rhetorical situation of a text collectively refers to the exigence…",
+     "skill": "1.A",
+     "skill_text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "lo": [
+      {
+       "code": "1.A",
+       "text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.A",
+       "text": "The rhetorical situation of a text collectively refers to the exigence, purpose, audience, writer, context, and message."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 37,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.B",
+     "title": "The exigence is the part of a rhetorical situation that inspires, stim…",
+     "skill": "1.A",
+     "skill_text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "lo": [
+      {
+       "code": "1.A",
+       "text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.B",
+       "text": "The exigence is the part of a rhetorical situation that inspires, stimulates, provokes, or prompts writers to create a text."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 37,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.C",
+     "title": "The purpose of a text is what the writer hopes to accomplish with it…",
+     "skill": "1.A",
+     "skill_text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "lo": [
+      {
+       "code": "1.A",
+       "text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.C",
+       "text": "The purpose of a text is what the writer hopes to accomplish with it. Writers may have more than one purpose in a text."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 37,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.D",
+     "title": "An audience of a text has shared as well as individual beliefs, values…",
+     "skill": "1.A",
+     "skill_text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "lo": [
+      {
+       "code": "1.A",
+       "text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.D",
+       "text": "An audience of a text has shared as well as individual beliefs, values, needs, and backgrounds."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.E",
+     "title": "Writers create texts within a particular context that includes the tim…",
+     "skill": "1.A",
+     "skill_text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "lo": [
+      {
+       "code": "1.A",
+       "text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.E",
+       "text": "Writers create texts within a particular context that includes the time, place, and occasion."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.F",
+     "title": "Writers’ perceptions of an audience’s values, beliefs, needs, and back…",
+     "skill": "1.B",
+     "skill_text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "lo": [
+      {
+       "code": "1.B",
+       "text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs."
+      },
+      {
+       "code": "2.B",
+       "text": "Demonstrate an understanding of an audience’s beliefs, values, or needs."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.F",
+       "text": "Writers’ perceptions of an audience’s values, beliefs, needs, and background guide the choices they make."
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 43,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.G",
+     "title": "To achieve a purpose, writers make choices in an attempt to relate to…",
+     "skill": "1.B",
+     "skill_text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "lo": [
+      {
+       "code": "1.B",
+       "text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs."
+      },
+      {
+       "code": "2.B",
+       "text": "Demonstrate an understanding of an audience’s beliefs, values, or needs."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.G",
+       "text": "To achieve a purpose, writers make choices in an attempt to relate to an intended audience’s emotions and values."
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 43,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.H",
+     "title": "Arguments seek to persuade or motivate action through appeals—the mode…",
+     "skill": "1.B",
+     "skill_text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "lo": [
+      {
+       "code": "1.B",
+       "text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs."
+      },
+      {
+       "code": "2.B",
+       "text": "Demonstrate an understanding of an audience’s beliefs, values, or needs."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.H",
+       "text": "Arguments seek to persuade or motivate action through appeals—the modes of persuasion."
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 43,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.I",
+     "title": "The introduction of an argument introduces the subject and/ or writer…",
+     "skill": "1.A",
+     "skill_text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "lo": [
+      {
+       "code": "1.A",
+       "text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message."
+      },
+      {
+       "code": "2.A",
+       "text": "Write introductions and conclusions appropriate to the purpose and context of the rhetorical situation."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.I",
+       "text": "The introduction of an argument introduces the subject and/ or writer of the argument to the audience. An introduction may present the argument’s thesis. An introduction may orient, engage, and/or focus the audience by presenting quotations, intriguing statements, anecdotes, questions, statistics, data, contextualized information, or a scenario."
+      }
+     ],
+     "ced_units": [
+      4,
+      7
+     ],
+     "p": 55,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.J",
+     "title": "The conclusion of an argument brings the argument to a unified end. A…",
+     "skill": "1.A",
+     "skill_text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message.",
+     "lo": [
+      {
+       "code": "1.A",
+       "text": "Identify and describe components of the rhetorical situation: the exigence, audience, writer, purpose, context, and message."
+      },
+      {
+       "code": "2.A",
+       "text": "Write introductions and conclusions appropriate to the purpose and context of the rhetorical situation."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.J",
+       "text": "The conclusion of an argument brings the argument to a unified end. A conclusion may present the argument’s thesis. It may engage and/or focus the audience by explaining the significance of the argument within a broader context, making connections, calling the audience to act, suggesting a change in behavior or attitude, proposing a solution, leaving the audience with a compelling image, explaining implications, summarizing the argument, or connecting to the introduction."
+      }
+     ],
+     "ced_units": [
+      4,
+      7
+     ],
+     "p": 55,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.K",
+     "title": "Writers may make comparisons (e.g., similes, metaphors, analogies, or…",
+     "skill": "1.B",
+     "skill_text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "lo": [
+      {
+       "code": "1.B",
+       "text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs."
+      },
+      {
+       "code": "2.B",
+       "text": "Demonstrate an understanding of an audience’s beliefs, values, or needs."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.K",
+       "text": "Writers may make comparisons (e.g., similes, metaphors, analogies, or anecdotes) in an attempt to relate to an audience. Effective comparisons must be shared and understood by the audience to advance the writer’s purpose."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 79,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.L",
+     "title": "Writers’ choices regarding syntax and diction influence how the writer…",
+     "skill": "1.B",
+     "skill_text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "lo": [
+      {
+       "code": "1.B",
+       "text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs."
+      },
+      {
+       "code": "2.B",
+       "text": "Demonstrate an understanding of an audience’s beliefs, values, or needs."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.L",
+       "text": "Writers’ choices regarding syntax and diction influence how the writer is perceived by an audience and may influence the degree to which an audience accepts an argument."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 79,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.M",
+     "title": "Word choice may reflect writers’ biases and may affect their credibili…",
+     "skill": "1.B",
+     "skill_text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "lo": [
+      {
+       "code": "1.B",
+       "text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs."
+      },
+      {
+       "code": "2.B",
+       "text": "Demonstrate an understanding of an audience’s beliefs, values, or needs."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.M",
+       "text": "Word choice may reflect writers’ biases and may affect their credibility with a particular audience."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 79,
+     "verified": "ced"
+    },
+    {
+     "code": "RHS-1.N",
+     "title": "Because audiences are unique and dynamic, writers must consider the pe…",
+     "skill": "1.B",
+     "skill_text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs.",
+     "lo": [
+      {
+       "code": "1.B",
+       "text": "Explain how an argument demonstrates understanding of an audience’s beliefs, values, or needs."
+      },
+      {
+       "code": "2.B",
+       "text": "Demonstrate an understanding of an audience’s beliefs, values, or needs."
+      }
+     ],
+     "ek": [
+      {
+       "code": "RHS-1.N",
+       "text": "Because audiences are unique and dynamic, writers must consider the perspectives, contexts, and needs of the intended audience when making choices of evidence, organization, and language in an argument."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 79,
+     "verified": "ced"
+    }
+   ],
+   "ced_units": [
+    1,
+    2,
+    4,
+    7,
+    8
+   ],
+   "excl": [
+    {
+     "text": "The CED names no required texts and no required literary or grammatical terminology; the exam assesses the skills and essential knowledge, not term recall.",
+     "verified": "recall"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "cle",
+   "n": 2,
+   "title": "Claims and Evidence",
+   "weight": "no per-unit weighting; skill categories 3 and 4 in the multiple-choice section",
+   "check": "Progress checks belong to the nine CED units: Unit 1: Progress check · 10 multiple choice · 1 free response; Unit 2: Progress check · 20 multiple choice · 1 free response; Unit 3: Progress check · 20 multiple choice · 1 free response; Unit 4: Progress check · 20 multiple choice · 1 free response; Unit 5: Progress check · 20 multiple choice · 1 free response; Unit 6: Progress check · 20 multiple choice · 1 free response; Unit 7: Progress check · 20 multiple choice · 1 free response; Unit 8: Progress check · 20 multiple choice · 1 free response; Unit 9: Progress check · 5 multiple choice · 1 free response",
+   "eu": [
+    {
+     "code": "CLE-1",
+     "text": "Writers make claims about subjects, rely on evidence that supports the reasoning that justifies the claim, and often acknowledge or respond to other, possibly opposing, arguments."
+    }
+   ],
+   "skills": [
+    {
+     "code": "3.A",
+     "name": "Identify and explain claims and evidence within an argument.",
+     "units": "Units 1, 2, 3, 6",
+     "category": "Claims and Evidence – Reading",
+     "category_text": "Identify and describe the claims and evidence of an argument."
+    },
+    {
+     "code": "3.B",
+     "name": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure.",
+     "units": "Units 2, 4, 6",
+     "category": "Claims and Evidence – Reading",
+     "category_text": "Identify and describe the claims and evidence of an argument."
+    },
+    {
+     "code": "3.C",
+     "name": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives.",
+     "units": "Units 7, 9",
+     "category": "Claims and Evidence – Reading",
+     "category_text": "Identify and describe the claims and evidence of an argument."
+    },
+    {
+     "code": "4.A",
+     "name": "Develop a paragraph that includes a claim and evidence supporting the claim.",
+     "units": "Units 1, 2, 3, 6",
+     "category": "Claims and Evidence – Writing",
+     "category_text": "Analyze and select evidence to develop and refine a claim."
+    },
+    {
+     "code": "4.B",
+     "name": "Write a thesis statement that requires proof or defense and that may preview the structure of the argument.",
+     "units": "Unit 2, 4, 6",
+     "category": "Claims and Evidence – Writing",
+     "category_text": "Analyze and select evidence to develop and refine a claim."
+    },
+    {
+     "code": "4.C",
+     "name": "Qualify a claim using modifiers, counterarguments, or alternative perspectives.",
+     "units": "Units 7, 9",
+     "category": "Claims and Evidence – Writing",
+     "category_text": "Analyze and select evidence to develop and refine a claim."
+    }
+   ],
+   "topics": [
+    {
+     "code": "CLE-1.A",
+     "title": "Writers convey their positions through one or more claims that require…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.A",
+       "text": "Writers convey their positions through one or more claims that require a defense."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.B",
+     "title": "Writers defend their claims with evidence and/or reasoning…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.B",
+       "text": "Writers defend their claims with evidence and/or reasoning."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.C",
+     "title": "Types of evidence may include facts, anecdotes, analogies, statistics…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.C",
+       "text": "Types of evidence may include facts, anecdotes, analogies, statistics, examples, details, illustrations, expert opinions, personal observations, personal experiences, testimonies, or experiments."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.D",
+     "title": "Effective claims provoke interest and require a defense, rather than s…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.D",
+       "text": "Effective claims provoke interest and require a defense, rather than simply stating an obvious, known fact that requires no defense or justification."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.E",
+     "title": "Writers relate source material to their own argument by syntactically…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.E",
+       "text": "Writers relate source material to their own argument by syntactically embedding particular quoted, paraphrased, or summarized information from one or more sources into their own ideas."
+      }
+     ],
+     "ced_units": [
+      1
+     ],
+     "p": 38,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.F",
+     "title": "Writers use evidence strategically and purposefully to illustrate, cla…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.F",
+       "text": "Writers use evidence strategically and purposefully to illustrate, clarify, set a mood, exemplify, associate, or amplify a point."
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 43,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.G",
+     "title": "Strategically selected evidence strengthens the validity and reasoning…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.G",
+       "text": "Strategically selected evidence strengthens the validity and reasoning of the argument, relates to an audience’s emotions and values, and increases a writer’s credibility."
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 43,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.H",
+     "title": "An effective argument contains sufficient evidence; evidence is suffic…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.H",
+       "text": "An effective argument contains sufficient evidence; evidence is sufficient when its quantity and quality provide apt support for the argument."
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 43,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.I",
+     "title": "A thesis is the main, overarching claim a writer is seeking to defend…",
+     "skill": "3.B",
+     "skill_text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure.",
+     "lo": [
+      {
+       "code": "3.B",
+       "text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure."
+      },
+      {
+       "code": "4.B",
+       "text": "Write a thesis statement that requires proof or defense and that may preview the structure of the argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.I",
+       "text": "A thesis is the main, overarching claim a writer is seeking to defend or prove by using reasoning supported by evidence."
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 44,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.J",
+     "title": "A writer’s thesis is not necessarily a single sentence or an explicit…",
+     "skill": "3.B",
+     "skill_text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure.",
+     "lo": [
+      {
+       "code": "3.B",
+       "text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure."
+      },
+      {
+       "code": "4.B",
+       "text": "Write a thesis statement that requires proof or defense and that may preview the structure of the argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.J",
+       "text": "A writer’s thesis is not necessarily a single sentence or an explicit statement and may require a thorough reading of the text to identify, but when a thesis is directly expressed, it is called a thesis statement. [Note: While the texts you assign your students to analyze may not always contain obvious thesis statements, they should each have a thesis. It can be good practice for students to write a thesis statement for such texts. On the AP Exam, a clear communication of the thesis is required in students’ essays.]"
+      }
+     ],
+     "ced_units": [
+      2
+     ],
+     "p": 44,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.K",
+     "title": "Effective use of evidence uses commentary to establish a logical relat…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.K",
+       "text": "Effective use of evidence uses commentary to establish a logical relationship between the evidence and the claim it supports."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 49,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.L",
+     "title": "Writers introduce source material by using commentary to properly inte…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.L",
+       "text": "Writers introduce source material by using commentary to properly integrate it into their line of reasoning."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 49,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.M",
+     "title": "Synthesis requires consideration, explanation, and integration of othe…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.M",
+       "text": "Synthesis requires consideration, explanation, and integration of others’ arguments into one’s own argument."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 49,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.N",
+     "title": "Writers must acknowledge words, ideas, images, texts, and other intell…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.N",
+       "text": "Writers must acknowledge words, ideas, images, texts, and other intellectual property of others through attribution, citation, or reference."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 49,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.O",
+     "title": "A thesis statement may preview the line of reasoning of an argument. T…",
+     "skill": "3.B",
+     "skill_text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure.",
+     "lo": [
+      {
+       "code": "3.B",
+       "text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure."
+      },
+      {
+       "code": "4.B",
+       "text": "Write a thesis statement that requires proof or defense and that may preview the structure of the argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.O",
+       "text": "A thesis statement may preview the line of reasoning of an argument. This is not to say that a thesis statement must list the points of an argument, aspects to be analyzed, or specific evidence to be used in an argument."
+      }
+     ],
+     "ced_units": [
+      4
+     ],
+     "p": 56,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.P",
+     "title": "When synthesizing, writers draw upon arguments from multiple sources…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.P",
+       "text": "When synthesizing, writers draw upon arguments from multiple sources, strategically select the most relevant information, and combine apt and specific source material as part of their own argument."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 67,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.Q",
+     "title": "A source provides information for an argument, and some sources are mo…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.Q",
+       "text": "A source provides information for an argument, and some sources are more reliable or credible than others."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 67,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.R",
+     "title": "A position and a perspective are different. Sources may have the same…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.R",
+       "text": "A position and a perspective are different. Sources may have the same position on a subject, yet each comes from a different perspective based on their background, interests, and expertise."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 67,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.S",
+     "title": "When incorporating evidence or sources into an argument, the strongest…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.S",
+       "text": "When incorporating evidence or sources into an argument, the strongest arguments recognize and acknowledge the biases and limitations of the material and account for those limitations in their reasoning."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 67,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.T",
+     "title": "The degree to which a source does or does not consider other positions…",
+     "skill": "3.A",
+     "skill_text": "Identify and explain claims and evidence within an argument.",
+     "lo": [
+      {
+       "code": "3.A",
+       "text": "Identify and explain claims and evidence within an argument."
+      },
+      {
+       "code": "4.A",
+       "text": "Develop a paragraph that includes a claim and evidence supporting the claim."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.T",
+       "text": "The degree to which a source does or does not consider other positions reflects the degree to which that source is biased."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 67,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.U",
+     "title": "Consideration and use of new evidence may require revision of the thes…",
+     "skill": "3.B",
+     "skill_text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure.",
+     "lo": [
+      {
+       "code": "3.B",
+       "text": "Identify and describe the overarching thesis of an argument, and any indication it provides of the argument’s structure."
+      },
+      {
+       "code": "4.B",
+       "text": "Write a thesis statement that requires proof or defense and that may preview the structure of the argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.U",
+       "text": "Consideration and use of new evidence may require revision of the thesis statement and/or changes to the line of reasoning."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 68,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.V",
+     "title": "A lack of understanding of the complexities of a subject or an issue c…",
+     "skill": "3.C",
+     "skill_text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives.",
+     "lo": [
+      {
+       "code": "3.C",
+       "text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives."
+      },
+      {
+       "code": "4.C",
+       "text": "Qualify a claim using modifiers, counterarguments, or alternative perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.V",
+       "text": "A lack of understanding of the complexities of a subject or an issue can lead to oversimplification or generalizations."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.W",
+     "title": "Because arguments are usually part of ongoing discourse, effective arg…",
+     "skill": "3.C",
+     "skill_text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives.",
+     "lo": [
+      {
+       "code": "3.C",
+       "text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives."
+      },
+      {
+       "code": "4.C",
+       "text": "Qualify a claim using modifiers, counterarguments, or alternative perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.W",
+       "text": "Because arguments are usually part of ongoing discourse, effective arguments often avoid expressing claims, reasoning, and evidence in absolute terms."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.X",
+     "title": "Writers may strategically use words, phrases, and clauses as modifiers…",
+     "skill": "3.C",
+     "skill_text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives.",
+     "lo": [
+      {
+       "code": "3.C",
+       "text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives."
+      },
+      {
+       "code": "4.C",
+       "text": "Qualify a claim using modifiers, counterarguments, or alternative perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.X",
+       "text": "Writers may strategically use words, phrases, and clauses as modifiers to qualify or limit the scope of an argument."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.Y",
+     "title": "Effectively entering into an ongoing conversation about a subject mean…",
+     "skill": "3.C",
+     "skill_text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives.",
+     "lo": [
+      {
+       "code": "3.C",
+       "text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives."
+      },
+      {
+       "code": "4.C",
+       "text": "Qualify a claim using modifiers, counterarguments, or alternative perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.Y",
+       "text": "Effectively entering into an ongoing conversation about a subject means engaging the positions that have already been considered and argued about."
+      }
+     ],
+     "ced_units": [
+      9
+     ],
+     "p": 85,
+     "verified": "ced"
+    },
+    {
+     "code": "CLE-1.Z",
+     "title": "Evidence and sources will either support, complement, or contradict a…",
+     "skill": "3.C",
+     "skill_text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives.",
+     "lo": [
+      {
+       "code": "3.C",
+       "text": "Explain ways claims are qualified through modifiers, counterarguments, and alternative perspectives."
+      },
+      {
+       "code": "4.C",
+       "text": "Qualify a claim using modifiers, counterarguments, or alternative perspectives."
+      }
+     ],
+     "ek": [
+      {
+       "code": "CLE-1.Z",
+       "text": "Evidence and sources will either support, complement, or contradict a writer’s thesis. CLE-1.AA Writers enhance their credibility when they refute, rebut, or concede opposing arguments and contradictory evidence. CLE-1.AB When writers concede, they accept all or a portion of a competing position or claim as correct, agree that the competing position or claim is correct under a different set of circumstances, or acknowledge the limitations of their own argument. CLE-1.AC When writers rebut, they offer a contrasting perspective on an argument and its evidence or provide alternative evidence to propose that all or a portion of a competing position or claim is invalid."
+      }
+     ],
+     "ced_units": [
+      9
+     ],
+     "p": 85,
+     "verified": "ced"
+    }
+   ],
+   "ced_units": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    7,
+    9
+   ],
+   "excl": [
+    {
+     "text": "The CED names no required texts and no required literary or grammatical terminology; the exam assesses the skills and essential knowledge, not term recall.",
+     "verified": "recall"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "reo",
+   "n": 3,
+   "title": "Reasoning and Organization",
+   "weight": "no per-unit weighting; skill categories 5 and 6 in the multiple-choice section",
+   "check": "Progress checks belong to the nine CED units: Unit 1: Progress check · 10 multiple choice · 1 free response; Unit 2: Progress check · 20 multiple choice · 1 free response; Unit 3: Progress check · 20 multiple choice · 1 free response; Unit 4: Progress check · 20 multiple choice · 1 free response; Unit 5: Progress check · 20 multiple choice · 1 free response; Unit 6: Progress check · 20 multiple choice · 1 free response; Unit 7: Progress check · 20 multiple choice · 1 free response; Unit 8: Progress check · 20 multiple choice · 1 free response; Unit 9: Progress check · 5 multiple choice · 1 free response",
+   "eu": [
+    {
+     "code": "REO-1",
+     "text": "Writers guide understanding of a text’s lines of reasoning and claims through that text’s organization and integration of evidence."
+    }
+   ],
+   "skills": [
+    {
+     "code": "5.A",
+     "name": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "units": "Unit 3, 5",
+     "category": "Reasoning and Organization – Reading",
+     "category_text": "Describe the reasoning, organization, and development of an argument."
+    },
+    {
+     "code": "5.B",
+     "name": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning.",
+     "units": "Unit 5",
+     "category": "Reasoning and Organization – Reading",
+     "category_text": "Describe the reasoning, organization, and development of an argument."
+    },
+    {
+     "code": "5.C",
+     "name": "Recognize and explain the use of methods of development to accomplish a purpose.",
+     "units": "Units 3, 4",
+     "category": "Reasoning and Organization – Reading",
+     "category_text": "Describe the reasoning, organization, and development of an argument."
+    },
+    {
+     "code": "6.A",
+     "name": "Develop a line of reasoning and commentary that explains it throughout an argument.",
+     "units": "Units 3, 5",
+     "category": "Reasoning and Organization – Writing",
+     "category_text": "Use organization and commentary to illuminate the line of reasoning in an argument."
+    },
+    {
+     "code": "6.B",
+     "name": "Use transitional elements to guide the reader through the line of reasoning of an argument.",
+     "units": "Unit 5",
+     "category": "Reasoning and Organization – Writing",
+     "category_text": "Use organization and commentary to illuminate the line of reasoning in an argument."
+    },
+    {
+     "code": "6.C",
+     "name": "Use appropriate methods of development to advance an argument.",
+     "units": "Units 3, 4",
+     "category": "Reasoning and Organization – Writing",
+     "category_text": "Use organization and commentary to illuminate the line of reasoning in an argument."
+    }
+   ],
+   "topics": [
+    {
+     "code": "REO-1.A",
+     "title": "Writers may lead readers through a line of reasoning and then arrive a…",
+     "skill": "5.A",
+     "skill_text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "lo": [
+      {
+       "code": "5.A",
+       "text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis."
+      },
+      {
+       "code": "6.A",
+       "text": "Develop a line of reasoning and commentary that explains it throughout an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.A",
+       "text": "Writers may lead readers through a line of reasoning and then arrive at a thesis."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.B",
+     "title": "Writers may express a claim and then develop a line of reasoning to ju…",
+     "skill": "5.A",
+     "skill_text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "lo": [
+      {
+       "code": "5.A",
+       "text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis."
+      },
+      {
+       "code": "6.A",
+       "text": "Develop a line of reasoning and commentary that explains it throughout an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.B",
+       "text": "Writers may express a claim and then develop a line of reasoning to justify the claim."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.C",
+     "title": "Writers explain their reasoning through commentary that connects chose…",
+     "skill": "5.A",
+     "skill_text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "lo": [
+      {
+       "code": "5.A",
+       "text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis."
+      },
+      {
+       "code": "6.A",
+       "text": "Develop a line of reasoning and commentary that explains it throughout an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.C",
+       "text": "Writers explain their reasoning through commentary that connects chosen evidence to a claim."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.D",
+     "title": "Commentary explains the significance and relevance of evidence in rela…",
+     "skill": "5.A",
+     "skill_text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "lo": [
+      {
+       "code": "5.A",
+       "text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis."
+      },
+      {
+       "code": "6.A",
+       "text": "Develop a line of reasoning and commentary that explains it throughout an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.D",
+       "text": "Commentary explains the significance and relevance of evidence in relation to the line of reasoning."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.E",
+     "title": "The sequence of paragraphs in a text reveals the argument’s line of re…",
+     "skill": "5.A",
+     "skill_text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "lo": [
+      {
+       "code": "5.A",
+       "text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis."
+      },
+      {
+       "code": "6.A",
+       "text": "Develop a line of reasoning and commentary that explains it throughout an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.E",
+       "text": "The sequence of paragraphs in a text reveals the argument’s line of reasoning."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.F",
+     "title": "Flaws in a line of reasoning may render an argument specious or illogi…",
+     "skill": "5.A",
+     "skill_text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "lo": [
+      {
+       "code": "5.A",
+       "text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis."
+      },
+      {
+       "code": "6.A",
+       "text": "Develop a line of reasoning and commentary that explains it throughout an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.F",
+       "text": "Flaws in a line of reasoning may render an argument specious or illogical."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.G",
+     "title": "Methods of development are common approaches writers frequently use to…",
+     "skill": "5.C",
+     "skill_text": "Recognize and explain the use of methods of development to accomplish a purpose.",
+     "lo": [
+      {
+       "code": "5.C",
+       "text": "Recognize and explain the use of methods of development to accomplish a purpose."
+      },
+      {
+       "code": "6.C",
+       "text": "Use appropriate methods of development to advance an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.G",
+       "text": "Methods of development are common approaches writers frequently use to develop and organize the reasoning of their arguments. A method of development provides an audience with the means to trace a writer’s reasoning in an argument."
+      }
+     ],
+     "ced_units": [
+      3,
+      4
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.H",
+     "title": "Some typical methods of development are narration, cause-effect, compa…",
+     "skill": "5.C",
+     "skill_text": "Recognize and explain the use of methods of development to accomplish a purpose.",
+     "lo": [
+      {
+       "code": "5.C",
+       "text": "Recognize and explain the use of methods of development to accomplish a purpose."
+      },
+      {
+       "code": "6.C",
+       "text": "Use appropriate methods of development to advance an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.H",
+       "text": "Some typical methods of development are narration, cause-effect, comparison-contrast, definition, and description."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.I",
+     "title": "When developing ideas through narration, writers offer details about r…",
+     "skill": "5.C",
+     "skill_text": "Recognize and explain the use of methods of development to accomplish a purpose.",
+     "lo": [
+      {
+       "code": "5.C",
+       "text": "Recognize and explain the use of methods of development to accomplish a purpose."
+      },
+      {
+       "code": "6.C",
+       "text": "Use appropriate methods of development to advance an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.I",
+       "text": "When developing ideas through narration, writers offer details about real-life experiences and offer reflections and insights on the significance of those experiences."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.J",
+     "title": "When developing ideas through cause-effect, writers present a cause, a…",
+     "skill": "5.C",
+     "skill_text": "Recognize and explain the use of methods of development to accomplish a purpose.",
+     "lo": [
+      {
+       "code": "5.C",
+       "text": "Recognize and explain the use of methods of development to accomplish a purpose."
+      },
+      {
+       "code": "6.C",
+       "text": "Use appropriate methods of development to advance an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.J",
+       "text": "When developing ideas through cause-effect, writers present a cause, assert effects or consequences of that cause, or present a series of causes and the subsequent effect(s)."
+      }
+     ],
+     "ced_units": [
+      3
+     ],
+     "p": 50,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.K",
+     "title": "When developing ideas through comparison-contrast, writers present a c…",
+     "skill": "5.C",
+     "skill_text": "Recognize and explain the use of methods of development to accomplish a purpose.",
+     "lo": [
+      {
+       "code": "5.C",
+       "text": "Recognize and explain the use of methods of development to accomplish a purpose."
+      },
+      {
+       "code": "6.C",
+       "text": "Use appropriate methods of development to advance an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.K",
+       "text": "When developing ideas through comparison-contrast, writers present a category of comparison and then examine the similarities and/or differences between the objects of the comparison. When analyzing similarities and/or differences, like categories of comparison must be used."
+      }
+     ],
+     "ced_units": [
+      4
+     ],
+     "p": 56,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.L",
+     "title": "When developing ideas through a definition or description, writers rel…",
+     "skill": "5.C",
+     "skill_text": "Recognize and explain the use of methods of development to accomplish a purpose.",
+     "lo": [
+      {
+       "code": "5.C",
+       "text": "Recognize and explain the use of methods of development to accomplish a purpose."
+      },
+      {
+       "code": "6.C",
+       "text": "Use appropriate methods of development to advance an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.L",
+       "text": "When developing ideas through a definition or description, writers relate the characteristics, features, or sensory details of an object or idea, sometimes using examples or illustrations."
+      }
+     ],
+     "ced_units": [
+      4
+     ],
+     "p": 56,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.M",
+     "title": "The body paragraphs of a written argument make claims, support them wi…",
+     "skill": "5.A",
+     "skill_text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis.",
+     "lo": [
+      {
+       "code": "5.A",
+       "text": "Describe the line of reasoning and explain whether it supports an argument’s overarching thesis."
+      },
+      {
+       "code": "6.A",
+       "text": "Develop a line of reasoning and commentary that explains it throughout an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.M",
+       "text": "The body paragraphs of a written argument make claims, support them with evidence, and provide commentary that explains how the paragraph contributes to the reasoning of the argument."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 61,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.N",
+     "title": "Coherence occurs at different levels in a piece of writing. In a sente…",
+     "skill": "5.B",
+     "skill_text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning.",
+     "lo": [
+      {
+       "code": "5.B",
+       "text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning."
+      },
+      {
+       "code": "6.B",
+       "text": "Use transitional elements to guide the reader through the line of reasoning of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.N",
+       "text": "Coherence occurs at different levels in a piece of writing. In a sentence, the idea in one clause logically links to an idea in the next. In a paragraph, the idea in one sentence logically links to an idea in the next. In a text, the ideas in one paragraph logically link to the ideas in the next."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 62,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.O",
+     "title": "Repetition, synonyms, pronoun references, and parallel structure may i…",
+     "skill": "5.B",
+     "skill_text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning.",
+     "lo": [
+      {
+       "code": "5.B",
+       "text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning."
+      },
+      {
+       "code": "6.B",
+       "text": "Use transitional elements to guide the reader through the line of reasoning of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.O",
+       "text": "Repetition, synonyms, pronoun references, and parallel structure may indicate or develop a relationship between elements of a text."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 62,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.P",
+     "title": "Transitional elements are words or other elements (phrases, clauses, s…",
+     "skill": "5.B",
+     "skill_text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning.",
+     "lo": [
+      {
+       "code": "5.B",
+       "text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning."
+      },
+      {
+       "code": "6.B",
+       "text": "Use transitional elements to guide the reader through the line of reasoning of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.P",
+       "text": "Transitional elements are words or other elements (phrases, clauses, sentences, or paragraphs) that assist in creating coherence among sentences, paragraphs, or sections in a text by showing relationships among ideas."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 62,
+     "verified": "ced"
+    },
+    {
+     "code": "REO-1.Q",
+     "title": "Transitional elements can be used to introduce evidence or to indicate…",
+     "skill": "5.B",
+     "skill_text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning.",
+     "lo": [
+      {
+       "code": "5.B",
+       "text": "Explain how the organization of a text creates unity and coherence and reflects a line of reasoning."
+      },
+      {
+       "code": "6.B",
+       "text": "Use transitional elements to guide the reader through the line of reasoning of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "REO-1.Q",
+       "text": "Transitional elements can be used to introduce evidence or to indicate its relationship to other ideas or evidence in that paragraph or in the text as a whole."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 62,
+     "verified": "ced"
+    }
+   ],
+   "ced_units": [
+    3,
+    4,
+    5
+   ],
+   "excl": [
+    {
+     "text": "The CED names no required texts and no required literary or grammatical terminology; the exam assesses the skills and essential knowledge, not term recall.",
+     "verified": "recall"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "stl",
+   "n": 4,
+   "title": "Style",
+   "weight": "no per-unit weighting; skill categories 7 and 8 in the multiple-choice section",
+   "check": "Progress checks belong to the nine CED units: Unit 1: Progress check · 10 multiple choice · 1 free response; Unit 2: Progress check · 20 multiple choice · 1 free response; Unit 3: Progress check · 20 multiple choice · 1 free response; Unit 4: Progress check · 20 multiple choice · 1 free response; Unit 5: Progress check · 20 multiple choice · 1 free response; Unit 6: Progress check · 20 multiple choice · 1 free response; Unit 7: Progress check · 20 multiple choice · 1 free response; Unit 8: Progress check · 20 multiple choice · 1 free response; Unit 9: Progress check · 5 multiple choice · 1 free response",
+   "eu": [
+    {
+     "code": "STL-1",
+     "text": "The rhetorical situation informs the strategic stylistic choices that writers make."
+    }
+   ],
+   "skills": [
+    {
+     "code": "7.A",
+     "name": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "units": "Units 5, 6, 8",
+     "category": "Style – Reading",
+     "category_text": "Explain how writers’ stylistic choices contribute to the purpose of an argument."
+    },
+    {
+     "code": "7.B",
+     "name": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "units": "Units 7, 8",
+     "category": "Style – Reading",
+     "category_text": "Explain how writers’ stylistic choices contribute to the purpose of an argument."
+    },
+    {
+     "code": "7.C",
+     "name": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument.",
+     "units": "Unit 7",
+     "category": "Style – Reading",
+     "category_text": "Explain how writers’ stylistic choices contribute to the purpose of an argument."
+    },
+    {
+     "code": "8.A",
+     "name": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument.",
+     "units": "Units 5, 6, 8",
+     "category": "Style – Writing",
+     "category_text": "Select words and use elements of composition to advance an argument."
+    },
+    {
+     "code": "8.B",
+     "name": "Write sentences that clearly convey ideas and arguments.",
+     "units": "Units 7, 8",
+     "category": "Style – Writing",
+     "category_text": "Select words and use elements of composition to advance an argument."
+    },
+    {
+     "code": "8.C",
+     "name": "Use established conventions of grammar and mechanics to communicate clearly and effectively.",
+     "units": "Unit 7",
+     "category": "Style – Writing",
+     "category_text": "Select words and use elements of composition to advance an argument."
+    }
+   ],
+   "topics": [
+    {
+     "code": "STL-1.A",
+     "title": "Words have both connotative and denotative meanings…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.A",
+       "text": "Words have both connotative and denotative meanings."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 62,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.B",
+     "title": "Descriptive words, such as adjectives and adverbs, not only qualify or…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.B",
+       "text": "Descriptive words, such as adjectives and adverbs, not only qualify or modify the things they describe but also convey a perspective toward those things."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 62,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.C",
+     "title": "Precise word choice reduces confusion and may help the audience percei…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.C",
+       "text": "Precise word choice reduces confusion and may help the audience perceive the writer’s perspective."
+      }
+     ],
+     "ced_units": [
+      5
+     ],
+     "p": 62,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.D",
+     "title": "A writer’s tone is the writer’s attitude or feeling about a subject, c…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.D",
+       "text": "A writer’s tone is the writer’s attitude or feeling about a subject, conveyed through word choice and writing style."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 68,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.E",
+     "title": "Readers infer a writer’s tone from the writer’s word choice, and espec…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.E",
+       "text": "Readers infer a writer’s tone from the writer’s word choice, and especially the positive, negative, or other connotations of those words."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 68,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.F",
+     "title": "A writer’s shifts in tone from one part of a text to another may sugge…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.F",
+       "text": "A writer’s shifts in tone from one part of a text to another may suggest the writer’s qualification, refinement, or reconsideration of their perspective on a subject."
+      }
+     ],
+     "ced_units": [
+      6
+     ],
+     "p": 68,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.G",
+     "title": "Writers express ideas in sentences. Sentences are made up of clauses…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.G",
+       "text": "Writers express ideas in sentences. Sentences are made up of clauses, at least one of which must be independent."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.H",
+     "title": "The arrangement of sentences in a text can emphasize particular ideas…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.H",
+       "text": "The arrangement of sentences in a text can emphasize particular ideas."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.I",
+     "title": "Subordination and coordination are used to express the intended relati…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.I",
+       "text": "Subordination and coordination are used to express the intended relationship between ideas in a sentence."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.J",
+     "title": "Writers frequently use coordination to illustrate a balance or equalit…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.J",
+       "text": "Writers frequently use coordination to illustrate a balance or equality between ideas."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.K",
+     "title": "Writers frequently use subordination to illustrate an imbalance or ine…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.K",
+       "text": "Writers frequently use subordination to illustrate an imbalance or inequality between ideas."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.L",
+     "title": "The arrangement of clauses, phrases, and words in a sentence can empha…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.L",
+       "text": "The arrangement of clauses, phrases, and words in a sentence can emphasize ideas."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.M",
+     "title": "Grammar and mechanics that follow established conventions of language…",
+     "skill": "7.C",
+     "skill_text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument.",
+     "lo": [
+      {
+       "code": "7.C",
+       "text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.M",
+       "text": "Grammar and mechanics that follow established conventions of language enable clear communication."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.N",
+     "title": "Writers use punctuation strategically to demonstrate the relationships…",
+     "skill": "7.C",
+     "skill_text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument.",
+     "lo": [
+      {
+       "code": "7.C",
+       "text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.N",
+       "text": "Writers use punctuation strategically to demonstrate the relationships among ideas in a sentence."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.O",
+     "title": "Punctuation (commas, colons, semicolons, dashes, hyphens, parentheses…",
+     "skill": "7.C",
+     "skill_text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument.",
+     "lo": [
+      {
+       "code": "7.C",
+       "text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.O",
+       "text": "Punctuation (commas, colons, semicolons, dashes, hyphens, parentheses, quotation marks, or end marks) advances a writer’s purpose by clarifying, organizing, emphasizing, indicating purpose, supplementing information, or contributing to tone."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.P",
+     "title": "Some design features, such as italics or boldface, create emphasis…",
+     "skill": "7.C",
+     "skill_text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument.",
+     "lo": [
+      {
+       "code": "7.C",
+       "text": "Explain how grammar and mechanics contribute to the clarity and effectiveness of an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.P",
+       "text": "Some design features, such as italics or boldface, create emphasis."
+      }
+     ],
+     "ced_units": [
+      7
+     ],
+     "p": 74,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.Q",
+     "title": "A writer’s style is made up of the mix of word choice, syntax, and con…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.Q",
+       "text": "A writer’s style is made up of the mix of word choice, syntax, and conventions employed by that writer."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 80,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.R",
+     "title": "Writers may signal a complex or ironic perspective through stylistic c…",
+     "skill": "7.A",
+     "skill_text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text.",
+     "lo": [
+      {
+       "code": "7.A",
+       "text": "Explain how word choice, comparisons, and syntax contribute to the specific tone or style of a text."
+      },
+      {
+       "code": "8.A",
+       "text": "Strategically use words, comparisons, and syntax to convey a specific tone or style in an argument."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.R",
+       "text": "Writers may signal a complex or ironic perspective through stylistic choices. Irony may emerge from the differences between an argument and the readers’ expectations or values."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 80,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.S",
+     "title": "Modifiers—including words, phrases, or clauses—qualify, clarify, or sp…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.S",
+       "text": "Modifiers—including words, phrases, or clauses—qualify, clarify, or specify information about the thing with which they are associated. To reduce ambiguity, modifiers should be placed closest to the word, phrase, or clause that they are meant to modify."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 80,
+     "verified": "ced"
+    },
+    {
+     "code": "STL-1.T",
+     "title": "Parenthetical elements—though not essential to understanding what they…",
+     "skill": "7.B",
+     "skill_text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas.",
+     "lo": [
+      {
+       "code": "7.B",
+       "text": "Explain how writers create, combine, and place independent and dependent clauses to show relationships between and among ideas."
+      },
+      {
+       "code": "8.B",
+       "text": "Write sentences that clearly convey ideas and arguments."
+      }
+     ],
+     "ek": [
+      {
+       "code": "STL-1.T",
+       "text": "Parenthetical elements—though not essential to understanding what they are describing—interrupt sentences to provide additional information that may address an audience’s needs and/or advance a writer’s purpose."
+      }
+     ],
+     "ced_units": [
+      8
+     ],
+     "p": 80,
+     "verified": "ced"
+    }
+   ],
+   "ced_units": [
+    5,
+    6,
+    7,
+    8
+   ],
+   "excl": [
+    {
+     "text": "The CED names no required texts and no required literary or grammatical terminology; the exam assesses the skills and essential knowledge, not term recall.",
+     "verified": "recall"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  }
+ ]
+}

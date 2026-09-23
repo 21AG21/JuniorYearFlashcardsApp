@@ -1004,8 +1004,8 @@
     var n = { long: 0, short: 0 }, other = 0;
     (u.frq || []).forEach(function (f) { if (n[f.kind] != null) n[f.kind]++; else other++; });
     var bits = [];
-    if (n.long) bits.push(plural(n.long, 'long'));
-    if (n.short) bits.push(plural(n.short, 'short'));
+    if (n.long) bits.push(n.long + ' long');
+    if (n.short) bits.push(n.short + ' short');
     if (other) bits.push(plural(other, 'question'));
     return bits.join(', ') + ' · ' + MODE_DESC.frq;
   }

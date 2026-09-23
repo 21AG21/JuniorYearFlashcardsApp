@@ -1,6 +1,10 @@
 # Source
 
-The cards live here, not in `/data`. `/data` is generated.
+`/data/*.json` is what the app loads and, since the CED rebuild, the source of truth
+for the five AP decks: each unit carries its Course and Exam Description frame
+(topics with codes and skills, exclusion statements, progress check, free-response
+set), and `src/scripts/gen/` regenerates a unit from `src/research/ced/` and merges
+it back. The chunk pipeline below predates that and is no longer run for the AP decks.
 
 ```
 src/data/chunks/*.json     the decks as written, 14 files

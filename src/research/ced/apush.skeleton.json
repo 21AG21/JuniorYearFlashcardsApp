@@ -1,0 +1,4101 @@
+{
+ "course": "apush",
+ "edition": "AP United States History Course and Exam Description, Effective Fall 2026",
+ "exam": {
+  "format": "<8171 characters of the CED, kept out of the repository>",
+  "rubrics": "<9161 characters of the CED, kept out of the repository>",
+  "reasoning": "<1748 characters of the CED, kept out of the repository>",
+  "verified": "ced"
+ },
+ "skills": [
+  {
+   "code": "1.A",
+   "name": "Identify a historical concept, development, or process.",
+   "category": "Developments and Processes"
+  },
+  {
+   "code": "1.B",
+   "name": "Explain a historical concept, development, or process.",
+   "category": "Developments and Processes"
+  },
+  {
+   "code": "2.A",
+   "name": "Identify a source’s point of view, purpose, historical situation, and/or audience.",
+   "category": "Sourcing and Situation"
+  },
+  {
+   "code": "2.B",
+   "name": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+   "category": "Sourcing and Situation"
+  },
+  {
+   "code": "2.C",
+   "name": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+   "category": "Sourcing and Situation"
+  },
+  {
+   "code": "3.A",
+   "name": "Identify and describe a claim and/or argument in a text-based or non-text-based source.",
+   "category": "Claims and Evidence in Sources"
+  },
+  {
+   "code": "3.B",
+   "name": "Identify the evidence used in a source to support an argument.",
+   "category": "Claims and Evidence in Sources"
+  },
+  {
+   "code": "3.C",
+   "name": "Compare the arguments or main ideas of two sources.",
+   "category": "Claims and Evidence in Sources"
+  },
+  {
+   "code": "3.D",
+   "name": "Explain how claims or evidence support, modify, or refute a source’s argument.",
+   "category": "Claims and Evidence in Sources"
+  },
+  {
+   "code": "4.A",
+   "name": "Identify and describe a historical context for a specific historical development or process.",
+   "category": "Contextualization"
+  },
+  {
+   "code": "4.B",
+   "name": "Explain how a specific historical development or process is situated within a broader historical context.",
+   "category": "Contextualization"
+  },
+  {
+   "code": "5.A",
+   "name": "Identify patterns among or connections between historical developments and processes.",
+   "category": "Making Connections"
+  },
+  {
+   "code": "5.B",
+   "name": "Explain how a historical development or process relates to another historical development or process.",
+   "category": "Making Connections"
+  },
+  {
+   "code": "6.A",
+   "name": "Make a historically defensible claim.",
+   "category": "Argumentation"
+  },
+  {
+   "code": "6.B",
+   "name": "Support an argument using specific and relevant evidence.",
+   "category": "Argumentation"
+  },
+  {
+   "code": "6.C",
+   "name": "Use historical reasoning to explain relationships among pieces of historical evidence.",
+   "category": "Argumentation"
+  },
+  {
+   "code": "6.D",
+   "name": "Corroborate, qualify, or modify an argument using diverse and alternative evidence in order to develop a complex argument. This argument might:",
+   "category": "Argumentation"
+  },
+  {
+   "code": "ARC",
+   "name": "American and Regional Culture",
+   "category": "Theme",
+   "text": "Creative expression, demographic change, philosophy, religious beliefs, scientific ideas, social mores, and technology shape national, regional, and group cultures in America, and these varying cultures often play a role in shaping government policy and developing economic systems."
+  },
+  {
+   "code": "GEO",
+   "name": "Geography and the Environment",
+   "category": "Theme",
+   "text": "Geographic and environmental factors, including competition over and debates about natural resources, shape the development of America and foster regional diversity. The development of America impacts the environment and reshapes geography, which leads to debates about environmental and geographic issues."
+  },
+  {
+   "code": "MIG",
+   "name": "Migration and Settlement",
+   "category": "Theme",
+   "text": "Push and pull factors shape immigration to and migration within America, and the demographic change as a result of these moves shapes the migrants, society, and the environment."
+  },
+  {
+   "code": "NAT",
+   "name": "American and National Identity",
+   "category": "Theme",
+   "text": "The development of and debates about democracy, freedom, citizenship, diversity, and individualism shape American national identity, cultural values, and beliefs about American exceptionalism, and in turn, these ideas shape political institutions and society. Throughout American history, notions of national identity and culture have coexisted with varying degrees of regional and group identities."
+  },
+  {
+   "code": "PCE",
+   "name": "Politics and Power",
+   "category": "Theme",
+   "text": "Debates fostered by social and political groups about the role of government in American social, political, and economic life shape government policy, institutions, political parties, and the rights of citizens."
+  },
+  {
+   "code": "SOC",
+   "name": "Social Structures",
+   "category": "Theme",
+   "text": "Social categories, roles, and practices are created, maintained, challenged, and transformed throughout American history, shaping government policy, economic systems, culture, and the lives of citizens."
+  },
+  {
+   "code": "WOR",
+   "name": "America in the World",
+   "category": "Theme",
+   "text": "Diplomatic, economic, cultural, and military interactions between empires, nations, and peoples shape the development of America and America’s increasingly important role in the world."
+  },
+  {
+   "code": "WXT",
+   "name": "Work, Exchange, and Technology",
+   "category": "Theme",
+   "text": "The interplay between markets, private enterprise, labor, technology, and government policy shape the American economy. In turn, economic activity shapes society and government policy and drives technological innovation."
+  }
+ ],
+ "units": [
+  {
+   "id": "u1",
+   "n": 1,
+   "title": "Period 1: 1491–1607",
+   "weight": "4–6%",
+   "check": "Progress check · 15 multiple choice · 2 short answer · 1 free response (Primary source (partial), Long essay (partial), Primary source, Long essay (partia)",
+   "topics": [
+    {
+     "code": "1.1",
+     "title": "Contextualizing Period 1",
+     "skill": "4.A",
+     "skill_text": "Identify and describe a historical context for a specific historical development or process.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 1.A",
+       "text": "Explain the context for European encounters in the Americas from 1491 to 1607. PREVIEW: UNIT 1 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-1.1",
+       "text": "As native populations migrated and settled across the vast expanse of North America over time, they developed distinct and increasingly complex societies by adapting to and transforming their diverse environments."
+      },
+      {
+       "code": "KC-1.1.I",
+       "text": "Different native societies adapted to and transformed their environments through innovations in agriculture, resource use, and social structure. Spend a class period helping students understand some contexts for this unit. Considering this unit’s key concepts (previewed below), select one or two for which your students will most need context. To understand context, your students could examine:"
+      },
+      {
+       "code": "KC-1.2",
+       "text": "Contact among Europeans, Native Americans, and Africans resulted in the Columbian Exchange and significant social, cultural, and political changes on both sides of the Atlantic Ocean."
+      },
+      {
+       "code": "KC-1.2.I",
+       "text": "European expansion into the Western Hemisphere generated intense social, religious, political, and economic competition and changes within European societies."
+      },
+      {
+       "code": "KC-1.2.II",
+       "text": "The Columbian Exchange and development of the Spanish Empire in the Western Hemisphere resulted in extensive demographic, economic, and social changes."
+      },
+      {
+       "code": "KC-1.2.III",
+       "text": "In their interactions, Europeans and Native Americans asserted divergent worldviews regarding issues such as religion, gender roles, family, land use, and power."
+      }
+     ],
+     "p": 43,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "1.2",
+     "title": "Native American Societies Before European Contact",
+     "skill": "1.A",
+     "skill_text": "Identify a historical concept, development, or process.",
+     "theme": [
+      "GEO"
+     ],
+     "lo": [
+      {
+       "code": "LO 1.B",
+       "text": "Explain how and why various native populations in the period before European contact interacted with the natural environment in North America."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-1.1.I.A",
+       "text": "The spread of maize cultivation from present-day Mexico northward into the present-day American Southwest and beyond supported economic development, settlement, advanced irrigation, and social diversification among societies."
+      },
+      {
+       "code": "KC-1.1.I.B",
+       "text": "Societies responded to the aridity of the Great Basin and the grasslands of the western Great Plains by developing largely mobile lifestyles."
+      },
+      {
+       "code": "KC-1.1.I.C",
+       "text": "In the Northeast, the Mississippi River Valley, and along the Atlantic seaboard, some societies developed mixed agricultural and hunter-gatherer economies that favored the development of permanent villages."
+      },
+      {
+       "code": "KC-1.1.I.D",
+       "text": "Societies in the Northwest and present-day California supported themselves by hunting and gathering, and in some areas developed settled communities supported by the vast resources of the ocean. Societies of the Northwest and California:"
+      }
+     ],
+     "p": 46,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "1.3",
+     "title": "European Exploration in the Americas",
+     "skill": "1.A",
+     "skill_text": "Identify a historical concept, development, or process.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 1.C",
+       "text": "Explain the causes of exploration and conquest of the New World by various European nations."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-1.2.I.A",
+       "text": "European nations’ efforts to explore and conquer the New World stemmed from a search for new sources of wealth, economic and military competition, and a desire to spread Christianity."
+      }
+     ],
+     "p": 50,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "1.4",
+     "title": "Columbian Exchange, Spanish Exploration, and Conquest",
+     "skill": "3.A",
+     "skill_text": "Identify and describe a claim and/or argument in a text-based or non-text-based source.",
+     "theme": [
+      "GEO"
+     ],
+     "lo": [
+      {
+       "code": "LO 1.D",
+       "text": "Explain causes of the Columbian Exchange and its effect on Europe and the Americas during the period after 1492."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-1.2.I.B",
+       "text": "The Columbian Exchange brought new crops to Europe from the Americas, stimulating European population growth, and new sources of mineral wealth, which facilitated the European shift from feudalism to capitalism."
+      },
+      {
+       "code": "KC-1.2.I.C",
+       "text": "Improvements in maritime technology and more organized methods for conducting international trade, such as joint-stock companies, helped drive changes to economies in Europe and the Americas."
+      },
+      {
+       "code": "KC-1.2.II.A",
+       "text": "Spanish exploration and conquest of the Americas were accompanied and furthered by widespread deadly epidemics that devastated native populations and by the introduction of crops and animals not found in the Americas. Crops and animals introduced to the Americas:"
+      }
+     ],
+     "p": 53,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "1.5",
+     "title": "Labor, Slavery, and Caste in the Spanish Colonial System",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 1.E",
+       "text": "Explain how the growth of the Spanish Empire in North America shaped the development of social and economic structures over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-1.2.II.B",
+       "text": "In the encomienda system, Spanish colonial economies marshaled Native American labor to support plantation-based agriculture and extract precious metals and other resources."
+      },
+      {
+       "code": "KC-1.2.II.C",
+       "text": "European traders partnered with some West African groups who practiced slavery to forcibly extract enslaved laborers for the Americas. The Spanish imported enslaved Africans to labor in plantation agriculture and mining."
+      },
+      {
+       "code": "KC-1.2.II.D",
+       "text": "The Spanish developed a caste system that incorporated, and carefully defined the status of, the diverse population of Europeans, Africans, and Native Americans in their empire."
+      }
+     ],
+     "p": 57,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "1.6",
+     "title": "Cultural Interactions Between Europeans, Native Americans, and Africans",
+     "skill": "3.B",
+     "skill_text": "Identify the evidence used in a source to support an argument.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 1.F",
+       "text": "Explain how and why European and Native American perspectives of others developed and changed in the period."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-1.2.III",
+       "text": "In their interactions, Europeans and Native Americans asserted divergent worldviews regarding issues such as religion, gender roles, family, land use, and power."
+      },
+      {
+       "code": "KC-1.2.III.A",
+       "text": "Mutual misunderstandings between Europeans and Native Americans often defined the early years of interaction and trade as each group sought to make sense of the other. Over time, Europeans and Native Americans adopted some useful aspects of each other’s culture."
+      },
+      {
+       "code": "KC-1.2.III.B",
+       "text": "As European encroachments on Native Americans’ lands and demands on their labor increased, native peoples sought to defend and maintain their political sovereignty, economic prosperity, religious beliefs, and concepts of gender relations through diplomatic negotiations and military resistance."
+      },
+      {
+       "code": "KC-1.2.III.C",
+       "text": "Extended contact with Native Americans and Africans fostered a debate among European religious and political leaders about how non-Europeans should be treated, as well as evolving religious, cultural, and racial justifications for the subjugation of Africans and Native Americans. Debates among Europeans about how non-Europeans should be treated:"
+      }
+     ],
+     "p": 60,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "1.7",
+     "title": "Causation in Period 1",
+     "skill": "6.A",
+     "skill_text": "Make a historically defensible claim.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 1.G",
+       "text": "Explain the effects of the development of transatlantic voyages from 1491 to 1607. REVIEW: UNIT 1 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-1.1",
+       "text": "As native populations migrated and settled across the vast expanse of North America over time, they developed distinct and increasingly complex societies by adapting to and transforming their diverse environments."
+      },
+      {
+       "code": "KC-1.1.I",
+       "text": "Different native societies adapted to and transformed their environments through innovations in agriculture, resource use, and social structure."
+      },
+      {
+       "code": "KC-1.2",
+       "text": "Contact among Europeans, Native Americans, and Africans resulted in the Columbian Exchange and significant social, cultural, and political changes on both sides of the Atlantic Ocean."
+      },
+      {
+       "code": "KC-1.2.I",
+       "text": "European expansion into the Western Hemisphere generated intense social, religious, political, and economic competition and changes within European societies."
+      },
+      {
+       "code": "KC-1.2.II",
+       "text": "The Columbian Exchange and development of the Spanish Empire in the Western Hemisphere resulted in extensive demographic, economic, and social changes."
+      },
+      {
+       "code": "KC-1.2.III",
+       "text": "In their interactions, Europeans and Native Americans asserted divergent worldviews regarding issues such as religion, gender roles, family, land use, and power."
+      }
+     ],
+     "p": 65,
+     "reasoning": "Causation",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u2",
+   "n": 2,
+   "title": "Period 2: 1607–1754",
+   "weight": "6–8%",
+   "check": "Progress check · 20 multiple choice · 2 short answer · 1 free response (Primary source, Long essay (partial))",
+   "topics": [
+    {
+     "code": "2.1",
+     "title": "Contextualizing Period 2",
+     "skill": "4.A",
+     "skill_text": "Identify and describe a historical context for a specific historical development or process.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 2.A",
+       "text": "Explain the context for the colonization of North America from 1607 to 1754. PREVIEW: UNIT 2 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.1",
+       "text": "Europeans developed a variety of colonization and migration patterns, influenced by different imperial goals, cultures, and the varied North American environments where they settled. They competed with each other and American Indians for resources."
+      },
+      {
+       "code": "KC-2.1.I",
+       "text": "Spanish, French, Dutch, and British colonizers had different economic and imperial goals involving land and labor that shaped the social and political development of their colonies as well as their relationships with native populations."
+      },
+      {
+       "code": "KC-2.1.II",
+       "text": "In the 17th century, early British colonies developed along the Atlantic coast, with regional differences that reflected various environmental, economic, cultural, and demographic factors."
+      },
+      {
+       "code": "KC-2.1.III",
+       "text": "Competition over resources between European rivals and American Indians encouraged industry and trade and led to conflict in the Americas."
+      },
+      {
+       "code": "KC-2.2",
+       "text": "The British colonies participated in political, social, cultural, and economic exchanges with Great Britain that encouraged both stronger bonds with Britain and resistance to Britain’s control."
+      },
+      {
+       "code": "KC-2.2.I",
+       "text": "Transatlantic commercial, religious, philosophical, and political exchanges led residents of the British colonies to evolve in their political and cultural attitudes as they became increasingly tied to Britain and one another."
+      },
+      {
+       "code": "KC-2.2.II",
+       "text": "Like other European empires in the Americas that participated in the Atlantic slave trade, the English colonies developed a system of slavery that reflected the specific economic, demographic, and geographic characteristics of those colonies."
+      }
+     ],
+     "p": 72,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "2.2",
+     "title": "European Colonization",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 2.B",
+       "text": "Explain how and why various European colonies developed and expanded from 1607 to 1754."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.1.I.A",
+       "text": "Spanish efforts to extract wealth from the land led them to develop institutions based on subjugating native populations, converting them to Christianity, and incorporating them, along with enslaved and free Africans, into Spanish colonial society."
+      },
+      {
+       "code": "KC-2.1.I.B",
+       "text": "French and Dutch colonial efforts involved relatively few Europeans and relied on trade alliances and intermarriage with American Indians to build economic and diplomatic relationships and acquire furs and other products for export to Europe."
+      },
+      {
+       "code": "KC-2.1.I.C",
+       "text": "English colonization efforts attracted a comparatively large number of male and female British migrants, as well as other European migrants, all of whom sought social mobility, economic prosperity, religious freedom, and improved living conditions. These colonists focused on agriculture and settled on land taken from Native Americans, from whom they lived separately. British Migrants:"
+      }
+     ],
+     "p": 75,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "2.3",
+     "title": "The Regions of British Colonies",
+     "skill": "3.A",
+     "skill_text": "Identify and describe a claim and/or argument in a text-based or non-text-based source.",
+     "theme": [
+      "GEO"
+     ],
+     "lo": [
+      {
+       "code": "LO 2.C",
+       "text": "Explain how and why environmental and other factors shaped the development and expansion of various British colonies that developed and expanded from 1607 to 1754."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.1.II.A",
+       "text": "The Chesapeake and North Carolina colonies grew prosperous exporting tobacco—a labor-intensive product initially cultivated by white, mostly male indentured servants and later by enslaved Africans."
+      },
+      {
+       "code": "KC-2.1.II.B",
+       "text": "The New England colonies, initially settled by Puritans, developed around small towns with family farms and achieved a thriving mixed economy of agriculture and commerce."
+      },
+      {
+       "code": "KC-2.1.II.C",
+       "text": "The middle colonies supported a flourishing export economy based on cereal crops and attracted a broad range of European migrants, leading to societies with greater cultural, ethnic, and religious diversity and tolerance."
+      },
+      {
+       "code": "KC-2.1.II.D",
+       "text": "The colonies of the southern Atlantic coast and the British West Indies used long growing seasons to develop plantation economies based on exporting cash crops. They depended on the labor of enslaved Africans, who often constituted the majority of the population in these areas and developed their own forms of cultural and religious autonomy."
+      },
+      {
+       "code": "KC-2.1.II.E",
+       "text": "Distance and Britain’s initially lax attention led to the colonies creating self-governing institutions that were unusually democratic for the era. The New England colonies based power in participatory town meetings, which in turn elected members to their colonial legislatures; in the southern colonies, elite planters exercised local authority and also dominated the elected assemblies. Self-governing institutions:"
+      }
+     ],
+     "p": 79,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "2.4",
+     "title": "Transatlantic Trade",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 2.D",
+       "text": "Explain causes and effects of transatlantic trade over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.1.III.A",
+       "text": "An Atlantic economy developed in which goods, as well as enslaved Africans and American Indians, were exchanged between Europe, Africa, and the Americas through extensive trade networks. European colonial economies focused on acquiring, producing, and exporting commodities that were valued in Europe and gaining new sources of labor."
+      },
+      {
+       "code": "KC-2.1.III.B",
+       "text": "Continuing trade with Europeans increased the flow of goods in and out of American Indian communities, stimulating cultural and economic changes and spreading epidemic diseases that caused radical demographic shifts."
+      },
+      {
+       "code": "KC-2.2.I.C",
+       "text": "The British government increasingly attempted to incorporate its North American colonies into a coherent, hierarchical, and imperial structure in order to pursue mercantilist economic aims, but conflicts with colonists and American Indians led to erratic enforcement of imperial policies."
+      }
+     ],
+     "p": 84,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "2.5",
+     "title": "Interactions Between American Indians and Europeans",
+     "skill": "2.A",
+     "skill_text": "Identify a source’s point of view, purpose, historical situation, and/or audience.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 2.E",
+       "text": "Explain how and why interactions between various European nations and American Indians changed over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.1.III.C",
+       "text": "Interactions between European rivals and American Indian populations fostered both accommodation and conflict. French, Dutch, British, and Spanish colonies allied with and armed American Indian groups, who frequently sought alliances with Europeans against other American Indian groups."
+      },
+      {
+       "code": "KC-2.1.III.E",
+       "text": "British conflicts with American Indians over land, resources, and political boundaries led to military confrontations, such as Metacom’s War (King Philip’s War) in New England."
+      },
+      {
+       "code": "KC-2.1.III.F",
+       "text": "American Indian resistance to Spanish colonizing efforts in North America, particularly after the Pueblo Revolt, led to Spanish accommodation of some aspects of American Indian culture in the Southwest."
+      }
+     ],
+     "p": 87,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "2.6",
+     "title": "Slavery in the British Colonies",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "WXT",
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 2.F",
+       "text": "Explain the causes and effects of slavery in the various British colonial regions."
+      },
+      {
+       "code": "LO 2.G",
+       "text": "Explain how enslaved people responded to slavery."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.2.II.A",
+       "text": "All the British colonies participated to varying degrees in the Atlantic slave trade due to the abundance of land and a growing European demand for colonial goods, as well as a shortage of indentured servants. Small New England farms used relatively few enslaved laborers, all port cities held significant minorities of enslaved people, and the emerging plantation systems of the Chesapeake and the southern Atlantic coast had large numbers of enslaved workers, while the great majority of enslaved Africans were sent to the West Indies."
+      },
+      {
+       "code": "KC-2.2.II.B",
+       "text": "As chattel slavery became the dominant labor system in many southern colonies, new laws created a strict racial system that prohibited interracial relationships and defined the descendants of African American mothers as black and enslaved in perpetuity."
+      },
+      {
+       "code": "KC-2.2.II.C",
+       "text": "Africans developed both overt and covert means to resist the dehumanizing nature of slavery and maintain their family and gender systems, culture, and religion."
+      }
+     ],
+     "p": 91,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "2.7",
+     "title": "Colonial Society and Culture",
+     "skill": "1.A",
+     "skill_text": "Identify a historical concept, development, or process.",
+     "theme": [
+      "ARC",
+      "NAT"
+     ],
+     "lo": [
+      {
+       "code": "LO 2.H",
+       "text": "Explain how and why the movement of a variety of people and ideas across the Atlantic contributed to the development of American culture over time."
+      },
+      {
+       "code": "LO 2.I",
+       "text": "Explain how and why the different goals and interests of European leaders and colonists affected how they viewed themselves and their relationship with Britain."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.2.I.A",
+       "text": "The presence of different European religious and ethnic groups contributed to a significant degree of pluralism and intellectual exchange, which were later enhanced by the first Great Awakening and the spread of European Enlightenment ideas."
+      },
+      {
+       "code": "KC-2.2.I.B",
+       "text": "The British colonies experienced a gradual Anglicization over time, developing autonomous political communities based on English models with influence from intercolonial commercial ties, the emergence of a transatlantic print culture, and the spread of Protestant evangelicalism."
+      },
+      {
+       "code": "KC-2.1.III.D",
+       "text": "The goals and interests of European leaders and colonists at times diverged, leading to a growing mistrust on both sides of the Atlantic. Colonists, especially in British North America, expressed dissatisfaction over issues including territorial settlements, frontier defense, self-rule, and trade."
+      },
+      {
+       "code": "KC-2.2.I.D",
+       "text": "Colonists’ resistance to imperial control drew on local experiences of self-government, evolving ideas of liberty, the political thought of the Enlightenment, greater religious independence and diversity, and an ideology critical of perceived corruption in the imperial system."
+      }
+     ],
+     "p": 96,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "2.8",
+     "title": "Comparison in Period 2",
+     "skill": "6.B",
+     "skill_text": "Support an argument using specific and relevant evidence.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 2.J",
+       "text": "Compare the effects of the development of colonial society in the various regions of North America. REVIEW: UNIT 2 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-2.1",
+       "text": "Europeans developed a variety of colonization and migration patterns, influenced by different imperial goals, cultures, and the varied North American environments where they settled. They competed with each other and American Indians for resources."
+      },
+      {
+       "code": "KC-2.1.I",
+       "text": "Spanish, French, Dutch, and British colonizers had different economic and imperial goals involving land and labor that shaped the social and political development of their colonies as well as their relationships with native populations."
+      },
+      {
+       "code": "KC-2.1.II",
+       "text": "In the 17th century, early British colonies developed along the Atlantic coast, with regional differences that reflected various environmental, economic, cultural, and demographic factors."
+      },
+      {
+       "code": "KC-2.1.III",
+       "text": "Competition over resources between European rivals and American Indians encouraged industry and trade and led to conflict in the Americas. continued on next page"
+      },
+      {
+       "code": "KC-2.2",
+       "text": "The British colonies participated in political, social, cultural, and economic exchanges with Great Britain that encouraged both stronger bonds with Britain and resistance to Britain’s control."
+      },
+      {
+       "code": "KC-2.2.I",
+       "text": "Transatlantic commercial, religious, philosophical, and political exchanges led residents of the British colonies to evolve in their political and cultural attitudes as they became increasingly tied to Britain and one another."
+      },
+      {
+       "code": "KC-2.2.II",
+       "text": "Like other European empires in the Americas that participated in the Atlantic slave trade, the English colonies developed a system of slavery that reflected the specific economic, demographic, and geographic characteristics of those colonies."
+      }
+     ],
+     "p": 101,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u3",
+   "n": 3,
+   "title": "Period 3: 1754–1800",
+   "weight": "10–17%",
+   "check": "Progress check · 30 multiple choice · 2 short answer · 1 free response (Primary source, Long essay (partial), Secondary source)",
+   "topics": [
+    {
+     "code": "3.1",
+     "title": "Contextualizing Period 3",
+     "skill": "4.A",
+     "skill_text": "Identify and describe a historical context for a specific historical development or process.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 3.A",
+       "text": "Explain the context in which America gained independence and developed a sense of national identity. PREVIEW: UNIT 3 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.1",
+       "text": "British attempts to assert tighter control over its North American colonies and the colonial resolve to pursue self-government led to a colonial independence movement and the Revolutionary War."
+      },
+      {
+       "code": "KC-3.1.I",
+       "text": "The competition among the British, French, and American Indians for economic and political advantage in North America culminated in the Seven Years’ War (the French and Indian War), in which Britain defeated France and allied American Indians."
+      },
+      {
+       "code": "KC-3.1.II",
+       "text": "The desire of many colonists to assert ideals of self-government in the face of renewed British imperial efforts led to a colonial independence movement and war with Britain. continued on next page"
+      },
+      {
+       "code": "KC-3.2",
+       "text": "The American Revolution’s democratic and republican ideals inspired new experiments with different forms of government."
+      },
+      {
+       "code": "KC-3.2.I",
+       "text": "The ideals that inspired the revolutionary cause reflected new beliefs about politics, religion, and society that had been developing over the course of the 18th century."
+      },
+      {
+       "code": "KC-3.2.II",
+       "text": "After declaring independence, American political leaders created new constitutions and declarations of rights that articulated the role of the state and federal governments while protecting individual liberties and limiting both centralized power and excessive popular influence."
+      },
+      {
+       "code": "KC-3.2.III.i",
+       "text": "New forms of national culture and political institutions developed in the United States alongside continued regional variations and differences over economic, political, social, and foreign policy issues."
+      },
+      {
+       "code": "KC-3.3",
+       "text": "Migration within North America and competition over resources, boundaries, and trade intensified conflicts among peoples and nations."
+      },
+      {
+       "code": "KC-3.3.I",
+       "text": "In the decades after American independence, interactions among different groups resulted in competition for resources, shifting alliances, and cultural blending."
+      },
+      {
+       "code": "KC-3.3.II",
+       "text": "The continued presence of European powers in North America challenged the United States to find ways to safeguard its borders, maintain neutral trading rights, and promote its economic interests."
+      }
+     ],
+     "p": 108,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "3.2",
+     "title": "The Seven Years’ War (The French and Indian War)",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.B",
+       "text": "Explain the causes and effects of the Seven Years’ War (the French and Indian War)."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.1.I.A",
+       "text": "Colonial rivalry intensified between Britain and France in the mid-18th century, as the growing population of the British colonies expanded into the interior of North America, threatening French–Indian trade networks and American Indian autonomy."
+      },
+      {
+       "code": "KC-3.1.I.B",
+       "text": "Britain achieved a major expansion of its territorial holdings by defeating the French, but at tremendous expense, setting the stage for imperial efforts to raise revenue and consolidate control over the colonies."
+      },
+      {
+       "code": "KC-3.1.I.C",
+       "text": "After the British victory, imperial officials’ attempts to prevent colonists from moving westward generated colonial opposition, while native groups sought to both continue trading with Europeans and resist the encroachments of colonists on tribal lands."
+      }
+     ],
+     "p": 111,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "3.3",
+     "title": "Taxation Without Representation",
+     "skill": "2.A",
+     "skill_text": "Identify a source’s point of view, purpose, historical situation, and/or audience.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.C",
+       "text": "Explain how British colonial policies regarding North America led to the Revolutionary War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.1.II.A",
+       "text": "The imperial struggles of the mid-18th century, as well as new British efforts to collect taxes without direct colonial representation or consent and to assert imperial authority in the colonies, began to unite the colonists against perceived and real constraints on their economic activities and political rights."
+      },
+      {
+       "code": "KC-3.1.II.B",
+       "text": "Colonial leaders based their calls for resistance to Britain on arguments about the rights of British subjects, the rights of the individual, local traditions of self-rule, and the ideas of the Enlightenment. Calls for resistance:"
+      },
+      {
+       "code": "KC-3.1.II.C",
+       "text": "The effort for American independence was energized by colonial leaders such as Benjamin Franklin, as well as by popular movements that included the political activism of laborers, artisans, and women. Political activism for American independence:"
+      },
+      {
+       "code": "KC-3.1.II.D",
+       "text": "In the face of economic shortages and the British military occupation of some regions, men and women mobilized in large numbers to provide financial and material support to the Patriot movement."
+      }
+     ],
+     "p": 114,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "3.4",
+     "title": "Philosophical Foundations of the American Revolution",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "NAT"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.D",
+       "text": "Explain how and why colonial attitudes about government and the individual changed in the years leading up to the American Revolution."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.2.I.A",
+       "text": "Enlightenment ideas and philosophy inspired many American political thinkers to emphasize individual talent over hereditary privilege, while religion strengthened Americans’ view of themselves as a people blessed with liberty."
+      },
+      {
+       "code": "KC-3.2.I.B",
+       "text": "The colonists’ belief in the superiority of republican forms of government based on the natural rights of the people found expression in Thomas Paine’s Common Sense and the Declaration of Independence. The ideas in these documents resonated throughout American history, shaping Americans’ understanding of the ideals on which the nation was based."
+      }
+     ],
+     "p": 119,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "3.5",
+     "title": "The American Revolution",
+     "skill": "6.B",
+     "skill_text": "Support an argument using specific and relevant evidence.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.E",
+       "text": "Explain how various factors contributed to the American victory in the Revolution."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.1.II.E",
+       "text": "Despite considerable loyalist opposition, as well as Great Britain’s apparently overwhelming military and financial advantages, the Patriot cause succeeded because of the actions of colonial militias and the Continental Army, George Washington’s military leadership, the colonists’ ideological commitment and resilience, and assistance sent by European allies."
+      }
+     ],
+     "p": 122,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "3.6",
+     "title": "The Influence of Revolutionary Ideals",
+     "skill": "3.A",
+     "skill_text": "Identify and describe a claim and/or argument in a text-based or non-text-based source.",
+     "theme": [
+      "SOC",
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.F",
+       "text": "Explain the various ways the American Revolution affected society."
+      },
+      {
+       "code": "LO 3.G",
+       "text": "Describe the global impact of the American Revolution."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.2.I.C",
+       "text": "During and after the American Revolution, an increased awareness of inequalities in society motivated some individuals and groups to call for the abolition of slavery and greater political democracy in the new state and national governments."
+      },
+      {
+       "code": "KC-3.2.I.D",
+       "text": "In response to women’s participation in the American Revolution, Enlightenment ideas, and women’s appeals for expanded roles, an ideal of “republican motherhood” gained popularity. It called on women to teach republican values within the family and granted women a new importance in American political culture. continued on next page Women’s appeals for expanded roles:"
+      },
+      {
+       "code": "KC-3.2.I.E",
+       "text": "The American Revolution and the ideals set forth in the Declaration of Independence reverberated in France, Haiti, and Latin America, inspiring future independence movements."
+      }
+     ],
+     "p": 125,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "3.7",
+     "title": "The Articles of Confederation",
+     "skill": "3.B",
+     "skill_text": "Identify the evidence used in a source to support an argument.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.H",
+       "text": "Explain how different forms of government developed and changed as a result of the Revolutionary Period."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.2.II.A",
+       "text": "Many new state constitutions placed power in the hands of the legislative branch and maintained property qualifications for voting and citizenship."
+      },
+      {
+       "code": "KC-3.2.II.B",
+       "text": "The Articles of Confederation unified the newly independent states, creating a central government with limited power. After the Revolution, difficulties over international trade, finances, interstate commerce, foreign relations, and internal unrest led to calls for a stronger central government."
+      },
+      {
+       "code": "KC-3.3.I.C",
+       "text": "As settlers moved westward during the 1780s, Congress enacted the Northwest Ordinance for admitting new states; the ordinance promoted public education, the protection of private property, and a ban on slavery in the Northwest Territory."
+      }
+     ],
+     "p": 130,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "3.8",
+     "title": "The Constitutional Convention and Debates over Ratification",
+     "skill": "3.A",
+     "skill_text": "Identify and describe a claim and/or argument in a text-based or non-text-based source.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.I",
+       "text": "Explain the differing ideological positions on the structure and function of the federal government."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.2.II.C.i",
+       "text": "Delegates from the states participated in the Constitutional Convention and through negotiation, collaboration, and compromise proposed a constitution."
+      },
+      {
+       "code": "KC-3.2.II.D",
+       "text": "The Constitutional Convention compromised over the representation of slave states in Congress and the role of the federal government in regulating both slavery and the slave trade, allowing the prohibition of the international slave trade after 1808."
+      },
+      {
+       "code": "KC-3.2.II.E",
+       "text": "In the debate over ratifying the Constitution, Anti-Federalists opposing ratification battled with Federalists, whose principles were articulated in the Federalist Papers (primarily written by Alexander Hamilton and James Madison). Federalists ensured the ratification of the Constitution by promising the addition of a Bill of Rights that enumerated individual rights and explicitly restricted the powers of the federal government."
+      }
+     ],
+     "p": 133,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "3.9",
+     "title": "The Constitution",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.J",
+       "text": "Explain the continuities and changes in the structure and functions of the government with the ratification of the Constitution."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.2.II.C.ii",
+       "text": "Delegates from the states participated in the Constitutional Convention that created a limited but dynamic central government embodying federalism and providing for a separation of powers between its three branches."
+      }
+     ],
+     "p": 136,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "3.10",
+     "title": "Shaping a New Republic",
+     "skill": "2.A",
+     "skill_text": "Identify a source’s point of view, purpose, historical situation, and/or audience.",
+     "theme": [
+      "WOR",
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.K",
+       "text": "Explain how and why competition intensified conflicts among peoples and nations from 1754 to 1800."
+      },
+      {
+       "code": "LO 3.L",
+       "text": "Explain how and why political ideas, institutions, and party systems developed and changed in the new republic."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.3.II.A",
+       "text": "The U.S. government forged diplomatic initiatives aimed at dealing with the continued British and Spanish presence in North America, as U.S. settlers migrated beyond the Appalachians and sought free navigation of the Mississippi River."
+      },
+      {
+       "code": "KC-3.3.II.B",
+       "text": "War between France and Britain resulting from the French Revolution presented challenges to the United States over issues offree trade and foreign policy and fostered political disagreement."
+      },
+      {
+       "code": "KC-3.3.I.E",
+       "text": "The Spanish, supported by the bonded labor of the local American Indians, expanded their mission settlements into California; these provided opportunities for social mobility among soldiers and led to new cultural blending. Mission settlements in California:"
+      },
+      {
+       "code": "KC-3.3.I.D",
+       "text": "An ambiguous relationship between the federal government and American Indian tribes contributed to problems regarding treaties and American Indian legal claims relating to the seizure of their lands. Relationship between the federal government and Indigenous Nations:"
+      },
+      {
+       "code": "KC-3.2.III.A",
+       "text": "During the presidential administrations of George Washington and John Adams, political leaders created institutions and precedents that put the principles of the Constitution into practice."
+      },
+      {
+       "code": "KC-3.2.III.B",
+       "text": "Political leaders in the 1790s took a variety of positions on issues such as the relationship between the national government and the states, economic policy, foreign policy, and the balance between liberty and order. This led to the formation of political parties— most significantly the Federalists, led by Alexander Hamilton, and the Democratic-Republican Party, led by Thomas Jefferson and James Madison."
+      },
+      {
+       "code": "KC-3.3.II.C",
+       "text": "George Washington’s Farewell Address encouraged national unity, as he cautioned against political factions and warned about the danger of permanent foreign alliances."
+      }
+     ],
+     "p": 138,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "3.11",
+     "title": "",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.M",
+       "text": "Explain the continuities and changes in American culture from 1754 to 1800."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.2.III.ii",
+       "text": "New forms of national culture developed in the United States alongside continued regional variations."
+      },
+      {
+       "code": "KC-3.2.III.D",
+       "text": "Ideas about national identity increasingly found expression in works of art, literature, and architecture. Developing an American Identity"
+      }
+     ],
+     "p": 143,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "3.12",
+     "title": "Movement in the Early Republic",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "MIG",
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 3.N",
+       "text": "Explain how and why migration and immigration to and within North America caused competition and conflict over time."
+      },
+      {
+       "code": "LO 3.O",
+       "text": "Explain the continuities and changes in regional attitudes about slavery as it expanded from 1754 to 1800."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.3.I.A",
+       "text": "Various American Indian groups repeatedly evaluated and adjusted their alliances with Europeans, other tribes, and the United States, seeking to limit migration of white settlers and maintain control of tribal lands and natural resources. British alliances with American Indians contributed to tensions between the United States and Britain."
+      },
+      {
+       "code": "KC-3.3.I.B",
+       "text": "As increasing numbers of migrants from North America and other parts of the world continued to move westward, frontier cultures that had emerged in the colonial period continued to grow, fueling social, political, and ethnic tensions. continued on next page"
+      },
+      {
+       "code": "KC-3.2.III.C",
+       "text": "The expansion of slavery in the deep South and adjacent western lands and rising antislavery sentiment began to create distinctive regional attitudes toward slavery."
+      }
+     ],
+     "p": 147,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "3.13",
+     "title": "Continuity and Change in Period 3",
+     "skill": "6.B",
+     "skill_text": "Support an argument using specific and relevant evidence.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 3.P",
+       "text": "Explain how the American independence movement affected society from 1754 to 1800. REVIEW: UNIT 3 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-3.1",
+       "text": "British attempts to assert tighter control over its North American colonies and the colonial resolve to pursue self-government led to a colonial independence movement and the Revolutionary War."
+      },
+      {
+       "code": "KC-3.1.I",
+       "text": "The competition among the British, French, and American Indians for economic and political advantage in North America culminated in the Seven Years’ War (the French and Indian War), in which Britain defeated France and allied American Indians."
+      },
+      {
+       "code": "KC-3.1.II",
+       "text": "The desire of many colonists to assert ideals of self-government in the face of renewed British imperial efforts led to a colonial independence movement and war with Britain."
+      },
+      {
+       "code": "KC-3.2",
+       "text": "The American Revolution’s democratic and republican ideals inspired new experiments with different forms of government."
+      },
+      {
+       "code": "KC-3.2.I",
+       "text": "The ideals that inspired the revolutionary cause reflected new beliefs about politics, religion, and society that had been developing over the course of the 18th century."
+      },
+      {
+       "code": "KC-3.2.II",
+       "text": "After declaring independence, American political leaders created new constitutions and declarations of rights that articulated the role of the state and federal governments while protecting individual liberties and limiting both centralized power and excessive popular influence."
+      },
+      {
+       "code": "KC-3.2.III.i",
+       "text": "New forms of national culture and political institutions developed in the United States alongside continued regional variations and differences over economic, political, social, and foreign policy issues."
+      },
+      {
+       "code": "KC-3.3",
+       "text": "Migration within North America and competition over resources, boundaries, and trade intensified conflicts among peoples and nations."
+      },
+      {
+       "code": "KC-3.3.I",
+       "text": "In the decades after American independence, interactions among different groups resulted in competition for resources, shifting alliances, and cultural blending."
+      },
+      {
+       "code": "KC-3.3.II",
+       "text": "The continued presence of European powers in North America challenged the United States to find ways to safeguard its borders, maintain neutral trading rights, and promote its economic interests."
+      }
+     ],
+     "p": 152,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u4",
+   "n": 4,
+   "title": "Period 4: 1800–1848",
+   "weight": "10–17%",
+   "check": "Progress check · 35 multiple choice · 2 short answer · 1 free response (Primary source, Secondary source, Long essay (partial), Secondary source (2 sources), No stimulus, Long essay (pa)",
+   "topics": [
+    {
+     "code": "4.1",
+     "title": "Contextualizing Period 4",
+     "skill": "4.A",
+     "skill_text": "Identify and describe a historical context for a specific historical development or process.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 4.A",
+       "text": "Explain the context in which the republic developed from 1800 to 1848. PREVIEW: UNIT 4 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1",
+       "text": "The United States began to develop a modern democracy and celebrated a new national culture, while Americans sought to define the nation’s democratic ideals and change their society and institutions to match them."
+      },
+      {
+       "code": "KC-4.1.I",
+       "text": "The nation’s transition to a more participatory democracy was achieved by expanding suffrage from a system based on property ownership to one based on voting by all adult white men, and it was accompanied by the growth of political parties."
+      },
+      {
+       "code": "KC-4.1.II",
+       "text": "While Americans embraced a new national culture, various groups developed distinctive cultures of their own."
+      },
+      {
+       "code": "KC-4.1.III",
+       "text": "Increasing numbers of Americans, many inspired by new religious and intellectual movements, worked primarily outside of government institutions to advance their ideals. continued on next page"
+      },
+      {
+       "code": "KC-4.2",
+       "text": "Innovations in technology, agriculture, and commerce powerfully accelerated the American economy, precipitating profound changes to U.S. society and to national and regional identities."
+      },
+      {
+       "code": "KC-4.2.I",
+       "text": "New transportation systems and technologies dramatically expanded manufacturing and agricultural production."
+      },
+      {
+       "code": "KC-4.2.II",
+       "text": "The changes caused by the market revolution had significant effects on U.S. society, workers’ lives, and gender and family relations."
+      },
+      {
+       "code": "KC-4.2.III",
+       "text": "Economic development shaped settlement and trade patterns, helping to unify the nation while also encouraging the growth of different regions."
+      },
+      {
+       "code": "KC-4.3",
+       "text": "The U.S. interest in increasing foreign trade and expanding its national borders shaped the nation’s foreign policy and spurred government and private initiatives."
+      },
+      {
+       "code": "KC-4.3.I",
+       "text": "Struggling to create an independent global presence, the United States sought to claim territory throughout the North American continent and promote foreign trade."
+      },
+      {
+       "code": "KC-4.3.II",
+       "text": "The United States’ acquisition of lands in the West gave rise to contests over the extension of slavery into new territories."
+      }
+     ],
+     "p": 160,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "4.2",
+     "title": "The Rise of Political Parties and the Era of Jefferson",
+     "skill": "2.A",
+     "skill_text": "Identify a source’s point of view, purpose, historical situation, and/or audience.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.B",
+       "text": "Explain the causes and effects of policy debates in the early republic."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.I.A",
+       "text": "In the early 1800s, national political parties continued to debate issues such as the tariff, powers of the federal government, and relations with European powers."
+      },
+      {
+       "code": "KC-4.1.I.B",
+       "text": "Supreme Court decisions established the primacy of the judiciary in determining the meaning of the Constitution and asserted that federal laws took precedence over state laws."
+      },
+      {
+       "code": "KC-4.3.I.A.i",
+       "text": "Following the Louisiana Purchase, the U.S. government sought influence and control over North America through a variety of means, including exploration and diplomatic efforts."
+      }
+     ],
+     "p": 163,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "4.3",
+     "title": "Politics and Regional Interests",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.C",
+       "text": "Explain how different regional interests affected debates about the role of the federal government in the early republic."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.I.D",
+       "text": "Regional interests often trumped national concerns as the basis for many political leaders’ positions on slavery and economic policy."
+      },
+      {
+       "code": "KC-4.2.III.D",
+       "text": "Plans to further unify the U.S. economy, such as the American System, generated debates over whether such policies would benefit agriculture or industry, potentially favoring different sections of the country."
+      },
+      {
+       "code": "KC-4.3.II.C",
+       "text": "Congressional attempts at political compromise, such as the Missouri Compromise, only temporarily stemmed growing tensions between opponents and defenders of slavery."
+      }
+     ],
+     "p": 166,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "4.4",
+     "title": "America on the World Stage",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.D",
+       "text": "Explain how and why American foreign policy developed and expanded over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.3.I",
+       "text": "Struggling to create an independent global presence, the United States sought to claim territory throughout the North American continent and promote foreign trade."
+      },
+      {
+       "code": "KC-4.3.I.A.ii",
+       "text": "The U.S. government sought influence and control over the Western Hemisphere through a variety of means, including military actions, American Indian removal, and diplomatic efforts such as the Monroe Doctrine."
+      }
+     ],
+     "p": 169,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "4.5",
+     "title": "Market Revolution: Industrialization",
+     "skill": "6.B",
+     "skill_text": "Support an argument using specific and relevant evidence.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.E",
+       "text": "Explain the causes and effects of the innovations in technology, agriculture, and commerce over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.2.I.A",
+       "text": "Entrepreneurs helped to create a market revolution in production and commerce, in which market relationships between producers and consumers came to prevail as the manufacture of goods became more organized."
+      },
+      {
+       "code": "KC-4.2.I.B",
+       "text": "Innovations including textile machinery, steam engines, interchangeable parts, the telegraph, and agricultural inventions increased the efficiency of production methods. Legislation and judicial systems supported the development of roads, canals, and railroads, which extended and enlarged markets and helped foster regional interdependence. Transportation networks linked the North and Midwest more closely than they linked regions in the South."
+      },
+      {
+       "code": "KC-4.2.III.B",
+       "text": "Increasing Southern cotton production and the related growth of Northern manufacturing, banking, and shipping industries promoted the development of national and international commercial ties."
+      },
+      {
+       "code": "KC-4.2.I.C",
+       "text": "Transportation networks:"
+      }
+     ],
+     "p": 173,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "4.6",
+     "title": "Market Revolution: Society and Culture",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.F",
+       "text": "Explain how and why innovation in technology, agriculture, and commerce affected various segments of American society over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.2.III.A",
+       "text": "Large numbers of international migrants moved to industrializing Northern cities, while many Americans moved west of the Appalachians, developing thriving new communities along the Ohio and Mississippi rivers."
+      },
+      {
+       "code": "KC-4.2.II.B",
+       "text": "The growth of manufacturing drove a significant increase in prosperity and standards of living for some; this led to the emergence of a larger middle class and a small but wealthy business elite, but also to a large and growing population of laboring poor."
+      },
+      {
+       "code": "KC-4.2.II.A",
+       "text": "Increasing numbers of Americans, especially women and men working in factories, no longer relied on semi-subsistence agriculture; instead they supported themselves producing goods for distant markets."
+      },
+      {
+       "code": "KC-4.2.II.C",
+       "text": "Gender and family roles changed in response to the market revolution, particularly with the growth of definitions of domestic ideals that emphasized the separation of public and private spheres."
+      }
+     ],
+     "p": 177,
+     "reasoning": null,
+     "verified": "ced"
+    },
+    {
+     "code": "4.7",
+     "title": "Expanding Democracy",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.G",
+       "text": "Explain the causes and effects of the expansion of participatory democracy from 1800 to 1848."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.I",
+       "text": "The nation’s transition to a more participatory democracy was achieved by expanding suffrage from a system based on property ownership to one based on voting by all adult white men, and it was accompanied by the growth of political parties."
+      }
+     ],
+     "p": 181,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "4.8",
+     "title": "Jackson and Federal Power",
+     "skill": "3.D",
+     "skill_text": "Explain how claims or evidence support, modify, or refute a source’s argument.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.H",
+       "text": "Explain the causes and effects of continuing policy debates about the role of the federal government from 1800 to 1848."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.I.C",
+       "text": "By the 1820s and 1830s, new political parties arose—the Democrats, led by Andrew Jackson, and the Whigs, led by Henry Clay— that disagreed about the role and powers of the federal government and issues such as the national bank, tariffs, and federally funded internal improvements."
+      },
+      {
+       "code": "KC-4.3.I.B",
+       "text": "Frontier settlers tended to champion expansion efforts, while American Indian resistance led to a sequence of wars and federal efforts to control and relocate American Indian populations."
+      }
+     ],
+     "p": 184,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "4.9",
+     "title": "The Development of an American Culture",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.I",
+       "text": "Explain how and why a new national culture developed from 1800 to 1848."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.II.B",
+       "text": "A new national culture emerged that combined American elements, European influences, and regional cultural sensibilities."
+      },
+      {
+       "code": "KC-4.1.II.C",
+       "text": "Liberal social ideas from abroad and Romantic beliefs in human perfectibility influenced literature, art, philosophy, and architecture."
+      }
+     ],
+     "p": 188,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "4.10",
+     "title": "The Second Great Awakening",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.J",
+       "text": "Explain the causes of the Second Great Awakening."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.II.A.i",
+       "text": "The rise of democratic and individualistic beliefs, a response to rationalism, and changes to society caused by the market revolution, along with greater social and geographical mobility, contributed to a Second Great Awakening among Protestants."
+      }
+     ],
+     "p": 192,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "4.11",
+     "title": "An Age of Reform",
+     "skill": "3.B",
+     "skill_text": "Identify the evidence used in a source to support an argument.",
+     "theme": [
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.K",
+       "text": "Explain how and why various reform movements developed and expanded from 1800 to 1848."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.II.A.ii",
+       "text": "The rise of democratic and individualistic beliefs, a response to rationalism, and changes to society caused by the market revolution, along with greater social and geographical mobility, contributed to a Second Great Awakening among Protestants that influenced moral and social reforms and inspired utopian and other religious movements."
+      },
+      {
+       "code": "KC-4.1.III.A",
+       "text": "Americans formed new voluntary organizations that aimed to change individual behaviors and improve society through temperance and other reform efforts. Voluntary organizations:"
+      },
+      {
+       "code": "KC-4.1.III.B.i",
+       "text": "Abolitionist and antislavery movements gradually achieved emancipation in the North, contributing to the growth of the free African American population, even as many state governments restricted African Americans’ rights."
+      },
+      {
+       "code": "KC-4.3.II.B.i",
+       "text": "Antislavery movements increased in the North."
+      },
+      {
+       "code": "KC-4.1.III.C",
+       "text": "A women’s rights movement sought to create greater equality and opportunities for women, expressing its ideals at the Seneca Falls Convention. Over time, arguments emerged over whether to narrow the goals to white women."
+      }
+     ],
+     "p": 196,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "4.12",
+     "title": "African Americans in the Early Republic",
+     "skill": "3.D",
+     "skill_text": "Explain how claims or evidence support, modify, or refute a source’s argument.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.L",
+       "text": "Explain the continuities and changes in the experience of African Americans from 1800 to 1848."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1.III.B.ii",
+       "text": "Antislavery efforts in the South were largely limited to unsuccessful rebellions by enslaved people."
+      },
+      {
+       "code": "KC-4.1.II.D",
+       "text": "Enslaved blacks and free African Americans created communities and strategies to protect their dignity and family structures, and they joined political efforts aimed at changing their status."
+      }
+     ],
+     "p": 202,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "4.13",
+     "title": "The Society of the South in the Early Republic",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "GEO"
+     ],
+     "lo": [
+      {
+       "code": "LO 4.M",
+       "text": "Explain how geographic and environmental factors shaped the development of the South from 1800 to 1848."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.3.II.B.ii",
+       "text": "In the South, although the majority of Southerners owned no enslaved persons, most leaders argued that slavery was part of the Southern way of life."
+      },
+      {
+       "code": "KC-4.2.III.C",
+       "text": "Southern business leaders continued to rely on the production and export of traditional agricultural staples, contributing to the growth of a distinctive Southern regional identity."
+      },
+      {
+       "code": "KC-4.3.II.A",
+       "text": "As overcultivation depleted arable land in the Southeast, slaveholders began relocating their plantations to more fertile lands west of the Appalachians, where the institution of slavery continued to grow."
+      }
+     ],
+     "p": 206,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "4.14",
+     "title": "Causation in Period 4",
+     "skill": "6.C",
+     "skill_text": "Use historical reasoning to explain relationships among pieces of historical evidence.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 4.N",
+       "text": "Explain the extent to which politics, economics, and foreign policy promoted the development of American identity from 1800 to 1848. REVIEW: UNIT 4 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-4.1",
+       "text": "The United States began to develop a modern democracy and celebrated a new national culture, while Americans sought to define the nation’s democratic ideals and change their society and institutions to match them."
+      },
+      {
+       "code": "KC-4.1.I",
+       "text": "The nation’s transition to a more participatory democracy was achieved by expanding suffrage from a system based on property ownership to one based on voting by all adult white men, and it was accompanied by the growth of political parties."
+      },
+      {
+       "code": "KC-4.1.II",
+       "text": "While Americans embraced a new national culture, various groups developed distinctive cultures of their own."
+      },
+      {
+       "code": "KC-4.1.III",
+       "text": "Increasing numbers of Americans, many inspired by new religious and intellectual movements, worked primarily outside of government institutions to advance their ideals. continued on next page"
+      },
+      {
+       "code": "KC-4.2",
+       "text": "Innovations in technology, agriculture, and commerce powerfully accelerated the American economy, precipitating profound changes to U.S. society and to national and regional identities."
+      },
+      {
+       "code": "KC-4.2.I",
+       "text": "New transportation systems and technologies dramatically expanded manufacturing and agricultural production."
+      },
+      {
+       "code": "KC-4.2.II",
+       "text": "The changes caused by the market revolution had significant effects on U.S. society, workers’ lives, and gender and family relations."
+      },
+      {
+       "code": "KC-4.2.III",
+       "text": "Economic development shaped settlement and trade patterns, helping to unify the nation while also encouraging the growth of different regions."
+      },
+      {
+       "code": "KC-4.3",
+       "text": "The U.S. interest in increasing foreign trade and expanding its national borders shaped the nation’s foreign policy and spurred government and private initiatives."
+      },
+      {
+       "code": "KC-4.3.I",
+       "text": "Struggling to create an independent global presence, the United States sought to claim territory throughout the North American continent and promote foreign trade."
+      },
+      {
+       "code": "KC-4.3.II",
+       "text": "The United States’ acquisition of lands in the West gave rise to contests over the extension of slavery into new territories."
+      }
+     ],
+     "p": 209,
+     "reasoning": "Causation",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u5",
+   "n": 5,
+   "title": "Period 5: 1844–1877",
+   "weight": "10–17%",
+   "check": "Progress check · 30 multiple choice · 2 short answer · 2 free response (Secondary source (2 sources), No stimulus, Long essay (partial), Document-based (partial))",
+   "topics": [
+    {
+     "code": "5.1",
+     "title": "Contextualizing Period 5",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context. Spend a class period helping students understand some contexts for this unit. Considering this unit’s key concepts (previewed below), select one or two for which your students will most need context. To understand context, your students could examine:",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 5.A",
+       "text": "Explain the context in which sectional conflict emerged from 1844 to 1877. PREVIEW: UNIT 5 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.1",
+       "text": "The United States became more connected with the world, pursued an expansionist foreign policy in the Western Hemisphere, and emerged as the destination for many migrants from other countries."
+      },
+      {
+       "code": "KC-5.1.I",
+       "text": "Popular enthusiasm for U.S. expansion, bolstered by economic and security interests, resulted in the acquisition of new territories, substantial migration westward, and new overseas initiatives."
+      },
+      {
+       "code": "KC-5.1.II",
+       "text": "In the 1840s and 1850s, Americans continued to debate questions about rights and citizenship for various groups of U.S. inhabitants. continued on next page"
+      },
+      {
+       "code": "KC-5.2",
+       "text": "Intensified by expansion and deepening regional divisions, debates over slavery and other economic, cultural, and political issues led the nation into civil war."
+      },
+      {
+       "code": "KC-5.2.I",
+       "text": "Ideological and economic differences over slavery produced an array of diverging responses from Americans in the North and the South."
+      },
+      {
+       "code": "KC-5.2.II",
+       "text": "Debates over slavery came to dominate political discussion in the 1850s, culminating in the bitter election of 1860 and the secession of Southern states."
+      },
+      {
+       "code": "KC-5.3",
+       "text": "The Union victory in the Civil War and the contested reconstruction of the South settled the issues of slavery and secession, but left unresolved many questions about the power of the federal government and citizenship rights."
+      },
+      {
+       "code": "KC-5.3.I",
+       "text": "The North’s greater manpower and industrial resources, the leadership of Abraham Lincoln and others, and the decision to emancipate enslaved people eventually led to the Union military victory over the Confederacy in the devastating Civil War."
+      },
+      {
+       "code": "KC-5.3.II.i",
+       "text": "Reconstruction and the Civil War ended slavery, altered relationships between the states and the federal government, and led to debates over new definitions of citizenship, particularly regarding the rights of African Americans, women, and other minorities."
+      }
+     ],
+     "p": 216,
+     "reasoning": null,
+     "verified": "ced"
+    },
+    {
+     "code": "5.2",
+     "title": "Manifest Destiny",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "GEO"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.B",
+       "text": "Explain the causes and effects of westward expansion from 1844 to 1877."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.1.I.A",
+       "text": "The desire for access to natural and mineral resources and the hope of many settlers for economic opportunities or religious refuge led to an increased migration to and settlement in the West."
+      },
+      {
+       "code": "KC-5.1.I.B",
+       "text": "Advocates of annexing western lands argued that Manifest Destiny and the superiority of American institutions compelled the United States to expand its borders westward to the Pacific Ocean; however, this frequently provoked competition and violent conflict."
+      },
+      {
+       "code": "KC-5.1.I.D",
+       "text": "Westward migration was boosted during and after the Civil War by the passage of new legislation promoting western transportation and economic development."
+      },
+      {
+       "code": "KC-5.1.I.E",
+       "text": "U.S. interest in expanding trade led to economic, diplomatic, and cultural initiatives to create more ties with Asia. Initiatives to create more ties with Asia:"
+      }
+     ],
+     "p": 219,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "5.3",
+     "title": "The Mexican–American War",
+     "skill": "3.C",
+     "skill_text": "Compare the arguments or main ideas of two sources.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.C",
+       "text": "Explain the causes and effects of the Mexican– American War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.1.I.C",
+       "text": "The United States added large territories in the West through victory in the Mexican– American War and diplomatic negotiations, raising questions about the status of slavery, American Indians, and Mexicans in the newly acquired lands."
+      },
+      {
+       "code": "KC-5.1.II.C",
+       "text": "U.S. government interaction and conflict with Mexican Americans and American Indians increased in regions newly taken from American Indians and Mexico, altering these groups’ economic self-sufficiency and cultures."
+      }
+     ],
+     "p": 223,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "5.4",
+     "title": "The Compromise of 1850",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "NAT"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.D",
+       "text": "Explain the similarities and differences in how regional attitudes affected federal policy in the period after the Mexican–American War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.2.II.A",
+       "text": "The Mexican Cession led to heated controversies over whether to allow slavery in the newly acquired territories."
+      },
+      {
+       "code": "KC-5.2.II.B.i",
+       "text": "The courts and national leaders made a variety of attempts to resolve the issue of slavery in the territories, including the Compromise of 1850."
+      }
+     ],
+     "p": 227,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "5.5",
+     "title": "Sectional Conflict: Regional Differences",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "ARC",
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.E",
+       "text": "Explain the effects of immigration from various parts of the world on American culture from 1844 to 1877."
+      },
+      {
+       "code": "LO 5.F",
+       "text": "Explain how regional differences related to slavery caused tension in the years leading up to the Civil War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.1.II.A",
+       "text": "Substantial numbers of international migrants continued to arrive in the United States from Europe and Asia, mainly from Ireland and Germany, often settling in ethnic communities where they could preserve elements of their languages and customs."
+      },
+      {
+       "code": "KC-5.1.II.B",
+       "text": "A strongly anti-Catholic nativist movement arose that was aimed at limiting new immigrants’ political power and cultural influence. continued on next page"
+      },
+      {
+       "code": "KC-5.2.I.A",
+       "text": "The North’s expanding manufacturing economy relied on free labor in contrast to the Southern economy’s dependence on enslaved labor. Some Northerners did not object to slavery on principle but claimed that slavery would undermine the free labor market. As a result, a free-soil movement arose that portrayed the expansion of slavery as incompatible with free labor."
+      },
+      {
+       "code": "KC-5.2.I.B",
+       "text": "African American and white abolitionists, although a minority in the North, mounted a highly visible campaign against slavery, presenting moral arguments against the institution, assisting escapes, and sometimes expressing a willingness to use violence to achieve their goals. Abolitionists:"
+      },
+      {
+       "code": "KC-5.2.I.C",
+       "text": "Defenders of slavery based their arguments on racial doctrines, the view that slavery was a positive social good, and the belief that slavery and states’ rights were protected by the Constitution. Defenses of slavery:"
+      }
+     ],
+     "p": 230,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "5.6",
+     "title": "Failure of Compromise",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.G",
+       "text": "Explain the political causes of the Civil War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.2.II.B.ii",
+       "text": "The courts and national leaders made a variety of attempts to resolve the issue of slavery in the territories, including the Kansas–Nebraska Act, and the Dred Scott decision, but these ultimately failed to reduce conflict."
+      },
+      {
+       "code": "KC-5.2.II.C",
+       "text": "The Second Party System ended when the issues of slavery and anti-immigrant nativism weakened loyalties to the two major parties and fostered the emergence of sectional parties, most notably the Republican Party in the North."
+      }
+     ],
+     "p": 236,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "5.7",
+     "title": "Election of 1860 and Secession",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.H",
+       "text": "Describe the effects of Lincoln’s election."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.2.II.D",
+       "text": "Abraham Lincoln’s victory on the Republicans’ free-soil platform in the presidential election of 1860 was accomplished without any Southern electoral votes. After a series of contested debates about secession, most slave states voted to secede from the Union, precipitating the Civil War."
+      }
+     ],
+     "p": 239,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "5.8",
+     "title": "Military Conflict in the Civil War",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.I",
+       "text": "Explain the various factors that contributed to the Union victory in the Civil War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.3.I.A",
+       "text": "Both the Union and the Confederacy mobilized their economies and societies to wage the war even while facing considerable home front opposition."
+      },
+      {
+       "code": "KC-5.3.I.D",
+       "text": "Although the Confederacy showed military initiative and daring early in the war, the Union ultimately succeeded due to improvements in leadership and strategy, key victories, greater resources, and the wartime destruction of the South’s infrastructure."
+      }
+     ],
+     "p": 242,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "5.9",
+     "title": "Government Policies During the Civil War",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "NAT"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.J",
+       "text": "Explain how Lincoln’s leadership during the Civil War impacted American ideals over the course of the war."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.3.I.B",
+       "text": "Lincoln and most Union supporters began the Civil War to preserve the Union, but Lincoln’s decision to issue the Emancipation Proclamation reframed the purpose of the war and helped prevent the Confederacy from gaining full diplomatic support from European powers. Many African Americans fled southern plantations and enlisted in the Union Army, helping to undermine the Confederacy."
+      },
+      {
+       "code": "KC-5.3.I.C",
+       "text": "Lincoln sought to reunify the country and used speeches such as the Gettysburg Address to portray the struggle against slavery as the fulfillment of America’s founding democratic ideals."
+      }
+     ],
+     "p": 246,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "5.10",
+     "title": "Reconstruction",
+     "skill": "3.D",
+     "skill_text": "Explain how claims or evidence support, modify, or refute a source’s argument.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.K",
+       "text": "Explain the effects of government policy during Reconstruction on society from 1865 to 1877."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.3.II.ii",
+       "text": "Reconstruction altered relationships between the states and the federal government and led to debates over new definitions of citizenship, particularly regarding the rights of African Americans, women, and other minorities."
+      },
+      {
+       "code": "KC-5.3.II.A",
+       "text": "The 13th Amendment abolished slavery, while the 14th and 15th amendments granted African Americans citizenship, equal protection under the laws, and voting rights."
+      },
+      {
+       "code": "KC-5.3.II.B",
+       "text": "The women’s rights movement was both emboldened and divided over the 14th and 15th amendments to the Constitution. Emboldened and divided women’s rights movement:"
+      },
+      {
+       "code": "KC-5.3.II.C",
+       "text": "Efforts by radical and moderate Republicans to change the balance of power between Congress and the presidency and to reorder race relations in the defeated South yielded some short-term successes. Reconstruction opened up political opportunities and other leadership roles to formerly enslaved persons but it ultimately failed, due both to determined Southern resistance and the North’s waning resolve. Efforts to reorder race relations:"
+      }
+     ],
+     "p": 249,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "5.11",
+     "title": "Failure of Reconstruction",
+     "skill": "3.C",
+     "skill_text": "Compare the arguments or main ideas of two sources.",
+     "theme": [
+      "NAT"
+     ],
+     "lo": [
+      {
+       "code": "LO 5.L",
+       "text": "Explain how and why Reconstruction resulted in continuity and change in regional and national understandings of what it meant to be American."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.3.II.D",
+       "text": "Southern plantation owners continued to own the majority of the region’s land even after Reconstruction. Formerly enslaved persons sought land ownership but generally fell short of self-sufficiency, as an exploitative and soil-intensive sharecropping system limited blacks’ and poor whites’ access to land in the South."
+      },
+      {
+       "code": "KC-5.3.II.E",
+       "text": "Segregation, violence, Supreme Court decisions, and local political tactics progressively stripped away African American rights, but the 14th and 15th amendments eventually became the basis for court decisions upholding civil rights in the 20th century."
+      }
+     ],
+     "p": 254,
+     "reasoning": null,
+     "verified": "ced"
+    },
+    {
+     "code": "5.12",
+     "title": "Comparison in Period 5",
+     "skill": "6.C",
+     "skill_text": "Use historical reasoning to explain relationships among pieces of historical evidence.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 5.M",
+       "text": "Compare the relative significance of the effects of the Civil War on American values. REVIEW: UNIT 5 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-5.1",
+       "text": "The United States became more connected with the world, pursued an expansionist foreign policy in the Western Hemisphere, and emerged as the destination for many migrants from other countries."
+      },
+      {
+       "code": "KC-5.1.I",
+       "text": "Popular enthusiasm for U.S. expansion, bolstered by economic and security interests, resulted in the acquisition of new territories, substantial migration westward, and new overseas initiatives."
+      },
+      {
+       "code": "KC-5.1.II",
+       "text": "In the 1840s and 1850s, Americans continued to debate questions about rights and citizenship for various groups of U.S. inhabitants. continued on next page"
+      },
+      {
+       "code": "KC-5.2",
+       "text": "Intensified by expansion and deepening regional divisions, debates over slavery and other economic, cultural, and political issues led the nation into civil war."
+      },
+      {
+       "code": "KC-5.2.I",
+       "text": "Ideological and economic differences over slavery produced an array of diverging responses from Americans in the North and the South."
+      },
+      {
+       "code": "KC-5.2.II",
+       "text": "Debates over slavery came to dominate political discussion in the 1850s, culminating in the bitter election of 1860 and the secession of Southern states."
+      },
+      {
+       "code": "KC-5.3",
+       "text": "The Union victory in the Civil War and the contested reconstruction of the South settled the issues of slavery and secession, but left unresolved many questions about the power of the federal government and citizenship rights."
+      },
+      {
+       "code": "KC-5.3.I",
+       "text": "The North’s greater manpower and industrial resources, the leadership of Abraham Lincoln and others, and the decision to emancipate enslaved people eventually led to the Union military victory over the Confederacy in the devastating Civil War."
+      },
+      {
+       "code": "KC-5.3.II.i",
+       "text": "Reconstruction and the Civil War ended slavery, altered relationships between the states and the federal government, and led to debates over new definitions of citizenship, particularly regarding the rights of African Americans, women, and other minorities."
+      }
+     ],
+     "p": 258,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u6",
+   "n": 6,
+   "title": "Period 6: 1865–1898",
+   "weight": "10–17%",
+   "check": "Progress check · 35 multiple choice · 2 short answer · 1 free response (No stimulus, Primary source, Document-based (partial))",
+   "topics": [
+    {
+     "code": "6.1",
+     "title": "Contextualizing Period 6",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context. continued on next page Spend a class period helping students understand some contexts for this unit. Considering this unit’s key concepts (previewed below), select one or two for which your students will most need context. To understand context, your students could examine:",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 6.A",
+       "text": "Explain the historical context for the rise of industrial capitalism in the United States. PREVIEW: UNIT 6 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1",
+       "text": "Technological advances, large-scale production methods, and the opening of new markets encouraged the rise of industrial capitalism in the United States."
+      },
+      {
+       "code": "KC-6.1.I",
+       "text": "Large-scale industrial production— accompanied by massive technological change, expanding international communication networks, and pro-growth government policies—generated rapid economic development and business consolidation."
+      },
+      {
+       "code": "KC-6.1.II",
+       "text": "A variety of perspectives on the economy and labor developed during a time of financial panics and downturns."
+      },
+      {
+       "code": "KC-6.1.III",
+       "text": "New systems of production and transportation enabled consolidation within agriculture, which, along with periods of instability, spurred a variety of responses from farmers."
+      },
+      {
+       "code": "KC-6.2",
+       "text": "The migrations that accompanied industrialization transformed both urban and rural areas of the United States and caused dramatic social and cultural change."
+      },
+      {
+       "code": "KC-6.2.I",
+       "text": "International and internal migration increased urban populations and fostered the growth of a new urban culture."
+      },
+      {
+       "code": "KC-6.2.II",
+       "text": "Larger numbers of migrants moved to the West in search of land and economic opportunity, frequently provoking competition and violent conflict."
+      },
+      {
+       "code": "KC-6.3",
+       "text": "The Gilded Age produced new cultural and intellectual movements, public reform efforts, and political debates over economic and social policies."
+      },
+      {
+       "code": "KC-6.3.I",
+       "text": "New cultural and intellectual movements both buttressed and challenged the social order of the Gilded Age."
+      },
+      {
+       "code": "KC-6.3.II",
+       "text": "Dramatic social changes in the period inspired political debates over citizenship, corruption, and the proper relationship between business and government."
+      }
+     ],
+     "p": 266,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "6.2",
+     "title": "Westward Expansion: Economic Development",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.B",
+       "text": "Explain the causes and effects of the settlement of the West from 1877 to 1898."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.III.A",
+       "text": "Improvements in mechanization helped agricultural production increase substantially and contributed to declines in food prices."
+      },
+      {
+       "code": "KC-6.1.III.B",
+       "text": "Many farmers responded to the increasing consolidation in agricultural markets and their dependence on the evolving railroad system by creating local and regional cooperative organizations."
+      },
+      {
+       "code": "KC-6.1.I.A",
+       "text": "Following the Civil War, government subsidies for transportation and communication systems helped open new markets in North America."
+      },
+      {
+       "code": "KC-6.2.II.A",
+       "text": "The building of transcontinental railroads, the discovery of mineral resources, and government policies promoted economic growth and created new communities and centers of commercial activity. New communities and centers of commercial activity:"
+      }
+     ],
+     "p": 269,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "6.3",
+     "title": "Westward Expansion: Social and Cultural Development",
+     "skill": "3.C",
+     "skill_text": "Compare the arguments or main ideas of two sources.",
+     "theme": [
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.B",
+       "text": "Explain the causes and effects of the settlement of the West from 1877 to 1898."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.2.II.B",
+       "text": "In hopes of achieving ideals of self-sufficiency and independence, migrants moved to both rural and boomtown areas of the West for opportunities, such as building the railroads, mining, farming, and ranching."
+      },
+      {
+       "code": "KC-6.2.II.C",
+       "text": "As migrant populations increased in number and the American bison population was decimated, competition for land and resources in the West among white settlers, American Indians, and Mexican Americans led to an increase in violent conflict."
+      },
+      {
+       "code": "KC-6.2.II.D",
+       "text": "The U.S. government violated treaties with American Indians and responded to resistance with military force, eventually confining American Indians to reservations and denying tribal sovereignty."
+      },
+      {
+       "code": "KC-6.2.II.E",
+       "text": "Many American Indians preserved their cultures and tribal identities despite government policies promoting assimilation, and they attempted to develop self-sustaining economic practices. Preservation of culture and tribal identities:"
+      }
+     ],
+     "p": 273,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "6.4",
+     "title": "The “New South”",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "NAT"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.C",
+       "text": "Explain how various factors contributed to continuity and change in the “New South” from 1877 to 1898."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.II.D",
+       "text": "Despite the industrialization of some segments of the Southern economy—a change promoted by Southern leaders who called for a “New South”—agriculture based on sharecropping and tenant farming continued to be the primary economic activity in the South."
+      },
+      {
+       "code": "KC-6.3.II.C",
+       "text": "The Supreme Court decision in Plessy v. Ferguson that upheld racial segregation (known as Jim Crow) helped to mark the end of most of the political gains African Americans made during Reconstruction. Facing increased violence, discrimination, and scientific theories of race, African American reformers continued to fight for political and social equality."
+      }
+     ],
+     "p": 277,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "6.5",
+     "title": "Technological Innovation",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.D",
+       "text": "Explain the effects of technological advances in the development of the United States over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.I.B.i",
+       "text": "Businesses made use of technological innovations and greater access to natural resources to dramatically increase the production of goods."
+      }
+     ],
+     "p": 281,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "6.6",
+     "title": "The Rise of Industrial Capitalism",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.E",
+       "text": "Explain the socioeconomic continuities and changes associated with the growth of industrial capitalism from 1865 to 1898."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.I",
+       "text": "Large-scale industrial production— accompanied by massive technological change, expanding international communication networks, pro-growth government policies—generated rapid economic development and business consolidation."
+      },
+      {
+       "code": "KC-6.1.I.B.ii",
+       "text": "Businesses made use of redesigned financial and management structures, advances in marketing, and a growing labor force to dramatically increase the production of goods."
+      },
+      {
+       "code": "KC-6.1.I.D",
+       "text": "Many business leaders sought increased profits by consolidating corporations into large trusts and holding companies, which further concentrated wealth. Large trusts and holding companies:"
+      },
+      {
+       "code": "KC-6.1.I.E.i",
+       "text": "Businesses increasingly looked outside U.S. borders in an effort to gain greater influence and control over markets and natural resources in the Pacific Rim, Asia, and Latin America. Business outside the United States:"
+      }
+     ],
+     "p": 284,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "6.7",
+     "title": "Labor in the Gilded Age",
+     "skill": "6.C",
+     "skill_text": "Use historical reasoning to explain relationships among pieces of historical evidence.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.E",
+       "text": "Explain the socioeconomic continuities and changes associated with the growth of industrial capitalism from 1865 to 1898."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.I.C",
+       "text": "As the price of many goods decreased, workers’ real wages increased, providing new access to a variety of goods and services; many Americans’ standards of living improved, while the gap between rich and poor grew."
+      },
+      {
+       "code": "KC-6.1.II.C",
+       "text": "Labor and management battled over wages and working conditions, with workers organizing local and national unions and/or directly confronting business leaders."
+      },
+      {
+       "code": "KC-6.1.II.B.i",
+       "text": "The industrial workforce expanded and child labor increased."
+      }
+     ],
+     "p": 288,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "6.8",
+     "title": "Immigration and Migration in the Gilded Age",
+     "skill": "3.C",
+     "skill_text": "Compare the arguments or main ideas of two sources.",
+     "theme": [
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.F",
+       "text": "Explain how cultural and economic factors affected migration patterns over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.II.B.ii",
+       "text": "The industrial workforce expanded and became more diverse through internal and international migration."
+      },
+      {
+       "code": "KC-6.2.I.A",
+       "text": "As cities became areas of economic growth featuring new factories and businesses, they attracted immigrants from Asia and southern and eastern Europe, as well as African American migrants within and out of the South. Many migrants moved to escape poverty, religious persecution, and limited opportunities for social mobility in their home countries or regions."
+      },
+      {
+       "code": "KC-6.2.I.B",
+       "text": "Urban neighborhoods based on particular ethnicities, races, and classes provided new cultural opportunities for city dwellers."
+      }
+     ],
+     "p": 292,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "6.9",
+     "title": "Responses to Immigration in the Gilded Age",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.G",
+       "text": "Explain the various responses to immigration in the period over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.2.I.C",
+       "text": "Increasing public debates over assimilation and Americanization accompanied the growth of international migration. Many immigrants negotiated compromises between the cultures they brought and the culture they found in the United States."
+      },
+      {
+       "code": "KC-6.3.I.A",
+       "text": "Social commentators advocated theories later described as Social Darwinism to justify the success of those at the top of the socioeconomic structure as both appropriate and inevitable."
+      },
+      {
+       "code": "KC-6.3.II.B.i",
+       "text": "Many women, like Jane Addams, worked in settlement houses to help immigrants adapt to U.S. language and customs. Settlement houses:"
+      }
+     ],
+     "p": 295,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "6.10",
+     "title": "Development of the Middle Class",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.H",
+       "text": "Explain the causes of increased economic opportunity and its effects on society."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.2.I.E",
+       "text": "Corporations’ need for managers and for male and female clerical workers, as well as increased access to educational institutions, fostered the growth of a distinctive middle class. A growing amount of leisure time also helped expand consumer culture."
+      },
+      {
+       "code": "KC-6.3.I.B",
+       "text": "Some business leaders argued that the wealthy had a moral obligation to help the less fortunate and improve society, as articulated in the idea known as the Gospel of Wealth, and they made philanthropic contributions that enhanced educational opportunities and urban environments."
+      }
+     ],
+     "p": 299,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "6.11",
+     "title": "Reform in the Gilded Age",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.I",
+       "text": "Explain how different reform movements responded to the rise of industrial capitalism in the Gilded Age."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.3.I.C",
+       "text": "A number of artists and critics, including agrarians, utopians, socialists, and advocates of the Social Gospel, championed alternative visions for the economy and U.S. society."
+      },
+      {
+       "code": "KC-6.3.II.B.ii",
+       "text": "Many women sought greater equality with men, often joining voluntary organizations, going to college, and promoting social and political reform."
+      }
+     ],
+     "p": 303,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "6.12",
+     "title": "Controversies over the Role of Government in the Gilded Age",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.J",
+       "text": "Explain continuities and changes in the role of the government in the U.S. economy."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.II.A",
+       "text": "Some argued that laissez-faire policies and competition promoted economic growth in the long run, and they opposed government intervention during economic downturns."
+      },
+      {
+       "code": "KC-6.1.I.E.ii",
+       "text": "Foreign policymakers increasingly looked outside U.S. borders in an effort to gain greater influence and control over markets and natural resources in the Pacific Rim, Asia, and Latin America."
+      }
+     ],
+     "p": 308,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "6.13",
+     "title": "Politics in the Gilded Age",
+     "skill": "3.D",
+     "skill_text": "Explain how claims or evidence support, modify, or refute a source’s argument.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 6.K",
+       "text": "Explain the similarities and differences between the political parties during the Gilded Age."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1.III.C",
+       "text": "Economic instability inspired agrarian activists to create the People’s (Populist) Party, which called for a stronger governmental role in regulating the American economic system."
+      },
+      {
+       "code": "KC-6.3.II.A",
+       "text": "The major political parties appealed to lingering divisions from the Civil War and contended over tariffs and currency issues, even as reformers argued that economic greed and self-interest had corrupted all levels of government."
+      },
+      {
+       "code": "KC-6.2.I.D",
+       "text": "In an urban atmosphere where the access to power was unequally distributed, political machines thrived, in part by providing immigrants and the poor with social services."
+      }
+     ],
+     "p": 311,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "6.14",
+     "title": "Continuity and Change Period 6",
+     "skill": "6.D",
+     "skill_text": "Corroborate, qualify, or modify an argument using diverse and alternative evidence in order to develop a complex argument. This argument might:",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 6.L",
+       "text": "Explain the extent to which industrialization brought change from 1865 to 1898. REVIEW: UNIT 6 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-6.1",
+       "text": "Technological advances, large-scale production methods, and the opening of new markets encouraged the rise of industrial capitalism in the United States."
+      },
+      {
+       "code": "KC-6.1.I",
+       "text": "Large-scale industrial production— accompanied by massive technological change, expanding international communication networks, and pro-growth government policies—generated rapid economic development and business consolidation."
+      },
+      {
+       "code": "KC-6.1.II",
+       "text": "A variety of perspectives on the economy and labor developed during a time of financial panics and downturns."
+      },
+      {
+       "code": "KC-6.1.III",
+       "text": "New systems of production and transportation enabled consolidation within agriculture, which, along with periods of instability, spurred a variety of responses from farmers. continued on next page"
+      },
+      {
+       "code": "KC-6.2",
+       "text": "The migrations that accompanied industrialization transformed both urban and rural areas of the United States and caused dramatic social and cultural change."
+      },
+      {
+       "code": "KC-6.2.I",
+       "text": "International and internal migration increased urban populations and fostered the growth of a new urban culture."
+      },
+      {
+       "code": "KC-6.2.II",
+       "text": "Larger numbers of migrants moved to the West in search of land and economic opportunity, frequently provoking competition and violent conflict."
+      },
+      {
+       "code": "KC-6.3",
+       "text": "The Gilded Age produced new cultural and intellectual movements, public reform efforts, and political debates over economic and social policies."
+      },
+      {
+       "code": "KC-6.3.I",
+       "text": "New cultural and intellectual movements both buttressed and challenged the social order of the Gilded Age."
+      },
+      {
+       "code": "KC-6.3.II",
+       "text": "Dramatic social changes in the period inspired political debates over citizenship, corruption, and the proper relationship between business and government."
+      }
+     ],
+     "p": 314,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u7",
+   "n": 7,
+   "title": "Period 7: 1890–1945",
+   "weight": "10–17%",
+   "check": "Progress check · 40 multiple choice · 2 short answer · 1 free response (Secondary source, No stimulus, Document-based)",
+   "topics": [
+    {
+     "code": "7.1",
+     "title": "Contextualizing Period 7",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context. continued on next page Spend a class period helping students understand some contexts for this unit. Considering this unit’s key concepts (previewed below), select one or two for which your students will most need context. To understand context, your students could examine:",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 7.A",
+       "text": "Explain the context in which America grew into its role as a world power. PREVIEW: UNIT 7 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.1",
+       "text": "Growth expanded opportunity, while economic instability led to new efforts to reform U.S. society and its economic system."
+      },
+      {
+       "code": "KC-7.1.I",
+       "text": "The United States continued its transition from a rural, agricultural economy to an urban, industrial economy led by large companies."
+      },
+      {
+       "code": "KC-7.1.II",
+       "text": "In the Progressive Era of the early 20th century, Progressives responded to political corruption, economic instability, and social concerns by calling for greater government action and other political and social measures."
+      },
+      {
+       "code": "KC-7.1.III",
+       "text": "During the 1930s, policymakers responded to the mass unemployment and social upheavals of the Great Depression by transforming the U.S. into a limited welfare state, redefining the goals and ideas of modern American liberalism."
+      },
+      {
+       "code": "KC-7.2",
+       "text": "Innovations in communications and technology contributed to the growth of mass culture, while significant changes occurred in internal and international migration patterns."
+      },
+      {
+       "code": "KC-7.2.I",
+       "text": "Popular culture grew in influence in U.S. society, even as debates increased over the effects of culture on public values, morals, and American national identity."
+      },
+      {
+       "code": "KC-7.2.II",
+       "text": "Economic pressures, global events, and political developments caused sharp variations in the numbers, sources, and experiences of both international and internal migrants."
+      },
+      {
+       "code": "KC-7.3",
+       "text": "Participation in a series of global conflicts propelled the United States into a position of international power while renewing domestic debates over the nation’s proper role in the world."
+      },
+      {
+       "code": "KC-7.3.I",
+       "text": "In the late 19th century and early 20th century, new U.S. territorial ambitions and acquisitions in the Western Hemisphere and the Pacific accompanied heightened public debates over America’s role in the world."
+      },
+      {
+       "code": "KC-7.3.II",
+       "text": "World War I and its aftermath intensified ongoing debates about the nation’s role in the world and how best to achieve national security and pursue American interests."
+      },
+      {
+       "code": "KC-7.3.III",
+       "text": "U.S. participation in World War II transformed American society, while the victory of the United States and its allies over the Axis powers vaulted the U.S. into a position of global, political, and military leadership."
+      }
+     ],
+     "p": 322,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "7.2",
+     "title": "Imperialism: Debates",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.B",
+       "text": "Explain the similarities and differences in attitudes about the nation’s proper role in the world."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.3.I.A",
+       "text": "Imperialists cited economic opportunities, racial theories, competition with European empires, and the perception in the 1890s that the western frontier was “closed” to argue that Americans were destined to expand their culture and institutions to peoples around the globe."
+      },
+      {
+       "code": "KC-7.3.I.B",
+       "text": "Anti-imperialists cited principles of self-determination and invoked both racial theories and the U.S. foreign policy tradition of isolationism to argue that the United States should not extend its territory overseas."
+      }
+     ],
+     "p": 326,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "7.3",
+     "title": "The Spanish–American War",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.C",
+       "text": "Explain the effects of the Spanish–American War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.3.I.C",
+       "text": "The American victory in the Spanish–American War led to the U.S. acquisition of island territories in the Caribbean and the Pacific, an increase in involvement in Asia, and the suppression of a nationalist movement in the Philippines."
+      }
+     ],
+     "p": 330,
+     "reasoning": null,
+     "verified": "ced"
+    },
+    {
+     "code": "7.4",
+     "title": "The Progressives",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "PCE",
+      "GEO"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.D",
+       "text": "Compare the goals and effects of the Progressive reform movement."
+      },
+      {
+       "code": "LO 7.E",
+       "text": "Compare attitudes toward the use of natural resources from 1890 to 1945."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.1.II.A",
+       "text": "Some Progressive Era journalists attacked what they saw as political corruption, social injustice, and economic inequality, while reformers, often from the middle and upper classes and including many women, worked to effect social changes in cities and among immigrant populations."
+      },
+      {
+       "code": "KC-7.1.II.D",
+       "text": "The Progressives were divided over many issues. Some Progressives supported Southern segregation, while others ignored its presence. Some Progressives advocated expanding popular participation in government, while others called for greater reliance on professional and technical experts to make government more efficient. Progressives also disagreed about immigration restriction."
+      },
+      {
+       "code": "KC-7.1.II.B",
+       "text": "On the national level, Progressives sought federal legislation that they believed would effectively regulate the economy, expand democracy, and generate moral reform. Progressive amendments to the Constitution dealt with issues such as prohibition and women’s suffrage."
+      },
+      {
+       "code": "KC-7.1.II.C",
+       "text": "Preservationists and conservationists both supported the establishment of national parks while advocating different government responses to the overuse of natural resources. Preservationists and conservationists:"
+      }
+     ],
+     "p": 334,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "7.5",
+     "title": "World War I: Military and Diplomacy",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.F",
+       "text": "Explain the causes and consequences of U.S. involvement in World War I."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.3.II.A",
+       "text": "After initial neutrality in World War I, the nation entered the conflict, departing from the U.S. foreign policy tradition of noninvolvement in European affairs, in response to Woodrow Wilson’s call for the defense of humanitarian and democratic principles."
+      },
+      {
+       "code": "KC-7.3.II.B",
+       "text": "Although the American Expeditionary Forces played a relatively limited role in combat, the United States’ entry helped to tip the balance of the conflict in favor of the Allies."
+      },
+      {
+       "code": "KC-7.3.II.C",
+       "text": "Despite Wilson’s deep involvement in postwar negotiations, the U.S. Senate refused to ratify the Treaty of Versailles or join the League of Nations."
+      }
+     ],
+     "p": 339,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.6",
+     "title": "World War I: Home Front",
+     "skill": "3.D",
+     "skill_text": "Explain how claims or evidence support, modify, or refute a source’s argument.",
+     "theme": [
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.G",
+       "text": "Explain the causes and effects of international and internal migration patterns over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.2.I.C",
+       "text": "Official restrictions on freedom of speech grew during World War I, as increased anxiety about radicalism led to a Red Scare and attacks on labor activism and immigrant culture."
+      },
+      {
+       "code": "KC-7.2.II.A.i",
+       "text": "Immigration from Europe reached its peak in the years before World War I. During World War I, nativist campaigns against some ethnic groups led to the passage of quotas that restricted immigration, particularly from southern and eastern Europe, and increased barriers to Asian immigration."
+      },
+      {
+       "code": "KC-7.2.II.B.i",
+       "text": "The increased demand for war production and labor during World War I led many Americans to migrate to urban centers in search of economic opportunities."
+      },
+      {
+       "code": "KC-7.2.II.C",
+       "text": "In the Great Migration during and after World War I, African Americans escaping segregation, racial violence, and limited economic opportunity in the South moved to the North and West, where they found new opportunities but still encountered discrimination. Discrimination during the Great Migration:"
+      }
+     ],
+     "p": 342,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.7",
+     "title": "1920s: Innovations in Communication and Technology",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.H",
+       "text": "Explain the causes and effects of the innovations in communication and technology in the United States over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.1.I.A",
+       "text": "New technologies and manufacturing techniques helped focus the U.S. economy on the production of consumer goods, contributing to improved standards of living, greater personal mobility, and better communications systems."
+      },
+      {
+       "code": "KC-7.2.I.A",
+       "text": "New forms of mass media, such as radio and cinema, contributed to the spread of national culture as well as greater awareness of regional cultures."
+      }
+     ],
+     "p": 346,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.8",
+     "title": "1920s: Cultural and Political Controversies",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "MIG",
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.G",
+       "text": "Explain the causes and effects of international and internal migration patterns over time."
+      },
+      {
+       "code": "LO 7.I",
+       "text": "Explain the causes and effects of developments in popular culture in the United States over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.1.I.B",
+       "text": "By 1920, a majority of the U.S. population lived in urban centers, which offered new economic opportunities for women, international migrants, and internal migrants."
+      },
+      {
+       "code": "KC-7.2.II.A.ii",
+       "text": "After World War I, nativist campaigns against some ethnic groups led to the passage of quotas that restricted immigration, particularly from southern and eastern Europe, and increased barriers to Asian immigration."
+      },
+      {
+       "code": "KC-7.2.I.B",
+       "text": "Migration gave rise to new forms of art and literature that expressed ethnic and regional identities, such as the Harlem Renaissance movement. Art and literature that expressed ethnic and regional identities:"
+      },
+      {
+       "code": "KC-7.2.I.D",
+       "text": "In the 1920s, cultural and political controversies emerged as Americans debated gender roles, modernism, science, religion, and issues related to race and immigration. Cultural and political debates:"
+      }
+     ],
+     "p": 349,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.9",
+     "title": "The Great Depression",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.J",
+       "text": "Explain the causes of the Great Depression and its effects on the economy."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.1.I",
+       "text": "The United States continued its transition from a rural, agricultural economy to an urban, industrial economy led by large companies."
+      },
+      {
+       "code": "KC-7.1.I.C",
+       "text": "Episodes of credit and market instability in the early 20th century, in particular the Great Depression, led to calls for a stronger financial regulatory system."
+      },
+      {
+       "code": "KC-7.1.III",
+       "text": "During the 1930s, policymakers responded to the mass unemployment and social upheavals of the Great Depression by transforming the U.S. into a limited welfare state, redefining the goals and ideas of modern American liberalism."
+      }
+     ],
+     "p": 355,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.10",
+     "title": "The New Deal",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.K",
+       "text": "Explain how the Great Depression and the New Deal impacted American political, social, and economic life over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.1.III.A",
+       "text": "Franklin Roosevelt’s New Deal attempted to end the Great Depression by using government power to provide relief to the poor, stimulate recovery, and reform the American economy."
+      },
+      {
+       "code": "KC-7.1.III.B",
+       "text": "Radical, union, and populist movements pushed Roosevelt toward more extensive efforts to change the American economic system, while conservatives in Congress and the Supreme Court sought to limit the New Deal’s scope. Efforts to limit the New Deal’s scope:"
+      },
+      {
+       "code": "KC-7.1.III.C",
+       "text": "Although the New Deal did not end the Depression, it left a legacy of reforms and regulatory agencies and fostered a long-term political realignment in which many ethnic groups, African Americans, and working-class communities identified with the Democratic Party. Legacy of reforms and regulatory agencies: Political realignment:"
+      },
+      {
+       "code": "KC-7.2.II.B.ii",
+       "text": "The increased demand for war production and labor during World War II and the economic difficulties of the 1930s led many Americans to migrate to urban centers in search of economic opportunities."
+      }
+     ],
+     "p": 358,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "7.11",
+     "title": "Interwar Foreign Policy",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.B",
+       "text": "Explain the similarities and differences in attitudes about the nation’s proper role in the world."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.3.II.D",
+       "text": "In the years following World War I, the United States pursued a unilateral foreign policy that used international investment, peace treaties, and select military intervention to promote a vision of international order, even while maintaining U.S. isolationism."
+      },
+      {
+       "code": "KC-7.3.II.E",
+       "text": "In the 1930s, while many Americans were concerned about the rise offascism and totalitarianism, most opposed taking military action against the aggression of Nazi Germany and Japan until the Japanese attack on Pearl Harbor drew the United States into World War II."
+      }
+     ],
+     "p": 362,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "7.12",
+     "title": "World War II: Mobilization",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.L",
+       "text": "Explain how and why U.S. participation in World War II transformed American society."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.3.III.B",
+       "text": "The mass mobilization of American society helped end the Great Depression, and the country’s strong industrial base played a pivotal role in winning the war by equipping and provisioning allies and millions of U.S. troops."
+      },
+      {
+       "code": "KC-7.3.III.C.i",
+       "text": "Mobilization provided opportunities for women and minorities to improve their socioeconomic positions for the war’s duration, while also leading to debates over racial segregation. Wartime experiences also generated challenges to civil liberties, such as the internment of Japanese Americans. Debates over racial segregation and challenges to civil liberties: Internment of Japanese Americans"
+      },
+      {
+       "code": "KC-7.2.II.D",
+       "text": "Migration to the United States from Mexico and elsewhere in the Western Hemisphere increased, in spite of contradictory government policies toward Mexican immigration. Migration to the United States from Mexico:"
+      }
+     ],
+     "p": 366,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.13",
+     "title": "World War II: Military",
+     "skill": "6.C",
+     "skill_text": "Use historical reasoning to explain relationships among pieces of historical evidence.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.M",
+       "text": "Explain the causes and effects of the victory of the United States and its allies over the Axis powers."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.3.III.A",
+       "text": "Americans viewed the war as a fight for the survival offreedom and democracy against fascist and militarist ideologies. This perspective was later reinforced by revelations about Japanese wartime atrocities, Nazi concentration camps, and the Holocaust."
+      },
+      {
+       "code": "KC-7.3.III.C.ii",
+       "text": "Military service provided opportunities for women and minorities to improve their socioeconomic positions for the war’s duration, while also leading to debates over racial segregation."
+      },
+      {
+       "code": "KC-7.3.III.D",
+       "text": "The United States and its allies achieved military victory through Allied cooperation, technological and scientific advances, the contributions of servicemen and women, and campaigns such as Pacific “island-hopping” and the D-Day invasion. The use of atomic bombs hastened the end of the war and sparked debates about the morality of using atomic weapons. Technological and scientific advances:"
+      }
+     ],
+     "p": 370,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.14",
+     "title": "Postwar Diplomacy",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 7.N",
+       "text": "Explain the consequences of U.S. involvement in World War II."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.3.III.E",
+       "text": "The war-ravaged condition of Asia and Europe, and the dominant U.S. role in the Allied victory and postwar peace settlements, allowed the United States to emerge from the war as the most powerful nation on Earth."
+      }
+     ],
+     "p": 374,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "7.15",
+     "title": "Comparison in Period 7",
+     "skill": "6.D",
+     "skill_text": "Corroborate, qualify, or modify an argument using diverse and alternative evidence in order to develop a complex argument. This argument might:",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 7.O",
+       "text": "Compare the relative significance of the major events of the first half of the 20th century in shaping American identity. REVIEW: UNIT 7 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-7.1",
+       "text": "Growth expanded opportunity, while economic instability led to new efforts to reform U.S. society and its economic system."
+      },
+      {
+       "code": "KC-7.1.I",
+       "text": "The United States continued its transition from a rural, agricultural economy to an urban, industrial economy led by large companies."
+      },
+      {
+       "code": "KC-7.1.II",
+       "text": "In the Progressive Era of the early 20th century, Progressives responded to political corruption, economic instability, and social concerns by calling for greater government action and other political and social measures."
+      },
+      {
+       "code": "KC-7.1.III",
+       "text": "During the 1930s, policymakers responded to the mass unemployment and social upheavals of the Great Depression by transforming the U.S. into a limited welfare state, redefining the goals and ideas of modern American liberalism."
+      },
+      {
+       "code": "KC-7.2",
+       "text": "Innovations in communications and technology contributed to the growth of mass culture, while significant changes occurred in internal and international migration patterns."
+      },
+      {
+       "code": "KC-7.2.I",
+       "text": "Popular culture grew in influence in U.S. society, even as debates increased over the effects of culture on public values, morals, and American national identity."
+      },
+      {
+       "code": "KC-7.2.II",
+       "text": "Economic pressures, global events, and political developments caused sharp variations in the numbers, sources, and experiences of both international and internal migrants."
+      },
+      {
+       "code": "KC-7.3",
+       "text": "Participation in a series of global conflicts propelled the United States into a position of international power while renewing domestic debates over the nation’s proper role in the world."
+      },
+      {
+       "code": "KC-7.3.I",
+       "text": "In the late 19th century and early 20th century, new U.S. territorial ambitions and acquisitions in the Western Hemisphere and the Pacific accompanied heightened public debates over America’s role in the world."
+      },
+      {
+       "code": "KC-7.3.II",
+       "text": "World War I and its aftermath intensified ongoing debates about the nation’s role in the world and how best to achieve national security and pursue American interests."
+      },
+      {
+       "code": "KC-7.3.III",
+       "text": "U.S. participation in World War II transformed American society, while the victory of the United States and its allies over the Axis powers vaulted the U.S. into a position of global, political, and military leadership."
+      }
+     ],
+     "p": 377,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u8",
+   "n": 8,
+   "title": "Period 8: 1945–1980",
+   "weight": "10–17%",
+   "check": "Progress check · 40 multiple choice · 2 short answer · 1 free response (No stimulus, Primary source, Long essay)",
+   "topics": [
+    {
+     "code": "8.1",
+     "title": "Contextualizing Period 8",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 8.A",
+       "text": "Explain the context for societal change from 1945 to 1980. PREVIEW: UNIT 8 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1",
+       "text": "The United States responded to an uncertain and unstable postwar world by asserting and working to maintain a position of global leadership, with far-reaching domestic and international consequences."
+      },
+      {
+       "code": "KC-8.1.I",
+       "text": "United States policymakers engaged in a cold war with the authoritarian Soviet Union, seeking to limit the growth of Communist military power and ideological influence, create a free-market global economy, and build an international security system."
+      },
+      {
+       "code": "KC-8.1.II",
+       "text": "Cold War policies led to public debates over the power of the federal government and acceptable means for pursuing international and domestic goals while protecting civil liberties. Spend a class period helping students understand some contexts for this unit. Considering this unit’s key concepts (previewed below), select one or two for which your students will most need context. To understand context, your students could examine:"
+      },
+      {
+       "code": "KC-8.2",
+       "text": "New movements for civil rights and liberal efforts to expand the role of government generated a range of political and cultural responses."
+      },
+      {
+       "code": "KC-8.2.I",
+       "text": "Seeking to fulfill Reconstruction-era promises, civil rights activists and political leaders achieved some legal and political successes in ending segregation, although progress toward racial equality was slow."
+      },
+      {
+       "code": "KC-8.2.II",
+       "text": "Responding to social conditions and the African American civil rights movement, a variety of movements emerged that focused on issues of identity, social justice, and the environment."
+      },
+      {
+       "code": "KC-8.2.III",
+       "text": "Liberalism influenced postwar politics and court decisions, but it came under increasing attack from the left as well as from a resurgent conservative movement."
+      },
+      {
+       "code": "KC-8.3",
+       "text": "Postwar economic and demographic changes had far-reaching consequences for American society, politics, and culture."
+      },
+      {
+       "code": "KC-8.3.I",
+       "text": "Rapid economic and social changes in American society fostered a sense of optimism in the postwar years."
+      },
+      {
+       "code": "KC-8.3.II",
+       "text": "New demographic and social developments, along with anxieties over the Cold War, changed U.S. culture and led to significant political and moral debates that sharply divided the nation."
+      }
+     ],
+     "p": 386,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "8.2",
+     "title": "The Cold War from 1945 to 1980",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.B",
+       "text": "Explain the continuities and changes in Cold War policies from 1945 to 1980."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1.I",
+       "text": "United States policymakers engaged in a cold war with the authoritarian Soviet Union, seeking to limit the growth of Communist military power and ideological influence, create a free-market global economy, and build an international security system."
+      },
+      {
+       "code": "KC-8.1.I.A",
+       "text": "As postwar tensions dissolved the wartime alliance between Western democracies and the Soviet Union, the United States developed a foreign policy based on collective security, international aid, and economic institutions that bolstered non-Communist nations."
+      },
+      {
+       "code": "KC-8.1.I.B.i",
+       "text": "Concerned by expansionist Communist ideology and Soviet repression, the United States sought to contain communism through a variety of measures, including major military engagements in Korea."
+      },
+      {
+       "code": "KC-8.1.I.C",
+       "text": "The Cold War fluctuated between periods of direct and indirect military confrontation and periods of mutual coexistence (or détente). Indirect military confrontation: Détente"
+      }
+     ],
+     "p": 389,
+     "reasoning": null,
+     "verified": "ced"
+    },
+    {
+     "code": "8.3",
+     "title": "The Red Scare",
+     "skill": "2.B",
+     "skill_text": "Explain the point of view, purpose, historical situation, and/or audience of a source.",
+     "theme": [
+      "NAT"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.C",
+       "text": "Explain the causes and effects of the Red Scare after World War II."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1.II.A",
+       "text": "Americans debated policies and methods designed to expose suspected communists within the United States even as both parties supported the broader strategy of containing communism."
+      }
+     ],
+     "p": 393,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "8.4",
+     "title": "Economy After 1945",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "WXT",
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.D",
+       "text": "Explain the causes of economic growth in the years after World War II."
+      },
+      {
+       "code": "LO 8.E",
+       "text": "Explain the causes and effects of the migration of various groups of Americans after 1945."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.3.I.A",
+       "text": "A burgeoning private sector, federal spending, the baby boom, and technological developments helped spur economic growth."
+      },
+      {
+       "code": "KC-8.3.I.B",
+       "text": "As higher education opportunities and new technologies rapidly expanded, increasing social mobility encouraged the migration of the middle class to the suburbs and of many Americans to the South and West. The Sun Belt region emerged as a significant political and economic force. Migration to the suburbs: Sunbelt region:"
+      }
+     ],
+     "p": 396,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "8.5",
+     "title": "Culture after 1945",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.F",
+       "text": "Explain how mass culture has been maintained or challenged over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.3.II.A",
+       "text": "Mass culture became increasingly homogeneous in the postwar years, inspiring challenges to conformity by artists, intellectuals, and rebellious youth."
+      }
+     ],
+     "p": 400,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "8.6",
+     "title": "Early Steps in the Civil Rights Movement (1940s and 1950s)",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.G",
+       "text": "Explain how and why the civil rights movements developed and expanded from 1945 to 1960."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.2.I",
+       "text": "Seeking to fulfill Reconstruction-era promises, civil rights activists and political leaders achieved some legal and political successes in ending segregation, although progress toward racial equality was slow."
+      },
+      {
+       "code": "KC-8.2.I.B.i",
+       "text": "The three branches of the federal government used measures including desegregation of the armed services and Brown v. Board of Education (1954) to promote greater racial equality. Successes in ending segregation:"
+      }
+     ],
+     "p": 403,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "8.7",
+     "title": "America as a World Power",
+     "skill": "3.C",
+     "skill_text": "Compare the arguments or main ideas of two sources.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.H",
+       "text": "Explain the various military and diplomatic responses to international developments over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1.I.E",
+       "text": "Cold War competition extended to Latin America, where the United States supported non-Communist regimes that had varying levels of commitment to democracy."
+      },
+      {
+       "code": "KC-8.1.II.C.i",
+       "text": "Americans debated the merits of a large nuclear arsenal and the military–industrial complex."
+      },
+      {
+       "code": "KC-8.1.I.D.i",
+       "text": "Postwar decolonization and the emergence of powerful nationalist movements in Africa and the Middle East led both sides in the Cold War to seek allies among new nations, many of which remained nonaligned. The Cold War in Africa and the Middle East:"
+      }
+     ],
+     "p": 407,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "8.8",
+     "title": "The Vietnam War",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.I",
+       "text": "Explain the causes and effects of the Vietnam War."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1.I.B.ii",
+       "text": "Concerned by expansionist Communist ideology and Soviet repression, the United States sought to contain communism through a variety of measures, including major military engagements in Vietnam."
+      },
+      {
+       "code": "KC-8.1.I.D.ii",
+       "text": "Postwar decolonization and the emergence of powerful nationalist movements in Asia led both sides in the Cold War to seek allies among new nations, many of which remained nonaligned."
+      },
+      {
+       "code": "KC-8.1.II.C.ii",
+       "text": "Americans debated the appropriate power of the executive branch in conducting foreign and military policy."
+      }
+     ],
+     "p": 411,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "8.9",
+     "title": "The Great Society",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process. continued on next page",
+     "theme": [
+      "PCE",
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.J",
+       "text": "Explain the causes and effects of continuing policy debates about the role of the federal government over time."
+      },
+      {
+       "code": "LO 8.K",
+       "text": "Explain the continuities and changes in immigration patterns over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.2.II.C",
+       "text": "Despite America, advocates raised concerns about the prevalence and persistence of poverty as a national problem."
+      },
+      {
+       "code": "KC-8.2.III.A",
+       "text": "Liberalism, based on anti-communism abroad and a firm belief in the efficacy of government power to achieve social goals at home, reached a high point of political influence by the mid-1960s."
+      },
+      {
+       "code": "KC-8.2.III.B.i",
+       "text": "Liberal ideas found expression in Lyndon Johnson’s Great Society, which attempted to use federal legislation and programs to end racial discrimination, eliminate poverty, and address other social issues. an overall affluence in postwar"
+      },
+      {
+       "code": "KC-8.3.I.C",
+       "text": "Immigrants from around the world sought access to the political, social, and economic opportunities in the United States, especially after the passage of new immigration laws in 1965. Immigration:"
+      }
+     ],
+     "p": 415,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "8.10",
+     "title": "The African American Civil Rights Movement (1960s)",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process. continued on next page",
+     "theme": [
+      "SOC",
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.L",
+       "text": "Explain how and why various groups responded to calls for the expansion of civil rights from 1960 to 1980."
+      },
+      {
+       "code": "LO 8.M",
+       "text": "Explain the various ways in which the federal government responded to the calls for the expansion of civil rights."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.2.I.A",
+       "text": "During and after World War II, civil rights activists and leaders, most notably Martin Luther King Jr., combated racial discrimination utilizing a variety of strategies, including legal challenges, direct action, and nonviolent protest tactics. Strategies of civil rights activist and leaders, including legal challenges, direct action, and nonviolent protest tactics:"
+      },
+      {
+       "code": "KC-8.2.I.C",
+       "text": "Continuing resistance slowed efforts at desegregation, sparking social and political unrest across the nation. Debates among civil rights activists over the efficacy of nonviolence increased after 1965."
+      },
+      {
+       "code": "KC-8.2.I.B.ii",
+       "text": "The three branches of the federal government used measures including the Civil Rights Act of 1964 to promote greater racial equality."
+      },
+      {
+       "code": "KC-8.2.III.B.ii",
+       "text": "A series of Supreme Court decisions expanded civil rights and individual liberties. Supreme Court decisions:"
+      }
+     ],
+     "p": 420,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "8.11",
+     "title": "The Civil Rights Movement Expands",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "SOC"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.L",
+       "text": "Explain how and why various groups responded to calls for the expansion of civil rights from 1960 to 1980."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.2.II.B",
+       "text": "Latino, American Indian, and Asian American movements continued to demand social and economic equality and a redress of past injustices. Asian American movements:"
+      },
+      {
+       "code": "KC-8.2.II.A",
+       "text": "Feminist and LGBTQ+ activists mobilized behind claims for legal, economic, and social equality. Feminist movements: LGBTQ+ movements:"
+      },
+      {
+       "code": "KC-8.3.II.B.i",
+       "text": "Feminists who participated in the counterculture of the 1960s rejected many of the social, economic, and political values of their parents’ generation and advocated changes in sexual norms."
+      }
+     ],
+     "p": 426,
+     "reasoning": "Comparison",
+     "verified": "ced"
+    },
+    {
+     "code": "8.12",
+     "title": "Youth Culture of the 1960s",
+     "skill": "5.B",
+     "skill_text": "Explain how a historical development or process relates to another historical development or process.",
+     "theme": [
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.N",
+       "text": "Explain how and why opposition to existing policies and values developed and changed over the course of the 20th century."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1.II.B",
+       "text": "Although anti-communist foreign policy faced little domestic opposition in previous years, the Vietnam War inspired sizable and passionate anti-war protests that became more numerous as the war escalated and sometimes led to violence."
+      },
+      {
+       "code": "KC-8.2.III.D",
+       "text": "Some groups on the left also rejected liberal policies, arguing that political leaders did too little to transform the racial and economic status quo at home and pursued immoral policies abroad."
+      },
+      {
+       "code": "KC-8.3.II.B.ii",
+       "text": "Young people who participated in the counterculture of the 1960s rejected many of the social, economic, and political values of their parents’ generation, introduced greater informality into U.S. culture, and advocated changes in sexual norms."
+      }
+     ],
+     "p": 432,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "8.13",
+     "title": "The Environment and Natural Resources from 1968 to 1980",
+     "skill": "5.A",
+     "skill_text": "Identify patterns among or connections between historical developments and processes.",
+     "theme": [
+      "GEO"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.O",
+       "text": "Explain how and why policies related to the environment developed and changed from 1968 to 1980."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1.II.D",
+       "text": "Ideological, military, and economic concerns shaped U.S. involvement in the Middle East, with several oil crises in the region eventually sparking attempts at creating a national energy policy."
+      },
+      {
+       "code": "KC-8.2.II.D",
+       "text": "Environmental problems and accidents led to a growing environmental movement that aimed to use legislative and public efforts to combat pollution and protect natural resources. The federal government established new environmental programs and regulations. New environmental programs and regulations:"
+      }
+     ],
+     "p": 435,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "8.14",
+     "title": "Society in Transition",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [
+      "PCE",
+      "ARC"
+     ],
+     "lo": [
+      {
+       "code": "LO 8.J",
+       "text": "Explain the causes and effects of continuing policy debates about the role of the federal government over time."
+      },
+      {
+       "code": "LO 8.P",
+       "text": "Explain the effects of the growth of religious movements over the course of the 20th century."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.2.III.C",
+       "text": "In the 1960s, conservatives challenged liberal laws and court decisions and perceived moral and cultural decline, seeking to limit the role of the federal government and enact more assertive foreign policies."
+      },
+      {
+       "code": "KC-8.2.III.E",
+       "text": "Public confidence and trust in government’s ability to solve social and economic problems declined in the 1970s in the wake of economic challenges, political scandals, and foreign policy crises."
+      },
+      {
+       "code": "KC-8.2.III.F",
+       "text": "The 1970s saw growing clashes between conservatives and liberals over social and cultural issues, the power of the federal government, race, and movements for greater individual rights. Clashes between conservatives and liberals: (1970s)"
+      },
+      {
+       "code": "KC-8.3.II.C",
+       "text": "The rapid and substantial growth of evangelical Christian churches and organizations was accompanied by greater political and social activism on the part of religious conservatives. Growth of evangelical Christian churches and organizations: Greater political and social activism on the part of religious conservatives:"
+      }
+     ],
+     "p": 439,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "8.15",
+     "title": "Continuity and Change in Period 8",
+     "skill": "6.D",
+     "skill_text": "Corroborate, qualify, or modify an argument using diverse and alternative evidence in order to develop a complex argument. This argument might:",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 8.Q",
+       "text": "Explain the extent to which the events of the period from 1945 to1980 reshaped national identity. Explain the extent to which the events of the period from 1945 to1980 reshaped national identity. REVIEW: UNIT 8 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-8.1",
+       "text": "The United States responded to an uncertain and unstable postwar world by asserting and working to maintain a position of global leadership, with far-reaching domestic and international consequences."
+      },
+      {
+       "code": "KC-8.1.I",
+       "text": "United States policymakers engaged in a cold war with the authoritarian Soviet Union, seeking to limit the growth of Communist military power and ideological influence, create a free-market global economy, and build an international security system."
+      },
+      {
+       "code": "KC-8.1.II",
+       "text": "Cold War policies led to public debates over the power of the federal government and acceptable means for pursuing international and domestic goals while protecting civil liberties. continued on next page"
+      },
+      {
+       "code": "KC-8.2",
+       "text": "New movements for civil rights and liberal efforts to expand the role of government generated a range of political and cultural responses."
+      },
+      {
+       "code": "KC-8.2.I",
+       "text": "Seeking to fulfill Reconstruction-era promises, civil rights activists and political leaders achieved some legal and political successes in ending segregation, although progress toward racial equality was slow."
+      },
+      {
+       "code": "KC-8.2.II",
+       "text": "Responding to social conditions and the African American civil rights movement, a variety of movements emerged that focused on issues of identity, social justice, and the environment."
+      },
+      {
+       "code": "KC-8.2.III",
+       "text": "Liberalism influenced postwar politics and court decisions, but it came under increasing attack from the left as well as from a resurgent conservative movement."
+      },
+      {
+       "code": "KC-8.3",
+       "text": "Postwar economic and demographic changes had far-reaching consequences for American society, politics, and culture."
+      },
+      {
+       "code": "KC-8.3.I",
+       "text": "Rapid economic and social changes in American society fostered a sense of optimism in the postwar years."
+      },
+      {
+       "code": "KC-8.3.II",
+       "text": "New demographic and social developments, along with anxieties over the Cold War, changed U.S. culture and led to significant political and moral debates that sharply divided the nation."
+      }
+     ],
+     "p": 445,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  },
+  {
+   "id": "u9",
+   "n": 9,
+   "title": "Period 9: 1980–Present",
+   "weight": "4–6%",
+   "check": "Progress check · 20 multiple choice · 2 short answer · 1 free response (Secondary source, No stimulus, Document-based)",
+   "topics": [
+    {
+     "code": "9.1",
+     "title": "Contextualizing Period 9",
+     "skill": "4.B",
+     "skill_text": "Explain how a specific historical development or process is situated within a broader historical context.",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 9.A",
+       "text": "Explain the context in which the United States faced international and domestic challenges after 1980. Explain the context in which the United States faced international and domestic challenges after 1980. PREVIEW: UNIT 9 KEY CONCEPTS"
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-9.1",
+       "text": "A newly ascendant conservative movement achieved several political and policy goals during the 1980s and continued to strongly influence public discourse in the following decades."
+      },
+      {
+       "code": "KC-9.1.I",
+       "text": "Conservative beliefs regarding the need for traditional social values and a reduced role for government advanced in U.S. politics after 1980."
+      },
+      {
+       "code": "KC-9.2",
+       "text": "Moving into the 21st century, the nation experienced significant technological, economic, and demographic changes."
+      },
+      {
+       "code": "KC-9.2.I",
+       "text": "New developments in science and technology enhanced the economy and transformed society, while manufacturing decreased."
+      },
+      {
+       "code": "KC-9.2.II",
+       "text": "The U.S. population continued to undergo demographic shifts that had significant cultural and political consequences. continued on next page"
+      },
+      {
+       "code": "KC-9.3",
+       "text": "The end of the Cold War and new challenges to U.S. leadership forced the nation to redefine its foreign policy and role in the world."
+      },
+      {
+       "code": "KC-9.3.I",
+       "text": "The Reagan administration promoted an interventionist foreign policy that continued in later administrations, even after the end of the Cold War."
+      },
+      {
+       "code": "KC-9.3.II",
+       "text": "Following the attacks of September 11, 2001, U.S. foreign policy efforts focused on fighting terrorism around the world."
+      }
+     ],
+     "p": 454,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "9.2",
+     "title": "Reagan and Conservatism",
+     "skill": "3.C",
+     "skill_text": "Compare the arguments or main ideas of two sources.",
+     "theme": [
+      "PCE"
+     ],
+     "lo": [
+      {
+       "code": "LO 9.B",
+       "text": "Explain the causes and effects of continuing policy debates about the role of the federal government over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-9.1.I.A",
+       "text": "Ronald Reagan’s victory in the presidential election of 1980 represented an important milestone, allowing conservatives to enact significant tax cuts and continue the deregulation of many industries."
+      },
+      {
+       "code": "KC-9.1.I.B",
+       "text": "Conservatives argued that liberal programs were counterproductive in fighting poverty and stimulating economic growth. Some of their efforts to reduce the size and scope of government met with inertia and liberal opposition, as many programs remained popular with voters."
+      },
+      {
+       "code": "KC-9.1.I.C",
+       "text": "Policy debates continued over free-trade agreements, the scope of the government social safety net, and calls to reform the U.S. financial system."
+      },
+      {
+       "code": "KC-9.1.I",
+       "text": "Conservative beliefs regarding the need for traditional social values and a reduced role for government advanced in U.S. politics after 1980. Conservative beliefs in U.S. politics:"
+      },
+      {
+       "code": "KC-9.2.II.C",
+       "text": "Intense political and cultural debates continued over issues such as immigration policy, diversity, gender roles, and family structures. Political and cultural debates:"
+      }
+     ],
+     "p": 457,
+     "reasoning": "Continuity and Change",
+     "verified": "ced"
+    },
+    {
+     "code": "9.3",
+     "title": "The End of the Cold War",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 9.C",
+       "text": "Explain the causes and effects of the end of the Cold War and its legacy."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-9.3.I.A",
+       "text": "Reagan asserted U.S. opposition to communism through speeches, diplomatic efforts, limited military interventions, and a buildup of nuclear and conventional weapons."
+      },
+      {
+       "code": "KC-9.3.I.B",
+       "text": "Increased U.S. military spending, Reagan’s diplomatic initiatives, and political changes and economic problems in Eastern Europe and the Soviet Union were all important in ending the Cold War."
+      },
+      {
+       "code": "KC-9.3.I.C",
+       "text": "The end of the Cold War led to new diplomatic relationships but also new U.S. military and peacekeeping interventions, as well as continued debates over the appropriate use of American power in the world."
+      }
+     ],
+     "p": 461,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "9.4",
+     "title": "A Changing Economy",
+     "skill": "1.B",
+     "skill_text": "Explain a historical concept, development, or process.",
+     "theme": [
+      "WXT"
+     ],
+     "lo": [
+      {
+       "code": "LO 9.D",
+       "text": "Explain the causes and effects of economic and technological change over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-9.2.I.A",
+       "text": "Economic productivity increased as improvements in digital communications enabled increased American participation in worldwide economic opportunities."
+      },
+      {
+       "code": "KC-9.2.I.B",
+       "text": "Technological innovations in computing, digital mobile technology, and the internet transformed daily life, increased access to information, and led to new social behaviors and networks."
+      },
+      {
+       "code": "KC-9.2.I.C",
+       "text": "Employment increased in service sectors and decreased in manufacturing, and union membership declined."
+      },
+      {
+       "code": "KC-9.2.I.D",
+       "text": "Real wages stagnated for the working and middle class amid growing economic inequality."
+      }
+     ],
+     "p": 465,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "9.5",
+     "title": "Migration and Immigration in the 1990s and 2000s",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "MIG"
+     ],
+     "lo": [
+      {
+       "code": "LO 9.E",
+       "text": "Explain the causes and effects of domestic and international migration over time."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-9.2.II.A",
+       "text": "After 1980, the political, economic, and cultural influence of the American South and West continued to increase as population shifted to those areas."
+      },
+      {
+       "code": "KC-9.2.II.B",
+       "text": "International migration from Latin America and Asia increased dramatically. The new immigrants affected U.S. culture in many ways and supplied the economy with an important labor force."
+      }
+     ],
+     "p": 468,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "9.6",
+     "title": "Challenges of the 21st Century",
+     "skill": "2.C",
+     "skill_text": "Explain the significance of a source’s point of view, purpose, historical situation, and/or audience, including how these might limit the use(s) of a source.",
+     "theme": [
+      "WOR"
+     ],
+     "lo": [
+      {
+       "code": "LO 9.F",
+       "text": "Explain the causes and effects of the domestic and international challenges the United States has faced in the 21st century."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-9.3.II.A",
+       "text": "In the wake of attacks on the World Trade Center and the Pentagon in 2001, the United States launched military efforts against terrorism and lengthy, controversial conflicts in Afghanistan and Iraq."
+      },
+      {
+       "code": "KC-9.3.II.B",
+       "text": "The war on terrorism sought to improve security within the United States but also raised questions about the protection of civil liberties and human rights."
+      },
+      {
+       "code": "KC-9.3.II.C",
+       "text": "Conflicts in the Middle East and concerns about climate change led to debates over U.S. dependence on fossil fuels and the impact of economic consumption on the environment."
+      },
+      {
+       "code": "KC-9.3.II.D",
+       "text": "Despite economic and foreign policy challenges, the United States continued as the world’s leading superpower in the 21st century."
+      }
+     ],
+     "p": 473,
+     "reasoning": "Causation",
+     "verified": "ced"
+    },
+    {
+     "code": "9.7",
+     "title": "Causation in Period 9",
+     "skill": "6.D",
+     "skill_text": "Corroborate, qualify, or modify an argument using diverse and alternative evidence in order to develop a complex argument. This argument might:",
+     "theme": [],
+     "lo": [
+      {
+       "code": "LO 9.G",
+       "text": "Explain the relative significance of the effects of change in the period after 1980 on American national identity. Explain the relative significance of the effects of change in the period after 1980 on American national identity. REVIEW: UNIT 9 KEY CONCEPTS"
+      },
+      {
+       "code": "LO 7.G",
+       "text": "Free-Response Question Question Type Skill Thematic Focus Learning Objective 1 Document-based 1.B, 2.B, 2.C, 3.C, 3.D, 4.A, 6.A, 6.B, 6.D WOR Unit 7: Learning Objectives B, C, O 2 Long essay 4.A, 6.A, 6.B, 6.C, 6.D SOC, ARC, PCE"
+      },
+      {
+       "code": "LO 3.F",
+       "text": ""
+      },
+      {
+       "code": "LO 4.K",
+       "text": ""
+      },
+      {
+       "code": "LO 5.K",
+       "text": "The scoring information for the questions within this course and exam description, along with further exam resources, can be found on the AP U.S. History Exam Page on AP Central."
+      }
+     ],
+     "ek": [
+      {
+       "code": "KC-9.1",
+       "text": "A newly ascendant conservative movement achieved several political and policy goals during the 1980s and continued to strongly influence public discourse in the following decades."
+      },
+      {
+       "code": "KC-9.1.I",
+       "text": "Conservative beliefs regarding the need for traditional social values and a reduced role for government advanced in U.S. politics after 1980."
+      },
+      {
+       "code": "KC-9.2",
+       "text": "Moving into the 21st century, the nation experienced significant technological, economic, and demographic changes."
+      },
+      {
+       "code": "KC-9.2.I",
+       "text": "New developments in science and technology enhanced the economy and transformed society, while manufacturing decreased."
+      },
+      {
+       "code": "KC-9.2.II",
+       "text": "The U.S. population continued to undergo demographic shifts that had significant cultural and political consequences. continued on next page"
+      },
+      {
+       "code": "KC-9.3",
+       "text": "The end of the Cold War and new challenges to U.S. leadership forced the nation to redefine its foreign policy and role in the world."
+      },
+      {
+       "code": "KC-9.3.I",
+       "text": "The Reagan administration promoted an interventionist foreign policy that continued in later administrations, even after the end of the Cold War."
+      },
+      {
+       "code": "KC-9.3.II",
+       "text": "Following the attacks of September 11, 2001, U.S. foreign policy efforts focused on fighting terrorism around the world."
+      }
+     ],
+     "p": 476,
+     "reasoning": "Causation",
+     "verified": "ced"
+    }
+   ],
+   "excl": [
+    {
+     "text": "Optional Sources pages offer examples of sources appropriate for a college-level course. None of the AP Exam questions require students to have studied these specific sources.",
+     "topic": null,
+     "verified": "ced"
+    }
+   ],
+   "borrow": [],
+   "notes": ""
+  }
+ ]
+}
