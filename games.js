@@ -52,7 +52,13 @@
     calcchain:  { name: 'Chains',           deck: 'calcbc', kind: 'chain'  },
     apushchain: { name: 'Chains',           deck: 'apush',  kind: 'chain'  },
     langchain:  { name: 'Chains',           deck: 'lang',   kind: 'chain'  },
-    frchain:    { name: 'Chains',           deck: 'french', kind: 'chain'  }
+    frchain:    { name: 'Chains',           deck: 'french', kind: 'chain'  },
+    // a real question, and which unit it comes from: knowing the kind of
+    // problem before solving it is what interleaved practice trains
+    chemunit:   { name: 'Which unit',       deck: 'chem',   kind: 'quiz'   },
+    calcunit:   { name: 'Which unit',       deck: 'calcbc', kind: 'quiz'   },
+    langunit:   { name: 'Which big idea',   deck: 'lang',   kind: 'quiz'   },
+    frunit:     { name: 'Which theme',      deck: 'french', kind: 'quiz'   }
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush', 'sat'];
 
@@ -525,6 +531,10 @@
 
   /* what each round asks, in one line under its name on the hub */
   var DESC = {
+    chemunit:   'Which unit does this question come from?',
+    calcunit:   'Which unit does this question come from?',
+    langunit:   'Which big idea does this question practise?',
+    frunit:     'Which theme does this question belong to?',
     chemchain:  'Put the steps of an explanation in order, first step first',
     calcchain:  'Put the steps of a justification in order, first step first',
     apushchain: 'Put the links of a historical argument in order, cause first',
@@ -2165,10 +2175,39 @@
     return qs;
   }
 
+
+  /* WHICH UNIT — a card's own question, and the four units it might come
+     from; the answer names the CED topic. Questions that lean on another
+     unit, drills and questions set in math notation stay out. */
+  function unitRound(deckId, n, id) {
+    var d = S.getDeck(deckId);
+    if (!d) return [];
+    var units = d.units.filter(function (u) { return u.topics && u.topics.length && u.id !== 'x'; });
+    if (units.length < 4) return [];
+    var byU = {};
+    units.forEach(function (u) { byU[u.id] = u; });
+    var pool = d.cards.filter(function (c) {
+      if (!byU[c.u] || c.y === 'd' || c.b || c.q.indexOf('$') > -1) return false;
+      var len = T.plain(c.q).length;
+      return len >= 25 && len <= 170;
+    });
+    var qs = [];
+    missFirst(shuffle(pool), function (c) { return c.i; }, id).forEach(function (c) {
+      if (qs.length >= n) return;
+      var u = byU[c.u];
+      var tp = (u.topics || []).filter(function (t) { return t.c === c.t; })[0];
+      var others = shuffle(units.filter(function (x) { return x.id !== u.id; })).slice(0, 3);
+      qs.push({ p: T.plain(c.q), c: shuffle([u.title].concat(others.map(function (x) { return x.title; }))), r: u.title,
+                why: tp ? (/^\d+\.\d+$/.test(tp.c) ? tp.c + ' · ' : '') + tp.t : '', tag: c.i });
+    });
+    return qs;
+  }
+
   /* Quizzes deal a generated batch per round: classic plays it out and stops,
      sprint races the clock, streak ends on the first miss. */
   function quizBatch(id) {
-    return id === 'limitsquiz' ? limitsRound(10) :
+    return /unit$/.test(id) && GAMES[id] ? unitRound(GAMES[id].deck, 10, id) :
+      id === 'limitsquiz' ? limitsRound(10) :
       id === 'converge' ? convergeRound(10) :
       id === 'moles' ? moleRound(10) :
       id === 'sigfigs' ? sigfigRound(10) :
