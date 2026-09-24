@@ -3,27 +3,27 @@
  "max_running": 8,
  "items": {
   "examaudit-a": {
-   "status": "running",
+   "status": "done",
    "kind": "patch",
    "result": "out/patch-exam-a.json"
   },
   "examaudit-b": {
-   "status": "running",
+   "status": "done",
    "kind": "patch",
    "result": "out/patch-exam-b.json"
   },
   "frproof-a": {
-   "status": "running",
+   "status": "done",
    "kind": "patch",
    "result": "out/patch-frproof-a.json"
   },
   "frproof-b": {
-   "status": "running",
+   "status": "done",
    "kind": "patch",
    "result": "out/patch-frproof-b.json"
   },
   "frproof-c": {
-   "status": "running",
+   "status": "done",
    "kind": "patch",
    "result": "out/patch-frproof-c.json"
   },
@@ -43,22 +43,22 @@
    "result": "out/mc-apush.json"
   },
   "audit-chem2": {
-   "status": "queued",
+   "status": "running",
    "kind": "patch",
    "result": "out/patch-chem-reasoning.json"
   },
   "audit-calc2": {
-   "status": "queued",
+   "status": "running",
    "kind": "patch",
    "result": "out/patch-calc-reasoning.json"
   },
   "audit-humanities": {
-   "status": "queued",
+   "status": "running",
    "kind": "patch",
    "result": "out/patch-humanities.json"
   },
   "audit-links": {
-   "status": "queued",
+   "status": "running",
    "kind": "patch",
    "result": "out/patch-links.json"
   }
@@ -71,12 +71,12 @@
   },
   {
    "id": "code-review",
-   "status": "todo",
+   "status": "done",
    "what": "Review the code added this round (Score it, Recall, By skill, FRQ practice, follow-up, Exam mix, Chains, Which unit, weak topics) for bugs; fix; test."
   },
   {
    "id": "skills-progress",
-   "status": "todo",
+   "status": "done",
    "what": "Progress: known share by skill for each AP course, linking to By skill."
   },
   {

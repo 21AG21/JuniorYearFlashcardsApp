@@ -1521,6 +1521,9 @@
         }
       }
       frqState.keepScroll = true; route();
+      // the picked choice is disabled now; keyboard focus moves to the next open question
+      var nx = document.querySelector('.fpw.mcq .choice:not([disabled])');
+      if (nx) { try { nx.focus({ preventScroll: true }); } catch (e) {} }
       return true;
     }
     if (t.closest('[data-fq-again]')) { frqState = { key: frqState.key, ans: {}, essay: '', checked: false, got: {}, mc: {} }; route(); return true; }
@@ -2425,7 +2428,7 @@
     if (!queue.length) return renderEmptySession(d, unitId, mode);
     sess = {
       deck: d, unitId: unitId || null, mode: mode, quiz: !!quiz,
-      back: lesson ? '#/d/' + deckId + '/l/' + lesson : null,
+      back: lesson ? '#/d/' + deckId + '/l/' + lesson : skill ? '#/d/' + deckId + '/k' : null,
       typing: !quiz && S.getSettings().typing,
       queue: queue, done: 0, planned: queue.length, redo: 0,
       revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0,
@@ -2536,6 +2539,7 @@
   function startScore(deckId, unitId) {
     var d = S.getDeck(deckId);
     if (!d) return go('#/');
+    if (unitId && !d.unitById[unitId]) return goReplace('#/d/' + deckId);
     if (savedPending()) return waitingScreen();
     if (resume()) return;
     var queue = scorePool(d, unitId || null);
@@ -2650,12 +2654,12 @@
       groups.map(function (g) {
         return '<ul class="list gap0 mt4">' + (g ? '<li><div class="ulabel">' + esc(g) + '</div></li>' : '') +
           byGroup[g].map(function (r) {
-            var bits = [plural(r.n, 'card'), r.known.toLocaleString() + ' known'];
+            var bits = ['Skill ' + r.s.code, plural(r.n, 'card'), r.known.toLocaleString() + ' known'];
             if (r.due) bits.push(r.due.toLocaleString() + ' due');
             return '<li><button class="skrow" data-go="#/study/' + deckId + '/s:' + encodeURIComponent(r.s.code) + '">' +
-              '<span class="skk">Skill ' + esc(r.s.code) + '</span>' +
-              '<span class="skn">' + esc(r.s.name) + '</span>' +
-              '<span class="skc num">' + esc(bits.join(' · ')) + '</span></button></li>';
+              '<span class="skk num">' + esc(bits.join(' · ')) + '</span>' +
+              '<span class="skn">' + esc(r.s.short || r.s.name) + '</span>' +
+              (r.s.short ? '<span class="skc">' + esc(r.s.name) + '</span>' : '') + '</button></li>';
           }).join('') + '</ul>';
       }).join('')
     );
@@ -2766,10 +2770,10 @@
       if (!list.length) return true;
       // the topic drill deals these and only these; a deal paused on that
       // drill earlier would otherwise be resumed in their place
-      var h = '/study/' + p[0] + '/t:' + encodeURIComponent(topic) + '/' + p[1];
-      var m = sessMap(); delete m[h]; writeSessMap(m);
-      pendingDeal = { h: h, ids: list.map(function (c) { return c.i; }) };
-      go('#' + h);
+      var dh = '/study/' + p[0] + '/t:' + encodeURIComponent(topic) + '/' + p[1];
+      var m = sessMap(); delete m[dh]; writeSessMap(m);
+      pendingDeal = { h: dh, ids: list.map(function (c) { return c.i; }) };
+      go('#' + dh);
       return true;
     }
     return false;
@@ -2863,6 +2867,12 @@
                 mode === 'stuck' ? 'Nothing is sticking — no card has been missed three times.' :
                 mode === 'hard' ? 'No trouble spots — nothing has been missed twice.' :
                 'Nothing due here right now.';
+    if (mode === 'score') return mount(
+      backbar(d.abbr) +
+      '<div class="head"><span class="k">' + esc(d.short) + '</span><h1>Nothing to score here</h1>' +
+      '<div class="sub">This unit has no answers to judge. The units built from the course framework do.</div></div>' +
+      '<button class="act" data-go="#/score/' + d.id + '">Score it across the course</button>'
+    );
     mount(
       backbar(d.abbr) +
       '<div class="head"><span class="k">' + esc(d.short) + '</span><h1>All caught up</h1>' +
@@ -2888,7 +2898,10 @@
     var fp = sess.deck && !sess.mixed ? focusOf(sess.deck, sess.unitId) : null;
     // never truncated, and it names the CED topic the card comes from
     var ced = c && c.t && /^\d+\.\d+$/.test(c.t) ? ' · CED ' + c.t : '';
-    var scope = d ? nice(d) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + (sess.just ? ' · Justify' : '') + (sess.score ? ' · Score it' : '') + ced : 'Review';
+    // a skill's deal is named for the skill: its cards come from every unit
+    var sk = sess.deck && sess.deck.skills && String(sess.mode || '').indexOf('s:') === 0
+      ? sess.deck.skills.filter(function (x) { return x.code === decodeURIComponent(sess.mode.slice(2)); })[0] : null;
+    var scope = d ? nice(d) + (sk ? ' · Skill ' + sk.code + ' · ' + (sk.short || sk.name) : fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + (sess.just ? ' · Justify' : '') + (sess.score ? ' · Score it' : '') + ced : 'Review';
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
       '<span class="pos num">' + Math.min(sess.done + 1, sess.planned).toLocaleString() + ' of ' + sess.planned.toLocaleString() +
@@ -3864,9 +3877,9 @@
     }
 
     // the three units that bite back hardest — each tap is the fix, not a report
-    var weak = weakBuckets(), weakBlock = '', wtop = weakTopics().length;
-    if (weak.length || wtop) {
-      weakBlock = '<div class="k sec">Weak spots</div><ul class="list tight">' +
+    var weak = weakBuckets(), weakBlock = '', wtop = weakTopics().length, wsk = weakSkills();
+    if (weak.length || wtop || wsk.length) {
+      weakBlock = '<div class="k sec">Weak spots</div>' + (weak.length ? '<ul class="list tight">' : '') +
         weak.slice(0, 3).map(function (w) {
           return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/hard/' + w.unit.id + '">' +
             '<span class="lname">' + esc(w.unit.title) + '</span>' +
@@ -3875,9 +3888,11 @@
             '<span class="lval num">' + pct(w.bad / w.studied) + '</span>' +
             '<span class="lsub">' + esc(nice(w.deck)) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
             '</button></li>';
-        }).join('') + '</ul>' +
-        (weak.length > 3 || wtop ? '<button class="textbtn quiet" data-go="#/weak">' +
-          (weak.length > 3 ? 'All weak spots, and by topic' : 'Weak spots by topic') + '</button>' : '');
+        }).join('') + (weak.length ? '</ul>' : '') +
+        (wsk.length ? '<ul class="list tight mt4"><li><div class="ulabel">Weakest skills</div></li>' +
+          wsk.slice(0, 2).map(skillRow).join('') + '</ul>' : '') +
+        (weak.length > 3 || wtop || wsk.length > 2 ? '<button class="textbtn quiet" data-go="#/weak">' +
+          (weak.length > 3 ? 'All weak spots, by topic and skill' : 'Weak spots by topic and skill') + '</button>' : '');
     }
 
     // the cards themselves, under the units they sit in: a unit you keep
@@ -3967,10 +3982,42 @@
     out.sort(function (a, b) { return (b.score - a.score) || (b.bad - a.bad); });
     return out.slice(0, 12);
   }
+  /* the same miss rate, by exam skill: a skill missed across units is a move
+     not yet learned, which no single unit's list can show */
+  function weakSkills() {
+    var out = [];
+    S.getIndex().courses.forEach(function (c) {
+      var d = S.getDeck(c.id); if (!d || !d.skills || !d.skills.length) return;
+      var byCode = {}; d.skills.forEach(function (x) { byCode[x.code] = x; });
+      var per = {};
+      d.cards.forEach(function (card) {
+        if (!card.s || !byCode[card.s]) return;
+        var s = S.cs(card.i);
+        if (!s || !(s.r || s.t || s.l)) return;
+        var b = per[card.s] || (per[card.s] = { skill: byCode[card.s], studied: 0, bad: 0 });
+        b.studied++;
+        if ((s.l || 0) > 0 && !S.isKnown(card.i)) b.bad++;
+      });
+      Object.keys(per).forEach(function (k) {
+        var b = per[k];
+        if (b.studied >= 8 && b.bad >= 3)
+          out.push({ deck: d, skill: b.skill, studied: b.studied, bad: b.bad, score: b.bad / b.studied });
+      });
+    });
+    out.sort(function (a, b) { return (b.score - a.score) || (b.bad - a.bad); });
+    return out.slice(0, 12);
+  }
+  function skillRow(w) {
+    return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/s:' + encodeURIComponent(w.skill.code) + '">' +
+      '<span class="lname">' + esc(w.skill.short || w.skill.name) + '</span>' +
+      '<span class="lval num">' + pct(w.bad / w.studied) + '</span>' +
+      '<span class="lsub">' + esc(nice(w.deck) + ' · Skill ' + w.skill.code) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
+      '</button></li>';
+  }
   function viewWeak() {
     curDeckId = null;
-    var list = weakBuckets(), topics = weakTopics();
-    if (!list.length && !topics.length) return goReplace('#/stats');
+    var list = weakBuckets(), topics = weakTopics(), skills = weakSkills();
+    if (!list.length && !topics.length && !skills.length) return goReplace('#/stats');
     mount(
       backbar('Progress') +
       '<div class="head"><h1 class="uhead">Weak spots</h1></div>' +
@@ -3991,6 +4038,10 @@
               '<span class="lsub">' + esc(nice(w.deck) + ' · ' + w.unit.title) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
               '</button></li>';
           }).join('') + '</ul>'
+        : '') +
+      (skills.length
+        ? '<ul class="list tight mt4"><li><div class="ulabel">By skill · each deals that skill from every unit</div></li>' +
+          skills.map(skillRow).join('') + '</ul>'
         : '')
     );
   }
