@@ -3792,8 +3792,8 @@
     }
 
     // the three units that bite back hardest — each tap is the fix, not a report
-    var weak = weakBuckets(), weakBlock = '';
-    if (weak.length) {
+    var weak = weakBuckets(), weakBlock = '', wtop = weakTopics().length;
+    if (weak.length || wtop) {
       weakBlock = '<div class="k sec">Weak spots</div><ul class="list tight">' +
         weak.slice(0, 3).map(function (w) {
           return '<li><button class="ledger mid" data-go="#/study/' + w.deck.id + '/hard/' + w.unit.id + '">' +
@@ -3804,7 +3804,8 @@
             '<span class="lsub">' + esc(nice(w.deck)) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
             '</button></li>';
         }).join('') + '</ul>' +
-        (weak.length > 3 ? '<button class="textbtn quiet" data-go="#/weak">All weak spots</button>' : '');
+        (weak.length > 3 || wtop ? '<button class="textbtn quiet" data-go="#/weak">' +
+          (weak.length > 3 ? 'All weak spots, and by topic' : 'Weak spots by topic') + '</button>' : '');
     }
 
     // the cards themselves, under the units they sit in: a unit you keep
@@ -3868,10 +3869,36 @@
   }
 
   /* every weak spot, when three rows are not the whole story */
+  /* the same measure, a topic at a time: a unit can be sound while one of
+     its topics is not, and a topic is small enough to recall on its own */
+  function weakTopics() {
+    var out = [];
+    S.getIndex().courses.forEach(function (c) {
+      var d = S.getDeck(c.id); if (!d) return;
+      var per = {};
+      d.cards.forEach(function (card) {
+        var u = d.unitById[card.u];
+        if (!card.t || !u || !u.topics || !u.topics.length) return;
+        var s = S.cs(card.i);
+        if (!s || !(s.r || s.t || s.l)) return;
+        var k = card.u + '|' + card.t;
+        var b = per[k] || (per[k] = { unit: u, topic: card.t, studied: 0, bad: 0 });
+        b.studied++;
+        if ((s.l || 0) > 0 && !S.isKnown(card.i)) b.bad++;
+      });
+      Object.keys(per).forEach(function (k) {
+        var b = per[k];
+        if (b.studied >= 4 && b.bad >= 2 && recallCards(d, b.unit.id, b.topic).length >= 3)
+          out.push({ deck: d, unit: b.unit, topic: b.topic, studied: b.studied, bad: b.bad, score: b.bad / b.studied });
+      });
+    });
+    out.sort(function (a, b) { return (b.score - a.score) || (b.bad - a.bad); });
+    return out.slice(0, 12);
+  }
   function viewWeak() {
     curDeckId = null;
-    var list = weakBuckets();
-    if (!list.length) return goReplace('#/stats');
+    var list = weakBuckets(), topics = weakTopics();
+    if (!list.length && !topics.length) return goReplace('#/stats');
     mount(
       backbar('Progress') +
       '<div class="head"><h1 class="uhead">Weak spots</h1></div>' +
@@ -3881,7 +3908,18 @@
           '<span class="lval num">' + pct(w.bad / w.studied) + '</span>' +
           '<span class="lsub">' + esc(nice(w.deck)) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
           '</button></li>';
-      }).join('') + '</ul>'
+      }).join('') + '</ul>' +
+      (topics.length
+        ? '<ul class="list tight mt4"><li><div class="ulabel">By topic · each opens a recall, then deals what it missed</div></li>' +
+          topics.map(function (w) {
+            var tp = (w.unit.topics || []).filter(function (x) { return x.c === w.topic; })[0];
+            return '<li><button class="ledger mid" data-go="#/recall/' + w.deck.id + '/' + w.unit.id + '/' + encodeURIComponent(w.topic) + '">' +
+              '<span class="lname">' + esc(tp && tp.t ? tp.t : w.topic) + '</span>' +
+              '<span class="lval num">' + pct(w.bad / w.studied) + '</span>' +
+              '<span class="lsub">' + esc(nice(w.deck) + ' · ' + w.unit.title) + ' · ' + w.bad + ' of ' + w.studied + ' missed</span>' +
+              '</button></li>';
+          }).join('') + '</ul>'
+        : '')
     );
   }
 
