@@ -948,6 +948,7 @@
     due: 'Only what is due, nothing new',
     hard: 'Cards missed twice, or missed the last time',
     all: 'A session\'s worth, shuffled from the whole course',
+    mix: 'Every unit, in proportion to its weight on the exam',
     games: 'Rounds built from this course',
     plan: 'The units week by week to the exam, from what is left',
     cram: 'Every card in the unit, one pass, nothing rescheduled',
@@ -1167,6 +1168,7 @@
         (st.due > S.getSettings().sessionSize
           ? modeBtn('#/study/' + deckId + '/due', 'Catch up · ' + st.due.toLocaleString(), MODE_DESC.due) : '') +
         modeBtn('#/study/' + deckId + '/hard', 'Trouble spots', MODE_DESC.hard) +
+        (mixUnits(d).length >= 3 ? modeBtn('#/study/' + deckId + '/mix', 'Exam mix', MODE_DESC.mix) : '') +
         modeBtn('#/study/' + deckId + '/all', 'Shuffle', MODE_DESC.all) +
         // the grammar by point, on a course that names its points
         (focusPoints(d).length ? modeBtn('#/d/' + deckId + '/g', 'Grammar', MODE_DESC.focus) : '') +
@@ -1539,7 +1541,9 @@
       if (grouped && c.t !== lastTopic) {
         lastTopic = c.t;
         var tl = topicTitle(u, c.t);
-        sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' + byTopic[c.t].length + '</span>' +
+        var tk = byTopic[c.t].filter(function (x) { return S.isKnown(x.i); }).length, tn = byTopic[c.t].length;
+        sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' +
+          (tk ? tk.toLocaleString() + ' of ' + tn.toLocaleString() + ' known' : tn.toLocaleString()) + '</span>' +
           (recallCards(d, unitId, c.t || '').length >= 3
             ? '<button class="textbtn quiet tstudy" data-go="#/recall/' + deckId + '/' + unitId + '/' + encodeURIComponent(c.t || '') + '">Recall</button>' : '') +
           '<button class="textbtn quiet tstudy" data-go="#/study/' + deckId + '/t:' + encodeURIComponent(c.t || '') + '/' + unitId + '">Study</button></div></li>';
@@ -2336,7 +2340,7 @@
     var skill = (mode || '').indexOf('s:') === 0 ? decodeURIComponent(mode.slice(2)) : null;
     var handed = pendingDeal && pendingDeal.h === hereHash() ? pendingDeal.ids.map(cardById).filter(Boolean) : null;
     pendingDeal = null;
-    var queue = handed && handed.length ? S.shuffle(handed) : skill ? skillQueue(d, skill) : topic ? S.shuffle(d.cards.filter(function (c) { return (!unitId || c.u === unitId) && (c.t || '') === topic; }))
+    var queue = handed && handed.length ? S.shuffle(handed) : mode === 'mix' ? examMix(d) : skill ? skillQueue(d, skill) : topic ? S.shuffle(d.cards.filter(function (c) { return (!unitId || c.u === unitId) && (c.t || '') === topic; }))
       : lesson ? lessonQueue(d, lesson)
       : (mode || 'smart') === 'smart'
       ? buildDaily({ deck: d, unit: unitId || null })
@@ -2711,6 +2715,77 @@
     return 'Links Units ' + names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
   }
 
+
+  /* ==========================================================================
+     AFTER A MISS — a missed fact is dealt its reason. When an ordinary card
+     gets Again, the explain-why of the same topic takes the place of a new
+     card waiting at the end of the deal, a few cards on: the denominator
+     stays where it was, once per topic per session, and never in a cram, a
+     quiz or a deal with nothing new to give up.
+     ========================================================================== */
+  function followUp(c) {
+    if (!sess || sess.quiz || sess.cram || c.y === 'j' || c.y === 'd' || !c.t) return;
+    sess.fu = sess.fu || {}; sess.fuIds = sess.fuIds || {};
+    var key = c.u + '|' + c.t;
+    if (sess.fu[key]) return;
+    var d = cardDeckOf(c); if (!d) return;
+    var inQ = {}; sess.queue.forEach(function (x) { inQ[x.i] = 1; });
+    var seen = {}; (sess.history || []).forEach(function (h) { seen[h.card.i] = 1; });
+    var j = d.cards.filter(function (x) {
+      return x.y === 'j' && x.u === c.u && x.t === c.t && !inQ[x.i] && !seen[x.i] && !S.isKnown(x.i);
+    })[0];
+    if (!j) return;
+    // the slot: the last card still waiting that is new and has not been missed
+    for (var n = sess.queue.length - 1; n >= 5; n--) {
+      var q = sess.queue[n];
+      if (S.isNew(q.i) && !sess.lapsed[q.i] && q.i !== c.i) {
+        sess.queue.splice(n, 1);
+        sess.queue.splice(Math.min(5, sess.queue.length), 0, j);
+        sess.fu[key] = 1; sess.fuIds[j.i] = 1;
+        return;
+      }
+    }
+  }
+
+  /* ==========================================================================
+     EXAM MIX — the exam samples every unit by its weight, so this does too:
+     each card's unit is drawn in proportion to the CED's weight (the middle
+     of its range; equal shares where the CED gives none), and within the unit
+     a due card comes first, then a seen one soonest due, then a new one.
+     ========================================================================== */
+  function mixUnits(d) {
+    return d.units.filter(function (u) { return u.topics && u.topics.length && u.id !== 'x'; });
+  }
+  function examMix(d) {
+    var units = mixUnits(d), today = S.dayNum(), lim = S.getSettings().sessionSize || 20;
+    var w = units.map(function (u) {
+      var m = String(u.weight || '').match(/(\d+)\s*[–-]\s*(\d+)\s*%/);
+      return m ? (+m[1] + +m[2]) / 2 : 1;
+    });
+    var pools = units.map(function (u) {
+      var due = [], seen = [], fresh = [];
+      d.cards.forEach(function (c) {
+        if (c.u !== u.id) return;
+        if (S.isNew(c.i)) fresh.push(c);
+        else if (S.cs(c.i).d <= today) due.push(c);
+        else seen.push(c);
+      });
+      due.sort(function (a, b) { return S.cs(a.i).d - S.cs(b.i).d; });
+      seen.sort(function (a, b) { return S.cs(a.i).d - S.cs(b.i).d; });
+      return due.concat(seen, S.shuffle(fresh));
+    });
+    var out = [], guard = 0;
+    while (out.length < lim && guard++ < lim * 20) {
+      var tot = 0; w.forEach(function (x, n) { if (pools[n].length) tot += x; });
+      if (!tot) break;
+      var r = Math.random() * tot, n = 0;
+      for (; n < w.length; n++) { if (!pools[n].length) continue; r -= w[n]; if (r <= 0) break; }
+      if (n >= w.length) n = w.length - 1;
+      if (pools[n].length) out.push(pools[n].shift());
+    }
+    return S.shuffle(out);
+  }
+
   function renderEmptySession(d, unitId, mode) {
     var label = mode === 'starred' ? 'No starred cards yet.' :
                 mode === 'stuck' ? 'Nothing is sticking — no card has been missed three times.' :
@@ -2816,7 +2891,7 @@
     return st.l ? 'Missed ' + st.l + (st.l === 1 ? ' time' : ' times') : '';
   }
   function metaHTML(c) {
-    var bits = [topicLabel(c), codeLabel(c), histWord(c)].filter(Boolean);
+    var bits = [sess && sess.fuIds && sess.fuIds[c.i] ? 'After a miss' : '', topicLabel(c), codeLabel(c), histWord(c)].filter(Boolean);
     return bits.length ? '<div class="meta reveal">' + esc(bits.join(' · ')) + '</div>' : '';
   }
   /* the CED codes a card answers to, its suggested skill, and the unit it
@@ -3238,6 +3313,7 @@
       sess.lapsed[c.i] = 1;
       sess.done--;                    // a re-queued card is not done yet
       sess.queue.splice(Math.min(4, sess.queue.length), 0, c);
+      followUp(c);
     }
     else if (g === 1) sess.hard++;
     else if (g === 2) sess.good++;
