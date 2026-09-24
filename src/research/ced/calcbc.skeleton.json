@@ -1408,7 +1408,7 @@
    "n": 6,
    "title": "Integration and Accumulation of Change",
    "weight": "15–20%",
-   "check": "Progress check · 25 multiple choice · 3 free response",
+   "check": "Progress check · 35 multiple choice · 3 free response",
    "intro": "This unit establishes the relationship between differentiation and integration using the Fundamental Theorem of Calculus. Students begin by exploring the contextual meaning of areas of certain regions bounded by rate functions. Integration determines accumulation of change over an interval, just as differentiation determines instantaneous rate of change at a point. Students need to understand that integration is a limiting case of a sum of products (areas) in the same way that differentiation is a limiting case of a quotient of differences (slopes). Future units will apply the idea of accumulation of change to a variety of realistic and geometric applications.",
    "topics": [
     {
@@ -1783,7 +1783,7 @@
    "n": 7,
    "title": "Differential Equations",
    "weight": "5–10%",
-   "check": "Progress check · 15 multiple choice · 3 free response",
+   "check": "Progress check · 20 multiple choice · 3 free response",
    "intro": "In this unit, students will learn to set up and solve separable differential equations. Slope fields can be used to represent solution curves to a differential equation and build understanding that there are infinitely many general solutions to a differential equation, varying only by a constant of integration. Students can locate a unique solution relevant to a particular situation, provided they can locate a point on the solution curve. By writing and solving differential equations leading to models for exponential growth and decay and logistic growth bc only, students build understanding of topics introduced in Algebra II and other courses.",
    "topics": [
     {
