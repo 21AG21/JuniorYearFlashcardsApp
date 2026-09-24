@@ -97,8 +97,8 @@
   "since": "2026-09-24T06:29Z"
  },
  "apush-u9": {
-  "state": "running",
-  "since": "2026-09-24T06:29Z"
+  "state": "merged",
+  "since": "2026-09-24T06:57Z"
  },
  "lang-rhs": {
   "state": "merged"
@@ -130,7 +130,8 @@
   "since": "2026-09-24T06:55Z"
  },
  "french-t5": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:57Z"
  },
  "french-t6": {
   "state": "queued"
