@@ -66,7 +66,7 @@
  "me": [
   {
    "id": "mc-player",
-   "status": "todo",
+   "status": "done",
    "what": "Interactive multiple-choice set player in Practice it (parse (A)-(D), pick, explain, score, best)."
   },
   {

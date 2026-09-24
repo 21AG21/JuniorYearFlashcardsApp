@@ -1334,7 +1334,8 @@
   }
   function frqKindLabel(d, u, i) {
     var KIND = { long: 'Long', short: 'Short', saq: 'Short answer', dbq: 'Document-based', leq: 'Long essay',
-                 synthesis: 'Synthesis', rhetorical: 'Rhetorical analysis', argument: 'Argument' };
+                 synthesis: 'Synthesis', rhetorical: 'Rhetorical analysis', argument: 'Argument',
+                 mc: 'Multiple choice', essay: 'Essay', presentation: 'Presentation', qa: 'Conversation' };
     var counts = {}, label = '';
     u.frq.forEach(function (f, n) {
       counts[f.kind] = (counts[f.kind] || 0) + 1;
@@ -1346,7 +1347,8 @@
     var d = S.getDeck(deckId), u = d && d.unitById[unitId], f = u && u.frq && u.frq[i];
     if (!f) return goReplace('#/d/' + deckId + (u ? '/u/' + unitId + '/frq' : ''));
     var key = deckId + '/' + unitId + '/' + i;
-    if (!frqState || frqState.key !== key) frqState = { key: key, ans: {}, essay: '', checked: false, got: {} };
+    if (!frqState || frqState.key !== key) frqState = { key: key, ans: {}, essay: '', checked: false, got: {}, mc: {} };
+    if (f.kind === 'mc') return viewMCPractice(d, u, f, i, key);
     var units = frqUnits(f), essay = !(f.parts || []).length;
     var of = units.reduce(function (s, x) { return s + x.p; }, 0);
     var scored = units.filter(function (x, n) { return frqState.got[n] != null; }).length;
@@ -1429,6 +1431,59 @@
     var es = document.querySelector('[data-fq-essay]');
     if (es) es.addEventListener('input', function () { frqState.essay = es.value; });
   }
+
+  /* A multiple-choice set is answered the way the exam asks it: pick one
+     letter, and the set says at once whether it was right, why, and what
+     trap the other choices set. The score is kept like a free response's. */
+  function mcParse(pt) {
+    // "(A) text" in English sets, "A. text" in French ones; a letter counts
+    // only as the next in order, so a question that opens "A." stays a question
+    var lines = String(pt.q || '').split('\n'), stem = [], choices = [];
+    lines.forEach(function (l) {
+      var m = l.match(/^\(([A-E])\)\s+(.*)$/) || l.match(/^([A-E])[.)]\s+(.*)$/);
+      if (m && m[1] === 'ABCDE'.charAt(choices.length)) choices.push({ L: m[1], t: m[2] });
+      else if (choices.length) choices[choices.length - 1].t += ' ' + l;
+      else stem.push(l);
+    });
+    var am = String(pt.a || '').match(/^\(([A-E])\)\.?\s*/) || String(pt.a || '').match(/^([A-E])[.)]\s+/);
+    return { q: stem.join('\n').trim(), choices: choices, right: am ? am[1] : '', why: am ? String(pt.a).slice(am[0].length) : pt.a };
+  }
+  function viewMCPractice(d, u, f, i, key) {
+    var qs = (f.parts || []).map(mcParse), picks = frqState.mc;
+    var answered = qs.filter(function (q, n) { return picks[n]; }).length;
+    var got = qs.filter(function (q, n) { return picks[n] && picks[n] === q.right; }).length;
+    var best = frqBest(key);
+    var label = [frqKindLabel(d, u, i) || 'Multiple choice', plural(qs.length, 'question'), f.calc ? 'Calculator' : '']
+      .filter(Boolean).join(' · ');
+    var keepScroll = !!frqState.keepScroll; frqState.keepScroll = false;
+    mount(
+      backbar('Free response') +
+      '<div class="head"><span class="k">' + esc(label) + '</span><h1 class="uhead">' + esc(f.title || u.title) + '</h1></div>' +
+      (f.stem ? '<div class="fstem">' + T.html(f.stem) + '</div>' : '') +
+      '<div class="fqwork">' + qs.map(function (q, n) {
+        var pick = picks[n];
+        return '<div class="fpw mcq"><div class="fpqw"><span class="fpl">' + (n + 1) + '</span>' +
+          '<span class="fpq' + (stacked(q.q) ? ' mathy' : '') + '">' + T.html(q.q) + '</span></div>' +
+          '<div class="choices">' + q.choices.map(function (ch) {
+            var state = pick ? (ch.L === q.right ? 'right' : ch.L === pick ? 'wrong' : 'mute') : '';
+            return '<button class="choice' + (stacked(ch.t) ? ' mathy' : '') + (T.plain(ch.t).length > 110 ? ' small' : '') + '" data-mcp="' + n + ':' + ch.L + '" data-letter="' + ch.L + '"' +
+              (state ? ' data-state="' + state + '"' : '') + (pick ? ' disabled' : '') + '>' + T.html(ch.t) + '</button>';
+          }).join('') + '</div>' +
+          (pick ? '<div class="scv"><p class="sv">' + (pick === q.right ? 'Right.' : 'Not quite: ' + esc(q.right) + '.') + '</p>' +
+            '<div class="sva' + (stacked(q.why) ? ' mathy' : '') + '">' + T.html(q.why || '') + '</div>' +
+            (f.parts[n].n ? '<div class="svn">' + T.html(f.parts[n].n) + '</div>' : '') + '</div>' : '') +
+          '</div>';
+      }).join('') + '</div>' +
+      (answered
+        ? '<div class="fqtotal"><span class="k">' + (answered < qs.length ? 'So far' : 'Your score') + '</span>' +
+          '<span class="v num">' + got + ' of ' + (answered < qs.length ? answered : qs.length) + '</span></div>' +
+          (answered >= qs.length && frqState.saved ? '<div class="actsub">' + esc(frqState.saved) + '</div>' : '') +
+          (answered >= qs.length ? '<button class="textbtn" data-fq-again>Try it again</button>' : '')
+        : '<div class="actsub">' + (best ? 'Your best: ' + best.got + ' of ' + best.of : 'Pick one letter for each question; each is marked as you go') + '</div>'),
+      keepScroll ? { keepScroll: true } : undefined
+    );
+  }
+
   function frqClick(t) {
     if (!frqState) return false;
     if (t.closest('[data-fq-check]')) {
@@ -1452,7 +1507,23 @@
       if (again) { try { again.focus({ preventScroll: true }); } catch (e) {} }
       return true;
     }
-    if (t.closest('[data-fq-again]')) { frqState = { key: frqState.key, ans: {}, essay: '', checked: false, got: {} }; route(); return true; }
+    var mp = t.closest('[data-mcp]');
+    if (mp) {
+      var v2 = mp.getAttribute('data-mcp').split(':');
+      if (frqState.mc[v2[0]]) return true;
+      frqState.mc[v2[0]] = v2[1];
+      var pp = frqState.key.split('/'), dd = S.getDeck(pp[0]), uu = dd && dd.unitById[pp[1]], ff = uu && uu.frq[+pp[2]];
+      if (ff) {
+        var qs = (ff.parts || []).map(mcParse), all = qs.every(function (q, n) { return frqState.mc[n]; });
+        if (all) {
+          var g = qs.filter(function (q, n) { return frqState.mc[n] === q.right; }).length;
+          frqState.saved = frqSaveBest(frqState.key, g, qs.length) ? 'Saved as your best on this device' : '';
+        }
+      }
+      frqState.keepScroll = true; route();
+      return true;
+    }
+    if (t.closest('[data-fq-again]')) { frqState = { key: frqState.key, ans: {}, essay: '', checked: false, got: {}, mc: {} }; route(); return true; }
     return false;
   }
 
@@ -1460,7 +1531,8 @@
     var d = S.getDeck(deckId), u = d && d.unitById[unitId];
     if (!d || !u || !u.frq || !u.frq.length) return go('#/d/' + deckId + (u ? '/u/' + unitId : ''));
     var KIND = { long: 'Long', short: 'Short', saq: 'Short answer', dbq: 'Document-based', leq: 'Long essay',
-                 synthesis: 'Synthesis', rhetorical: 'Rhetorical analysis', argument: 'Argument' };
+                 synthesis: 'Synthesis', rhetorical: 'Rhetorical analysis', argument: 'Argument',
+                 mc: 'Multiple choice', essay: 'Essay', presentation: 'Presentation', qa: 'Conversation' };
     var counts = {};
     var list = u.frq.map(function (f, i) {
       counts[f.kind] = (counts[f.kind] || 0) + 1;

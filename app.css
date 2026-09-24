@@ -1514,3 +1514,8 @@ sub,sup{ font-size:max(.68em, 11px); }
 .chainlist .next{ color:var(--muted); }
 .chainans{ margin:var(--s-2) 0 var(--s-3); padding-left:var(--s-2); border-left:2px solid var(--hair);
   font-size:var(--t-body); line-height:1.45; color:var(--ink-soft); overflow-wrap:anywhere; }
+.fpw.mcq .choices{ margin-top:4px; }
+/* in a set, the choices are read beside their question, not as the screen's one prompt */
+.fpw.mcq .choice{ font-size:var(--t-body); line-height:1.45; font-weight:460; letter-spacing:-.005em;
+  padding-top:var(--s-2); padding-bottom:var(--s-2); min-height:44px; }
+.fpw.mcq .choice[data-letter]::before{ top:calc(var(--s-2) + .1em); }
