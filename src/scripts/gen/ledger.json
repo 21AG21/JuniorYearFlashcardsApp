@@ -77,8 +77,8 @@
   "since": "2026-09-24T06:49Z"
  },
  "apush-u4": {
-  "state": "running",
-  "since": "2026-09-24T06:21Z"
+  "state": "merged",
+  "since": "2026-09-24T06:58Z"
  },
  "apush-u5": {
   "state": "running",
@@ -112,7 +112,8 @@
   "since": "2026-09-24T06:35Z"
  },
  "lang-stl": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:58Z"
  },
  "french-t1": {
   "state": "merged"
