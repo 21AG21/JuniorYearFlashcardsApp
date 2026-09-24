@@ -38,12 +38,12 @@
   "since": "2026-09-24T06:21Z"
  },
  "calcbc-u4": {
-  "state": "running",
-  "since": "2026-09-24T06:07Z"
+  "state": "merged",
+  "since": "2026-09-24T06:27Z"
  },
  "calcbc-u5": {
-  "state": "running",
-  "since": "2026-09-24T06:07Z"
+  "state": "merged",
+  "since": "2026-09-24T06:27Z"
  },
  "calcbc-u6": {
   "state": "merged",
@@ -81,7 +81,8 @@
   "since": "2026-09-24T06:21Z"
  },
  "apush-u5": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:26Z"
  },
  "apush-u6": {
   "state": "queued"

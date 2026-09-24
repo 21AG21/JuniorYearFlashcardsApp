@@ -1049,10 +1049,6 @@
       {
        "code": "CHA-3.F",
        "text": "Approximate a value on a curve using the equation of a tangent line."
-      },
-      {
-       "code": "LIM-4.A",
-       "text": "Determine limits offunctions that result in indeterminate forms."
       }
      ],
      "ek": [
@@ -1063,25 +1059,42 @@
       {
        "code": "CHA-3.F.2",
        "text": "For a tangent line approximation, the function’s behavior near the point of tangency may determine whether a tangent line value is an underestimate or an overestimate of the corresponding function value."
-      },
-      {
-       "code": "LIM-4.A.1",
-       "text": "When the ratio of two functions tends to"
-      },
-      {
-       "code": "LIM-4.A.2",
-       "text": "Limits of the indeterminate forms"
       }
      ],
      "bc": false,
      "p": 92,
+     "verified": "ced"
+    },
+    {
+     "code": "4.7",
+     "title": "Using L’Hospital’s Rule for Determining Limits of Indeterminate Forms",
+     "skill": "3.D",
+     "skill_text": "Apply an appropriate mathematical definition, theorem, or test.",
+     "lo": [
+      {
+       "code": "LIM-4.A",
+       "text": "Determine limits of functions that result in indeterminate forms."
+      }
+     ],
+     "ek": [
+      {
+       "code": "LIM-4.A.1",
+       "text": "When the ratio of two functions tends to 0/0 or ∞/∞ in the limit, such forms are said to be indeterminate."
+      },
+      {
+       "code": "LIM-4.A.2",
+       "text": "Limits of the indeterminate forms 0/0 or ∞/∞ may be evaluated using L’Hospital’s Rule."
+      }
+     ],
+     "bc": false,
+     "p": 93,
      "verified": "ced"
     }
    ],
    "excl": [
     {
      "text": "There are many other indeterminate forms, such as ∞ -∞, for example, but these will not be assessed on either the AP Calculus AB or BC Exam. However, teachers may include these topics, if time permits.",
-     "topic": "4.6",
+     "topic": "4.7",
      "p": 93,
      "verified": "ced"
     }
