@@ -1299,6 +1299,161 @@
   /* VIEW · a unit's free-response set: the exam's own format, each part's
      model answer a tap away, point splits marked as estimates. Essays are
      laid out by rubric row instead of by part. */
+  /* ==========================================================================
+     FREE-RESPONSE PRACTICE — one question at a time, the way the exam asks
+     it: write each part first, then check it against the model answer and
+     score yourself part by part, as a reader would. The best score stays on
+     this device beside the question.
+     ========================================================================== */
+  var FRQ_BEST_KEY = 'apdecks.frqbest';
+  var frqState = null;
+  function frqBestAll() {
+    try { var o = JSON.parse(localStorage.getItem(FRQ_BEST_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; }
+    catch (e) { return {}; }
+  }
+  function frqBest(key) { return frqBestAll()[key] || null; }
+  function frqSaveBest(key, got, of) {
+    var all = frqBestAll(), was = all[key];
+    if (was && was.got >= got) return false;
+    all[key] = { got: got, of: of, day: S.dayNum() };
+    try { localStorage.setItem(FRQ_BEST_KEY, JSON.stringify(all)); } catch (e) { return false; }
+    return true;
+  }
+  /* the scoring units of a question: its parts, or — for an essay scored by
+     rubric rows — its rows */
+  function frqUnits(f) {
+    var parts = (f.parts || []).filter(function (pt) { return pt && pt.q; });
+    if (parts.length) return parts.map(function (pt) {
+      return { label: pt.l ? '(' + pt.l + ')' : '', q: pt.q, p: +pt.p || 0, a: pt.a, n: pt.n };
+    });
+    return (f.rows || []).map(function (r) {
+      return { label: r.r || '', q: '', p: +r.p || 0, earns: r.earns, loses: r.loses, row: true };
+    });
+  }
+  function frqKindLabel(d, u, i) {
+    var KIND = { long: 'Long', short: 'Short', saq: 'Short answer', dbq: 'Document-based', leq: 'Long essay',
+                 synthesis: 'Synthesis', rhetorical: 'Rhetorical analysis', argument: 'Argument' };
+    var counts = {}, label = '';
+    u.frq.forEach(function (f, n) {
+      counts[f.kind] = (counts[f.kind] || 0) + 1;
+      if (n === i) label = (KIND[f.kind] || f.kind || 'Question') + ' ' + counts[f.kind];
+    });
+    return label;
+  }
+  function viewFRQPractice(deckId, unitId, i) {
+    var d = S.getDeck(deckId), u = d && d.unitById[unitId], f = u && u.frq && u.frq[i];
+    if (!f) return goReplace('#/d/' + deckId + (u ? '/u/' + unitId + '/frq' : ''));
+    var key = deckId + '/' + unitId + '/' + i;
+    if (!frqState || frqState.key !== key) frqState = { key: key, ans: {}, essay: '', checked: false, got: {} };
+    var units = frqUnits(f), essay = !(f.parts || []).length;
+    var of = units.reduce(function (s, x) { return s + x.p; }, 0);
+    var scored = units.filter(function (x, n) { return frqState.got[n] != null; }).length;
+    var got = units.reduce(function (s, x, n) { return s + (frqState.got[n] || 0); }, 0);
+    var best = frqBest(key);
+    var label = [frqKindLabel(d, u, i), of ? plural(of, 'point') : '', f.calc ? 'Calculator' : '']
+      .filter(Boolean).join(' · ');
+
+    var picker = function (n, p) {
+      var out = '';
+      for (var k = 0; k <= p; k++) {
+        var on = frqState.got[n] === k;
+        out += '<button class="ptbtn' + (on ? ' on' : '') + '" data-fq-pt="' + n + ':' + k + '" aria-pressed="' + on + '">' + k + '</button>';
+      }
+      return '<div class="ptrow" role="group" aria-label="Points you earned">' +
+        '<span class="ptk">You earned</span>' + out + '<span class="ptk">of ' + p + '</span></div>';
+    };
+    var body = '';
+    if (essay) {
+      // an essay is written on paper; here the thesis and the plan are the practice
+      body += '<div class="fpw"><div class="ulabel">Your thesis and plan</div>' +
+        (frqState.checked
+          ? '<div class="recallecho">' + (frqState.essay.trim() ? esc(frqState.essay.trim()) : 'Nothing written.') + '</div>'
+          : '<textarea class="recallin" data-fq-essay rows="7" placeholder="Thesis, then the line of reasoning, then the evidence for each step">' +
+            esc(frqState.essay) + '</textarea>') + '</div>';
+    }
+    units.forEach(function (x, n) {
+      var head = '<div class="fpqw"><span class="fpl">' + esc(x.label) + '</span>' +
+        (x.q ? '<span class="fpq' + (stacked(x.q) ? ' mathy' : '') + '">' + T.html(x.q) + '</span>' : '') +
+        (x.p ? '<span class="fpp num">' + esc(plural(x.p, 'pt')) + '</span>' : '') + '</div>';
+      if (x.row) {
+        if (!frqState.checked) return;
+        body += '<div class="fpw">' + head +
+          (x.earns ? '<div class="sva">' + T.html(x.earns) + '</div>' : '') +
+          (x.loses ? '<div class="svn">' + T.html(x.loses) + '</div>' : '') +
+          (x.p ? picker(n, x.p) : '') + '</div>';
+        return;
+      }
+      var mine = frqState.ans[n] || '';
+      body += '<div class="fpw">' + head +
+        (frqState.checked
+          ? '<div class="recallecho">' + (mine.trim() ? esc(mine.trim()) : 'Nothing written.') + '</div>' +
+            '<div class="jl">The model answer</div><div class="sva' + (stacked(x.a || '') ? ' mathy' : '') + '">' + T.html(x.a || '') + '</div>' +
+            (x.n ? '<div class="svn">' + T.html(x.n) + '</div>' : '') + (x.p ? picker(n, x.p) : '')
+          : '<textarea class="recallin fpin" data-fq-ans="' + n + '" rows="4" placeholder="Your answer">' + esc(mine) + '</textarea>') +
+        '</div>';
+    });
+    // parts and rubric rows together (a DBQ's model plan): the parts are
+    // scored, and the rows are the reference a reader scores them against
+    if (frqState.checked && !essay && (f.rows || []).length) {
+      body += '<div class="fpw"><div class="ulabel">The rubric</div>' + (f.rows || []).map(function (r) {
+        return '<div class="fprow"><div class="fpqw"><span class="fpq">' + esc(r.r || '') + '</span>' +
+          (r.p != null ? '<span class="fpp num">' + esc(plural(+r.p, 'pt')) + '</span>' : '') + '</div>' +
+          (r.earns ? '<div class="sva">' + T.html(r.earns) + '</div>' : '') +
+          (r.loses ? '<div class="svn">' + T.html(r.loses) + '</div>' : '') + '</div>';
+      }).join('') + '</div>';
+    }
+    var foot;
+    if (!frqState.checked) {
+      foot = '<button class="act" data-fq-check>Check against the model</button>' +
+        '<div class="actsub">' + (best ? 'Your best: ' + best.got + ' of ' + best.of : 'Write first, then score each part as a reader would') + '</div>';
+    } else {
+      var all = units.filter(function (x) { return x.p; }).length;
+      foot = '<div class="fqtotal"><span class="k">' + (scored < all ? 'Scored so far' : 'Your score') + '</span>' +
+        '<span class="v num">' + got + ' of ' + of + '</span></div>' +
+        (scored >= all && frqState.saved ? '<div class="actsub">' + esc(frqState.saved) + '</div>' : '') +
+        '<button class="textbtn" data-fq-again>Try it again</button>';
+    }
+    var keepScroll = !!frqState.keepScroll; frqState.keepScroll = false;
+    mount(
+      backbar('Free response') +
+      '<div class="head"><span class="k">' + esc(label) + '</span><h1 class="uhead">' + esc(f.title || u.title) + '</h1></div>' +
+      (f.stem ? '<div class="fstem">' + T.html(f.stem) + '</div>' : '') +
+      '<div class="fqwork">' + body + '</div>' + foot,
+      keepScroll ? { keepScroll: true } : undefined
+    );
+    [].forEach.call(document.querySelectorAll('[data-fq-ans]'), function (ta) {
+      ta.addEventListener('input', function () { frqState.ans[ta.getAttribute('data-fq-ans')] = ta.value; });
+    });
+    var es = document.querySelector('[data-fq-essay]');
+    if (es) es.addEventListener('input', function () { frqState.essay = es.value; });
+  }
+  function frqClick(t) {
+    if (!frqState) return false;
+    if (t.closest('[data-fq-check]')) {
+      [].forEach.call(document.querySelectorAll('[data-fq-ans]'), function (ta) { frqState.ans[ta.getAttribute('data-fq-ans')] = ta.value; });
+      var es = document.querySelector('[data-fq-essay]'); if (es) frqState.essay = es.value;
+      frqState.checked = true; route(); return true;
+    }
+    var pt = t.closest('[data-fq-pt]');
+    if (pt) {
+      var v = pt.getAttribute('data-fq-pt').split(':');
+      frqState.got[v[0]] = parseInt(v[1], 10);
+      // every part scored: the total is the attempt, and a better one is kept
+      var p = frqState.key.split('/'), d = S.getDeck(p[0]), u = d && d.unitById[p[1]], f = u && u.frq[+p[2]];
+      if (f) {
+        var units = frqUnits(f), all = true, got = 0, of = 0;
+        units.forEach(function (x, n) { if (!x.p) return; of += x.p; if (frqState.got[n] == null) all = false; else got += frqState.got[n]; });
+        if (all) frqState.saved = frqSaveBest(frqState.key, got, of) ? 'Saved as your best on this device' : '';
+      }
+      frqState.keepScroll = true; route();
+      var again = document.querySelector('[data-fq-pt="' + v[0] + ':' + v[1] + '"]');
+      if (again) { try { again.focus({ preventScroll: true }); } catch (e) {} }
+      return true;
+    }
+    if (t.closest('[data-fq-again]')) { frqState = { key: frqState.key, ans: {}, essay: '', checked: false, got: {} }; route(); return true; }
+    return false;
+  }
+
   function viewFRQ(deckId, unitId) {
     var d = S.getDeck(deckId), u = d && d.unitById[unitId];
     if (!d || !u || !u.frq || !u.frq.length) return go('#/d/' + deckId + (u ? '/u/' + unitId : ''));
@@ -1324,9 +1479,12 @@
           (r.earns ? '<div class="fre">' + T.html(r.earns) + '</div>' : '') +
           (r.loses ? '<div class="frl">' + T.html(r.loses) + '</div>' : '') + '</li>';
       }).join('');
+      var best = frqBest(deckId + '/' + unitId + '/' + i);
       return '<section class="frq">' +
         '<div class="ulabel">' + esc(label) + '</div>' +
         '<h2 class="ftitle">' + esc(f.title || '') + '</h2>' +
+        '<button class="textbtn fprac" data-go="#/d/' + deckId + '/u/' + unitId + '/frq/' + i + '">Practice it' +
+          (best ? '<span class="fbest num"> · best ' + best.got + ' of ' + best.of + '</span>' : '') + '</button>' +
         (f.stem ? '<div class="fstem">' + T.html(f.stem) + '</div>' : '') +
         (parts ? '<ul class="fparts">' + parts + '</ul>' : '') +
         (rows ? '<ul class="fparts">' + rows + '</ul>' : '') +
@@ -1338,7 +1496,7 @@
         '<h1 class="dnh"><button class="dn" data-back>' + esc(u.title) + '</button></h1>' +
         '<span class="dv num">' + u.frq.length + '</span>' +
       '</div>' +
-      '<div class="dblurb">' + esc(frqLine(u).split(' · ')[0]) + ', in the exam\'s own format. Tap a part for its model answer. Point splits are estimates.</div>' +
+      '<div class="dblurb">' + esc(frqLine(u).split(' · ')[0]) + ', in the exam\'s own format. Tap a part for its model answer, or practise one: write it, then score it. Point splits are estimates.</div>' +
       list
     );
   }
@@ -2337,7 +2495,7 @@
     var k = sess.cand, starred = S.isStarred(c.i);
     var body =
       '<div class="q' + sizeClass(c.q) + '">' + T.html(c.q) + '</div>' +
-      '<div class="cand"><div class="jl">A student wrote</div><div class="ctext">' + T.html(k.text) + '</div></div>' +
+      '<div class="cand"><div class="jl">A student wrote</div><div class="ctext' + (stacked(k.text) ? ' mathy' : '') + '">' + T.html(k.text) + '</div></div>' +
       '<div class="choices">' + sess.choices.map(function (ch, n) {
         var state = sess.answered ? (ch.correct ? 'right' : (n === sess.picked ? 'wrong' : 'mute')) : '';
         return '<button class="choice" data-pick="' + n + '" style="--i:' + n + '"' +
@@ -2363,7 +2521,7 @@
       : 'It loses the point' + (k.why ? ': ' : '.'));
     return '<div class="scv">' +
       '<p class="sv">' + esc(head) + (!k.earns && k.why ? T.html(k.why) : '') + '</p>' +
-      (k.model ? '' : '<div class="jl">The model answer</div><div class="sva">' + T.html(c.a) + '</div>') +
+      (k.model ? '' : '<div class="jl">The model answer</div><div class="sva' + (stacked(c.a) ? ' mathy' : '') + '">' + T.html(c.a) + '</div>') +
       (c.n ? '<p class="svn">' + T.html(c.n) + '</p>' : '') +
       '</div>';
   }
@@ -2487,6 +2645,7 @@
       return;
     }
     var missed = cards.filter(function (c) { return !recallState.had[c.i]; }).length;
+    var keepScroll = !!recallState.keep; recallState.keep = false;
     mount(
       backbar(u.title) + hero +
       '<div class="sub">Tap each point your recall covered. The rest are dealt as a session.</div></div>' +
@@ -2501,7 +2660,8 @@
           '<span class="qa">' + esc(firstSentence(c.a)) + '</span>' +
           '<span class="qmeta">' + (had ? 'Had it' : 'Not in my recall') + '</span></button></li>';
       }).join('') + '</ul>' +
-      '<button class="textbtn" data-recall-again>Write it again</button>'
+      '<button class="textbtn" data-recall-again>Write it again</button>',
+      keepScroll ? { keepScroll: true } : undefined
     );
   }
   function recallClick(t) {
@@ -2515,7 +2675,7 @@
     if (h) {
       var id = h.getAttribute('data-recall-had');
       recallState.had[id] = !recallState.had[id];
-      var keep = app.scrollTop; route(); app.scrollTop = keep;
+      recallState.keep = true; route();
       var again = document.querySelector('[data-recall-had="' + id + '"]');
       if (again) { try { again.focus({ preventScroll: true }); } catch (e) {} }
       return true;
@@ -4162,6 +4322,7 @@
     var pk = t.closest('[data-pick]');
     if (pk) { pickChoice(parseInt(pk.getAttribute('data-pick'), 10)); return; }
     if (recallClick(t)) return;
+    if (frqClick(t)) return;
     if (t.closest('[data-next]')) { nextQuiz(); return; }
 
     if (t.closest('[data-unit-filter]')) {
@@ -4615,6 +4776,7 @@
     // or you come back an hour later to "No matches in English"
     if (p[0] !== 'search') searchState.deck = null;
     if (p[0] !== 'recall') recallState = null;
+    if (!(p[0] === 'd' && p[4] === 'frq' && p[5] != null)) frqState = null;
     if (window.Games) window.Games.onRoute(p[0] || '');
 
     if (!p.length) {
@@ -4643,6 +4805,7 @@
     if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'g') return viewFocus(p[1]);
     if (p[0] === 'd' && p[1] && p[2] === 'k') return viewSkills(p[1]);
+    if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3] && p[4] === 'frq' && /^\d+$/.test(p[5] || '')) return viewFRQPractice(p[1], p[3], +p[5]);
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3] && p[4] === 'frq') return viewFRQ(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3]) return viewUnit(p[1], p[3]);
     if (p[0] === 'd' && p[1]) return viewCourse(p[1]);
