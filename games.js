@@ -58,7 +58,14 @@
     chemunit:   { name: 'Which unit',       deck: 'chem',   kind: 'quiz'   },
     calcunit:   { name: 'Which unit',       deck: 'calcbc', kind: 'quiz'   },
     langunit:   { name: 'Which big idea',   deck: 'lang',   kind: 'quiz'   },
-    frunit:     { name: 'Which theme',      deck: 'french', kind: 'quiz'   }
+    frunit:     { name: 'Which theme',      deck: 'french', kind: 'quiz'   },
+    // two ideas students mix up, and statements to sort between them:
+    // telling neighbours apart is its own skill, the one a distractor tests
+    chemtell:   { name: 'Tell apart',       deck: 'chem',   kind: 'tell'   },
+    calctell:   { name: 'Tell apart',       deck: 'calcbc', kind: 'tell'   },
+    apushtell:  { name: 'Tell apart',       deck: 'apush',  kind: 'tell'   },
+    langtell:   { name: 'Tell apart',       deck: 'lang',   kind: 'tell'   },
+    frtell:     { name: 'Tell apart',       deck: 'french', kind: 'tell'   }
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush', 'sat'];
 
@@ -399,7 +406,8 @@
   /* unit / period filters for the games that draw from real data.
      FILT[id] is a cycling index — 0 is All; tapping the word restarts. */
   var GFILT = { timeline: 'apush', yearquiz: 'apush', langmatch: 'lang', langboard: 'lang',
-                apterms: 'apushunit', blank: 'satunit' };
+                apterms: 'apushunit', blank: 'satunit',
+                chemtell: 'tell', calctell: 'tell', apushtell: 'tell', langtell: 'tell', frtell: 'tell' };
   var FILT = {};
   /* A unit too thin to deal a round used to be offered anyway: choosing it
      dealt nothing, the start fell back to All, and the word snapped back — so
@@ -413,12 +421,22 @@
         id === 'langmatch' ? langPairs(unitId).length >= 4 :
         id === 'langboard' ? termRound(9, unitId).length >= 4 :
         id === 'apterms' ? namedRound(9, unitId).length >= 4 :
-        id === 'blank' ? blankRound(4, unitId).length >= 4 : true;
+        id === 'blank' ? blankRound(4, unitId).length >= 4 :
+        GAMES[id] && GAMES[id].kind === 'tell' ? tellPairs(GAMES[id].deck, unitId).length >= 2 : true;
     }
     return playCache[k];
   }
   function filtList(id) {
     var kind = GFILT[id];
+    if (kind === 'tell') {
+      // the units that hold two pairs or more, in the course's order
+      var td = S.getDeck(GAMES[id].deck), to = [];
+      if (!td) return to;
+      td.units.forEach(function (u) {
+        if (playable(id, u.id)) to.push({ label: (td.id === 'apush' ? 'Period ' : 'Unit ') + u.n, v: u.id });
+      });
+      return to;
+    }
     if (kind === 'apush') return PERIODS.map(function (p) { return { label: p[0], v: p }; });
     if (kind === 'satunit') {
       // the vocab deck's word units, by the one word that names each
@@ -540,6 +558,11 @@
     apushchain: 'Put the links of a historical argument in order, cause first',
     langchain:  'Put the steps of an analysis in order, first step first',
     frchain:    'Put the steps of an explanation in order, first step first',
+    chemtell:   'Two ideas students mix up; tap the one each statement is true of',
+    calctell:   'Two ideas students mix up; tap the one each statement is true of',
+    apushtell:  'Two ideas students mix up; tap the one each statement is true of',
+    langtell:   'Two ideas students mix up; tap the one each statement is true of',
+    frtell:     'Two ideas students mix up; tap the one each statement is true of',
     timeline:   'Put events in the order they happened',
     presorder:  'Put presidents in the order they served',
     periodquiz: 'Which period does this event belong to?',
@@ -598,7 +621,7 @@
       // read the classic key alone and listed it as if it had never been played
       function shown(id) { return b[id] || b[id + '!sprint'] || b[id + '!streak']; }
       Object.keys(GAMES).forEach(function (id) {
-        if (GAMES[id].deck !== deckId) return;
+        if (GAMES[id].deck !== deckId || !hasContent(id)) return;
         var bs = shown(id);
         // the symbol says the kind; the line says what the round asks
         var kind = CUE[GAMES[id].kind] || '', dsc = DESC[id] || '';
@@ -651,6 +674,7 @@
     else if (g.kind === 'board') startBoard(id);
     else if (g.kind === 'quiz') startQuiz(id);
     else if (g.kind === 'chain') startChain(id);
+    else if (g.kind === 'tell') startTell(id);
     else startCircle(id);
   }
 
@@ -960,7 +984,7 @@
   /* The chrome says everything in symbols, so a round can be read before it can
      be read: ✓ right, ✗ wrong, ↑ in a row, ↻ tries, ◷ seconds left, ● a question
      answered, ○ one still to come, and a cue showing what this game asks of you. */
-  var CUE = { quiz: 'Quiz', match: 'Match', order: 'Order', board: 'Quiz', circle: 'Circle', graph: 'Graph', chain: 'Order' };
+  var CUE = { quiz: 'Quiz', match: 'Match', order: 'Order', board: 'Quiz', circle: 'Circle', graph: 'Graph', chain: 'Order', tell: 'Sort' };
   function cue(id) {
     var k = GAMES[id] && GAMES[id].kind;
     return '';
@@ -2375,6 +2399,80 @@
     renderChain();
   }
 
+  /* ==========================================================================
+     TELL APART — two ideas students confuse, as two buttons, and one statement
+     at a time to sort between them. A round draws three pairs (the ones missed
+     most first) and interleaves four statements from each, so the same two
+     labels come back before the contrast is forgotten. After each tap the
+     reason shows; a round counts first-tap answers.
+     ========================================================================== */
+  function tellPairs(deckId, unitId) {
+    var d = S.getDeck(deckId);
+    var ps = (d && d.pairs) || [];
+    if (!unitId) return ps;
+    return ps.filter(function (p) { return String(p.u || '').split(',').indexOf(unitId) > -1; });
+  }
+  function hasContent(id) {
+    return GAMES[id].kind !== 'tell' || tellPairs(GAMES[id].deck).length > 0;
+  }
+  function tellRound(id) {
+    var pairs = tellPairs(GAMES[id].deck, filtVal(id));
+    if (pairs.length < 2 && FILT[id]) { FILT[id] = 0; pairs = tellPairs(GAMES[id].deck); }
+    var pick = missFirst(shuffle(pairs.slice()), function (p) { return p.id; }, id).slice(0, 3);
+    var qs = [];
+    pick.forEach(function (p) {
+      // at least one statement from each side, then any four
+      var items = shuffle((p.items || []).slice());
+      var a = items.filter(function (x) { return x.k === 'a'; }), b = items.filter(function (x) { return x.k === 'b'; });
+      var take = [a[0], b[0]].filter(Boolean);
+      items.forEach(function (x) { if (take.length < 4 && take.indexOf(x) < 0) take.push(x); });
+      take.forEach(function (x) { qs.push({ pair: p, item: x }); });
+    });
+    return shuffle(qs);
+  }
+  function startTell(id) {
+    var qs = tellRound(id);
+    if (!qs.length) return renderNoData(id);
+    st = { id: id, kind: 'tell', qs: qs, i: 0, total: qs.length, score: 0, lock: false, pick: -1 };
+    renderTell();
+  }
+  function renderTell() {
+    if (st.i >= st.total) return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
+    var q = st.qs[st.i], p = q.pair, labels = [p.a, p.b];
+    var rightN = q.item.k === 'a' ? 0 : 1;
+    ctx.mount(
+      ctx.backbar(GAMES[st.id].name, filtCtl(st.id, true)) +
+      gameTop(st.id, right(st.score), dots(st.i, st.total)) +
+      '<div class="gcur' + (st.lock ? '' : ' swap') + '">' +
+        '<div class="gname gsm' + (flat(T.plain(q.item.s)).length > 88 ? ' gxs' : '') + '" data-plain="' + esc(flat(T.plain(q.item.s))) + '">' + T.html(q.item.s) + '</div></div>' +
+      '<div class="choices tellch' + (st.lock ? '' : ' deal') + '">' + labels.map(function (l, n) {
+        var state = st.lock ? (n === rightN ? 'right' : n === st.pick ? 'wrong' : 'mute') : '';
+        return '<button class="choice" data-gc="' + n + '" style="--i:' + n + '"' +
+          (state ? ' data-state="' + state + '"' : '') + (st.lock ? ' disabled' : '') + '>' + T.html(l) + '</button>';
+      }).join('') + '</div>' +
+      (st.lock
+        ? '<div class="chainans">' + T.html(q.item.why) + '</div>' +
+          '<button class="act" data-tell-next>' + (st.i + 1 < st.total ? 'Next' : 'Finish') + '</button>'
+        : ''),
+      { session: true, keepScroll: st.lock }
+    );
+  }
+  function tapTell(n) {
+    if (!st || st.kind !== 'tell' || st.lock) return;
+    var q = st.qs[st.i], ok = (q.item.k === 'a' ? 0 : 1) === n;
+    st.lock = true; st.pick = n;
+    if (ok) { st.score++; missHeal(st.id, q.pair.id); } else missLog(st.id, q.pair.id);
+    renderTell();
+    var nx = document.querySelector('[data-tell-next]');
+    if (nx) { try { nx.focus({ preventScroll: true }); } catch (e) {} nx.scrollIntoView({ block: 'nearest' }); }
+  }
+  function nextTell() {
+    if (!st || st.kind !== 'tell' || !st.lock) return;
+    if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
+    st.i++; st.lock = false; st.pick = -1;
+    renderTell();
+  }
+
   function nextQuizQ() {
     if (!st || st.kind !== 'quiz') return;
     if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
@@ -2601,6 +2699,7 @@
     var t = e.target;
     var el;
     if (t.closest('[data-chain-next]')) { nextChain(); return; }
+    if (t.closest('[data-tell-next]')) { nextTell(); return; }
     if ((el = t.closest('[data-gagain]'))) {
       if (gRecent(doneAt, 400)) return;   // the tap that ended the round
       play(el.getAttribute('data-gagain')); return;
@@ -2638,6 +2737,7 @@
       if (st.kind === 'graph') tapGraphChoice(ci);
       else if (st.kind === 'quiz') tapQuizGame(ci);
       else if (st.kind === 'chain') tapChain(ci);
+      else if (st.kind === 'tell') tapTell(ci);
       else tapChoice(ci);
       return;
     }
@@ -2669,7 +2769,10 @@
     if (st && st.kind === 'chain' && st.lock && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault(); nextChain(); return;
     }
-    if (st && (st.kind === 'quiz' || st.kind === 'graph' || st.kind === 'circle' || st.kind === 'chain') &&
+    if (st && st.kind === 'tell' && st.lock && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault(); nextTell(); return;
+    }
+    if (st && (st.kind === 'quiz' || st.kind === 'graph' || st.kind === 'circle' || st.kind === 'chain' || st.kind === 'tell') &&
         /^[1-9]$/.test(e.key)) {
       var els = document.querySelectorAll('.choices .choice[data-gc]');
       var ch = els[+e.key - 1];
@@ -2708,6 +2811,7 @@
       else if (st.kind === 'board') renderBoard(true);
       else if (st.kind === 'quiz') renderQuiz();
       else if (st.kind === 'chain') renderChain();
+      else if (st.kind === 'tell') renderTell();
       else if (st.kind === 'graph') renderGraph();
       else renderCircle();
       return true;
@@ -2716,7 +2820,7 @@
       var out = [];
       if (!S.getDeck(deckId)) return out;
       Object.keys(GAMES).forEach(function (id) {
-        if (GAMES[id].deck === deckId) out.push([GAMES[id].name, id]);
+        if (GAMES[id].deck === deckId && hasContent(id)) out.push([GAMES[id].name, id]);
       });
       return out;
     },
@@ -2735,6 +2839,11 @@
       d.units.forEach(function (u, i) { if (u.id === unitId) idx = i; });
       if (idx < 0) return out;
       var n = idx + 1;
+      Object.keys(GAMES).forEach(function (id) {
+        if (GAMES[id].deck !== deckId || GAMES[id].kind !== 'tell') return;
+        var tn = filtIndexOf(id, unitId);
+        if (tn) out.push([GAMES[id].name, '#/game/' + id + '/' + tn]);
+      });
       if (deckId === 'apush') {
         var an = filtIndexOf('apterms', unitId);
         if (an) out.push([GAMES.apterms.name, '#/game/apterms/' + an]);

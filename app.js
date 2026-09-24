@@ -957,6 +957,7 @@
     score: 'One answer at a time: decide whether it earns the point, then see why',
     skills: 'One exam skill at a time, with cards from every unit',
     frq: 'Long and short questions in the exam\'s own format, model answers by point',
+    exprac: 'Written questions with model answers by point, and multiple-choice sets marked as you pick',
     print: 'Questions and answers on paper, two columns'
   };
   function modeBtn(go, label, desc) {
@@ -1008,13 +1009,19 @@
     return bits.join(' · ');
   }
   function frqLine(u) {
-    var n = { long: 0, short: 0 }, other = 0;
-    (u.frq || []).forEach(function (f) { if (n[f.kind] != null) n[f.kind]++; else other++; });
+    var n = { long: 0, short: 0 }, other = 0, mc = 0;
+    (u.frq || []).forEach(function (f) { if (f.kind === 'mc') mc++; else if (n[f.kind] != null) n[f.kind]++; else other++; });
     var bits = [];
     if (n.long) bits.push(n.long + ' long');
     if (n.short) bits.push(n.short + ' short');
-    if (other) bits.push(plural(other, 'question'));
-    return bits.join(', ') + ' · ' + MODE_DESC.frq;
+    if (other) bits.push(plural(other, mc ? 'written question' : 'question'));
+    if (mc) bits.push(plural(mc, 'multiple-choice set'));
+    return bits.join(', ') + ' · ' + (mc ? MODE_DESC.exprac : MODE_DESC.frq);
+  }
+  /* a unit whose set includes multiple choice is practice for the whole
+     exam, not only its free-response half, and is named for it */
+  function frqName(u) {
+    return (u && u.frq || []).some(function (f) { return f.kind === 'mc'; }) ? 'Exam practice' : 'Free response';
   }
 
   /* ==========================================================================
@@ -1315,11 +1322,28 @@
   }
   function frqBest(key) { return frqBestAll()[key] || null; }
   function frqSaveBest(key, got, of) {
-    var all = frqBestAll(), was = all[key];
-    if (was && was.got >= got) return false;
-    all[key] = { got: got, of: of, day: S.dayNum() };
+    var all = frqBestAll(), was = all[key], today = S.dayNum();
+    // every finished attempt dates the question (a retry is due from the last
+    // one); only a better score replaces the best
+    var better = !was || got > was.got;
+    all[key] = better ? { got: got, of: of, day: today, last: today } : { got: was.got, of: was.of, day: was.day, last: today };
     try { localStorage.setItem(FRQ_BEST_KEY, JSON.stringify(all)); } catch (e) { return false; }
-    return true;
+    return better;
+  }
+  /* questions practised and scored under 70%, three days or more since the
+     last attempt: a written answer is retrieval practice too, and it is
+     spaced like any other — oldest attempt first */
+  function frqRetries() {
+    var all = frqBestAll(), today = S.dayNum(), out = [];
+    Object.keys(all).forEach(function (key) {
+      var b = all[key], p = key.split('/');
+      if (!b || !b.of || b.got / b.of >= 0.7 || today - (b.last != null ? b.last : b.day) < 3) return;
+      var d = S.getDeck(p[0]), u = d && d.unitById[p[1]], f = u && u.frq && u.frq[+p[2]];
+      if (!f) return;
+      out.push({ key: key, d: d, u: u, f: f, i: +p[2], b: b, ago: today - (b.last != null ? b.last : b.day) });
+    });
+    out.sort(function (a, b) { return b.ago - a.ago; });
+    return out;
   }
   /* the scoring units of a question: its parts, or — for an essay scored by
      rubric rows — its rows */
@@ -1419,7 +1443,7 @@
     }
     var keepScroll = !!frqState.keepScroll; frqState.keepScroll = false;
     mount(
-      backbar('Free response') +
+      backbar(frqName(u)) +
       '<div class="head"><span class="k">' + esc(label) + '</span><h1 class="uhead">' + esc(f.title || u.title) + '</h1></div>' +
       (f.stem ? '<div class="fstem">' + T.html(f.stem) + '</div>' : '') +
       '<div class="fqwork">' + body + '</div>' + foot,
@@ -1457,7 +1481,7 @@
       .filter(Boolean).join(' · ');
     var keepScroll = !!frqState.keepScroll; frqState.keepScroll = false;
     mount(
-      backbar('Free response') +
+      backbar(frqName(u)) +
       '<div class="head"><span class="k">' + esc(label) + '</span><h1 class="uhead">' + esc(f.title || u.title) + '</h1></div>' +
       (f.stem ? '<div class="fstem">' + T.html(f.stem) + '</div>' : '') +
       '<div class="fqwork">' + qs.map(function (q, n) {
@@ -1568,12 +1592,13 @@
         '</section>';
     }).join('');
     mount(
-      '<div class="ulabel mt0">' + esc(nice(d)) + ' · Unit ' + u.n + ' · Free response</div>' +
+      '<div class="ulabel mt0">' + esc(nice(d)) + ' · Unit ' + u.n + ' · ' + frqName(u) + '</div>' +
       '<div class="dhero">' +
         '<h1 class="dnh"><button class="dn" data-back>' + esc(u.title) + '</button></h1>' +
         '<span class="dv num">' + u.frq.length + '</span>' +
       '</div>' +
-      '<div class="dblurb">' + esc(frqLine(u).split(' · ')[0]) + ', in the exam\'s own format. Tap a part for its model answer, or practise one: write it, then score it. Point splits are estimates.</div>' +
+      '<div class="dblurb">' + esc(frqLine(u).split(' · ')[0]) + ', in the exam\'s own format. Tap a part for its model answer, or practise one: write it, then score it' +
+        (frqName(u) === 'Exam practice' ? '; a multiple-choice set is marked as you pick' : '') + '. Point splits are estimates.</div>' +
       list
     );
   }
@@ -1656,7 +1681,7 @@
         (scorePool(d, unitId, 1).length ? modeBtn('#/score/' + deckId + '/' + unitId, 'Score it', MODE_DESC.score) : '') +
         // the exam's own question format, with model answers by point
         (u.frq && u.frq.length
-          ? modeBtn('#/d/' + deckId + '/u/' + unitId + '/frq', 'Free response', frqLine(u)) : '') +
+          ? modeBtn('#/d/' + deckId + '/u/' + unitId + '/frq', frqName(u), frqLine(u)) : '') +
         // the grammar by point, when this unit's topics feed one
         (focusPoints(d).some(function (f) { return cards.some(function (c) { return f.topics.indexOf(c.t || '') > -1; }); })
           ? modeBtn('#/d/' + deckId + '/g', 'Grammar', MODE_DESC.focus) : '') +
@@ -3898,6 +3923,18 @@
     // the cards themselves, under the units they sit in: a unit you keep
     // missing is a topic to reread, but one card missed six times is a card
     // to rewrite, and only this list can tell you which you have
+    var retry = frqRetries(), retryBlock = '';
+    if (retry.length) {
+      retryBlock = '<div class="k sec">Practice again</div><ul class="list tight">' +
+        retry.slice(0, 3).map(function (r) {
+          return '<li><button class="ledger mid" data-go="#/d/' + r.d.id + '/u/' + r.u.id + '/frq/' + r.i + '">' +
+            '<span class="lname">' + esc(r.f.title || frqKindLabel(r.d, r.u, r.i)) + '</span>' +
+            '<span class="lval num">' + r.b.got + ' of ' + r.b.of + '</span>' +
+            '<span class="lsub">' + esc(nice(r.d) + ' · Unit ' + r.u.n + ' · ' + frqKindLabel(r.d, r.u, r.i) + ' · ' + plural(r.ago, 'day') + ' ago') + '</span>' +
+            '</button></li>';
+        }).join('') + '</ul>' +
+        '<div class="empty cap">Questions you scored under 70%, three days or more since you last tried them.</div>';
+    }
     var stuck = stuckCards(), stuckBlock = '';
     if (stuck.length) {
       stuckBlock = '<div class="k sec">Trouble spots</div>' +
@@ -3948,6 +3985,7 @@
       paceBlock +
       fcBlock +
       weakBlock +
+      retryBlock +
       stuckBlock +
       spark +
       (totals.due ? '<div class="mt5"><button class="act" data-go="#/review">Review ' + totals.due.toLocaleString() + '</button></div>'
@@ -4403,7 +4441,7 @@
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
         b('Cram') + ', on a unit: ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
         b('Justify') + ', on a unit of an AP course: ' + esc(MODE_DESC.justify) + '. Dealt like Cram. In Quiz, the wrong choices are the answers that earn nothing.',
-        b('Free response') + ', on a unit of an AP course: ' + esc(MODE_DESC.frq) + '. Point splits are estimates; the essays are laid out by rubric row. ' + b('Practice it') + ' on a question: write each part, then score it against the model, part by part; the best score stays on this device.',
+        b('Free response') + ', on a unit of an AP course: ' + esc(MODE_DESC.frq) + '. Point splits are estimates; the essays are laid out by rubric row. Where a unit also has multiple-choice sets it is called ' + b('Exam practice') + ', and a set is played one pick at a time, each marked with its explanation. ' + b('Practice it') + ' on a question: write each part, then score it against the model, part by part; the best score stays on this device.',
         b('Grammar') + ', on French: ' + esc(MODE_DESC.focus) + '. A point deals every card on it, from both grammar units, the least-known first, like Cram.',
         b('Print') + ', on a unit: ' + esc(MODE_DESC.print) + '.',
         b('Plan') + ', on a course with an exam date: ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',

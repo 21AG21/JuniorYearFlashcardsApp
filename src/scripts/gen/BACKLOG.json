@@ -3,27 +3,27 @@
  "max_running": 8,
  "items": {
   "examaudit-a": {
-   "status": "done",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-exam-a.json"
   },
   "examaudit-b": {
-   "status": "done",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-exam-b.json"
   },
   "frproof-a": {
-   "status": "done",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-frproof-a.json"
   },
   "frproof-b": {
-   "status": "done",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-frproof-b.json"
   },
   "frproof-c": {
-   "status": "done",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-frproof-c.json"
   },
@@ -33,17 +33,17 @@
    "result": "out/mc-chem.json"
   },
   "mc-calcbc": {
-   "status": "running",
+   "status": "applied",
    "kind": "mc",
    "result": "out/mc-calcbc.json"
   },
   "mc-apush": {
-   "status": "running",
+   "status": "applied",
    "kind": "mc",
    "result": "out/mc-apush.json"
   },
   "audit-chem2": {
-   "status": "running",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-chem-reasoning.json"
   },
@@ -61,6 +61,18 @@
    "status": "running",
    "kind": "patch",
    "result": "out/patch-links.json"
+  },
+  "tell-a": {
+   "status": "running",
+   "kind": "tell",
+   "result": "out/tell-chem.json out/tell-calcbc.json",
+   "apply": "tell_check.py <c> merge"
+  },
+  "tell-b": {
+   "status": "running",
+   "kind": "tell",
+   "result": "out/tell-apush.json out/tell-lang.json out/tell-french.json",
+   "apply": "tell_check.py <c> merge"
   }
  },
  "me": [
@@ -81,8 +93,18 @@
   },
   {
    "id": "frq-label",
-   "status": "todo",
+   "status": "done",
    "what": "Once units carry multiple-choice sets, name the unit mode \"Exam practice\" and count sets separately."
+  },
+  {
+   "id": "tell-game",
+   "status": "doing",
+   "what": "Tell apart: a discrimination game per AP course from data/<course>.json \"pairs\" (two labels, one statement at a time, the reason after each tap)."
+  },
+  {
+   "id": "frq-retry",
+   "status": "done",
+   "what": "Spaced free-response retries: a question practised with a best under 70% comes back on Progress after 3+ days."
   }
  ]
 }
