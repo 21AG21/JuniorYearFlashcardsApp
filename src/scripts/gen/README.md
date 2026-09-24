@@ -19,3 +19,17 @@ re-run the parsers to get full skeletons (the committed ones leave out the exam 
 copy this directory to `$GEN_DIR`, run `export_unit.py` for every unit the ledger shows
 as queued or running, and relaunch those units from `PROMPT2.md` with their course's
 `BRIEF-*.md`. Merged units are already in `data/`.
+
+## Connections units, corrections and skills (added after the rebuild)
+
+- **Connections (`x`).** `export_links.py <course>` writes `in/<course>-x.json` (every CED topic, EK code and
+  exclusion of the course); an agent follows `SPEC-links.md` (prompts in `prompts3.json`) to write
+  `out/<course>-x.json`; `validate.py <course> x` accepts it with the one expected warning ("topic codes differ
+  from skeleton"). `merge.py <course> x` inserts the unit after the last CED unit, moves the exam and table
+  units down one place in both the course file and `index.json`, and takes the unit's title and blurb from the
+  output. A card's `b` may list several units (`"u3,u9"`); the app reads it as "Links Units 3 and 9".
+- **Corrections.** Audits write source-cited corrections to `out/patch-*.json` in the format documented at
+  the top of `apply_patches.py`; run it with `--dry` first, then without, then `merge.py` the touched units.
+  A card's question is never patched (its id follows the question).
+- **Skills.** `add_skills.py` writes each course's skill list (the CED wording, grouped by practice) into
+  `data/<course>.json` as `skills`, for the By skill screen. `merge.py` keeps it.
