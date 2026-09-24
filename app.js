@@ -953,6 +953,8 @@
     cram: 'Every card in the unit, one pass, nothing rescheduled',
     focus: 'One point at a time: the subjonctif, the passé composé, the pronouns',
     justify: 'Every explain-why in the unit: the chain, the argument, what loses the point',
+    score: 'One answer at a time: decide whether it earns the point, then see why',
+    skills: 'One exam skill at a time, with cards from every unit',
     frq: 'Long and short questions in the exam\'s own format, model answers by point',
     print: 'Questions and answers on paper, two columns'
   };
@@ -1159,6 +1161,8 @@
       '<div class="modes">' +
         modeBtn('#/study/' + deckId + '/core', 'High-yield', MODE_DESC.core) +
         modeBtn('#/quiz/' + deckId + '/smart', 'Quiz', MODE_DESC.quiz) +
+        (scorePool(d, null, 1).length ? modeBtn('#/score/' + deckId, 'Score it', MODE_DESC.score) : '') +
+        (d.skills && d.skills.length ? modeBtn('#/d/' + deckId + '/k', 'By skill', MODE_DESC.skills) : '') +
         (st.starred ? modeBtn('#/study/' + deckId + '/starred', 'Study starred', MODE_DESC.starred) : '') +
         (st.due > S.getSettings().sessionSize
           ? modeBtn('#/study/' + deckId + '/due', 'Catch up · ' + st.due.toLocaleString(), MODE_DESC.due) : '') +
@@ -1305,7 +1309,7 @@
       counts[f.kind] = (counts[f.kind] || 0) + 1;
       var kind = (KIND[f.kind] || f.kind || 'Question') + ' ' + counts[f.kind];
       var label = [kind, f.pts ? plural(f.pts, 'point') : '',
-        f.b ? 'Borrows from ' + (d.unitById[f.b] ? 'Unit ' + d.unitById[f.b].n : f.b) : ''].filter(Boolean).join(' · ');
+        f.b ? borrowWord(d, f.b) : ''].filter(Boolean).join(' · ');
       var parts = (f.parts || []).map(function (pt, n) {
         var id = 'fp-' + i + '-' + n;
         return '<li><button class="fpart" data-fp aria-expanded="false" aria-controls="' + id + '">' +
@@ -1378,6 +1382,8 @@
         lastTopic = c.t;
         var tl = topicTitle(u, c.t);
         sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' + byTopic[c.t].length + '</span>' +
+          (recallCards(d, unitId, c.t || '').length >= 3
+            ? '<button class="textbtn quiet tstudy" data-go="#/recall/' + deckId + '/' + unitId + '/' + encodeURIComponent(c.t || '') + '">Recall</button>' : '') +
           '<button class="textbtn quiet tstudy" data-go="#/study/' + deckId + '/t:' + encodeURIComponent(c.t || '') + '/' + unitId + '">Study</button></div></li>';
       }
       return sep + '<li><button class="qrow' + (known ? ' done' : '') + '" data-peek="' + c.i + '">' +
@@ -1410,6 +1416,7 @@
         // the unit's explain-whys on their own, dealt like Cram
         (cards.some(function (c) { return c.y === 'j'; })
           ? modeBtn('#/cram/' + deckId + '/' + unitId + '/j', 'Justify', MODE_DESC.justify) : '') +
+        (scorePool(d, unitId, 1).length ? modeBtn('#/score/' + deckId + '/' + unitId, 'Score it', MODE_DESC.score) : '') +
         // the exam's own question format, with model answers by point
         (u.frq && u.frq.length
           ? modeBtn('#/d/' + deckId + '/u/' + unitId + '/frq', 'Free response', frqLine(u)) : '') +
@@ -2054,7 +2061,7 @@
         done: sess.done, planned: sess.planned, lapsed: sess.lapsed || {},
         again: sess.again, hard: sess.hard || 0, good: sess.good, easy: sess.easy,
         right: sess.right, wrong: sess.wrong,
-        quiz: !!sess.quiz, typing: !!sess.typing, cram: !!sess.cram, just: !!sess.just,
+        quiz: !!sess.quiz, score: !!sess.score, typing: !!sess.typing, cram: !!sess.cram, just: !!sess.just,
         mixed: !!sess.mixed, mode: sess.mode, unitId: sess.unitId || null,
         deck: sess.deck ? sess.deck.id : null, back: sess.back || null,
         // grades given: Again re-queues and leaves done where it was, so done
@@ -2081,7 +2088,7 @@
         : p[0] === 'starred' ? 'Starred' : p[0] === 'stuck' ? 'Trouble spots'
         : deck ? nice(deck) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : j.unitId && j.unitId.indexOf('+') > -1 ? ' · both tables' : '')
         : 'Session';
-      if (j.cram) name += j.just ? ' · justify' : ' · cram'; else if (j.quiz) name += ' · quiz';
+      if (j.cram) name += j.just ? ' · justify' : ' · cram'; else if (j.score) name += ' · score it'; else if (j.quiz) name += ' · quiz';
       out.push({ h: h, name: name, done: j.done || 0, planned: j.planned || j.ids.length });
     }
     return out;
@@ -2136,7 +2143,7 @@
     if (!q.length) { clearSess(); return null; }
     return {
       deck: j.deck ? S.getDeck(j.deck) : null, unitId: j.unitId, mode: j.mode,
-      quiz: j.quiz, cram: j.cram, just: j.just, mixed: j.mixed, typing: j.typing, back: j.back,
+      quiz: j.quiz, score: j.score, cram: j.cram, just: j.just, mixed: j.mixed, typing: j.typing, back: j.back,
       queue: q, done: j.done || 0, planned: j.planned || q.length, lapsed: j.lapsed || {},
       again: j.again || 0, hard: j.hard || 0, good: j.good || 0, easy: j.easy || 0,
       right: j.right || 0, wrong: j.wrong || 0,
@@ -2167,7 +2174,11 @@
     // one topic of a unit, every card of it, shuffled: the drill a topic
     // heading offers
     var topic = (mode || '').indexOf('t:') === 0 ? decodeURIComponent(mode.slice(2)) : null;
-    var queue = topic ? S.shuffle(d.cards.filter(function (c) { return (!unitId || c.u === unitId) && (c.t || '') === topic; }))
+    // one exam skill across every unit: the move practised, not the chapter
+    var skill = (mode || '').indexOf('s:') === 0 ? decodeURIComponent(mode.slice(2)) : null;
+    var handed = pendingDeal && pendingDeal.h === hereHash() ? pendingDeal.ids.map(cardById).filter(Boolean) : null;
+    pendingDeal = null;
+    var queue = handed && handed.length ? S.shuffle(handed) : skill ? skillQueue(d, skill) : topic ? S.shuffle(d.cards.filter(function (c) { return (!unitId || c.u === unitId) && (c.t || '') === topic; }))
       : lesson ? lessonQueue(d, lesson)
       : (mode || 'smart') === 'smart'
       ? buildDaily({ deck: d, unit: unitId || null })
@@ -2269,6 +2280,277 @@
     return (S.isKnown(c.i) ? 4 : 1) + (s.r || 0) - (s.l || 0) * 0.5;
   }
 
+  /* ==========================================================================
+     SCORE IT — the reader's side of an explain-why. Every explain-why card
+     carries its model answer, the other arguments that also earn the point
+     and the confident answers that lose it, each with the reason. Shown one
+     at a time, "would this earn the point?" is the judgement the free-
+     response section scores, practised on answers someone else wrote. It
+     rides the quiz's two-choice machinery but never writes the schedule:
+     judging an answer is not recalling one.
+     ========================================================================== */
+  function scorePool(d, unitId, limit) {
+    var js = d.cards.filter(function (c) {
+      return c.y === 'j' && (!unitId || c.u === unitId) && ((c.w && c.w.length) || (c.o && c.o.length));
+    });
+    if (limit) return js.slice(0, limit);
+    // cards already studied first: judging is sharper on a question you know
+    var seen = [], fresh = [];
+    js.forEach(function (c) { (S.isNew(c.i) ? fresh : seen).push(c); });
+    return S.shuffle(seen).concat(S.shuffle(fresh)).slice(0, Math.min(S.getSettings().sessionSize || 20, 15));
+  }
+  function startScore(deckId, unitId) {
+    var d = S.getDeck(deckId);
+    if (!d) return go('#/');
+    if (savedPending()) return waitingScreen();
+    if (resume()) return;
+    var queue = scorePool(d, unitId || null);
+    if (!queue.length) return renderEmptySession(d, unitId, 'score');
+    sess = {
+      deck: d, unitId: unitId || null, mode: 'score', quiz: true, score: true, typing: false,
+      queue: queue, done: 0, planned: queue.length, redo: 0,
+      revealed: false, again: 0, hard: 0, good: 0, easy: 0, lapsed: {}, right: 0, wrong: 0,
+      history: [], answered: false, typed: ''
+    };
+    renderCard();
+  }
+  /* one answer to judge: a weak one a little more often than a valid one,
+     since the weak answers are where the trap lives */
+  function scoreCand(c) {
+    var weak = (c.w || []).map(function (x) { return typeof x === 'string' ? { a: x } : x; })
+      .filter(function (x) { return x && x.a; });
+    var good = (c.o || []).filter(Boolean);
+    var earn = weak.length ? Math.random() < 0.45 : true;
+    if (earn) {
+      if (good.length) return { text: good[Math.floor(Math.random() * good.length)], earns: true };
+      return { text: c.a, earns: true, model: true };
+    }
+    var w = weak[Math.floor(Math.random() * weak.length)];
+    return { text: w.a, earns: false, why: w.why || '' };
+  }
+  function renderScoreCard(c) {
+    if (!sess.choices || !sess.cand) {
+      sess.cand = scoreCand(c);
+      sess.choices = [{ text: 'Earns the point', correct: sess.cand.earns },
+                      { text: 'Loses the point', correct: !sess.cand.earns }];
+    }
+    var k = sess.cand, starred = S.isStarred(c.i);
+    var body =
+      '<div class="q' + sizeClass(c.q) + '">' + T.html(c.q) + '</div>' +
+      '<div class="cand"><div class="jl">A student wrote</div><div class="ctext">' + T.html(k.text) + '</div></div>' +
+      '<div class="choices">' + sess.choices.map(function (ch, n) {
+        var state = sess.answered ? (ch.correct ? 'right' : (n === sess.picked ? 'wrong' : 'mute')) : '';
+        return '<button class="choice" data-pick="' + n + '" style="--i:' + n + '"' +
+          (state ? ' data-state="' + state + '"' : '') + (sess.answered ? ' disabled' : '') + '>' +
+          esc(ch.text) + '</button>';
+      }).join('') + '</div>' +
+      (sess.answered ? scoreVerdict(c, k) : '');
+    var footer = sess.answered
+      ? '<div class="rate"><button class="r-good" data-next><span class="lab">Next</span></button></div>' : '';
+    mount(
+      '<div class="session">' + sessTop(c) +
+      '<div class="cardstage"><div class="cardwrap"><div class="card' + (sess.answered ? '' : ' enter') + '" id="card"' +
+        ' role="group" aria-live="polite" aria-atomic="false"' +
+        ' aria-label="' + esc('Answer ' + (sess.done + 1) + ' of ' + sess.planned) + '">' + body + '</div></div></div>' +
+      '<div class="morecue" aria-hidden="true">' + CHEV + '</div>' +
+      footer + sessUtil(starred) + '</div>', { session: true, quiz: true });
+    wireCard();
+  }
+  function scoreVerdict(c, k) {
+    var ch = sess.choices[sess.picked], right = ch && ch.correct;
+    var head = (right ? 'Right. ' : 'Not quite. ') + (k.earns
+      ? (k.model ? 'It earns the point: it is the model answer.' : 'It earns the point: another valid way to argue it.')
+      : 'It loses the point' + (k.why ? ': ' : '.'));
+    return '<div class="scv">' +
+      '<p class="sv">' + esc(head) + (!k.earns && k.why ? T.html(k.why) : '') + '</p>' +
+      (k.model ? '' : '<div class="jl">The model answer</div><div class="sva">' + T.html(c.a) + '</div>') +
+      (c.n ? '<p class="svn">' + T.html(c.n) + '</p>' : '') +
+      '</div>';
+  }
+
+  /* ==========================================================================
+     BY SKILL — the exam asks each skill about every unit, so a skill's cards
+     dealt together are interleaved by construction: due first, then new,
+     then the soonest-due of the rest, from wherever in the course they sit.
+     ========================================================================== */
+  function skillQueue(d, code) {
+    var today = S.dayNum(), set = S.getSettings(), lim = set.sessionSize || 20;
+    var due = [], fresh = [], rest = [];
+    d.cards.forEach(function (c) {
+      if (c.s !== code) return;
+      if (S.isNew(c.i)) fresh.push(c);
+      else if (S.cs(c.i).d <= today) due.push(c);
+      else rest.push(c);
+    });
+    due.sort(function (a, b) { return S.cs(a.i).d - S.cs(b.i).d; });
+    rest.sort(function (a, b) { return S.cs(a.i).d - S.cs(b.i).d; });
+    S.shuffle(fresh);
+    var out = due.slice(0, lim);
+    var newCap = Math.max(set.newPerSession || 10, lim - out.length);
+    out = out.concat(fresh.slice(0, Math.min(newCap, lim - out.length)));
+    if (out.length < lim) out = out.concat(rest.slice(0, lim - out.length));
+    return S.shuffle(out);
+  }
+  function viewSkills(deckId) {
+    var d = S.getDeck(deckId);
+    if (!d || !d.skills || !d.skills.length) return goReplace('#/d/' + deckId);
+    var today = S.dayNum(), groups = [], byGroup = {};
+    d.skills.forEach(function (s) {
+      var n = 0, known = 0, due = 0;
+      d.cards.forEach(function (c) {
+        if (c.s !== s.code) return;
+        n++;
+        if (S.isKnown(c.i)) known++;
+        else if (!S.isNew(c.i) && S.cs(c.i).d <= today) due++;
+      });
+      if (!n) return;
+      var g = s.group || '';
+      if (!byGroup[g]) { byGroup[g] = []; groups.push(g); }
+      byGroup[g].push({ s: s, n: n, known: known, due: due });
+    });
+    mount(
+      backbar(nice(d)) +
+      '<div class="head"><h1 class="uhead">By skill</h1>' +
+      '<div class="sub">The exam asks every skill about every unit. One skill at a time, with cards ' +
+      'from across the course, practises the move instead of the chapter.</div></div>' +
+      groups.map(function (g) {
+        return '<ul class="list gap0 mt4">' + (g ? '<li><div class="ulabel">' + esc(g) + '</div></li>' : '') +
+          byGroup[g].map(function (r) {
+            var bits = [plural(r.n, 'card'), r.known.toLocaleString() + ' known'];
+            if (r.due) bits.push(r.due.toLocaleString() + ' due');
+            return '<li><button class="skrow" data-go="#/study/' + deckId + '/s:' + encodeURIComponent(r.s.code) + '">' +
+              '<span class="skk">Skill ' + esc(r.s.code) + '</span>' +
+              '<span class="skn">' + esc(r.s.name) + '</span>' +
+              '<span class="skc num">' + esc(bits.join(' · ')) + '</span></button></li>';
+          }).join('') + '</ul>';
+      }).join('')
+    );
+  }
+
+  /* ==========================================================================
+     RECALL — a topic's free recall. Writing down everything you remember
+     before looking is the strongest form of retrieval there is; then the
+     topic's own cards are the checklist, and whatever the recall missed is
+     dealt as a session at once, while the gap is fresh.
+     ========================================================================== */
+  var RECALL_ASK = {
+    chem: 'the terms, the relationships, the equations, an example of each',
+    calcbc: 'the definitions, the theorems and their conditions, the formulas, an example',
+    apush: 'the people, the events, the causes and effects, the dates',
+    lang: 'the terms, the moves a writer makes, an example of each',
+    french: 'the words, the expressions, the cultural examples',
+    _: 'the terms, the causes, the examples'
+  };
+  var recallState = null;
+  var pendingDeal = null;   // a queue handed to the next session the router starts
+  function recallCards(d, unitId, topic) {
+    var cs = d.cards.filter(function (c) { return c.u === unitId && (c.t || '') === topic && c.y !== 'd'; });
+    var core = cs.filter(function (c) { return c.c && c.y !== 'j'; }),
+        plain = cs.filter(function (c) { return !c.c && c.y !== 'j'; }),
+        why = cs.filter(function (c) { return c.y === 'j'; });
+    return core.concat(plain, why).slice(0, 12);
+  }
+  function firstSentence(a) {
+    var t = T.plain(a || '');
+    var m = t.match(/^(.{20,220}?[.!?])(\s|$)/);
+    if (m) return m[1];
+    if (t.length <= 220) return t;
+    var cut = t.slice(0, 220), at = Math.max(cut.lastIndexOf('; '), cut.lastIndexOf(', '));
+    return (at > 80 ? cut.slice(0, at) : cut.replace(/\s+\S*$/, '')) + '…';
+  }
+  function viewRecall(deckId, unitId, topic) {
+    var d = S.getDeck(deckId);
+    if (!d) return go('#/');
+    var u = d.unitById[unitId];
+    if (!u) return goReplace('#/d/' + deckId);
+    var cards = recallCards(d, unitId, topic);
+    if (!cards.length) return goReplace('#/d/' + deckId + '/u/' + unitId);
+    var key = deckId + '/' + unitId + '/' + topic;
+    if (!recallState || recallState.key !== key) recallState = { key: key, text: '', checked: false, had: {} };
+    var tp = (u.topics || []).filter(function (x) { return x.c === topic; })[0];
+    var title = tp && tp.t ? tp.t : topicTitle(u, topic);
+    var codes = tp ? [cedCode(tp.c), skillWord(tp.s)].filter(Boolean).join(' · ') : '';
+    var hero = '<div class="head">' + (codes ? '<span class="k">' + esc(codes) + '</span>' : '') +
+      '<h1 class="uhead">' + esc(title) + '</h1>';
+    if (!recallState.checked) {
+      mount(
+        backbar(u.title) + hero +
+        '<div class="sub">Write down everything you remember about it: ' + esc(RECALL_ASK[deckId] || RECALL_ASK._) +
+        '. Then check it against the topic.</div></div>' +
+        '<textarea class="recallin" id="recallin" rows="7" placeholder="Everything you remember"' +
+        ' aria-label="' + esc('Everything you remember about ' + title) + '">' + esc(recallState.text) + '</textarea>' +
+        '<button class="act" data-recall-check>Check</button>' +
+        '<div class="actsub">' + esc(plural(cards.length, 'point')) + ' to check it against</div>'
+      );
+      var ta = document.getElementById('recallin');
+      if (ta) ta.addEventListener('input', function () { recallState.text = ta.value; });
+      return;
+    }
+    var missed = cards.filter(function (c) { return !recallState.had[c.i]; }).length;
+    mount(
+      backbar(u.title) + hero +
+      '<div class="sub">Tap each point your recall covered. The rest are dealt as a session.</div></div>' +
+      (recallState.text.trim() ? '<div class="recallecho">' + esc(recallState.text.trim()) + '</div>' : '') +
+      (missed
+        ? '<button class="act" data-recall-go>Study the ' + esc(plural(missed, 'point')) + ' you missed</button>'
+        : '<div class="sub">You had every point.</div>') +
+      '<ul class="list tight still mt4">' + cards.map(function (c) {
+        var had = !!recallState.had[c.i];
+        return '<li><button class="qrow rcrow' + (had ? ' done' : '') + '" data-recall-had="' + c.i + '" aria-pressed="' + had + '">' +
+          '<span class="qq">' + T.html(c.q) + '</span>' +
+          '<span class="qa">' + esc(firstSentence(c.a)) + '</span>' +
+          '<span class="qmeta">' + (had ? 'Had it' : 'Not in my recall') + '</span></button></li>';
+      }).join('') + '</ul>' +
+      '<button class="textbtn" data-recall-again>Write it again</button>'
+    );
+  }
+  function recallClick(t) {
+    if (!recallState) return false;
+    if (t.closest('[data-recall-check]')) {
+      var ta = document.getElementById('recallin');
+      if (ta) recallState.text = ta.value;
+      recallState.checked = true; route(); return true;
+    }
+    var h = t.closest('[data-recall-had]');
+    if (h) {
+      var id = h.getAttribute('data-recall-had');
+      recallState.had[id] = !recallState.had[id];
+      var keep = app.scrollTop; route(); app.scrollTop = keep;
+      var again = document.querySelector('[data-recall-had="' + id + '"]');
+      if (again) { try { again.focus({ preventScroll: true }); } catch (e) {} }
+      return true;
+    }
+    if (t.closest('[data-recall-again]')) {
+      recallState = { key: recallState.key, text: '', checked: false, had: {} }; route(); return true;
+    }
+    if (t.closest('[data-recall-go]')) {
+      var p = recallState.key.split('/'), d = S.getDeck(p[0]);
+      var topic = recallState.key.slice(p[0].length + p[1].length + 2);
+      var list = recallCards(d, p[1], topic).filter(function (c) { return !recallState.had[c.i]; });
+      if (!list.length) return true;
+      // the topic drill deals these and only these; a deal paused on that
+      // drill earlier would otherwise be resumed in their place
+      var h = '/study/' + p[0] + '/t:' + encodeURIComponent(topic) + '/' + p[1];
+      var m = sessMap(); delete m[h]; writeSessMap(m);
+      pendingDeal = { h: h, ids: list.map(function (c) { return c.i; }) };
+      go('#' + h);
+      return true;
+    }
+    return false;
+  }
+
+  /* the unit a card or question leans on — or, for a Connections card, the
+     units it links */
+  function borrowWord(d, b) {
+    var ids = String(b).split(',');
+    var names = ids.map(function (id) {
+      var u = d && d.unitById[id];
+      return u ? (u.n != null ? String(u.n) : u.title) : id;
+    });
+    if (ids.length === 1) return 'Borrows from Unit ' + names[0];
+    return 'Links Units ' + names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+  }
+
   function renderEmptySession(d, unitId, mode) {
     var label = mode === 'starred' ? 'No starred cards yet.' :
                 mode === 'stuck' ? 'Nothing is sticking — no card has been missed three times.' :
@@ -2299,7 +2581,7 @@
     var fp = sess.deck && !sess.mixed ? focusOf(sess.deck, sess.unitId) : null;
     // never truncated, and it names the CED topic the card comes from
     var ced = c && c.t && /^\d+\.\d+$/.test(c.t) ? ' · CED ' + c.t : '';
-    var scope = d ? nice(d) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + (sess.just ? ' · Justify' : '') + ced : 'Review';
+    var scope = d ? nice(d) + (fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + (sess.just ? ' · Justify' : '') + (sess.score ? ' · Score it' : '') + ced : 'Review';
     return '<div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
       '<span class="pos num">' + Math.min(sess.done + 1, sess.planned).toLocaleString() + ' of ' + sess.planned.toLocaleString() +
@@ -2327,7 +2609,7 @@
       (sess.queue.length ? '<button class="sizebtn" data-note>' +
         (S.noteOf(sess.queue[0].i) ? 'Note ·' : 'Note') + '</button>' : '') +
       // the mode word changes THIS session only — Settings owns the default
-      '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'Choices' : (sess.typing ? 'Typing' : 'Flip')) + '</button>' +
+      (sess.score ? '' : '<button class="sizebtn" data-qmode>' + (sess.quiz ? 'Choices' : (sess.typing ? 'Typing' : 'Flip')) + '</button>') +
       '</div>';
   }
 
@@ -2383,10 +2665,7 @@
     // the topic already names an EK when the topic is one (Lang's RHS-1.A)
     var bits = (c.k || []).filter(function (k) { return k !== c.t; });
     if (c.s) bits.push(skillWord(c.s));
-    if (c.b) {
-      var d = cardDeckOf(c), bu = d && d.unitById[c.b];
-      bits.push('Borrows from ' + (bu ? 'Unit ' + bu.n : c.b));
-    }
+    if (c.b) bits.push(borrowWord(cardDeckOf(c), c.b));
     return bits.join(' · ');
   }
   /* an explain-why card carries, under its answer, the other valid ways to
@@ -2494,6 +2773,7 @@
   }
 
   function renderQuizCard(c, d, unit) {
+    if (sess.score) return renderScoreCard(c);
     if (!sess.choices) sess.choices = makeChoices(c, d);
     var starred = S.isStarred(c.i);
     var body =
@@ -2856,7 +3136,7 @@
     var before = S.cs(c.i) ? JSON.parse(JSON.stringify(S.cs(c.i))) : null;
     if (correct) sess.right++; else sess.wrong++;
     // the same cram guard as doGrade — a switched-to-MCQ cram stays honest
-    var wrote = !sess.cram || !correct || S.isNew(c.i) || S.isDue(c.i);
+    var wrote = !sess.score && (!sess.cram || !correct || S.isNew(c.i) || S.isDue(c.i));
     sess.history.push({ card: c, before: before, g: correct ? 1 : 0, rq: false, wrote: wrote, day: S.dayNum() });
     if (wrote) S.grade(c.i, correct ? 2 : 0, examCap(c));
     renderCard();
@@ -2875,7 +3155,7 @@
       var top = sess.history[sess.history.length - 1];
       if (top && top.card.i === c.i) top.rq = true;
     }
-    sess.done++; sess.answered = false; sess.picked = -1; sess.choices = null; sess.hinted = false;
+    sess.done++; sess.answered = false; sess.picked = -1; sess.choices = null; sess.cand = null; sess.hinted = false;
     saveSess();
     renderCard();
   }
@@ -2973,6 +3253,7 @@
     var again = sess.mode === 'starred' && sess.mixed ? '#/starred' :
       sess.mixed ? '#/review' :
       sess.mode === 'cram' ? '#/cram/' + d.id + (sess.unitId ? '/' + sess.unitId : '') :
+      sess.mode === 'score' ? '#/score/' + d.id + (sess.unitId ? '/' + sess.unitId : '') :
       '#/' + (sess.quiz ? 'quiz' : 'study') + '/' + d.id + '/' + sess.mode + (sess.unitId ? '/' + sess.unitId : '');
     // one line under the number, and it earns its place: caught up beats a
     // milestone streak beats the day's count — never the same rote line
@@ -3880,6 +4161,7 @@
     if (g) { doGrade(parseInt(g.getAttribute('data-grade'), 10)); return; }
     var pk = t.closest('[data-pick]');
     if (pk) { pickChoice(parseInt(pk.getAttribute('data-pick'), 10)); return; }
+    if (recallClick(t)) return;
     if (t.closest('[data-next]')) { nextQuiz(); return; }
 
     if (t.closest('[data-unit-filter]')) {
@@ -4314,13 +4596,13 @@
     var h = location.hash.replace(/^#/, '') || '/';
     var p = h.split('/').filter(Boolean);
     var root = '/' + (p[0] || '');
-    if (swRefreshDue && !(p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' || p[0] === 'ten')) {
+    if (swRefreshDue && !(p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' || p[0] === 'ten' || p[0] === 'score')) {
       swRefreshDue = false; S.refreshIndex();
     }
     syncTabs(['review', 'search', 'stats', 'settings'].indexOf(p[0]) > -1 ? root
       : (p[0] === 'weak' || p[0] === 'stuck') ? '/stats' : '/');   // starred hangs off the deck list
     var onSess = (p[0] === 'study' || p[0] === 'quiz' || p[0] === 'review' || p[0] === 'cram' ||
-                  p[0] === 'ten' || ((p[0] === 'starred' || p[0] === 'stuck') && p[1] === 'go'));
+                  p[0] === 'ten' || p[0] === 'score' || ((p[0] === 'starred' || p[0] === 'stuck') && p[1] === 'go'));
     // a deal left for another screen, or for another deal, is kept for the
     // day and offered back as a Continue line — it used to be dropped the
     // moment another course was opened
@@ -4332,6 +4614,7 @@
     // the same rule for the search scope: leaving the screen widens it again,
     // or you come back an hour later to "No matches in English"
     if (p[0] !== 'search') searchState.deck = null;
+    if (p[0] !== 'recall') recallState = null;
     if (window.Games) window.Games.onRoute(p[0] || '');
 
     if (!p.length) {
@@ -4346,7 +4629,8 @@
     // A deep link can land before its deck has arrived — the app paints on the
     // index now, so the decks are still in flight. Say "Loading" and repaint
     // when it lands, rather than bouncing the reader off their own lesson.
-    var wantsDeck = (p[0] === 'd' || p[0] === 'study' || p[0] === 'quiz' || p[0] === 'cram') && p[1];
+    var wantsDeck = (p[0] === 'd' || p[0] === 'study' || p[0] === 'quiz' || p[0] === 'cram' ||
+                     p[0] === 'score' || p[0] === 'recall') && p[1];
     if (wantsDeck && !S.getDeck(p[1]) && S.deckPending && S.deckPending(p[1]) &&
         (S.getIndex().courses || []).some(function (c) { return c.id === p[1]; })) {
       return mount('<div class="head"><h1>' + esc(nice(p[1])) + '</h1>' + RING + '</div>');
@@ -4358,6 +4642,7 @@
     if (p[0] === 'd' && p[1] && p[2] === 'l' && p[3]) return viewLesson(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'r' && p[3]) return viewResource(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'g') return viewFocus(p[1]);
+    if (p[0] === 'd' && p[1] && p[2] === 'k') return viewSkills(p[1]);
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3] && p[4] === 'frq') return viewFRQ(p[1], p[3]);
     if (p[0] === 'd' && p[1] && p[2] === 'u' && p[3]) return viewUnit(p[1], p[3]);
     if (p[0] === 'd' && p[1]) return viewCourse(p[1]);
@@ -4366,6 +4651,8 @@
     if (p[0] === 'review') return startReview();
     if (p[0] === 'ten') return startReview(10);
     if (p[0] === 'cram') return startCram(p[1], p[2], p[3]);
+    if (p[0] === 'score' && p[1]) return startScore(p[1], p[2]);
+    if (p[0] === 'recall' && p[1] && p[2] && p[3]) return viewRecall(p[1], p[2], decodeURIComponent(p[3]));
     if (p[0] === 'weak') return viewWeak();
     if (p[0] === 'stuck') return p[1] === 'go' ? startStuck() : viewStuck();
     if (p[0] === 'starred') return p[1] === 'go' ? startStarred() : viewStarred();

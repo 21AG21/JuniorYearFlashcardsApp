@@ -35,6 +35,8 @@ sk_codes = [t.get('code') for t in sk.get('topics', [])]
 if tcodes != sk_codes: warn(f'topic codes differ from skeleton: {tcodes} vs {sk_codes}')
 ek_by_topic = {t['code']: {e['code'] for e in t.get('ek', [])} for t in sk.get('topics', [])}
 all_ek = set().union(*ek_by_topic.values()) if ek_by_topic else set()
+# the Connections unit's skeleton spans the course: which unit each code belongs to
+ek_unit = {e['code']: t.get('unit') for t in sk.get('topics', []) for e in t.get('ek', []) if t.get('unit')}
 for t in topics:
     for k in ('c','t','s'):
         if not t.get(k): err(f'topic {t.get("c")} missing {k}')
@@ -86,7 +88,9 @@ for i, c in enumerate(cards):
             elif c.get('t') in ek_by_topic and ek_by_topic[c['t']] and code not in ek_by_topic[c['t']]: warn(f'{w}: EK {code} belongs to another topic than {c["t"]}')
     if not c.get('s'): err(f'{w}: no skill')
     elif skills and c['s'] not in skills: warn(f'{w}: skill {c["s"]} not in skill list')
-    if c.get('b') is not None and (c['b'] not in unit_ids or c['b'] == unit): err(f'{w}: bad borrow {c["b"]}')
+    if c.get('b') is not None and not all(b in unit_ids and b != unit for b in str(c['b']).split(',')): err(f'{w}: bad borrow {c["b"]}')
+    if unit == 'x' and course != 'french' and c.get('y') != 'd' and len({ek_unit.get(k) for k in c.get('k') or [] if ek_unit.get(k)}) < 2 and not str(c.get('q','')).lower().startswith('identify the error'):
+        warn(f'{w}: cites codes from fewer than two units')
     y = c.get('y')
     if y not in (None, 'j', 'd'): err(f'{w}: y must be j or d')
     q, a = str(c.get('q','')), str(c.get('a',''))
@@ -138,7 +142,7 @@ for i, f in enumerate(frq):
     for k in ('title','stem'):
         if not isinstance(f.get(k), str) or not f[k].strip(): err(f'{w}: empty {k}')
     if not isinstance(f.get('pts'), int) or f['pts'] <= 0: err(f'{w}: pts')
-    if f.get('b') is not None and (f['b'] not in unit_ids or f['b'] == unit): err(f'{w}: bad borrow')
+    if f.get('b') is not None and not all(b in unit_ids and b != unit for b in str(f['b']).split(',')): err(f'{w}: bad borrow')
     parts, rows = f.get('parts') or [], f.get('rows') or []
     if not parts and not rows: err(f'{w}: no parts and no rows')
     for n, p in enumerate(parts):

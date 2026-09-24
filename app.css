@@ -1447,3 +1447,36 @@ sub,sup{ font-size:max(.68em, 11px); }
 .frq .fre{ color:var(--ink-soft); }
 .frq .frl{ color:var(--muted); }
 @media (hover:hover){ .frq .fpart:hover .fpq{ color:var(--ink); } }
+
+/* ---- a topic heading's two drills: Recall, then Study -------------------- */
+.list .tsep .tstudy + .tstudy{ margin-left:12px; }
+
+/* ---- Score it: the answer under judgement is set off like a quotation ---- */
+.cand{ margin-top:var(--s-3); padding-left:var(--s-2); border-left:2px solid var(--hair); }
+.cand .ctext{ font-size:var(--t-body); line-height:1.45; color:var(--ink); overflow-wrap:anywhere; }
+.scv{ margin-top:var(--s-3); display:flex; flex-direction:column; gap:6px; }
+.scv .sv{ margin:0; font-size:var(--t-body); font-weight:500; color:var(--ink); line-height:1.4; overflow-wrap:anywhere; }
+.scv .sva{ font-size:var(--t-body); color:var(--ink-soft); line-height:1.45; overflow-wrap:anywhere; }
+.scv .svn{ margin:0; font-size:var(--t-label); color:var(--ink-soft); line-height:1.4; overflow-wrap:anywhere; }
+
+/* ---- By skill: the code small, the skill itself the value ---------------- */
+.skrow{ display:flex; flex-direction:column; gap:4px; width:100%; min-height:44px; text-align:left; background:none;
+  border:0; padding:var(--s-2) 0; color:inherit; font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.skrow:active{ opacity:.5; }
+.skrow .skk{ font-size:var(--t-label); font-weight:500; color:var(--ink-soft); }
+.skrow .skn{ font-size:var(--t-option); font-weight:460; color:var(--ink); letter-spacing:-.012em; line-height:1.3; overflow-wrap:anywhere; }
+.skrow .skc{ font-size:var(--t-label); color:var(--muted); }
+@media (hover:hover){ .skrow:hover .skn{ color:var(--ink); } }
+
+/* ---- Recall: an underline field, then what was written, quoted ----------- */
+.recallin{ display:block; width:100%; box-sizing:border-box; min-height:9em; margin:var(--s-2) 0 var(--s-3);
+  background:transparent; border:0; border-bottom:2px solid var(--hair); border-radius:0; padding:8px 1px;
+  font:inherit; font-size:var(--t-body); line-height:1.5; color:var(--ink); resize:vertical; }
+.recallin::placeholder{ color:var(--muted); }
+.recallin:focus{ outline:none; border-bottom-color:var(--ink-soft); }
+.recallin:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
+.recallecho{ white-space:pre-wrap; max-height:14em; overflow:auto; margin:0 0 var(--s-3); padding-left:var(--s-2);
+  border-left:2px solid var(--hair); font-size:var(--t-body); line-height:1.5; color:var(--ink-soft); overflow-wrap:anywhere; }
+.rcrow .qmeta{ font-weight:500; }
+.rcrow.done .qq{ color:var(--muted); }
+.rcrow.done .qmeta{ color:var(--ink); }

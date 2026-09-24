@@ -1,11 +1,31 @@
 #!/usr/bin/env python3
 """merge.py <course> <unit> [<unit> ...]  — replaces each unit's cards in data/<course>.json with out/<course>-<unit>.json, sets the unit's CED frame, re-counts, re-stamps."""
 import json, sys, os, re, hashlib, subprocess
-G = os.environ.get('GEN_DIR', os.path.dirname(os.path.abspath(__file__))); ROOT = os.environ.get('APP_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+G = os.path.dirname(os.path.abspath(__file__)); ROOT = '/home/user/JuniorYearFlashcardsApp'
 course = sys.argv[1]; units = sys.argv[2:]
-sk = json.load(open(os.path.join(os.environ.get('CED_DIR', os.path.join(ROOT, 'src', 'research', 'ced')), f'{course}.skeleton.json'), encoding='utf-8'))
+sk = json.load(open(f'{G}/../ced/{course}.skeleton.json', encoding='utf-8'))
 path = f'{ROOT}/data/{course}.json'
 d = json.load(open(path, encoding='utf-8'))
+ix_path = f'{ROOT}/data/index.json'; ix_raw = open(ix_path, encoding='utf-8').read(); ix = json.loads(ix_raw)
+ixc = [c for c in ix['courses'] if c['id'] == course][0]
+# a unit the course does not have yet (the Connections unit, 'x') goes after the last CED unit, ahead of
+# the exam and reference units, which each move down one place
+ced_ids = {u['id'] for u in sk['units']}
+for unit in units:
+    if any(u['id'] == unit for u in d['units']): continue
+    out0 = json.load(open(f'{G}/out/{course}-{unit}.json', encoding='utf-8'))
+    at = max(i for i, u in enumerate(d['units']) if u['id'] in ced_ids) + 1
+    n = d['units'][at - 1]['n'] + 1
+    for u in d['units'][at:]:
+        if isinstance(u.get('n'), int): u['n'] += 1
+    for iu in ixc['units']:
+        if iu['id'] not in ced_ids and isinstance(iu.get('n'), int) and iu['n'] >= n: iu['n'] += 1
+    d['units'].insert(at, {'id': unit, 'n': n, 'title': out0['title'], 'weight': '', 'count': 0,
+                           'blurb': out0.get('blurb') or ''})
+    iat = [i for i, iu in enumerate(ixc['units']) if iu['id'] == d['units'][at - 1]['id']][0] + 1
+    ixc['units'].insert(iat, {'id': unit, 'n': n, 'title': out0['title'], 'weight': '', 'count': 0})
+    open(ix_path, 'w', encoding='utf-8').write(json.dumps(ix, ensure_ascii=False, separators=(',', ':')) + ('\n' if ix_raw.endswith('\n') else ''))
+    print(f'{course}: added unit {unit} as number {n}')
 order = [u['id'] for u in d['units']]
 by_unit = {uid: [] for uid in order}
 for c in d['cards']: by_unit.setdefault(c['u'], []).append(c)
@@ -25,6 +45,8 @@ for unit in units:
     u['topics'] = out['topics']; u['excl'] = out.get('excl') or []; u['check'] = out.get('check') or ''
     u['frq'] = out.get('frq') or []; u['count'] = len(new)
     u['ced'] = sk.get('edition') or ''
+    if unit not in ced_ids:   # the Connections unit names itself
+        u['title'] = out.get('title') or u['title']; u['blurb'] = out.get('blurb') or u.get('blurb') or ''
     su = [x for x in sk['units'] if x['id'] == unit]
     if su and su[0].get('weight') and re.match(r'^\d+–\d+%$', su[0]['weight']): u['weight'] = su[0]['weight']
     print(f'{course}/{unit}: {len(new)} cards, {len(u["frq"])} FRQ')
