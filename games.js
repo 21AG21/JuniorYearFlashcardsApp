@@ -46,7 +46,13 @@
     radmatch:   { name: 'Radians',          deck: 'calcbc', kind: 'match'  },
     limitsquiz: { name: 'Limits',           deck: 'calcbc', kind: 'quiz'   },
     converge:   { name: 'Converge',         deck: 'calcbc', kind: 'quiz'   },
-    blank:      { name: 'In context',       deck: 'sat',    kind: 'quiz'   }
+    blank:      { name: 'In context',       deck: 'sat',    kind: 'quiz'   },
+    // an explain-why's hint is its reasoning chain; put the steps in order
+    chemchain:  { name: 'Chains',           deck: 'chem',   kind: 'chain'  },
+    calcchain:  { name: 'Chains',           deck: 'calcbc', kind: 'chain'  },
+    apushchain: { name: 'Chains',           deck: 'apush',  kind: 'chain'  },
+    langchain:  { name: 'Chains',           deck: 'lang',   kind: 'chain'  },
+    frchain:    { name: 'Chains',           deck: 'french', kind: 'chain'  }
   };
   var ORDER_BY_DECK = ['lang', 'chem', 'french', 'calcbc', 'apush', 'sat'];
 
@@ -519,6 +525,11 @@
 
   /* what each round asks, in one line under its name on the hub */
   var DESC = {
+    chemchain:  'Put the steps of an explanation in order, first step first',
+    calcchain:  'Put the steps of a justification in order, first step first',
+    apushchain: 'Put the links of a historical argument in order, cause first',
+    langchain:  'Put the steps of an analysis in order, first step first',
+    frchain:    'Put the steps of an explanation in order, first step first',
     timeline:   'Put events in the order they happened',
     presorder:  'Put presidents in the order they served',
     periodquiz: 'Which period does this event belong to?',
@@ -629,6 +640,7 @@
     else if (g.kind === 'graph') startGraph(id);
     else if (g.kind === 'board') startBoard(id);
     else if (g.kind === 'quiz') startQuiz(id);
+    else if (g.kind === 'chain') startChain(id);
     else startCircle(id);
   }
 
@@ -938,7 +950,7 @@
   /* The chrome says everything in symbols, so a round can be read before it can
      be read: ✓ right, ✗ wrong, ↑ in a row, ↻ tries, ◷ seconds left, ● a question
      answered, ○ one still to come, and a cue showing what this game asks of you. */
-  var CUE = { quiz: 'Quiz', match: 'Match', order: 'Order', board: 'Quiz', circle: 'Circle', graph: 'Graph' };
+  var CUE = { quiz: 'Quiz', match: 'Match', order: 'Order', board: 'Quiz', circle: 'Circle', graph: 'Graph', chain: 'Order' };
   function cue(id) {
     var k = GAMES[id] && GAMES[id].kind;
     return '';
@@ -2252,6 +2264,78 @@
     );
   }
 
+
+  /* ==========================================================================
+     CHAINS — every explain-why carries its reasoning as a chain in its hint
+     ("→ particles uncountable → mass measurable → molar mass converts").
+     The steps come shuffled; tap them in order. A chain counts when it was
+     put in order without a slip; then the model answer shows the chain as
+     prose. Cards already studied come first: ordering a chain you have met
+     is retrieval, not guessing.
+     ========================================================================== */
+  function chainSteps(h) {
+    return String(h || '').split('→').map(function (x) { return clean(x); }).filter(Boolean);
+  }
+  function chainPool(deckId) {
+    var d = S.getDeck(deckId);
+    if (!d) return [];
+    var seen = [], fresh = [];
+    d.cards.forEach(function (c) {
+      if (c.y !== 'j') return;
+      var steps = chainSteps(c.h);
+      if (steps.length < 3 || steps.length > 6) return;
+      if (steps.some(function (x) { return x.length > 120; })) return;
+      var low = steps.map(function (x) { return x.toLowerCase(); });
+      if (low.some(function (x, n) { return low.indexOf(x) !== n; })) return;
+      (S.isNew(c.i) ? fresh : seen).push({ q: c.q, a: c.a, steps: steps });
+    });
+    return shuffle(seen).concat(shuffle(fresh)).slice(0, 8);
+  }
+  function startChain(id) {
+    var pool = chainPool(GAMES[id].deck);
+    if (!pool.length) return renderNoData(id);
+    st = { id: id, kind: 'chain', qs: pool, i: 0, total: pool.length, score: 0,
+           placed: 0, order: null, slip: false, lock: false, wrongChoice: -1 };
+    renderChain();
+  }
+  function renderChain() {
+    if (st.i >= st.total) return gameDone(st.id, st.score, st.total, st.score + ' of ' + st.total);
+    var q = st.qs[st.i];
+    if (!st.order) st.order = shuffle(q.steps.map(function (x, n) { return n; }));
+    var left = st.order.filter(function (n) { return n >= st.placed; });
+    ctx.mount(
+      ctx.backbar(GAMES[st.id].name) +
+      gameTop(st.id, right(st.score), dots(st.i, st.total)) +
+      '<div class="gcur"><div class="gname gsm gxs" data-plain="' + esc(flat(T.plain(q.q))) + '">' + T.html(q.q) + '</div></div>' +
+      '<ol class="chainlist">' + q.steps.slice(0, st.placed).map(function (x) {
+        return '<li>' + T.html(x) + '</li>';
+      }).join('') + (st.lock ? '' : '<li class="next" aria-hidden="true">…</li>') + '</ol>' +
+      (st.lock
+        ? '<div class="chainans">' + T.html(q.a) + '</div>' +
+          '<button class="act" data-chain-next>' + (st.i + 1 < st.total ? 'Next' : 'Finish') + '</button>'
+        : '<div class="choices">' + left.map(function (n) {
+            return '<button class="choice" data-gc="' + n + '" style="--i:' + n + '"' +
+              (n === st.wrongChoice ? ' data-state="wrong"' : '') + '>' + T.html(q.steps[n]) + '</button>';
+          }).join('') + '</div>'),
+      { session: true, keepScroll: st.placed > 0 }
+    );
+  }
+  function tapChain(n) {
+    if (!st || st.kind !== 'chain' || st.lock) return;
+    var q = st.qs[st.i];
+    if (n === st.placed) {
+      st.placed++; st.wrongChoice = -1;
+      if (st.placed >= q.steps.length) { st.lock = true; if (!st.slip) st.score++; }
+    } else { st.slip = true; st.wrongChoice = n; }
+    renderChain();
+  }
+  function nextChain() {
+    if (!st || st.kind !== 'chain' || !st.lock) return;
+    if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
+    st.i++; st.placed = 0; st.order = null; st.slip = false; st.lock = false; st.wrongChoice = -1;
+    renderChain();
+  }
+
   function nextQuizQ() {
     if (!st || st.kind !== 'quiz') return;
     if (location.hash.indexOf('#/game/' + st.id) !== 0) { st = null; return; }
@@ -2477,6 +2561,7 @@
   function onClick(e) {
     var t = e.target;
     var el;
+    if (t.closest('[data-chain-next]')) { nextChain(); return; }
     if ((el = t.closest('[data-gagain]'))) {
       if (gRecent(doneAt, 400)) return;   // the tap that ended the round
       play(el.getAttribute('data-gagain')); return;
@@ -2513,6 +2598,7 @@
       var ci = parseInt(el.getAttribute('data-gc'), 10);
       if (st.kind === 'graph') tapGraphChoice(ci);
       else if (st.kind === 'quiz') tapQuizGame(ci);
+      else if (st.kind === 'chain') tapChain(ci);
       else tapChoice(ci);
       return;
     }
@@ -2541,7 +2627,10 @@
     }
     // the circle and graph rounds that ask by choices render the very same
     // numbered list a quiz does — there is no reason the keys stop working
-    if (st && (st.kind === 'quiz' || st.kind === 'graph' || st.kind === 'circle') &&
+    if (st && st.kind === 'chain' && st.lock && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault(); nextChain(); return;
+    }
+    if (st && (st.kind === 'quiz' || st.kind === 'graph' || st.kind === 'circle' || st.kind === 'chain') &&
         /^[1-9]$/.test(e.key)) {
       var els = document.querySelectorAll('.choices .choice[data-gc]');
       var ch = els[+e.key - 1];
@@ -2579,6 +2668,7 @@
       else if (st.kind === 'match') renderMatch();
       else if (st.kind === 'board') renderBoard(true);
       else if (st.kind === 'quiz') renderQuiz();
+      else if (st.kind === 'chain') renderChain();
       else if (st.kind === 'graph') renderGraph();
       else renderCircle();
       return true;

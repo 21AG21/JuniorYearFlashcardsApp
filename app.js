@@ -4235,15 +4235,19 @@
         b('High-yield') + ': ' + esc(MODE_DESC.core) + '.',
         b('Quiz') + ': ' + esc(MODE_DESC.quiz) + '. The card\'s note appears under the right choice.',
         b('Trouble spots') + ': ' + esc(MODE_DESC.hard) + '.',
+        b('Score it') + ', on an AP course or unit: ' + esc(MODE_DESC.score) + '. The answers are the explain-whys\' own: the model, the other arguments that earn the point, and the confident ones that lose it. Judging never moves the schedule.',
+        b('By skill') + ', on an AP course: ' + esc(MODE_DESC.skills) + '. The exam asks every skill about every unit, so a skill\'s cards come mixed from across the course.',
+        b('Exam mix') + ': ' + esc(MODE_DESC.mix) + '.',
         b('Shuffle') + ': ' + esc(MODE_DESC.all) + '.',
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
         b('Cram') + ', on a unit: ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
         b('Justify') + ', on a unit of an AP course: ' + esc(MODE_DESC.justify) + '. Dealt like Cram. In Quiz, the wrong choices are the answers that earn nothing.',
-        b('Free response') + ', on a unit of an AP course: ' + esc(MODE_DESC.frq) + '. Point splits are estimates; the essays are laid out by rubric row.',
+        b('Free response') + ', on a unit of an AP course: ' + esc(MODE_DESC.frq) + '. Point splits are estimates; the essays are laid out by rubric row. ' + b('Practice it') + ' on a question: write each part, then score it against the model, part by part; the best score stays on this device.',
         b('Grammar') + ', on French: ' + esc(MODE_DESC.focus) + '. A point deals every card on it, from both grammar units, the least-known first, like Cram.',
         b('Print') + ', on a unit: ' + esc(MODE_DESC.print) + '.',
         b('Plan') + ', on a course with an exam date: ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',
-        'A unit page opens with its key ideas, then its cards under their topics; ' + b('Study') + ' beside a topic deals that topic alone.'
+        'A unit page opens with its key ideas, then its cards under their topics; ' + b('Study') + ' beside a topic deals that topic alone, and ' + b('Recall') + ' asks you to write down everything you remember about it first, then deals only what your recall missed.',
+        'When an ordinary card gets Again, its topic\'s explain-why follows a few cards later, marked ' + b('After a miss') + ', in the place of a new card, so the session is no longer.'
       ]) +
       sec('Stars, notes and typing', [
         'The ' + b('star') + ' keeps a card. Starred cards collect under Starred on the course list and under Study starred on their course; swiping a card up stars it.',
