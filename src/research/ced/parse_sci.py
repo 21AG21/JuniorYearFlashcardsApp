@@ -13,7 +13,8 @@ if COURSE == 'chem':
 else:
     LO_RE = re.compile(r'^([A-Z]{3}-\d+\.[A-Z])\s*$'); EK_RE = re.compile(r'^([A-Z]{3}-\d+\.[A-Z]\.\d+)\s*$'); EU_RE = re.compile(r'^([A-Z]{3}-\d+)\s*$')
 SK_RE = re.compile(r'^(\d\.[A-Z])\s*$')
-TOPIC_RE = re.compile(r'^TOPIC (\d+\.\d+)\s*$')
+# A skill-category label can share the heading line ("Justification TOPIC 4.7").
+TOPIC_RE = re.compile(r'^(?:[A-Z][A-Za-z]+(?: [A-Za-z]+)* )?TOPIC (\d+\.\d+)\s*$')
 STOP = ('SUGGESTED SKILL', 'AVAILABLE RESOURCE', 'Course Framework', 'Return to', 'RETURN TO', 'return to', '©', 'You can find', '§',
         'LEARNING OBJECTIVE', 'ESSENTIAL KNOWLEDGE', 'ENDURING UNDERSTANDING', 'Required Course Content', 'TOPIC ', 'UNIT',
         'AP Chemistry Course', 'AP Calculus AB and BC', 'EXCLUSION STATEMENT', 'X EXCLUSION', 'Exclusion Statement', 'Unit at a glance', 'UNIT AT A GLANCE')
@@ -46,7 +47,7 @@ for n in sorted(P):
     lines = text.split('\n')
     if n < FIRST or n >= LAST: continue
     if 'Using the Unit Guides' in text or 'TOPIC PAGES' in text: continue
-    mt = re.search(r'^TOPIC (\d+\.\d+)\s*$', text, re.M)
+    mt = re.search(TOPIC_RE.pattern, text, re.M)
     if mt:
         nz = [l.strip() for l in lines if l.strip()]
         if 'UNIT' in nz[:4]:

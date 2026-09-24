@@ -69,8 +69,8 @@
   "state": "merged"
  },
  "apush-u3": {
-  "state": "running",
-  "since": "2026-09-24T06:07Z"
+  "state": "merged",
+  "since": "2026-09-24T06:30Z"
  },
  "apush-u2": {
   "state": "running",
@@ -85,16 +85,20 @@
   "since": "2026-09-24T06:26Z"
  },
  "apush-u6": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:29Z"
  },
  "apush-u7": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:29Z"
  },
  "apush-u8": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:29Z"
  },
  "apush-u9": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:29Z"
  },
  "lang-rhs": {
   "state": "merged"
