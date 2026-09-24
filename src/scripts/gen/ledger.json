@@ -62,8 +62,8 @@
   "since": "2026-09-24T06:07Z"
  },
  "calcbc-u10": {
-  "state": "running",
-  "since": "2026-09-24T06:07Z"
+  "state": "merged",
+  "since": "2026-09-24T06:35Z"
  },
  "apush-u1": {
   "state": "merged"
@@ -104,7 +104,8 @@
   "state": "merged"
  },
  "lang-cle": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:30Z"
  },
  "lang-reo": {
   "state": "queued"
