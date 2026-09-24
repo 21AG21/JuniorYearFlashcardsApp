@@ -90,11 +90,11 @@
  },
  "apush-u7": {
   "state": "running",
-  "since": "2026-09-24T06:29Z"
+  "since": "2026-09-24T11:10Z"
  },
  "apush-u8": {
   "state": "running",
-  "since": "2026-09-24T06:29Z"
+  "since": "2026-09-24T11:10Z"
  },
  "apush-u9": {
   "state": "merged",
@@ -104,37 +104,38 @@
   "state": "merged"
  },
  "lang-cle": {
-  "state": "running",
-  "since": "2026-09-24T06:30Z"
+  "state": "merged",
+  "since": "2026-09-24T11:10Z"
  },
  "lang-reo": {
   "state": "running",
-  "since": "2026-09-24T06:35Z"
+  "since": "2026-09-24T11:10Z"
  },
  "lang-stl": {
   "state": "running",
-  "since": "2026-09-24T06:58Z"
+  "since": "2026-09-24T11:10Z"
  },
  "french-t1": {
   "state": "merged"
  },
  "french-t2": {
   "state": "running",
-  "since": "2026-09-24T06:40Z"
+  "since": "2026-09-24T11:10Z"
  },
  "french-t3": {
   "state": "running",
-  "since": "2026-09-24T06:49Z"
+  "since": "2026-09-24T11:10Z"
  },
  "french-t4": {
   "state": "running",
-  "since": "2026-09-24T06:55Z"
+  "since": "2026-09-24T11:10Z"
  },
  "french-t5": {
   "state": "running",
-  "since": "2026-09-24T06:57Z"
+  "since": "2026-09-24T11:10Z"
  },
  "french-t6": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T11:10Z"
  }
 }

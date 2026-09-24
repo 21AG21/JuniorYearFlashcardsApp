@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """validate.py <course> <unit>  — checks out/<course>-<unit>.json against in/<course>-<unit>.json and the live deck."""
 import json, re, sys, os, collections
-G = os.environ.get('GEN_DIR', os.path.dirname(os.path.abspath(__file__)))
-ROOT = os.environ.get('APP_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+G = os.path.dirname(os.path.abspath(__file__))
+ROOT = '/home/user/JuniorYearFlashcardsApp'
 course, unit = sys.argv[1], sys.argv[2]
 E, W, I = [], [], []
 def err(m): E.append(m)
@@ -48,7 +48,9 @@ if not out.get('check'): warn('no check line')
 def norm(q): return re.sub(r'\s+', ' ', str(q).lower()).strip().rstrip('.?!:')
 def tex_check(s, where):
     if not isinstance(s, str): return
-    if s.count('$') % 2: err(f'{where}: unbalanced $')
+    # tex.js treats a $...$ island as math only when it holds \ ^ or _, so a
+    # literal dollar amount in prose renders as text; only math can be unbalanced.
+    if s.count('$') % 2 and re.search(r'[\\^_]', s): err(f'{where}: unbalanced $')
     for seg in re.findall(r'\$(.+?)\$', s):
         for cmd in re.findall(r'\\([A-Za-z]+|[,;])', seg):
             if cmd not in TEX_OK: err(f'{where}: tex command \\{cmd} not in subset')
