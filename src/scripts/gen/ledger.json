@@ -34,8 +34,8 @@
   "since": "2026-09-24T06:17Z"
  },
  "calcbc-u3": {
-  "state": "running",
-  "since": "2026-09-24T06:07Z"
+  "state": "merged",
+  "since": "2026-09-24T06:21Z"
  },
  "calcbc-u4": {
   "state": "running",
@@ -73,7 +73,8 @@
   "since": "2026-09-24T06:07Z"
  },
  "apush-u2": {
-  "state": "queued"
+  "state": "running",
+  "since": "2026-09-24T06:17Z"
  },
  "apush-u4": {
   "state": "queued"
