@@ -1,0 +1,88 @@
+{
+ "about": "Autonomous backlog after the Connections round. Agent items run from prompts4.json; results are applied by the steps in each item.",
+ "max_running": 8,
+ "items": {
+  "examaudit-a": {
+   "status": "running",
+   "kind": "patch",
+   "result": "out/patch-exam-a.json"
+  },
+  "examaudit-b": {
+   "status": "running",
+   "kind": "patch",
+   "result": "out/patch-exam-b.json"
+  },
+  "frproof-a": {
+   "status": "running",
+   "kind": "patch",
+   "result": "out/patch-frproof-a.json"
+  },
+  "frproof-b": {
+   "status": "running",
+   "kind": "patch",
+   "result": "out/patch-frproof-b.json"
+  },
+  "frproof-c": {
+   "status": "running",
+   "kind": "patch",
+   "result": "out/patch-frproof-c.json"
+  },
+  "mc-chem": {
+   "status": "running",
+   "kind": "mc",
+   "result": "out/mc-chem.json"
+  },
+  "mc-calcbc": {
+   "status": "running",
+   "kind": "mc",
+   "result": "out/mc-calcbc.json"
+  },
+  "mc-apush": {
+   "status": "running",
+   "kind": "mc",
+   "result": "out/mc-apush.json"
+  },
+  "audit-chem2": {
+   "status": "queued",
+   "kind": "patch",
+   "result": "out/patch-chem-reasoning.json"
+  },
+  "audit-calc2": {
+   "status": "queued",
+   "kind": "patch",
+   "result": "out/patch-calc-reasoning.json"
+  },
+  "audit-humanities": {
+   "status": "queued",
+   "kind": "patch",
+   "result": "out/patch-humanities.json"
+  },
+  "audit-links": {
+   "status": "queued",
+   "kind": "patch",
+   "result": "out/patch-links.json"
+  }
+ },
+ "me": [
+  {
+   "id": "mc-player",
+   "status": "todo",
+   "what": "Interactive multiple-choice set player in Practice it (parse (A)-(D), pick, explain, score, best)."
+  },
+  {
+   "id": "code-review",
+   "status": "todo",
+   "what": "Review the code added this round (Score it, Recall, By skill, FRQ practice, follow-up, Exam mix, Chains, Which unit, weak topics) for bugs; fix; test."
+  },
+  {
+   "id": "skills-progress",
+   "status": "todo",
+   "what": "Progress: known share by skill for each AP course, linking to By skill."
+  },
+  {
+   "id": "frq-label",
+   "status": "todo",
+   "what": "Once units carry multiple-choice sets, name the unit mode \"Exam practice\" and count sets separately."
+  }
+ ]
+}
