@@ -2927,7 +2927,7 @@
     var sk = sess.deck && sess.deck.skills && String(sess.mode || '').indexOf('s:') === 0
       ? sess.deck.skills.filter(function (x) { return x.code === decodeURIComponent(sess.mode.slice(2)); })[0] : null;
     var scope = d ? nice(d) + (sk ? ' · Skill ' + sk.code + ' · ' + (sk.short || sk.name) : fp ? ' · ' + fp.title : unit ? ' · ' + unit.title : '') + (sess.just ? ' · Justify' : '') + (sess.score ? ' · Score it' : '') + ced : 'Review';
-    return '<div class="sess-top">' +
+    return '<h1 class="sr-only">' + esc(scope) + '</h1><div class="sess-top">' +
       '<span class="scope">' + esc(scope) + '</span>' +
       '<span class="pos num">' + Math.min(sess.done + 1, sess.planned).toLocaleString() + ' of ' + sess.planned.toLocaleString() +
         (redoLeft() ? '<span class="redo"> · ' + redoLeft() + ' to redo</span>' : '') + '</span>' +
@@ -3282,6 +3282,10 @@
       var flag = function () {
         var over = stage.scrollHeight - stage.clientHeight;
         host.classList.toggle('more', over > 4 && stage.scrollTop < over - 4);
+        // a stage that scrolls is a stop on the Tab path, so the keyboard can
+        // reach what is below the fold once the choices are spent
+        if (over > 4) { stage.tabIndex = 0; stage.setAttribute('role', 'region'); stage.setAttribute('aria-label', 'Card'); }
+        else if (stage.hasAttribute('tabindex')) { stage.removeAttribute('tabindex'); stage.removeAttribute('role'); stage.removeAttribute('aria-label'); }
       };
       stage.addEventListener('scroll', flag, { passive: true });
       flag();

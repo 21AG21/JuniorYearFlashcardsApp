@@ -28,7 +28,7 @@
    "result": "out/patch-frproof-c.json"
   },
   "mc-chem": {
-   "status": "running",
+   "status": "applied",
    "kind": "mc",
    "result": "out/mc-chem.json"
   },
@@ -105,6 +105,11 @@
    "id": "frq-retry",
    "status": "done",
    "what": "Spaced free-response retries: a question practised with a best under 70% comes back on Progress after 3+ days."
+  },
+  {
+   "id": "a11y-audit",
+   "status": "done",
+   "what": "axe-core audit (light and dark) of this round's screens: Score it, Recall, By skill, Exam practice and the set player, Weak spots, Progress, Tell apart; fix every serious finding."
   }
  ]
 }

@@ -1004,7 +1004,7 @@
     // on the first prompt of a round, one line says what the round asks; it
     // leaves with the first move, so a round in progress is not lectured
     var first = /data-done="0"/.test(posHtml || '') && DESC[id];
-    return '<div class="sess-top">' + cue(id) +
+    return '<h1 class="sr-only">' + esc(GAMES[id] ? GAMES[id].name : '') + '</h1><div class="sess-top">' + cue(id) +
       '<span class="scope">' + leftHtml + '</span>' +
       '<span class="pos">' + posHtml + '</span></div>' +
       (first ? '<div class="gask">' + esc(DESC[id]) + '</div>' : '');
@@ -2300,7 +2300,7 @@
     if (st.mode === 'sprint') {
       // the countdown updates in place via [data-clock] — a full re-render
       // every tick would eat taps mid-answer
-      top = '<div class="sess-top">' + cue(st.id) + '<span class="scope">' + right(st.score) + '</span>' +
+      top = '<h1 class="sr-only">' + esc(GAMES[st.id].name) + '</h1><div class="sess-top">' + cue(st.id) + '<span class="scope">' + right(st.score) + '</span>' +
         '<span class="pos num" data-clock>' + esc(clockLabel()) + '</span></div>';
     } else if (st.mode === 'streak') {
       top = gameTop(st.id, straight(st.score), '<span class="num">' + (st.i + 1) + '</span>');
