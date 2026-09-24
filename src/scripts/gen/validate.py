@@ -43,7 +43,9 @@ for x in out.get('excl') or []:
     if not isinstance(x, dict) or not x.get('s'): err(f'bad excl entry {x}')
 if not out.get('check'): warn('no check line')
 
-def norm(q): return re.sub(r'\s+',' ', re.sub(r'[^\w\s]', '', str(q).lower())).strip()
+# the same key the deck builder dedupes on: case and spacing folded, the trailing stop dropped,
+# every symbol kept (ΔH < 0 and ΔH > 0 are different questions)
+def norm(q): return re.sub(r'\s+', ' ', str(q).lower()).strip().rstrip('.?!:')
 def tex_check(s, where):
     if not isinstance(s, str): return
     if s.count('$') % 2: err(f'{where}: unbalanced $')
