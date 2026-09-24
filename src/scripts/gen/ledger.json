@@ -50,12 +50,12 @@
   "since": "2026-09-24T06:25Z"
  },
  "calcbc-u7": {
-  "state": "running",
-  "since": "2026-09-24T06:07Z"
+  "state": "merged",
+  "since": "2026-09-24T06:28Z"
  },
  "calcbc-u8": {
-  "state": "running",
-  "since": "2026-09-24T06:07Z"
+  "state": "merged",
+  "since": "2026-09-24T06:28Z"
  },
  "calcbc-u9": {
   "state": "running",
