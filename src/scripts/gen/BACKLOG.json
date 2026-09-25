@@ -100,12 +100,12 @@
    "result": "out/patch-mcverify-french.json"
   },
   "tellverify-a": {
-   "status": "running",
+   "status": "applied",
    "kind": "tell",
    "result": "out/tell-chem.json out/tell-calcbc.json"
   },
   "tellverify-b": {
-   "status": "running",
+   "status": "applied",
    "kind": "tell",
    "result": "out/tell-apush.json out/tell-lang.json out/tell-french.json"
   }
