@@ -226,7 +226,7 @@
       var d = S.getDeck(c.id);
       var st = d ? S.deckStats(d) : { due: 0 };
       due += st.due; seen += st.seen || 0;
-      return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
+      return '<li><button class="ledger course' + (st.due ? ' due' : '') + '" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + (st.due || c.count).toLocaleString() + '</span>' +
         (st.due ? '<span class="lsub">' + esc('due · ' + plural(c.count, 'card')) + '</span>'
@@ -889,7 +889,7 @@
         var dn = bookDone(), rd = bk.order.filter(function (id) { return dn[id]; }).length;
         if (rd) bits.push(rd + ' of ' + bk.order.length + ' read');
       }
-      return '<li><button class="ledger" data-go="#/d/' + c.id + '">' +
+      return '<li><button class="ledger course' + (st.due ? ' due' : '') + '" data-go="#/d/' + c.id + '">' +
         '<span class="lname">' + esc(nice(c.id)) + '</span>' +
         '<span class="lval num">' + (st.due || c.count).toLocaleString() + '</span>' +
         (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
@@ -919,7 +919,7 @@
           : !seen ? '<div class="sub">Pick a course, or start with twenty from all of them.</div>' : '') +
       '</div>' +
       resumeHTML() +
-      (deal0 ? '<button class="act" data-go="#/review">Start · ' + plural(deal0, 'card') + '</button>' : '') +
+      (deal0 ? '<button class="act lead" data-go="#/review">Start · ' + plural(deal0, 'card') + '</button>' : '') +
       '<ul class="list tight">' + rows + '</ul>' +
       // these three are navigation, not modes: as a stack of 26px words they
       // pushed themselves 92px below the fold, under the tab bar, where the
@@ -1089,7 +1089,7 @@
     var tableBlock = '';
     if (tables.length) {
       var tAll = 0;
-      tableBlock = '<div class="ulabel mt4">Tables</div><div class="modes">' +
+      tableBlock = '<div class="ulabel mt4">Tables</div><div class="modes single">' +
         tables.map(function (u) {
           var n = S.unitStats(d, u.id).total; tAll += n;
           return modeBtn('#/cram/' + deckId + '/' + u.id, u.title + ' · ' + n, u.blurb || 'Every card, the least-known first.');

@@ -19,7 +19,7 @@
   /* --- type scale (skill §3) --------------------------------------------- */
   --font-sf:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","SF Pro",system-ui,"Helvetica Neue",Arial,sans-serif;
   --t-hero:clamp(48px,16.4vw,64px);
-  --t-row:clamp(30px,12.3vw,48px);
+  --t-row:clamp(26px,7.9vw,32px);      /* a course row: the name the eye reads down */
   --t-title:clamp(40px,14vw,55px);
   --t-act:clamp(28px,8.6vw,38px);      /* the primary action, and a utility heading */
   --t-prompt:clamp(26px,8.7vw,34px);
@@ -286,7 +286,7 @@ button.hero-tap:active{ opacity:.5; }
    320px the deck list printed "Chemis…" and "US Hist…". Below 380px the row
    type steps down as well, so a one-word name like "Chemistry" still fits on
    one line instead of breaking across two. */
-@media (max-width:380px){ :root{ --t-row:clamp(23px,9.9vw,38px); } }
+@media (max-width:380px){ :root{ --t-row:clamp(24px,7.8vw,28px); } }
 /* A PHONE ON ITS SIDE. Every size in the scale is driven by vw, so a 64px hero
    and 40px rows landed in a 320px-tall window: one of six deck rows was above
    the tab bar at 568x320. On a short screen the scale has to answer the SHORT
@@ -347,12 +347,17 @@ button.hero-tap:active{ opacity:.5; }
   /* the name and its count read as two unrelated things a screen apart */
   .dhero{ max-width:460px; }
 }
-.ledger .lname{ font-size:var(--t-row); font-weight:460; color:var(--ink); letter-spacing:-.03em; line-height:1.2;
-  min-width:0; overflow-wrap:anywhere; overflow:hidden; text-overflow:ellipsis;
+.ledger .lname{ font-size:var(--t-row); font-weight:460; color:var(--ink); letter-spacing:-.025em; line-height:1.2;
+  min-width:0; overflow-wrap:break-word; overflow:hidden; text-overflow:ellipsis;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
 .ledger .lname small{ display:none; }   /* taglines are gone; the row is name + number */
-.ledger .lval{ font-size:var(--t-row); font-weight:500; color:var(--ink-soft); font-variant-numeric:tabular-nums; letter-spacing:-.03em;
+.ledger .lval{ font-size:var(--t-row); font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-.03em;
   color:var(--ink); white-space:nowrap; }
+/* a course row: the name is what the eye reads down the list; its total is a
+   quiet figure beside it. A count that is due is the one thing to act on, so
+   it comes back to full ink and weight (and its line says "due"). */
+.ledger.course .lval{ font-size:var(--t-option); font-weight:500; color:var(--ink-soft); letter-spacing:-.015em; }
+.ledger.course.due .lval{ color:var(--ink); font-weight:650; }
 .ledger .lsub{ grid-column:1 / -1; font-size:var(--t-label); font-weight:500; color:var(--muted); margin-top:-2px; }
 .ledger.done .lname,.ledger.done .lval{ color:var(--muted); }
 /* the week ahead: each row carries its share of the busiest day as a rule at
@@ -389,7 +394,7 @@ button.hero-tap:active{ opacity:.5; }
    and the primary one is simply the biggest line on the screen */
 .act{ display:inline-block; background:none; border:0; border-radius:0; margin:0;
   padding:10px 0; color:var(--ink); font:inherit; font-size:var(--t-act);
-  font-weight:460; letter-spacing:-.03em; line-height:1.15; text-align:left;
+  font-weight:560; letter-spacing:-.03em; line-height:1.15; text-align:left;
   cursor:pointer; transition:opacity var(--d-fast) ease; }
 .act:active{ opacity:.5; }
 .textbtn{ background:none; border:0; padding:12px 0; margin:0; min-height:44px; font:inherit; font-size:var(--t-lead); font-weight:500;
@@ -1519,3 +1524,22 @@ sub,sup{ font-size:max(.68em, 11px); }
 .fpw.mcq .choice{ font-size:var(--t-body); line-height:1.45; font-weight:460; letter-spacing:-.005em;
   padding-top:var(--s-2); padding-bottom:var(--s-2); min-height:44px; }
 .fpw.mcq .choice[data-letter]::before{ top:calc(var(--s-2) + .1em); }
+
+/* the start line leads the course list — it is not its first row */
+.act.lead{ margin-bottom:var(--s-4); }
+/* content that scrolls up under the status bar (home-screen app, iOS 26
+   Safari) passes behind a strip of the ground, not under the clock */
+@media (max-width:899px), (max-height:499px){
+  body::before{ content:""; position:fixed; left:0; right:0; top:0; height:env(safe-area-inset-top, 0px);
+    background:var(--ground); z-index:60; pointer-events:none; }
+}
+/* on a phone, the ways into a course are a two-column index of names, not a
+   wall of rows: eleven modes with a line each pushed the units — the course's
+   actual content — a screen and a half below the Study line. What each mode
+   deals is on the How page; a wide pane has room for it and keeps it. */
+@media (max-width:899px), (max-height:499px){
+  .modes:not(.nav):not(.single){ display:grid; grid-template-columns:1fr 1fr; column-gap:var(--s-3); }
+  .modes:not(.nav):not(.single) .textbtn.mode{ justify-content:center; min-height:52px; padding:10px 0; border-top:1px solid var(--hair-soft); }
+  .modes:not(.nav):not(.single) .textbtn.mode:nth-child(-n+2){ border-top:0; }
+  .modes:not(.nav):not(.single) .mdesc{ display:none; }
+}
