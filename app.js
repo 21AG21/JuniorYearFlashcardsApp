@@ -2167,7 +2167,7 @@
       var mine = st.ans[q.n], right = q.spr ? (q.p.x || [])[0] : q.m.right;
       return '<li><button class="ledger mid" data-go="' + base + '/review/' + q.n + '"><span class="lname">Question ' + q.n + '</span>' +
         '<span class="lval word">' + esc(mine ? right + ', not ' + mine : right + ', left blank') + '</span>' +
-        '<span class="lsub">' + esc(T.plain(q.m.q).slice(0, 90) + (T.plain(q.m.q).length > 90 ? '…' : '')) + '</span></button></li>';
+        '<span class="lsub">' + esc(qGist(q)) + '</span></button></li>';
     }).join('');
     var best = testBest(key), hist = testHist(key), prev = hist.length > 1 ? hist[hist.length - 2] : null;
     var w = s.w, weights = s.frOf && s.frAll
@@ -2191,6 +2191,21 @@
         (t._fr.length && s.frAll ? '<button class="textbtn" data-go="' + base + '/score/1">Your free response</button>' : '') +
         '<button class="textbtn quiet" data-test-again="' + esc(id) + '">Take it again</button></div>'
     );
+  }
+  /* a miss is named by what it was about: its own words, unless they are the
+     stock wording every question of its type shares ("Which choice completes
+     the text…"), when the passage's opening says it better */
+  function qGist(q) {
+    var own = T.plain(q.m.q).replace(/\s+/g, ' ').trim();
+    var stock = /^(Which choice|As used in the text|Based on the text|Which finding|Which quotation|Which statement|Which of the following|According to the text|The student wants)/i.test(own);
+    var src = own;
+    if (stock && q.g.stem) {
+      var lines = String(q.g.stem).split('\n').map(function (l) { return l.trim(); }).filter(function (l) {
+        return l && !/^Questions?\s+\d/i.test(l) && !/^(The following text|Text \d is|Text \d|While researching)/i.test(l);
+      });
+      if (lines.length) src = T.plain(lines[0]);
+    }
+    return src.length > 90 ? src.slice(0, 88).replace(/\s+\S*$/, '') + '…' : src;
   }
   function unitOfTopic(d, tc) {
     for (var i = 0; i < d.units.length; i++) if (topicOf(d.units[i], tc)) return d.units[i];
