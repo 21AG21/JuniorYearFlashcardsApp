@@ -1521,6 +1521,63 @@ sub,sup{ font-size:max(.68em, 11px); }
 .chainans{ margin:var(--s-2) 0 var(--s-3); padding-left:var(--s-2); border-left:2px solid var(--hair);
   font-size:var(--t-body); line-height:1.45; color:var(--ink-soft); overflow-wrap:anywhere; }
 .fpw.mcq .choices{ margin-top:4px; }
+
+/* --- tests: a full-length test, one question to a screen -------------------- */
+/* no tab bar while a test is open: the way out is the test's own name */
+#app.is-test{ padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 32px); scroll-padding-bottom:32px; }
+.tbar{ gap:16px; }
+.tbar .bk{ margin-right:auto; min-width:0; text-align:left; }
+.tbar .tclock, .tbar .tpos{ background:none; border:0; padding:12px 0; min-height:44px; font:inherit; cursor:pointer;
+  font-size:var(--t-label); font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--muted); }
+.tbar .tpos{ color:var(--ink-soft); }
+.tbar .tclock.low{ color:var(--ink); font-weight:650; }
+.tbar .tclock:active, .tbar .tpos:active{ opacity:.5; }
+.tstem{ display:flex; flex-direction:column; gap:6px; margin:0 0 var(--s-4); max-width:66ch; }
+.tstem .fstem, .is-test .fstem, .tstemfold .fstem{ font-size:var(--t-body); line-height:1.55; color:var(--ink); overflow-wrap:anywhere; }
+.tq{ max-width:66ch; }
+.tq .fpqw{ display:flex; gap:12px; align-items:baseline; }
+.tq .fpl{ flex:none; font-size:var(--t-label); font-weight:500; color:var(--muted); }
+.tq .tqq{ flex:1; font-size:var(--t-lead); font-weight:460; line-height:1.4; letter-spacing:-.01em; color:var(--ink); overflow-wrap:anywhere; }
+.tq .choices{ margin-top:var(--s-3); }
+.tq .choice{ font-size:var(--t-body); font-weight:460; line-height:1.45; letter-spacing:-.005em; }
+.tq .choice.small{ font-size:var(--t-body); }
+/* picked: the letter fills, the way a pencil fills a bubble */
+.choice.tchoice[data-letter]::before{ width:24px; height:24px; left:-4px; top:calc(var(--s-3) + .05em); display:flex;
+  align-items:center; justify-content:center; border-radius:50%; box-shadow:inset 0 0 0 1px var(--hair); }
+.choice.tchoice[data-state="pick"]::before{ background:var(--ink); color:var(--ground); box-shadow:none; font-weight:650; }
+.choice.tchoice[data-state="pick"]{ color:var(--ink); }
+.tq div.choice{ cursor:default; }
+.tmark{ margin-top:var(--s-2); }
+.tmark[aria-pressed="true"]{ color:var(--ink); }
+.tnav{ display:flex; flex-direction:column; align-items:flex-start; margin-top:var(--s-4); }
+.tnav .textbtn{ font-size:var(--t-body); }
+.sprin{ display:block; width:min(220px,100%); box-sizing:border-box; margin:6px 0 var(--s-1); padding:10px 0; border:0; border-bottom:1px solid var(--hair);
+  border-radius:0; background:none; color:var(--ink); font:inherit; font-size:var(--t-option); font-weight:500; font-variant-numeric:tabular-nums; }
+.sprin:focus{ outline:none; border-bottom-color:var(--ink-soft); }
+.sprin:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
+.sprin::placeholder{ color:var(--muted); font-size:var(--t-body); font-weight:400; }
+/* the map: every question as a number; answered in ink, unanswered faint,
+   marked with a dot — Bluebook's grid without its chrome */
+.tgrid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(48px, 1fr)); gap:8px; margin:var(--s-2) 0 var(--s-2); max-width:520px; }
+.tcell{ position:relative; display:flex; align-items:center; justify-content:center; min-height:48px; border:0; border-radius:12px;
+  background:none; box-shadow:inset 0 0 0 1px var(--hair-soft); color:var(--muted); font:inherit; font-size:var(--t-body); font-weight:500; cursor:pointer; }
+.tcell.on{ box-shadow:inset 0 0 0 1.5px var(--ink); color:var(--ink); font-weight:650; }
+.tcell.here{ text-decoration:underline; text-underline-offset:4px; }
+.tcell.flag::after{ content:""; position:absolute; top:7px; right:7px; width:6px; height:6px; border-radius:50%; background:var(--ink); }
+.tcell:active{ opacity:.5; }
+.tkey{ display:flex; flex-wrap:wrap; gap:6px 18px; font-size:var(--t-label); color:var(--muted); margin-bottom:var(--s-3); }
+.tkey span{ display:inline-flex; align-items:center; gap:8px; }
+.tkey .tcell{ display:inline-block; width:18px; min-height:18px; height:18px; border-radius:5px; }
+.tkey .tcell.flag::after{ top:3px; right:3px; width:4px; height:4px; }
+.tstemfold{ margin:0 0 var(--s-3); }
+.tstemfold summary{ min-height:44px; display:flex; align-items:center; cursor:pointer; font-size:var(--t-label); font-weight:500; color:var(--muted); }
+.ledger.mid.tfr .lname{ font-size:var(--t-option); }
+.ledger.fc[data-go]{ cursor:pointer; }
+.ledger.static{ cursor:default; }
+.ledger.static:active{ opacity:1; }
+@media (min-width:900px) and (min-height:500px){
+  .tq .tqq{ font-size:var(--t-lead); }
+}
 /* in a set, the choices are read beside their question, not as the screen's one prompt */
 .fpw.mcq .choice{ font-size:var(--t-body); line-height:1.45; font-weight:460; letter-spacing:-.005em;
   padding-top:var(--s-2); padding-bottom:var(--s-2); min-height:44px; }

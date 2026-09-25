@@ -136,7 +136,8 @@
     app.classList.toggle('is-game', !!(opts && opts.session) && !sess);
     app.classList.toggle('is-quiz', !!(opts && opts.quiz));
     app.classList.toggle('is-book', !!(opts && opts.book));
-    tabs.hidden = isWide() || !!(opts && opts.session) || !!(opts && opts.book);
+    app.classList.toggle('is-test', !!(opts && opts.test));
+    tabs.hidden = isWide() || !!(opts && opts.session) || !!(opts && opts.book) || !!(opts && opts.test);
     if (window.LG) window.LG.init(app);
     fitVals();
     if (!(opts && opts.keepScroll)) {
@@ -325,6 +326,7 @@
     if ((p[0] === 'study' || p[0] === 'quiz') && p[1]) return '#/d/' + p[1] + (p[3] ? '/u/' + p[3] : '');
     // a grammar point's cram goes back to the list of points
     if (p[0] === 'cram' && p[1]) return !p[2] ? '#/d/' + p[1] : p[2].indexOf('g:') === 0 ? '#/d/' + p[1] + '/g' : '#/d/' + p[1] + '/u/' + p[2];
+    if (p[0] === 'test' && p[1]) return p[3] ? '#/test/' + p[1] + '/' + p[2] : p[2] ? '#/test/' + p[1] : '#/d/' + p[1];
     if (p[0] === 'weak' || p[0] === 'stuck') return '#/stats';
     return '#/';
   }
@@ -955,6 +957,8 @@
     skills: 'One exam skill at a time, with cards from every unit',
     frq: 'Long and short questions in the exam\'s own format, model answers by point',
     exprac: 'Written questions with model answers by point, and multiple-choice sets marked as you pick',
+    tests: 'Full length, the way a teacher writes them: every question makes you reason, then results by topic',
+    ptests: 'Timed modules and drills at the hard-module level, marked with every explanation',
     print: 'Questions and answers on paper, two columns'
   };
   function modeBtn(go, label, desc) {
@@ -1167,6 +1171,7 @@
       '<div class="modes">' +
         modeBtn('#/study/' + deckId + '/core', 'High-yield', MODE_DESC.core) +
         modeBtn('#/quiz/' + deckId + '/smart', 'Quiz', MODE_DESC.quiz) +
+        (deckTests(d).length ? modeBtn('#/test/' + deckId, deckId === 'psat' ? 'Practice tests' : 'Unit tests', deckId === 'psat' ? MODE_DESC.ptests : MODE_DESC.tests) : '') +
         (scorePool(d, null, 1).length ? modeBtn('#/score/' + deckId, 'Score it', MODE_DESC.score) : '') +
         (d.skills && d.skills.length ? modeBtn('#/d/' + deckId + '/k', 'By skill', MODE_DESC.skills) : '') +
         (st.starred ? modeBtn('#/study/' + deckId + '/starred', 'Study starred', MODE_DESC.starred) : '') +
@@ -1646,6 +1651,681 @@
     );
   }
 
+  /* ==========================================================================
+     TESTS — a full-length test the way a teacher gives one. Everything is
+     answered before anything is marked; the clock runs or stays off; then the
+     app marks the multiple choice and you score your own free response, part
+     by part, against the model. The attempt lives on this device and survives
+     a reload, a closed tab and a class change. The results break the score
+     down by section, by topic and by the kind of thinking each question asked
+     for, and every miss goes back to its topic.
+     ========================================================================== */
+  var TESTS = {}, testsLoading = {};
+  var TEST_KEY = 'apdecks.tests', TEST_HIST = 'apdecks.testhist';
+  function loadTests(deckId) {
+    if (TESTS[deckId]) return Promise.resolve(TESTS[deckId]);
+    if (testsLoading[deckId]) return testsLoading[deckId];
+    testsLoading[deckId] = fetch('data/tests/' + deckId + '.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then(function (j) { TESTS[deckId] = j; delete testsLoading[deckId]; return j; },
+            function (e) { delete testsLoading[deckId]; throw e; });
+    return testsLoading[deckId];
+  }
+  /* the tests a deck lists, in its unit order, without loading the file */
+  function deckTests(d) {
+    var out = [];
+    (d && d.units || []).forEach(function (u) {
+      (u.tests || []).forEach(function (t) { out.push({ u: u, t: t }); });
+    });
+    return out;
+  }
+  function testName(d, u, meta) {
+    if (meta && meta.title) return meta.title;
+    if (u.id === 'x') return 'Cumulative test';
+    return typeof u.n === 'number' ? 'Unit ' + u.n + ' test' : u.title + ' test';
+  }
+  function testSub(meta) {
+    return (meta.fr ? meta.mc + ' multiple choice · ' + meta.fr + ' free response' : plural(meta.mc, 'question')) +
+      ' · ' + meta.min + ' minutes';
+  }
+  /* one test, flattened: every multiple-choice question with its stimulus,
+     numbered through the test, then the free-response items */
+  function testModel(t) {
+    if (t._qs) return t;
+    var qs = [];
+    (t.mc || []).forEach(function (g, gi) {
+      (g.parts || []).forEach(function (p, pi) {
+        var m = mcParse(p);
+        qs.push({ n: qs.length + 1, g: g, gi: gi, first: pi === 0, count: g.parts.length, p: p, m: m,
+                  spr: p.x != null && !m.choices.length });
+      });
+    });
+    t._qs = qs; t._fr = t.fr || [];
+    return t;
+  }
+  function allTestState() {
+    try { var o = JSON.parse(localStorage.getItem(TEST_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; }
+    catch (e) { return {}; }
+  }
+  function testState(key) { return allTestState()[key] || null; }
+  function saveTestState(key, st) {
+    var all = allTestState();
+    if (st) all[key] = st; else delete all[key];
+    try { localStorage.setItem(TEST_KEY, JSON.stringify(all)); } catch (e) {}
+  }
+  function testHist(key) {
+    try { var o = JSON.parse(localStorage.getItem(TEST_HIST) || '{}'); return (o && o[key]) || []; } catch (e) { return []; }
+  }
+  function pushTestHist(key, rec) {
+    var o = {};
+    try { o = JSON.parse(localStorage.getItem(TEST_HIST) || '{}') || {}; } catch (e) { o = {}; }
+    o[key] = (o[key] || []).concat([rec]).slice(-12);
+    try { localStorage.setItem(TEST_HIST, JSON.stringify(o)); } catch (e) {}
+  }
+  function testBest(key) {
+    var h = testHist(key), b = null;
+    h.forEach(function (r) { if (!b || r.pct > b.pct) b = r; });
+    return b;
+  }
+  function dayWord(day) {
+    var dt = new Date(S.dateOf ? S.dateOf(day) : Date.now() - (S.dayNum() - day) * 864e5);
+    return MONTHS[dt.getMonth() + 1] + ' ' + dt.getDate();
+  }
+  /* a typed answer the way Bluebook reads one: a fraction or a decimal, the
+     leading zero optional, an unreduced fraction as good as its value */
+  function sprNum(s) {
+    s = String(s || '').replace(/\s+/g, '').replace(/^\+/, '').replace(/−/g, '-');
+    var m = s.match(/^(-?)(\d+)\/(\d+)$/);
+    if (m) return +m[3] ? (m[1] ? -1 : 1) * (+m[2] / +m[3]) : NaN;
+    if (/^-?(\d+\.?\d*|\.\d+)$/.test(s)) return parseFloat(s);
+    return NaN;
+  }
+  function sprNorm(s) { return String(s || '').replace(/\s+/g, '').replace(/^\+/, '').replace(/−/g, '-').replace(/^(-?)0+(\d)/, '$1$2').replace(/^(-?)0\./, '$1.'); }
+  function sprOk(ans, xs) {
+    if (!ans) return false;
+    var a = sprNorm(ans), v = sprNum(ans);
+    return (xs || []).some(function (x) {
+      if (sprNorm(x) === a) return true;
+      var w = sprNum(x);
+      return !isNaN(v) && !isNaN(w) && Math.abs(v - w) < 1e-9;
+    });
+  }
+  function qRight(q, st) {
+    var a = st.ans[q.n];
+    return q.spr ? sprOk(a, q.p.x) : !!a && a === q.m.right;
+  }
+  function frUnitsOf(f) { return frqUnits(f).filter(function (x) { return x.p; }); }
+  /* the numbers of an attempt: sections, the weighted percent, and whether the
+     free response is scored yet */
+  function testScore(pack, t, st) {
+    var qs = t._qs, got = 0;
+    qs.forEach(function (q) { if (qRight(q, st)) got++; });
+    var frGot = 0, frOf = 0, frAll = true;
+    t._fr.forEach(function (f, k) {
+      frUnitsOf(f).forEach(function (x, i) {
+        frOf += x.p;
+        var v = st.sc[(k + 1) + '.' + i];
+        if (v == null) frAll = false; else frGot += v;
+      });
+    });
+    var w = (pack && pack.w) || { mc: 0.5, fr: 0.5 };
+    var mcP = qs.length ? got / qs.length : 0, frP = frOf ? frGot / frOf : 0;
+    var pctv = !frOf ? mcP : frAll ? (w.mc * mcP + w.fr * frP) / (w.mc + w.fr) : mcP;
+    return { got: got, of: qs.length, frGot: frGot, frOf: frOf, frAll: frAll || !frOf, pct: pctv, w: w };
+  }
+  function pctWord(x) { return Math.round(x * 100) + '%'; }
+  function clockWord(ms) {
+    var s = Math.max(0, Math.round(Math.abs(ms) / 1000)), m = Math.floor(s / 60);
+    return m + ':' + ('0' + (s % 60)).slice(-2);
+  }
+
+  /* the clock runs only while a question or the map is on screen and the page
+     is visible — a phone locked in a pocket is not time spent on the test */
+  var testClock = null;
+  function clockStop() {
+    if (!testClock) return;
+    clearInterval(testClock.iv);
+    var st = testState(testClock.key);
+    if (st && !st.handed) { st.el = testClock.el; saveTestState(testClock.key, st); }
+    testClock = null;
+  }
+  function clockStart(key, st, limitMs) {
+    if (testClock && testClock.key === key) { paintClock(); return; }
+    clockStop();
+    testClock = { key: key, el: st.el || 0, last: Date.now(), limit: limitMs, timed: !!st.timed, n: 0,
+                  warned5: (st.el || 0) > limitMs - 300000, warned0: (st.el || 0) > limitMs };
+    testClock.iv = setInterval(function () {
+      var now = Date.now(), c = testClock;
+      if (!c) return;
+      if (document.hidden) { c.last = now; return; }
+      c.el += Math.min(now - c.last, 5000); c.last = now;
+      if (c.timed && !c.warned5 && c.el > c.limit - 300000) { c.warned5 = true; toast('Five minutes left.'); }
+      if (c.timed && !c.warned0 && c.el > c.limit) { c.warned0 = true; toast('Time. Finish the question you are on, then hand it in.'); }
+      if (++c.n % 10 === 0) { var s = testState(c.key); if (s && !s.handed) { s.el = c.el; saveTestState(c.key, s); } }
+      paintClock();
+    }, 1000);
+    paintClock();
+  }
+  function paintClock() {
+    var el = document.querySelector('[data-tclock]'), c = testClock;
+    if (!el || !c) return;
+    var st = testState(c.key) || {};
+    if (st.hideClock) { el.textContent = 'Show time'; return; }
+    if (c.timed) {
+      var left = c.limit - c.el;
+      el.textContent = left >= 0 ? clockWord(left) : clockWord(left) + ' over';
+      el.classList.toggle('low', left < 300000);
+    } else el.textContent = clockWord(c.el);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden && testClock) {
+      var s = testState(testClock.key);
+      if (s && !s.handed) { s.el = testClock.el; saveTestState(testClock.key, s); }
+    }
+  });
+
+  function testRoute(p) {
+    var deckId = p[1], d = S.getDeck(deckId);
+    if (!d) return goReplace('#/');
+    if (!deckTests(d).length) return goReplace('#/d/' + deckId);
+    var taking = p[3] === 'q' || p[3] === 'map';
+    if (!taking) clockStop();
+    if (!TESTS[deckId]) {
+      var here = location.hash;
+      mount(backbar(nice(d)) + '<div class="head"><h1>' + (p[2] ? 'Test' : 'Tests') + '</h1>' + RING + '</div>');
+      loadTests(deckId).then(function () { if (location.hash === here) route(); }, function () {
+        if (location.hash !== here) return;
+        mount(backbar(nice(d)) +
+          '<div class="head"><h1>The tests did not download</h1><div class="sub">Open them once with a connection and they stay on this device.</div></div>' +
+          '<button class="textbtn" data-test-retry>Try again</button>');
+      });
+      return;
+    }
+    if (!p[2]) return viewTests(d);
+    var pack = TESTS[deckId], t = pack.tests && pack.tests[p[2]];
+    if (!t) return goReplace('#/test/' + deckId);
+    testModel(t);
+    var key = deckId + '/' + p[2];
+    if (!p[3]) return viewTestCover(d, pack, t, p[2], key);
+    var st = testState(key);
+    if (!st) return goReplace('#/test/' + deckId + '/' + p[2]);
+    if (p[3] === 'q' && !st.handed) return viewTestQ(d, pack, t, p[2], key, st, Math.max(1, Math.min(+p[4] || 1, t._qs.length + t._fr.length)));
+    if (p[3] === 'map' && !st.handed) return viewTestMap(d, pack, t, p[2], key, st);
+    if (!st.handed) return goReplace('#/test/' + deckId + '/' + p[2] + '/map');
+    if (p[3] === 'score' && t._fr.length) return viewTestScore(d, pack, t, p[2], key, st, Math.max(1, Math.min(+p[4] || 1, t._fr.length)));
+    if (p[3] === 'review') return viewTestReview(d, pack, t, p[2], key, st, Math.max(1, Math.min(+p[4] || 1, t._qs.length)));
+    return viewTestResult(d, pack, t, p[2], key, st);
+  }
+
+  /* VIEW · a course's tests: one row each, the best score as its value */
+  function viewTests(d) {
+    var rows = deckTests(d).map(function (x) {
+      var key = d.id + '/' + x.t.id, st = testState(key), best = testBest(key);
+      var sub = [testSub(x.t)];
+      if (st && !st.handed) sub.push('in progress');
+      else if (st && st.handed && !st.fin) sub.push('to score');
+      var name = x.t.title ? x.t.title : (x.u.id === 'x' ? 'Cumulative test' : (typeof x.u.n === 'number' ? x.u.n + ' · ' : '') + x.u.title);
+      return '<li><button class="ledger mid' + (best ? '' : ' fresh') + '" data-go="#/test/' + d.id + '/' + x.t.id + '">' +
+        '<span class="lname">' + esc(name) + '</span>' +
+        '<span class="lval num' + (best ? '' : ' dim') + '">' + (best ? pctWord(best.pct) : '') + '</span>' +
+        '<span class="lsub">' + esc(sub.join(' · ')) + '</span></button></li>';
+    }).join('');
+    var psat = d.id === 'psat';
+    mount(
+      '<div class="ulabel mt0">' + esc(nice(d)) + '</div>' +
+      '<div class="dhero"><h1 class="dnh"><button class="dn" data-back>' + (psat ? 'Practice tests' : 'Unit tests') + '</button></h1>' +
+        '<span class="dv num">' + deckTests(d).length + '</span></div>' +
+      '<div class="dblurb">' + (psat
+        ? 'Timed the way Bluebook times them, at the level of the harder second module. Nothing is marked until you hand it in.'
+        : 'Full length, the way a teacher writes them: every question puts something new in front of you and asks you to reason about it. Nothing is marked until you hand it in.') + '</div>' +
+      '<ul class="list mt4 gap0">' + rows + '</ul>'
+    );
+  }
+
+  /* VIEW · a test's cover: what it holds, the clock, and the way in */
+  function viewTestCover(d, pack, t, id, key) {
+    var u = d.unitById[t.unit || id] || {}, meta = (u.tests || []).filter(function (x) { return x.id === id; })[0] ||
+      { mc: t._qs.length, fr: t._fr.length, min: t.minutes };
+    var st = testState(key), best = testBest(key), hist = testHist(key), last = hist[hist.length - 1];
+    var base = '#/test/' + d.id + '/' + id;
+    var calc = t.calc ? 'Calculator allowed' : (t.mc || []).some(function (g) { return g.calc; }) ? 'Calculator on the last ' +
+      t._qs.filter(function (q) { return q.g.calc; }).length + ' multiple-choice questions' : '';
+    var lines = [];
+    if (t.intro) lines.push(t.intro);
+    if (calc && !t.intro) lines.push(calc);
+    var how = t._fr.length
+      ? 'Answer everything, then hand it in. The multiple choice is marked for you; you score your free response against the model answers, part by part.'
+      : 'Answer everything, then hand it in. It is marked the moment you do, with every explanation.';
+    var act, sub = '';
+    if (st && !st.handed) {
+      var answered = t._qs.filter(function (q) { return st.ans[q.n]; }).length;
+      act = '<button class="act lead" data-go="' + base + '/q/' + (st.at || 1) + '">Continue</button>';
+      sub = answered + ' of ' + t._qs.length + ' answered' + (st.timed ? ' · ' + clockWord(t.minutes * 60000 - (st.el || 0)) + ' left' : '');
+    } else if (st && st.handed && !st.fin) {
+      act = '<button class="act lead" data-go="' + base + '/score/1">Score your free response</button>';
+      sub = 'Handed in · the multiple choice is marked';
+    } else {
+      act = '<button class="act lead" data-test-start="' + esc(id) + '">' + (st && st.fin ? 'Take it again' : 'Start') + '</button>';
+    }
+    var timedNow = st && !st.handed ? !!st.timed : (testPref().timed !== false);
+    mount(
+      backbar(d.id === 'psat' ? 'Practice tests' : 'Unit tests') +
+      '<div class="head"><span class="k">' + esc(nice(d) + (u.title && !t.title ? ' · ' + u.title : '')) + '</span>' +
+        '<h1>' + esc(testName(d, u, t)) + '</h1>' +
+        '<div class="sub">' + esc(testSub(meta)) + '</div></div>' +
+      (lines.length ? '<div class="dblurb">' + esc(lines.join(' ')) + '</div>' : '') +
+      '<div class="dblurb">' + esc(how) + '</div>' +
+      act + (sub ? '<div class="actsub">' + esc(sub) + '</div>' : '') +
+      (!st || st.fin
+        ? '<div><button class="textbtn quiet tclockpref" data-test-timed aria-pressed="' + timedNow + '">' +
+          (timedNow ? 'Timer on · ' + t.minutes + ' minutes' : 'Timer off') + '</button></div>' : '') +
+      (st && st.fin ? '<div><button class="textbtn" data-go="' + base + '/result">Your last results</button></div>' : '') +
+      (st && !st.handed ? '<div><button class="textbtn quiet" data-test-abandon="' + esc(id) + '">Start over</button></div>' : '') +
+      (hist.length
+        ? '<ul class="list mt4 gap0"><li><div class="ulabel">Your scores</div></li>' + hist.slice(-5).reverse().map(function (r) {
+            return '<li><div class="ledger mid static"><span class="lname">' + esc(dayWord(r.day)) + '</span>' +
+              '<span class="lval num">' + pctWord(r.pct) + '</span>' +
+              '<span class="lsub">' + esc([r.mc ? r.mc[0] + ' of ' + r.mc[1] + ' multiple choice' : '',
+                r.fr && r.fr[1] ? r.fr[0] + ' of ' + r.fr[1] + ' free response' : '', r.min ? plural(r.min, 'minute') : '']
+                .filter(Boolean).join(' · ')) + '</span></div></li>';
+          }).join('') + '</ul>' : '')
+    );
+  }
+  function testPref() { try { return JSON.parse(localStorage.getItem('apdecks.testpref') || '{}') || {}; } catch (e) { return {}; } }
+
+  function testTop(d, t, id, key, st, label) {
+    var base = '#/test/' + d.id + '/' + id;
+    return '<div class="backbar tbar">' +
+      '<button class="bk" data-go="' + base + '">' + esc(testName(d, d.unitById[t.unit || id] || {}, t)) + '</button>' +
+      '<button class="tclock num" data-tclock aria-label="Time">' + (st.timed ? clockWord(t.minutes * 60000 - (st.el || 0)) : clockWord(st.el || 0)) + '</button>' +
+      (label ? '<button class="tpos num" data-go="' + base + '/map" aria-label="All questions">' + esc(label) + '</button>' : '') +
+      '</div>';
+  }
+  /* the stimulus a question stands on: its "Questions 4-7 refer to…" line as a
+     label, the rest as the text */
+  function stemHTML(stem, cls) {
+    if (!stem) return '';
+    var lines = String(stem).split('\n'), lead = '';
+    if (/^(Questions?\s+\d+|Question\s+\d+)/i.test(lines[0]) && lines[0].length < 120) { lead = lines.shift(); while (lines.length && !lines[0].trim()) lines.shift(); }
+    var body = lines.join('\n');
+    return '<div class="tstem' + (cls || '') + '">' + (lead ? '<div class="ulabel">' + esc(lead) + '</div>' : '') +
+      '<div class="fstem' + (stacked(body) ? ' mathy' : '') + '">' + T.html(body) + '</div></div>';
+  }
+
+  /* VIEW · one question of a test in progress */
+  function viewTestQ(d, pack, t, id, key, st, n) {
+    var nq = t._qs.length, total = nq + t._fr.length, base = '#/test/' + d.id + '/' + id;
+    if (st.at !== n) { st.at = n; saveTestState(key, st); }
+    var body, label;
+    if (n <= nq) {
+      var q = t._qs[n - 1], pick = st.ans[n];
+      label = n + ' of ' + nq;
+      var calcNote = q.g.calc === true && (n === 1 || t._qs[n - 2].g.calc !== true) ? '<div class="ulabel">Calculator allowed from here on</div>' : '';
+      body = calcNote + stemHTML(q.g.stem) +
+        '<div class="tq"><h2 class="sr-only">Question ' + n + '</h2>' +
+        '<div class="fpqw"><span class="fpl num">' + n + '</span><span class="fpq tqq' + (stacked(q.m.q) ? ' mathy' : '') + '">' + T.html(q.m.q) + '</span></div>' +
+        (q.spr
+          ? '<label class="ulabel" for="tspr">Your answer</label><input id="tspr" class="sprin" data-tspr="' + n + '" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="6" value="' + esc(pick || '') + '" placeholder="A number or a fraction">' +
+            '<div class="actsub">A fraction like 3/2 or a decimal like 1.5. No mixed numbers.</div>'
+          : '<div class="choices" role="group" aria-label="Choices">' + q.m.choices.map(function (ch) {
+              var on = pick === ch.L;
+              return '<button class="choice tchoice' + (stacked(ch.t) ? ' mathy' : '') + (T.plain(ch.t).length > 110 ? ' small' : '') + '" data-tpick="' + n + ':' + ch.L + '" data-letter="' + ch.L + '"' +
+                (on ? ' data-state="pick"' : '') + ' aria-pressed="' + on + '">' + T.html(ch.t) + '</button>';
+            }).join('') + '</div>') +
+        '</div>' +
+        '<button class="textbtn quiet tmark" data-tflag="' + n + '" aria-pressed="' + !!st.flag[n] + '">' + (st.flag[n] ? 'Marked for review' : 'Mark for review') + '</button>';
+    } else {
+      var k = n - nq, f = t._fr[k - 1], units = frqUnits(f), essay = !(f.parts || []).length;
+      label = 'Free response ' + k + ' of ' + t._fr.length;
+      var of = units.reduce(function (s, x) { return s + x.p; }, 0);
+      body = '<div class="head"><span class="k">' + esc([frKindWord(f), of ? plural(of, 'point') : '', f.calc === true ? 'Calculator' : f.calc === false ? 'No calculator' : ''].filter(Boolean).join(' · ')) + '</span>' +
+        '<h2 class="uhead">' + esc(f.title || '') + '</h2></div>' +
+        (f.stem ? '<div class="fstem' + (stacked(f.stem) ? ' mathy' : '') + '">' + T.html(f.stem) + '</div>' : '') +
+        '<div class="fqwork">' + (essay
+          ? '<div class="fpw"><div class="ulabel">Your essay, or its thesis and plan</div>' +
+            '<textarea class="recallin" data-tfr="' + k + '.e" rows="10" placeholder="On paper is fine too: write it there, and score it here after you hand in">' + esc(st.fr[k + '.e'] || '') + '</textarea></div>'
+          : units.map(function (x, i) {
+              return '<div class="fpw"><div class="fpqw"><span class="fpl">' + esc(x.label) + '</span>' +
+                '<span class="fpq' + (stacked(x.q) ? ' mathy' : '') + '">' + T.html(x.q) + '</span>' +
+                (x.p ? '<span class="fpp num">' + esc(plural(x.p, 'pt')) + '</span>' : '') + '</div>' +
+                '<textarea class="recallin fpin" data-tfr="' + k + '.' + i + '" rows="4" placeholder="Your answer">' + esc(st.fr[k + '.' + i] || '') + '</textarea></div>';
+            }).join('')) + '</div>';
+    }
+    var next = n < total
+      ? '<button class="act tnext" data-go="' + base + '/q/' + (n + 1) + '">' + (n === nq ? 'Free response' : 'Next') + '</button>'
+      : '<button class="act tnext" data-go="' + base + '/map">Review and hand in</button>';
+    mount(
+      testTop(d, t, id, key, st, label) +
+      '<h1 class="sr-only">' + esc(testName(d, d.unitById[t.unit || id] || {}, t) + ' · ' + label) + '</h1>' +
+      body +
+      '<div class="tnav">' + next +
+        (n > 1 ? '<button class="textbtn tprev" data-go="' + base + '/q/' + (n - 1) + '">Back</button>' : '') +
+      '</div>',
+      { test: true }
+    );
+    clockStart(key, st, t.minutes * 60000);
+    [].forEach.call(document.querySelectorAll('[data-tfr]'), function (ta) {
+      ta.addEventListener('input', function () {
+        var s = testState(key); if (!s) return;
+        s.fr[ta.getAttribute('data-tfr')] = ta.value; if (testClock) s.el = testClock.el; saveTestState(key, s);
+      });
+    });
+    var sp = document.querySelector('[data-tspr]');
+    if (sp) sp.addEventListener('input', function () {
+      var s = testState(key); if (!s) return;
+      var v = sp.value.trim();
+      if (v) s.ans[sp.getAttribute('data-tspr')] = v; else delete s.ans[sp.getAttribute('data-tspr')];
+      if (testClock) s.el = testClock.el; saveTestState(key, s);
+    });
+  }
+  function frKindWord(f) {
+    var KIND = { long: 'Long', short: 'Short', saq: 'Short answer', dbq: 'Document-based', leq: 'Long essay',
+                 synthesis: 'Synthesis essay', rhetorical: 'Rhetorical analysis', argument: 'Argument essay',
+                 essay: 'Essay', email: 'Email reply', presentation: 'Presentation', qa: 'Conversation' };
+    return KIND[f.kind] || 'Free response';
+  }
+
+  /* VIEW · every question at a glance, and the hand-in */
+  function viewTestMap(d, pack, t, id, key, st) {
+    var base = '#/test/' + d.id + '/' + id, nq = t._qs.length;
+    var answered = t._qs.filter(function (q) { return st.ans[q.n]; }).length;
+    var marked = Object.keys(st.flag).filter(function (k) { return st.flag[k]; }).length;
+    var cells = t._qs.map(function (q) {
+      var a = !!st.ans[q.n], f = !!st.flag[q.n];
+      return '<button class="tcell num' + (a ? ' on' : '') + (f ? ' flag' : '') + (st.at === q.n ? ' here' : '') + '" data-go="' + base + '/q/' + q.n + '" aria-label="Question ' + q.n +
+        (a ? ', answered' : ', unanswered') + (f ? ', marked' : '') + '">' + q.n + '</button>';
+    }).join('');
+    var frRows = t._fr.map(function (f, k) {
+      var wrote = Object.keys(st.fr).some(function (x) { return x.indexOf((k + 1) + '.') === 0 && String(st.fr[x]).trim(); });
+      return '<li><button class="ledger mid tfr" data-go="' + base + '/q/' + (nq + k + 1) + '"><span class="lname">' + esc(f.title || frKindWord(f)) + '</span>' +
+        '<span class="lval word">' + (wrote ? 'Written' : 'Not yet') + '</span>' +
+        '<span class="lsub">' + esc(frKindWord(f) + (f.pts ? ' · ' + plural(f.pts, 'point') : '')) + '</span></button></li>';
+    }).join('');
+    var left = nq - answered;
+    mount(
+      testTop(d, t, id, key, st, '') +
+      '<div class="head"><h1 class="uhead">All questions</h1>' +
+        '<div class="sub">' + esc([answered + ' of ' + nq + ' answered', marked ? marked + ' marked for review' : ''].filter(Boolean).join(' · ')) + '</div></div>' +
+      '<div class="tgrid">' + cells + '</div>' +
+      '<div class="tkey"><span><i class="tcell on"></i>Answered</span><span><i class="tcell"></i>Not yet</span><span><i class="tcell flag"></i>Marked</span></div>' +
+      (frRows ? '<ul class="list mt4 gap0"><li><div class="ulabel">Free response</div></li>' + frRows + '</ul>' : '') +
+      '<div class="tnav"><button class="act tnext" data-test-hand="' + (left ? 'arm' : 'go') + '">Hand it in</button>' +
+      '<div class="actsub" id="thandsub">' + (left ? plural(left, 'question') + ' unanswered. A blank is always wrong; a guess costs nothing.' : 'Everything is answered.') + '</div></div>',
+      { test: true }
+    );
+    clockStart(key, st, t.minutes * 60000);
+  }
+
+  function handIn(d, t, id, key) {
+    var st = testState(key); if (!st) return;
+    if (testClock && testClock.key === key) st.el = testClock.el;
+    clockStop();
+    st.handed = Date.now(); st.at = 0;
+    if (!t._fr.length) st.fin = Date.now();
+    saveTestState(key, st);
+    if (st.fin) recordTest(d, t, id, key, st);
+    goReplace('#/test/' + d.id + '/' + id + (t._fr.length ? '/score/1' : '/result'));
+  }
+  function recordTest(d, t, id, key, st) {
+    var s = testScore(TESTS[d.id], t, st);
+    pushTestHist(key, { day: S.dayNum(), pct: s.pct, mc: [s.got, s.of], fr: [s.frGot, s.frOf], min: Math.max(1, Math.round((st.el || 0) / 60000)) });
+  }
+
+  /* VIEW · score one free-response item: your answer, the model, a point picker */
+  function viewTestScore(d, pack, t, id, key, st, k) {
+    var f = t._fr[k - 1], units = frqUnits(f), essay = !(f.parts || []).length, base = '#/test/' + d.id + '/' + id;
+    var picker = function (i, p) {
+      var out = '';
+      for (var v = 0; v <= p; v++) {
+        var on = st.sc[k + '.' + i] === v;
+        out += '<button class="ptbtn' + (on ? ' on' : '') + '" data-tsc="' + k + '.' + i + ':' + v + '" aria-pressed="' + on + '">' + v + '</button>';
+      }
+      return '<div class="ptrow" role="group" aria-label="Points you earned"><span class="ptk">You earned</span>' + out + '<span class="ptk">of ' + p + '</span></div>';
+    };
+    var body = '';
+    if (essay) body += '<div class="fpw"><div class="ulabel">What you wrote</div><div class="recallecho">' +
+      (String(st.fr[k + '.e'] || '').trim() ? esc(String(st.fr[k + '.e']).trim()) : 'Nothing written here. Score what you wrote on paper.') + '</div></div>';
+    units.forEach(function (x, i) {
+      var head = '<div class="fpqw"><span class="fpl">' + esc(x.label) + '</span>' +
+        (x.q ? '<span class="fpq' + (stacked(x.q) ? ' mathy' : '') + '">' + T.html(x.q) + '</span>' : '') +
+        (x.p ? '<span class="fpp num">' + esc(plural(x.p, 'pt')) + '</span>' : '') + '</div>';
+      if (x.row) {
+        body += '<div class="fpw">' + head + (x.earns ? '<div class="sva">' + T.html(x.earns) + '</div>' : '') +
+          (x.loses ? '<div class="svn">' + T.html(x.loses) + '</div>' : '') + (x.p ? picker(i, x.p) : '') + '</div>';
+        return;
+      }
+      var mine = String(st.fr[k + '.' + i] || '').trim();
+      body += '<div class="fpw">' + head +
+        '<div class="recallecho">' + (mine ? esc(mine) : 'Nothing written.') + '</div>' +
+        '<div class="jl">The model answer</div><div class="sva' + (stacked(x.a || '') ? ' mathy' : '') + '">' + T.html(x.a || '') + '</div>' +
+        (x.n ? '<div class="svn">' + T.html(x.n) + '</div>' : '') + (x.p ? picker(i, x.p) : '') + '</div>';
+    });
+    if (!essay && (f.rows || []).length) {
+      body += '<div class="fpw"><div class="ulabel">The rubric</div>' + f.rows.map(function (r) {
+        return '<div class="fprow"><div class="fpqw"><span class="fpq">' + esc(r.r || '') + '</span>' +
+          (r.p != null ? '<span class="fpp num">' + esc(plural(+r.p, 'pt')) + '</span>' : '') + '</div>' +
+          (r.earns ? '<div class="sva">' + T.html(r.earns) + '</div>' : '') + (r.loses ? '<div class="svn">' + T.html(r.loses) + '</div>' : '') + '</div>';
+      }).join('') + '</div>';
+    }
+    var scoredAll = units.every(function (x, i) { return !x.p || st.sc[k + '.' + i] != null; });
+    var got = units.reduce(function (s, x, i) { return s + (st.sc[k + '.' + i] || 0); }, 0), of = units.reduce(function (s, x) { return s + x.p; }, 0);
+    var last = k === t._fr.length;
+    mount(
+      backbar(testName(d, d.unitById[t.unit || id] || {}, t)) +
+      '<div class="head"><span class="k">' + esc('Score your free response · ' + k + ' of ' + t._fr.length) + '</span>' +
+        '<h1 class="uhead">' + esc(f.title || frKindWord(f)) + '</h1></div>' +
+      (f.stem ? '<details class="tstemfold"><summary>The question</summary><div class="fstem' + (stacked(f.stem) ? ' mathy' : '') + '">' + T.html(f.stem) + '</div></details>' : '') +
+      '<div class="fqwork">' + body + '</div>' +
+      '<div class="fqtotal"><span class="k">' + (scoredAll ? 'This question' : 'Scored so far') + '</span><span class="v num">' + got + ' of ' + of + '</span></div>' +
+      '<div class="tnav">' + (last
+        ? '<button class="act tnext" data-test-finish>' + (scoredAll ? 'See your results' : 'Results with what is scored') + '</button>'
+        : '<button class="act tnext" data-go="' + base + '/score/' + (k + 1) + '">Next question</button>') +
+        (k > 1 ? '<button class="textbtn tprev" data-go="' + base + '/score/' + (k - 1) + '">Back</button>' : '') + '</div>',
+      { test: true, keepScroll: !!st.keep }
+    );
+    if (st.keep) { st.keep = false; saveTestState(key, st); }
+  }
+
+  /* VIEW · the results: the percent, the sections, thinking, topics, misses */
+  function viewTestResult(d, pack, t, id, key, st) {
+    var s = testScore(pack, t, st), base = '#/test/' + d.id + '/' + id, u = d.unitById[t.unit || id] || {};
+    var mins = Math.max(1, Math.round((st.el || 0) / 60000)), over = mins - t.minutes;
+    var sub = [s.got + ' of ' + s.of + ' multiple choice'];
+    if (s.frOf) sub.push(s.frAll ? s.frGot + ' of ' + s.frOf + ' free response' : 'free response not all scored');
+    sub.push(plural(mins, 'minute') + (st.timed && over > 0 ? ', ' + over + ' over' : ''));
+    // thinking levels, then topics, weakest first
+    var LV = [['apply', 'Apply'], ['analyze', 'Analyze'], ['evaluate', 'Evaluate']];
+    var lv = {}, tp = {}, torder = [];
+    t._qs.forEach(function (q) {
+      var ok = qRight(q, st);
+      if (q.p.lv) { var a = lv[q.p.lv] || (lv[q.p.lv] = [0, 0]); a[1]++; if (ok) a[0]++; }
+      var tc = q.p.t || '';
+      if (!tp[tc]) { tp[tc] = { got: 0, of: 0, miss: [] }; torder.push(tc); }
+      tp[tc].of++; if (ok) tp[tc].got++; else tp[tc].miss.push(q.n);
+    });
+    var fcRow = function (name, a, b, go, subl) {
+      var r = b ? a / b : 0;
+      return '<li>' + (go ? '<button' : '<div') + ' class="ledger mid fc' + (a ? '' : ' zero') + (go ? '' : ' static') + '" style="--fc:' + Math.round(r * 100) + '%"' + (go ? ' data-go="' + go + '"' : '') + '>' +
+        '<span class="lname">' + esc(name) + '</span><span class="lval num">' + a + ' of ' + b + '</span>' +
+        (subl ? '<span class="lsub">' + esc(subl) + '</span>' : '') + (go ? '</button>' : '</div>') + '</li>';
+    };
+    var lvRows = LV.filter(function (x) { return lv[x[0]]; }).map(function (x) { return fcRow(x[1], lv[x[0]][0], lv[x[0]][1]); }).join('');
+    torder.sort(function (a, b) { return tp[a].got / tp[a].of - tp[b].got / tp[b].of || tp[b].of - tp[a].of; });
+    var tpRows = torder.map(function (tc) {
+      var ow = unitOfTopic(d, tc), tpo = ow ? topicOf(ow, tc) : null;
+      var name = tpo && tpo.t ? tpo.t : tc || 'Other';
+      var go = '', how = '';
+      if (tp[tc].miss.length && ow && tc) {
+        var rc = recallCards(d, ow.id, tc).length >= 3, hasCards = d.cards.some(function (c) { return c.u === ow.id && c.t === tc; });
+        if (rc) { go = '#/recall/' + d.id + '/' + ow.id + '/' + encodeURIComponent(tc); how = 'Recall'; }
+        else if (hasCards) { go = '#/study/' + d.id + '/t:' + encodeURIComponent(tc) + '/' + ow.id; how = 'Study'; }
+      }
+      return fcRow(name, tp[tc].got, tp[tc].of, go, [cedCode(tc), tp[tc].miss.length ? (tp[tc].miss.length > 1 ? 'Missed ' : 'Missed ') + tp[tc].miss.join(', ') : '', how].filter(Boolean).join(' · '));
+    }).join('');
+    var misses = t._qs.filter(function (q) { return !qRight(q, st); });
+    var missRows = misses.map(function (q) {
+      var mine = st.ans[q.n], right = q.spr ? (q.p.x || [])[0] : q.m.right;
+      return '<li><button class="ledger mid" data-go="' + base + '/review/' + q.n + '"><span class="lname">Question ' + q.n + '</span>' +
+        '<span class="lval word">' + esc(mine ? right + ', not ' + mine : right + ', left blank') + '</span>' +
+        '<span class="lsub">' + esc(T.plain(q.m.q).slice(0, 90) + (T.plain(q.m.q).length > 90 ? '…' : '')) + '</span></button></li>';
+    }).join('');
+    var best = testBest(key), hist = testHist(key), prev = hist.length > 1 ? hist[hist.length - 2] : null;
+    var w = s.w, weights = s.frOf && s.frAll
+      ? (Math.abs(w.mc - w.fr) < 1e-9 ? 'Multiple choice and free response count half each, as on the AP exam.'
+        : 'Multiple choice counts ' + Math.round(w.mc / (w.mc + w.fr) * 100) + '% and free response ' + Math.round(w.fr / (w.mc + w.fr) * 100) + '%, as on the AP exam.')
+      : s.frOf ? 'Multiple choice only until the free response is scored.' : '';
+    mount(
+      backbar(testName(d, u, t)) +
+      '<div class="ulabel mt0">' + esc(nice(d) + ' · ' + testName(d, u, t)) + '</div>' +
+      '<div class="dhero"><h1 class="dnh"><span class="dn">Results</span></h1>' +
+        '<span class="dv num">' + pctWord(s.pct) + '</span></div>' +
+      '<div class="dblurb">' + esc(sub.join(' · ')) + '</div>' +
+      (weights ? '<div class="dblurb frame">' + esc(weights) + '</div>' : '') +
+      (prev ? '<div class="dblurb frame">' + esc('Last time ' + pctWord(prev.pct) + (best && best.pct > s.pct + 1e-9 ? ' · your best ' + pctWord(best.pct) : '')) + '</div>' : '') +
+      (s.frOf && !s.frAll ? '<button class="act lead" data-go="' + base + '/score/1">Score your free response</button>' : '') +
+      (lvRows ? '<ul class="list mt4 gap0"><li><div class="ulabel">By thinking</div></li>' + lvRows + '</ul>' : '') +
+      '<ul class="list mt4 gap0"><li><div class="ulabel">' + (d.id === 'psat' ? 'By question type' : 'By topic') + ', weakest first</div></li>' + tpRows + '</ul>' +
+      (missRows ? '<ul class="list mt4 gap0"><li><div class="ulabel">' + esc(plural(misses.length, 'miss', 'misses')) + '</div></li>' + missRows + '</ul>'
+        : '<div class="dblurb mt4">Every multiple-choice question right.</div>') +
+      '<div class="tnav"><button class="textbtn" data-go="' + base + '/review/1">Review every question</button>' +
+        (t._fr.length && s.frAll ? '<button class="textbtn" data-go="' + base + '/score/1">Your free response</button>' : '') +
+        '<button class="textbtn quiet" data-test-again="' + esc(id) + '">Take it again</button></div>'
+    );
+  }
+  function unitOfTopic(d, tc) {
+    for (var i = 0; i < d.units.length; i++) if (topicOf(d.units[i], tc)) return d.units[i];
+    return null;
+  }
+
+  /* VIEW · one question after the test: your pick, the key, the why */
+  function viewTestReview(d, pack, t, id, key, st, n) {
+    var q = t._qs[n - 1], base = '#/test/' + d.id + '/' + id, mine = st.ans[n], ok = qRight(q, st);
+    var body = stemHTML(q.g.stem) +
+      '<div class="tq"><div class="fpqw"><span class="fpl num">' + n + '</span><span class="fpq tqq' + (stacked(q.m.q) ? ' mathy' : '') + '">' + T.html(q.m.q) + '</span></div>' +
+      (q.spr
+        ? '<div class="scv"><p class="sv">' + (mine ? 'You entered ' + esc(mine) + '. ' : 'Left blank. ') + (ok ? 'Right.' : 'Accepted: ' + esc((q.p.x || []).join(', ')) + '.') + '</p></div>'
+        : '<div class="choices">' + q.m.choices.map(function (ch) {
+            var state = ch.L === q.m.right ? 'right' : ch.L === mine ? 'wrong' : 'mute';
+            return '<div class="choice' + (stacked(ch.t) ? ' mathy' : '') + (T.plain(ch.t).length > 110 ? ' small' : '') + '" data-letter="' + ch.L + '" data-state="' + state + '">' + T.html(ch.t) + '</div>';
+          }).join('') + '</div>' +
+          '<div class="scv"><p class="sv">' + (ok ? 'Right.' : mine ? 'You picked ' + esc(mine) + '; the answer is ' + esc(q.m.right) + '.' : 'Left blank; the answer is ' + esc(q.m.right) + '.') + '</p></div>') +
+      '<div class="scv"><div class="sva' + (stacked(q.m.why || '') ? ' mathy' : '') + '">' + T.html(q.spr ? q.p.a || '' : q.m.why || '') + '</div>' +
+        (q.p.n ? '<div class="svn">' + T.html(q.p.n) + '</div>' : '') + '</div></div>';
+    mount(
+      '<div class="backbar tbar"><button class="bk" data-go="' + base + '/result">Results</button>' +
+        '<span class="tpos num">' + esc(n + ' of ' + t._qs.length) + '</span></div>' +
+      '<h1 class="sr-only">' + esc('Review · question ' + n) + '</h1>' + body +
+      '<div class="tnav">' + (n < t._qs.length ? '<button class="act tnext" data-go="' + base + '/review/' + (n + 1) + '">Next</button>'
+        : '<button class="act tnext" data-go="' + base + '/result">Results</button>') +
+        (n > 1 ? '<button class="textbtn tprev" data-go="' + base + '/review/' + (n - 1) + '">Back</button>' : '') + '</div>',
+      { test: true }
+    );
+  }
+
+  function testClick(t) {
+    var p = (location.hash.replace(/^#/, '') || '/').split('/').filter(Boolean);
+    if (p[0] !== 'test' || !p[1]) return false;
+    var d = S.getDeck(p[1]), pack = TESTS[p[1]], te = pack && p[2] && pack.tests[p[2]];
+    if (t.closest('[data-test-retry]')) { route(); return true; }
+    if (!d || !te) return false;
+    testModel(te);
+    var key = p[1] + '/' + p[2], base = '#/test/' + p[1] + '/' + p[2];
+    if (t.closest('[data-test-timed]')) {
+      var pref = testPref(); pref.timed = pref.timed === false; try { localStorage.setItem('apdecks.testpref', JSON.stringify(pref)); } catch (e) {}
+      route(); return true;
+    }
+    if (t.closest('[data-test-start]')) {
+      clockStop();
+      saveTestState(key, { v: 1, t0: Date.now(), el: 0, timed: testPref().timed !== false, ans: {}, flag: {}, fr: {}, sc: {}, handed: 0, fin: 0, at: 1 });
+      go(base + '/q/1'); return true;
+    }
+    var ab = t.closest('[data-test-abandon]');
+    if (ab) {
+      if (ab.getAttribute('data-armed')) { clockStop(); saveTestState(key, null); route(); }
+      else { ab.setAttribute('data-armed', '1'); ab.textContent = 'Start over? Your answers go. Tap again'; }
+      return true;
+    }
+    var ag = t.closest('[data-test-again]');
+    if (ag) {
+      if (ag.getAttribute('data-armed')) { saveTestState(key, null); go(base); }
+      else { ag.setAttribute('data-armed', '1'); ag.textContent = 'Clear these answers and start again? Tap again'; }
+      return true;
+    }
+    var st = testState(key);
+    if (!st) return false;
+    var pk = t.closest('[data-tpick]');
+    if (pk && !st.handed) {
+      var v = pk.getAttribute('data-tpick').split(':');
+      if (st.ans[v[0]] === v[1]) delete st.ans[v[0]]; else st.ans[v[0]] = v[1];   // a second tap clears it, as in Bluebook
+      if (testClock) st.el = testClock.el;
+      saveTestState(key, st);
+      [].forEach.call(document.querySelectorAll('[data-tpick^="' + v[0] + ':"]'), function (b) {
+        var on = st.ans[v[0]] === b.getAttribute('data-tpick').split(':')[1];
+        if (on) b.setAttribute('data-state', 'pick'); else b.removeAttribute('data-state');
+        b.setAttribute('aria-pressed', String(on));
+      });
+      return true;
+    }
+    var fl = t.closest('[data-tflag]');
+    if (fl && !st.handed) {
+      var n = fl.getAttribute('data-tflag');
+      if (st.flag[n]) delete st.flag[n]; else st.flag[n] = 1;
+      saveTestState(key, st);
+      fl.setAttribute('aria-pressed', String(!!st.flag[n]));
+      fl.textContent = st.flag[n] ? 'Marked for review' : 'Mark for review';
+      return true;
+    }
+    if (t.closest('[data-tclock]')) {
+      st.hideClock = !st.hideClock; saveTestState(key, st); paintClock();
+      if (!testClock) { var el = document.querySelector('[data-tclock]'); if (el) el.textContent = st.hideClock ? 'Show time' : clockWord(st.el || 0); }
+      return true;
+    }
+    var hi = t.closest('[data-test-hand]');
+    if (hi && !st.handed) {
+      if (hi.getAttribute('data-test-hand') === 'arm') {
+        hi.setAttribute('data-test-hand', 'go'); hi.textContent = 'Hand it in anyway';
+        var hs = document.getElementById('thandsub'); if (hs) hs.textContent = 'Or tap a number to go back to it.';
+        return true;
+      }
+      handIn(d, te, p[2], key); return true;
+    }
+    var sc = t.closest('[data-tsc]');
+    if (sc && st.handed) {
+      var w = sc.getAttribute('data-tsc').split(':');
+      st.sc[w[0]] = parseInt(w[1], 10); st.keep = true;
+      saveTestState(key, st); route(); return true;
+    }
+    if (t.closest('[data-test-finish]') && st.handed) {
+      if (!st.fin) { st.fin = Date.now(); saveTestState(key, st); recordTest(d, te, p[2], key, st); }
+      else {
+        // a re-score after the results were in replaces that attempt's record
+        var s = testScore(pack, te, st), o = {};
+        try { o = JSON.parse(localStorage.getItem(TEST_HIST) || '{}') || {}; } catch (e) { o = {}; }
+        var h = o[key] || [];
+        if (h.length) { h[h.length - 1].pct = s.pct; h[h.length - 1].fr = [s.frGot, s.frOf]; o[key] = h; try { localStorage.setItem(TEST_HIST, JSON.stringify(o)); } catch (e) {} }
+      }
+      goReplace(base + '/result'); return true;
+    }
+    return false;
+  }
+  /* A to D (or 1 to 4) picks, the arrows move between questions */
+  function testKey(e) {
+    var p = (location.hash.replace(/^#/, '') || '/').split('/').filter(Boolean);
+    if (p[0] !== 'test' || (p[3] !== 'q' && p[3] !== 'review')) return false;
+    var n = +p[4] || 1, base = '#/test/' + p[1] + '/' + p[2] + '/' + p[3] + '/';
+    var k = e.key && e.key.length === 1 ? e.key.toUpperCase() : e.key;
+    if (p[3] === 'q') {
+      var L = /^[A-D]$/.test(k) ? k : /^[1-4]$/.test(k) ? 'ABCD'.charAt(+k - 1) : '';
+      if (L) {
+        var b = document.querySelector('[data-tpick="' + n + ':' + L + '"]');
+        if (b) { e.preventDefault(); b.click(); return true; }
+      }
+    }
+    if (k === 'ArrowRight') { var nx = document.querySelector('.tnav .tnext'); if (nx) { e.preventDefault(); nx.click(); return true; } }
+    if (k === 'ArrowLeft') { var pv = document.querySelector('.tnav .tprev'); if (pv) { e.preventDefault(); pv.click(); return true; } }
+    return false;
+  }
+
   function viewUnit(deckId, unitId) {
     var d = S.getDeck(deckId);
     if (!d || !d.unitById[unitId]) return go('#/d/' + deckId);
@@ -1727,6 +2407,12 @@
         // the exam's own question format, with model answers by point
         (u.frq && u.frq.length
           ? modeBtn('#/d/' + deckId + '/u/' + unitId + '/frq', frqName(u), frqLine(u)) : '') +
+        // the unit's own tests: full length, marked when handed in
+        (u.tests || []).map(function (tm) {
+          var b = testBest(deckId + '/' + tm.id);
+          return modeBtn('#/test/' + deckId + '/' + tm.id, tm.title || (unitId === 'x' ? 'Cumulative test' : 'Unit test'),
+            testSub(tm) + (b ? ' · best ' + pctWord(b.pct) : ''));
+        }).join('') +
         // the grammar by point, when this unit's topics feed one
         (focusPoints(d).some(function (f) { return cards.some(function (c) { return f.topics.indexOf(c.t || '') > -1; }); })
           ? modeBtn('#/d/' + deckId + '/g', 'Grammar', MODE_DESC.focus) : '') +
@@ -4486,6 +5172,8 @@
         b('Quiz') + ': ' + esc(MODE_DESC.quiz) + '. The card\'s note appears under the right choice.',
         b('Trouble spots') + ': ' + esc(MODE_DESC.hard) + '.',
         b('Score it') + ', on an AP course or unit: ' + esc(MODE_DESC.score) + '. The answers are the explain-whys\' own: the model, the other arguments that earn the point, and the confident ones that lose it. Judging never moves the schedule.',
+        b('Unit tests') + ', on an AP course or unit: full-length tests, one to a unit and a cumulative one, written the way a teacher writes them. Every question puts a new experiment, source, passage or claim in front of you. Answer everything with the clock on or off, hand it in, and the multiple choice is marked; then score your free response part by part against the model. The results break down by topic and by the kind of thinking each question asked for, and every miss links back to its topic. An unfinished test waits on this device.',
+        b('Practice tests') + ', on the PSAT course: Reading and Writing and Math modules timed as Bluebook times them, at the level of the harder second module, and a drill for each question type.',
         b('By skill') + ', on an AP course: ' + esc(MODE_DESC.skills) + '. The exam asks every skill about every unit, so a skill\'s cards come mixed from across the course.',
         b('Exam mix') + ': ' + esc(MODE_DESC.mix) + '.',
         b('Shuffle') + ': ' + esc(MODE_DESC.all) + '.',
@@ -4654,6 +5342,7 @@
     if (g) { doGrade(parseInt(g.getAttribute('data-grade'), 10)); return; }
     var pk = t.closest('[data-pick]');
     if (pk) { pickChoice(parseInt(pk.getAttribute('data-pick'), 10)); return; }
+    if (testClick(t)) return;
     if (recallClick(t)) return;
     if (frqClick(t)) return;
     if (t.closest('[data-next]')) { nextQuiz(); return; }
@@ -4973,6 +5662,7 @@
       return;
     }
     if (e.repeat) return;                        // holding a key never burns cards
+    if (!sess && testKey(e)) return;
     /* #app is the only scroller and the document has no overflow at all, so
        PageDown, End and the arrows did nothing anywhere: 25,000 px of reader
        with Tab as the only way down, and every word of prose between two
@@ -5109,6 +5799,7 @@
     // or you come back an hour later to "No matches in English"
     if (p[0] !== 'search') searchState.deck = null;
     if (p[0] !== 'recall') recallState = null;
+    if (p[0] !== 'test') clockStop();
     if (!(p[0] === 'd' && p[4] === 'frq' && p[5] != null)) frqState = null;
     if (window.Games) window.Games.onRoute(p[0] || '');
 
@@ -5125,7 +5816,7 @@
     // index now, so the decks are still in flight. Say "Loading" and repaint
     // when it lands, rather than bouncing the reader off their own lesson.
     var wantsDeck = (p[0] === 'd' || p[0] === 'study' || p[0] === 'quiz' || p[0] === 'cram' ||
-                     p[0] === 'score' || p[0] === 'recall') && p[1];
+                     p[0] === 'score' || p[0] === 'recall' || p[0] === 'test') && p[1];
     if (wantsDeck && !S.getDeck(p[1]) && S.deckPending && S.deckPending(p[1]) &&
         (S.getIndex().courses || []).some(function (c) { return c.id === p[1]; })) {
       return mount('<div class="head"><h1>' + esc(nice(p[1])) + '</h1>' + RING + '</div>');
@@ -5149,6 +5840,7 @@
     if (p[0] === 'cram') return startCram(p[1], p[2], p[3]);
     if (p[0] === 'score' && p[1]) return startScore(p[1], p[2]);
     if (p[0] === 'recall' && p[1] && p[2] && p[3]) return viewRecall(p[1], p[2], decodeURIComponent(p[3]));
+    if (p[0] === 'test' && p[1]) return testRoute(p);
     if (p[0] === 'weak') return viewWeak();
     if (p[0] === 'stuck') return p[1] === 'go' ? startStuck() : viewStuck();
     if (p[0] === 'starred') return p[1] === 'go' ? startStarred() : viewStarred();

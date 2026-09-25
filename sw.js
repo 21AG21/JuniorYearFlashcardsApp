@@ -7,7 +7,10 @@ var ASSETS = [
   './icon-180.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './data/index.json', './data/timeline.json', './data/fr-vocab.json',
   './data/lang.json', './data/chem.json', './data/french.json',
-  './data/calcbc.json', './data/apush.json', './data/sat.json'
+  './data/calcbc.json', './data/apush.json', './data/sat.json', './data/psat.json',
+  // each course's tests ride beside it; a file not built yet fails its add quietly
+  './data/tests/chem.json', './data/tests/calcbc.json', './data/tests/apush.json',
+  './data/tests/lang.json', './data/tests/french.json', './data/tests/psat.json'
   // NOTE: a private deck is not listed here — it is 3.6 MB and only its owner
   // can see it, so it is never shipped to every device. It is picked up at
   // runtime and carried across version bumps by the activate handler below.
