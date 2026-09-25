@@ -23,7 +23,7 @@
   --t-title:clamp(40px,14vw,55px);
   --t-act:clamp(28px,8.6vw,38px);      /* the primary action, and a utility heading */
   --t-prompt:clamp(26px,8.7vw,34px);
-  --t-mid:clamp(24px,7.7vw,30px);      /* unit rows, summary rows */
+  --t-mid:clamp(22px,6.6vw,26px);      /* unit rows, summary rows */
   --t-option:clamp(20px,6.2vw,24px);   /* an answer, a choice, a search field, a mode word */
   --t-answer:var(--t-option);
   --t-lead:20px;      /* a control's word: text buttons, settings rows, fields */
@@ -516,6 +516,7 @@ button.hero-tap:active{ opacity:.5; }
 .card .q,.card .a,.card .note,.card .hint{ overflow-wrap:anywhere; }
 .card .q{ font-size:var(--t-prompt); font-weight:500; letter-spacing:-.02em; line-height:1.25; color:var(--ink); }
 .card .q.small{ font-size:var(--t-option); line-height:1.32; }
+.card .q.long{ font-size:var(--t-lead); line-height:1.36; letter-spacing:-.014em; }
 .card .q.tiny{ font-size:var(--t-body); font-weight:500; line-height:1.4; letter-spacing:-.012em; }
 .card .hint{ margin-top:14px; font-size:var(--t-caption); color:var(--muted); }
 /* the hint waits to be asked — a quiet word, its hit area padded invisibly */
@@ -541,7 +542,7 @@ button.hero-tap:active{ opacity:.5; }
 .qrow .qn{ display:block; margin-top:6px; padding-left:12px; border-left:2px solid var(--hair);
   font-size:var(--t-body); line-height:1.4; color:var(--ink-soft); white-space:pre-wrap; overflow-wrap:anywhere; }
 .card .a{ font-size:var(--t-answer); font-weight:460; letter-spacing:-.015em; line-height:1.32; color:var(--ink); }
-.card .a.small{ font-size:var(--t-body); font-weight:460; line-height:1.42; }
+.card .a.small,.card .a.long{ font-size:var(--t-body); font-weight:460; line-height:1.42; }
 .card .a.tiny{ font-size:var(--t-body); font-weight:460; line-height:1.55; letter-spacing:0; }
 .card .note{ margin-top:16px; padding-left:12px; border-left:1.5px solid var(--hair); font-size:var(--t-caption); line-height:1.5; color:var(--ink-soft); }
 .card .meta{ margin-top:16px; font-size:var(--t-caption); color:var(--muted); }
@@ -655,7 +656,7 @@ button.hero-tap:active{ opacity:.5; }
 .list li.dropped .qmeta{ opacity:.6; }
 .choices{ display:flex; flex-direction:column; margin-top:var(--s-3); }
 .choice{ position:relative; width:100%; text-align:left; padding:var(--s-3) var(--s-4) var(--s-3) 0; border:0; border-top:1px solid var(--hair-soft);
-  background:none; color:var(--ink-soft); font:inherit; font-size:var(--t-option); font-weight:500; line-height:1.4; cursor:pointer;
+  background:none; color:var(--ink); font:inherit; font-size:var(--t-option); font-weight:500; line-height:1.4; cursor:pointer;
   transition:opacity var(--d-fast) ease; min-height:44px; }
 .choice:first-child{ border-top:0; }
 .choice:active{ opacity:.5; }
@@ -689,7 +690,7 @@ button.hero-tap:active{ opacity:.5; }
 .qrow:active{ opacity:.5; }
 .qrow .qq, .qrow .qa, .qrow .qmeta{ display:block; }
 .qrow [hidden]{ display:none !important; }
-.qrow .qq{ font-size:var(--t-option); font-weight:460; color:var(--ink); letter-spacing:-.012em; line-height:1.32;
+.qrow .qq{ font-size:var(--t-lead); font-weight:460; color:var(--ink); letter-spacing:-.012em; line-height:1.32;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
 .qrow.open .qq{ display:block; -webkit-line-clamp:none; overflow:visible; }
 .qrow .qa{ font-size:var(--t-body); color:var(--ink-soft); line-height:1.4; margin-top:5px; }
@@ -1006,7 +1007,7 @@ sub,sup{ font-size:max(.68em, 11px); }
   /* min(vw, vh): on a phone held sideways the WIDTH is the long side, so a
      width-driven size put 40px rows in a 320px-tall window — one of six deck
      rows above the tab bar. The short side has to be able to win. */
-  .ledger .lname,.ledger .lval{ font-size:clamp(22px,min(11vw,8vh),40px); }
+  .ledger .lname,.ledger .lval{ font-size:clamp(22px,min(7.6vw,5.4vh),30px); }
   .card .q{ font-size:clamp(20px,min(7.4vw,7.6vh),28px); line-height:1.22; }
   .card .rule{ margin:18px 0 16px; }
   .card .a{ font-size:clamp(16px,min(5.6vw,5.4vh),20px); }
@@ -1543,3 +1544,27 @@ sub,sup{ font-size:max(.68em, 11px); }
   .modes:not(.nav):not(.single) .textbtn.mode:nth-child(-n+2){ border-top:0; }
   .modes:not(.nav):not(.single) .mdesc{ display:none; }
 }
+
+/* the week ahead is seven short rows of a forecast, read as one block: at the
+   unit-row size it filled a phone screen by itself */
+.ledger.mid.fc{ padding:4px 0 13px; }
+.ledger.mid.fc .lname,.ledger.mid.fc .lval{ font-size:var(--t-option); }
+/* on a phone the unit list is an index to scan: name, weight and progress.
+   What each unit holds opens its own page; four grey lines under every name
+   turned the list into a wall */
+@media (max-width:899px), (max-height:499px){
+  .ledger .ublurb{ display:none; }
+}
+.ledger .lval.dim{ color:var(--muted); }
+/* a unit's number label belongs to the name under it, not the row above */
+.list.gap0 > li > .ulabel{ margin-top:var(--s-4); }
+.list.gap0 > li:first-child > .ulabel{ margin-top:var(--s-2); }
+/* a topic's heading: its name on a line of its own, then the count and the
+   two ways into it — squeezed beside the buttons, a long name broke into a
+   narrow column three lines deep */
+.list .tsep .ulabel{ flex-wrap:wrap; row-gap:2px; }
+.list .tsep .ulabel .tt{ flex:1 0 100%; color:var(--ink-soft); }
+/* headings break into even lines ("…starts at / x = 2", never "…at x / = 2");
+   running text avoids a one-word last line where the browser can */
+.head h1, .dhero .dn, .ledger .lname, .ftitle, .gcur .gname{ text-wrap:balance; }
+.card .q, .card .a, .fstem, .fpq, .sub, .dblurb, .how p, .choice, .qrow .qq{ text-wrap:pretty; }

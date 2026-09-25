@@ -471,24 +471,21 @@
     var need = COVER.byDeck[deckId];
     return { need: need, days: exam - today, perDay: perDay, all: COVER.all };
   }
-  function coverLine(deckId) {
+  /* the coverage verdict, as the tail of the countdown line: "every card by
+     Apr 14 · 9 days spare", or — when the pace falls short — the rate that
+     closes the gap, one tap away (a forecast you cannot act on is just bad
+     news). The rate is SOLVED for, not scaled: raising it changes every
+     deck's share, so "16 a day" once set turned into "18 a day". */
+  function coverBit(deckId) {
     var cv = coverage(deckId);
     if (!cv || !cv.need) return '';                      // nothing unseen left
     if (cv.need <= cv.days) {
       var spare = cv.days - cv.need;
-      return '<div class="ulabel cover">' + esc('Every card seen by ' + dateWord(S.dayNum() + cv.need) +
-        (spare > 0 ? ' · ' + plural(spare, 'day') + ' spare' : '')) + '</div>';
+      return esc('every card by ' + dateWord(S.dayNum() + cv.need) + (spare > 0 ? ' · ' + plural(spare, 'day') + ' spare' : ''));
     }
-    // the honest version: name the shortfall, and make the rate that closes it
-    // one tap away — a forecast you cannot act on is just bad news. The rate
-    // is SOLVED for, not scaled: raising it changes every deck's share, so
-    // "16 a day covers it" once set turned into "18 a day covers it".
     var want = paceFor(deckId, cv.days);
-    if (!want) return '<div class="ulabel cover">' +
-      esc('Not every card before the exam at ' + cv.perDay + ' new a day') + '</div>';
-    return '<div class="ulabel cover">' +
-      esc('Not every card before the exam at ' + cv.perDay + ' new a day') +
-      '<span class="nowrap"> · <button class="pace" data-pace="' + want + '">' + want + ' a day covers it</button></span></div>';
+    if (!want) return esc('not every card at ' + cv.perDay + ' new a day');
+    return '<button class="pace" data-pace="' + want + '">set ' + want + ' new a day to finish</button>';
   }
   function dateWord(dayN) {
     var dt = new Date(S.dayKey(dayN) + 'T12:00:00Z');
@@ -1055,7 +1052,8 @@
     var tables = d.units.filter(function (u) { return u.table; });
     var units = d.units.map(function (u) {
       var us = S.unitStats(d, u.id);
-      if (!us.total) return '';
+      // a table is offered in the Tables block above, not listed twice
+      if (!us.total || u.table) return '';
       var bits = [];
       var wt = weightText(u);
       if (wt) bits.push(wt);
@@ -1073,7 +1071,7 @@
         '<div class="ulabel">' + (u.table ? 'Table' : 'Unit ' + u.n) + '</div>' +
         '<button class="ledger mid' + (us.pct >= 0.9 ? ' done' : '') + '" data-go="#/d/' + deckId + '/u/' + u.id + '">' +
         '<span class="lname">' + esc(u.title) + '</span>' +
-        '<span class="lval num">' + (anySeen ? pct(us.pct) : us.total.toLocaleString()) + '</span>' +
+        '<span class="lval num' + (anySeen && !us.seen ? ' dim' : '') + '">' + (anySeen ? pct(us.pct) : us.total.toLocaleString()) + '</span>' +
         (bits.length ? '<span class="lsub">' + esc(bits.join(' · ')) + '</span>' : '') +
         // what the unit holds, in a line, so the title is not the only clue
         (u.blurb ? '<span class="lsub ublurb">' + esc(u.blurb) + '</span>' : '') +
@@ -1082,7 +1080,7 @@
 
     // the app knows when the exam is — the countdown sits over the course name
     var pl = paceLine(d);
-    var cl = (over || examPast) ? '' : coverLine(deckId);
+    var cb = (over || examPast) ? '' : coverBit(deckId);
     var deal = over ? [] : buildDaily({ deck: d }), dealNow = deal.length;
     // the tables: each on its own, or both in one deal — every card, the
     // least-known first, the way a cram deals
@@ -1145,14 +1143,14 @@
       : examPast
       ? '<div class="ulabel mt0">' + esc('Exam was ' + examName(deckId) + ' · ') +
         '<button class="pace" data-deck-over="' + deckId + '">Clear what\'s due</button></div>'
-      : (pl ? '<div class="ulabel mt0">' + esc(pl) + '</div>' : '');
+      // one line: the countdown, then what it means for this course
+      : (pl || cb ? '<div class="ulabel mt0 cover">' + [pl ? esc(pl) : '', cb].filter(Boolean).join(' · ') + '</div>' : '');
     mount(
       '<div class="dhero">' +
         '<h1 class="dnh"><button class="dn" data-back>' + esc(nice(d)) + '</button></h1>' +
         '<span class="dv num">' + st.total.toLocaleString() + '</span>' +
       '</div>' +
       topLine +
-      cl +
       resumeHTML() +
       (d.blurb ? '<div class="dblurb">' + esc(d.blurb) + '</div>' : '') +
       (over
@@ -1663,8 +1661,10 @@
     // nothing renders (and no space is held) when no game covers this unit
     var ugames = (window.Games && window.Games.forUnit)
       ? (window.Games.forUnit(deckId, unitId) || []) : [];
+    // a unit's games are ways into it like any mode — the same word, the same
+    // rule; as bare grey words in the grid they read as switched off
     var gameLinks = ugames.map(function (g) {
-      return '<button class="textbtn" data-go="' + esc(g[1]) + '">' + esc(g[0]) + '</button>';
+      return modeBtn(g[1], g[0], 'A game on this unit\'s material');
     }).join('');
 
     // The unit list was every card, always — 90 rows to scroll for the four
@@ -1687,7 +1687,7 @@
         lastTopic = c.t;
         var tl = topicTitle(u, c.t);
         var tk = byTopic[c.t].filter(function (x) { return S.isKnown(x.i); }).length, tn = byTopic[c.t].length;
-        sep = '<li class="tsep"><div class="ulabel">' + esc(tl) + ' <span class="num">' +
+        sep = '<li class="tsep"><div class="ulabel"><span class="tt">' + esc(tl) + '</span><span class="num">' +
           (tk ? tk.toLocaleString() + ' of ' + tn.toLocaleString() + ' known' : tn.toLocaleString()) + '</span>' +
           (recallCards(d, unitId, c.t || '').length >= 3
             ? '<button class="textbtn quiet tstudy" data-go="#/recall/' + deckId + '/' + unitId + '/' + encodeURIComponent(c.t || '') + '">Recall</button>' : '') +
@@ -3079,7 +3079,9 @@
   }
   function sizeClass(s) {
     var n = T.plain(s).length;
-    return (n > 360 ? ' tiny' : n > 90 ? ' small' : '') + (stacked(s) ? ' mathy' : '');
+    // three steps down as a question grows, so a long one reads as a paragraph
+    // rather than ten lines of headline
+    return (n > 360 ? ' tiny' : n > 180 ? ' long' : n > 90 ? ' small' : '') + (stacked(s) ? ' mathy' : '');
   }
   /* stacked math (fractions, bounded operators) needs the extra leading */
   function stacked(s) {
