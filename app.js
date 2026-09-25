@@ -1472,6 +1472,30 @@
     var am = String(pt.a || '').match(/^\(([A-E])\)\.?\s*/) || String(pt.a || '').match(/^([A-E])[.)]\s+/);
     return { q: stem.join('\n').trim(), choices: choices, right: am ? am[1] : '', why: am ? String(pt.a).slice(am[0].length) : pt.a };
   }
+  /* the CED topics a set question's note names — directly (RHS-1.B, "topic
+     5.2"), by its essential-knowledge code's own topic prefix (5.3.A.1), or
+     through the unit's cards that carry that code (FUN-6.A.1) */
+  function noteTopics(d, u, note) {
+    var have = {}; (u.topics || []).forEach(function (t) { have[t.c] = 1; });
+    var ek = {};
+    d.cards.forEach(function (c) {
+      if (c.u !== u.id || !c.t || !have[c.t]) return;
+      (c.k || []).forEach(function (k) { var m = ek[k] || (ek[k] = {}); m[c.t] = (m[c.t] || 0) + 1; });
+    });
+    var best = function (k) {
+      var m = ek[k]; if (!m) return null;
+      return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; })[0];
+    };
+    var head = String(note || '').split(/\bskill\b/i)[0].slice(0, 160), out = [];
+    var add = function (t) { if (t && have[t] && out.indexOf(t) < 0) out.push(t); };
+    (head.match(/topic\s+(\d+\.\d+)/gi) || []).forEach(function (m) { add(m.replace(/topic\s+/i, '')); });
+    (head.match(/[A-Z]{2,4}-\d+(?:\.[A-Z0-9]+)*|\b\d+\.\d+(?:\.[A-Z](?:\.\d+)?)?/g) || []).forEach(function (tok) {
+      if (have[tok]) return add(tok);
+      var pre = tok.match(/^(\d+\.\d+)\./); if (pre && have[pre[1]]) return add(pre[1]);
+      add(best(tok) || best(tok.replace(/\.[^.]+$/, '')));
+    });
+    return out;
+  }
   function viewMCPractice(d, u, f, i, key) {
     var qs = (f.parts || []).map(mcParse), picks = frqState.mc;
     var answered = qs.filter(function (q, n) { return picks[n]; }).length;
@@ -1502,12 +1526,33 @@
         ? '<div class="fqtotal"><span class="k">' + (answered < qs.length ? 'So far' : 'Your score') + '</span>' +
           '<span class="v num">' + got + ' of ' + (answered < qs.length ? answered : qs.length) + '</span></div>' +
           (answered >= qs.length && frqState.saved ? '<div class="actsub">' + esc(frqState.saved) + '</div>' : '') +
-          (answered >= qs.length ? '<button class="textbtn" data-fq-again>Try it again</button>' : '')
+          (answered >= qs.length ? mcGoBack(d, u, f, qs, picks) + '<button class="textbtn" data-fq-again>Try it again</button>' : '')
         : '<div class="actsub">' + (best ? 'Your best: ' + best.got + ' of ' + best.of : 'Pick one letter for each question; each is marked as you go') + '</div>'),
       keepScroll ? { keepScroll: true } : undefined
     );
   }
 
+  /* a finished set sends each miss back to the topic it tests: Recall when
+     the topic has enough cards to check a recall against, else its drill */
+  function mcGoBack(d, u, f, qs, picks) {
+    var by = {}, order = [];
+    qs.forEach(function (q, n) {
+      if (!picks[n] || picks[n] === q.right) return;
+      noteTopics(d, u, (f.parts[n] || {}).n).forEach(function (t) {
+        if (!by[t]) { by[t] = []; order.push(t); }
+        by[t].push(n + 1);
+      });
+    });
+    if (!order.length) return '';
+    return '<ul class="list tight mt4"><li><div class="ulabel">Go back to</div></li>' + order.slice(0, 4).map(function (t) {
+      var tp = topicOf(u, t), rc = recallCards(d, u.id, t).length >= 3;
+      var go = rc ? '#/recall/' + d.id + '/' + u.id + '/' + encodeURIComponent(t) : '#/study/' + d.id + '/t:' + encodeURIComponent(t) + '/' + u.id;
+      return '<li><button class="ledger mid" data-go="' + go + '">' +
+        '<span class="lname">' + esc(tp && tp.t ? tp.t : t) + '</span>' +
+        '<span class="lsub">' + esc([cedCode(t), (by[t].length > 1 ? 'Questions ' : 'Question ') + by[t].join(', '), rc ? 'Recall' : 'Study'].filter(Boolean).join(' · ')) + '</span>' +
+        '</button></li>';
+    }).join('') + '</ul>';
+  }
   function frqClick(t) {
     if (!frqState) return false;
     if (t.closest('[data-fq-check]')) {

@@ -48,31 +48,46 @@
    "result": "out/patch-chem-reasoning.json"
   },
   "audit-calc2": {
-   "status": "running",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-calc-reasoning.json"
   },
   "audit-humanities": {
-   "status": "running",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-humanities.json"
   },
   "audit-links": {
-   "status": "running",
+   "status": "applied",
    "kind": "patch",
    "result": "out/patch-links.json"
   },
   "tell-a": {
-   "status": "running",
+   "status": "applied",
    "kind": "tell",
    "result": "out/tell-chem.json out/tell-calcbc.json",
    "apply": "tell_check.py <c> merge"
   },
   "tell-b": {
-   "status": "running",
+   "status": "applied",
    "kind": "tell",
    "result": "out/tell-apush.json out/tell-lang.json out/tell-french.json",
    "apply": "tell_check.py <c> merge"
+  },
+  "mcverify-chem": {
+   "status": "applied",
+   "kind": "patch",
+   "result": "out/patch-mcverify-chem.json"
+  },
+  "mcverify-calcbc": {
+   "status": "applied",
+   "kind": "patch",
+   "result": "out/patch-mcverify-calcbc.json"
+  },
+  "mcverify-apush": {
+   "status": "applied",
+   "kind": "patch",
+   "result": "out/patch-mcverify-apush.json"
   }
  },
  "me": [
@@ -98,7 +113,7 @@
   },
   {
    "id": "tell-game",
-   "status": "doing",
+   "status": "done",
    "what": "Tell apart: a discrimination game per AP course from data/<course>.json \"pairs\" (two labels, one statement at a time, the reason after each tap)."
   },
   {
@@ -110,6 +125,11 @@
    "id": "a11y-audit",
    "status": "done",
    "what": "axe-core audit (light and dark) of this round's screens: Score it, Recall, By skill, Exam practice and the set player, Weak spots, Progress, Tell apart; fix every serious finding."
+  },
+  {
+   "id": "mc-goback",
+   "status": "done",
+   "what": "A finished multiple-choice set links each missed question to its CED topic (Recall, or the topic drill)."
   }
  ]
 }
