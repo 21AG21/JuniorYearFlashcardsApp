@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""mc_sets.py check <course>     — checks out/mc-<course>.json
+"""mc_sets.py check <course> [src]  — checks out/mc-<course>.json (or src)
    mc_sets.py merge <course>     — appends its sets to each unit's out/<course>-<unit>.json "frq" list (replacing
                                    any set with the same title), then validates each touched unit
 
@@ -14,7 +14,10 @@ out/mc-<course>.json maps a unit id to a list of stimulus-based multiple-choice 
 import json, sys, os, re, subprocess
 G = os.path.dirname(os.path.abspath(__file__))
 cmd, course = sys.argv[1], sys.argv[2]
-sets = json.load(open(f'{G}/out/mc-{course}.json', encoding='utf-8'))
+# an optional third argument names a different source file, e.g. out/mc-chem-x.json, so a later batch can be
+# merged without re-merging (and so reverting fixes applied since to) the sets of the first batch
+SRC = sys.argv[3] if len(sys.argv) > 3 else f'{G}/out/mc-{course}.json'
+sets = json.load(open(SRC, encoding='utf-8'))
 E, W = [], []
 TEXCMD = re.compile(r'\\([A-Za-z]+)')
 titles = set()

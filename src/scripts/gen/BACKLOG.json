@@ -108,6 +108,12 @@
    "status": "applied",
    "kind": "tell",
    "result": "out/tell-apush.json out/tell-lang.json out/tell-french.json"
+  },
+  "mc-x": {
+   "status": "running",
+   "kind": "mc",
+   "result": "out/mc-chem-x.json out/mc-calcbc-x.json out/mc-apush-x.json",
+   "apply": "mc_sets.py check/merge <c> out/mc-<c>-x.json, then merge.py <c> x"
   }
  },
  "me": [
