@@ -88,6 +88,26 @@
    "status": "applied",
    "kind": "patch",
    "result": "out/patch-mcverify-apush.json"
+  },
+  "mcverify-lang": {
+   "status": "applied",
+   "kind": "patch",
+   "result": "out/patch-mcverify-lang.json"
+  },
+  "mcverify-french": {
+   "status": "applied",
+   "kind": "patch",
+   "result": "out/patch-mcverify-french.json"
+  },
+  "tellverify-a": {
+   "status": "running",
+   "kind": "tell",
+   "result": "out/tell-chem.json out/tell-calcbc.json"
+  },
+  "tellverify-b": {
+   "status": "running",
+   "kind": "tell",
+   "result": "out/tell-apush.json out/tell-lang.json out/tell-french.json"
   }
  },
  "me": [

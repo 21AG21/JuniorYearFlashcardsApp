@@ -4490,7 +4490,7 @@
         b('Catch up') + ' — appears when more is due than fits a session. ' + esc(MODE_DESC.due) + '.',
         b('Cram') + ', on a unit: ' + esc(MODE_DESC.cram) + '. Practice before a test, without moving anything the schedule owns.',
         b('Justify') + ', on a unit of an AP course: ' + esc(MODE_DESC.justify) + '. Dealt like Cram. In Quiz, the wrong choices are the answers that earn nothing.',
-        b('Free response') + ', on a unit of an AP course: ' + esc(MODE_DESC.frq) + '. Point splits are estimates; the essays are laid out by rubric row. Where a unit also has multiple-choice sets it is called ' + b('Exam practice') + ', and a set is played one pick at a time, each marked with its explanation. ' + b('Practice it') + ' on a question: write each part, then score it against the model, part by part; the best score stays on this device.',
+        b('Free response') + ', on a unit of an AP course: ' + esc(MODE_DESC.frq) + '. Point splits are estimates; the essays are laid out by rubric row. Where a unit also has multiple-choice sets it is called ' + b('Exam practice') + ', and a set is played one pick at a time, each marked with its explanation; a finished set lists the topics its misses came from, each opening Recall or the topic\'s drill. ' + b('Practice it') + ' on a question: write each part, then score it against the model, part by part; the best score stays on this device.',
         b('Grammar') + ', on French: ' + esc(MODE_DESC.focus) + '. A point deals every card on it, from both grammar units, the least-known first, like Cram.',
         b('Print') + ', on a unit: ' + esc(MODE_DESC.print) + '.',
         b('Plan') + ', on a course with an exam date: ' + esc(MODE_DESC.plan) + '. It keeps two weeks at the end for review and offers to set the new-cards rate it needs.',
@@ -4506,11 +4506,14 @@
         'Every game deals rounds built from a course, so a round is practice on the same material. ' +
           b('Match') + ' pairs two columns. ' + b('Order') + ' puts items in sequence. ' + b('Quiz') + ' is one prompt and four answers. ' +
           b('Board') + ' shows a prompt and a board of tiles; tap the one it names. ' + b('Circle') + ' is the unit circle. ' + b('Graph') + ' asks which trig function is drawn.',
+        b('Tell apart') + ', on every AP course, sets two ideas students confuse side by side (Q and K, the IVT and the MVT, containment and rollback, the imparfait and the passé composé) and deals statements to sort between them, the reason shown after each. Rounds lean toward the pairs you miss, and a unit page offers the ones it teaches. ' +
+          b('Chains') + ' puts the steps of an explanation in order, and ' + b('Which unit') + ' names the unit a question comes from.',
         'Each game keeps a best, and the Games page says under every name what its round asks.'
       ]) +
       sec('Progress', [
-        b('Progress') + ' shows what is due, the week ahead at this pace, the units where you are weakest, the cards you keep missing, and the last four weeks of reviews. ' +
-          'Weak spots and sticking points open as sessions.'
+        b('Progress') + ' shows what is due, the week ahead at this pace, the units and exam skills where you are weakest, the cards you keep missing, and the last four weeks of reviews. ' +
+          'Weak spots and sticking points open as sessions; Weak spots also lists topics, each opening Recall.',
+        b('Practice again') + ' lists free-response questions and multiple-choice sets you scored under 70%, once three days have passed since you last tried them: a written answer is retrieval practice too, and it is spaced like any other.'
       ]) +
       sec('Sync', [
         'Progress lives on this device until you paste an account token under Settings → Sync. Then every device with the same token shares one record: ' +
