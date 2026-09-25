@@ -2021,7 +2021,7 @@
   function frKindWord(f) {
     var KIND = { long: 'Long', short: 'Short', saq: 'Short answer', dbq: 'Document-based', leq: 'Long essay',
                  synthesis: 'Synthesis essay', rhetorical: 'Rhetorical analysis', argument: 'Argument essay',
-                 essay: 'Essay', email: 'Email reply', presentation: 'Presentation', qa: 'Conversation' };
+                 essay: 'Argumentative essay', email: 'Email reply', presentation: 'Presentation', qa: 'Project Q&A' };
     return KIND[f.kind] || 'Free response';
   }
 
