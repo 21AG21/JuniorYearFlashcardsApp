@@ -20,7 +20,7 @@ The agent prompts are in `prompts5-tests.json` (writers), `prompts6-tests.json` 
 - **PSAT: done and shipped.** Six units and 227 cards. Four drills, three Reading and Writing modules and two math modules, 208 questions in all, every one verified.
 - **AP tests shipped (verified):**
   - Chemistry: u1, u4, u5, u6, u7
-  - Calculus BC: u1, u4, u7, u8. u9 is written and was in verification.
+  - Calculus BC: u1, u4, u7, u8, u9
   - US History: u7, u8
   - Language: rhs, cle, reo, stl
   - French: t1, t2, t3, t4
