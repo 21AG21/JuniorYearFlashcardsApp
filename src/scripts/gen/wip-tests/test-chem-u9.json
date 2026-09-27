@@ -1,0 +1,162 @@
+{
+ "course": "chem",
+ "unit": "u9",
+ "minutes": 90,
+ "calc": true,
+ "intro": "A periodic table and the AP Chemistry equations sheet are allowed, and a calculator may be used throughout.",
+ "mc": [
+  {
+   "stem": "Questions 1-4 refer to the following.\n\nA student measures how the solubility of potassium nitrate changes with temperature. She dissolves 5.00 g of KNO₃ (101.10 g/mol) in a small volume of hot water in a large test tube, reads the volume of the solution, then lets it cool slowly while stirring with a thermometer and records the temperature at which crystals first appear. She then adds a little more water, redissolves the crystals and repeats. At the moment crystals appear the solution is saturated, so s = [K⁺] = [NO₃⁻] = (mol KNO₃) ÷ (volume of solution) and Ksp = s². She calculates ΔG° = −RT ln Ksp for each trial, with R = 8.314 J/(mol·K). The test tube feels cold whenever solid KNO₃ dissolves.\nTrial · T when crystals appear (K) · s (M) · Ksp · ΔG° (kJ/mol)\n1 · 343 · 3.11 · 9.68 · −6.47\n2 · 333 · 2.60 · 6.77 · −5.29\n3 · 323 · 2.15 · 4.63 · −4.11\n4 · 313 · 1.76 · 3.09 · −2.93\n5 · 303 · 1.42 · 2.01 · −1.75\nAssume that ΔH° and ΔS° for KNO₃(s) ⇌ K⁺(aq) + NO₃⁻(aq) do not change with temperature.",
+   "parts": [
+    {
+     "l": "1",
+     "p": 1,
+     "q": "Which values of ΔH° and ΔS° for the dissolving of KNO₃ are best supported by the data?\n(A) ΔH° = −37.5 kJ/mol and ΔS° = −118 J/(mol·K)\n(B) ΔH° = +34.0 kJ/mol and ΔS° = +118 J/(mol·K)\n(C) ΔH° = +1.8 kJ/mol and ΔS° = +118 J/(mol·K)\n(D) ΔH° = +34.0 kJ/mol and ΔS° = +0.118 J/(mol·K)",
+     "a": "(B). Because ΔG° = ΔH° − TΔS°, a graph of ΔG° against T is a straight line with slope −ΔS°. Every 10 K rise lowers ΔG° by 1.18 kJ/mol, so the slope is −0.118 kJ/(mol·K) and ΔS° = +118 J/(mol·K). Then ΔH° = ΔG° + TΔS° = −1.75 kJ/mol + (303 K)(0.118 kJ/(mol·K)) = +34.0 kJ/mol, and every row gives the same value; the positive sign agrees with the cold test tube. (A) takes the slope itself as ΔS°, dropping the minus sign in −TΔS°, and then carries the wrong sign into ΔH°; a negative ΔH° also contradicts the cold test tube. (C) finds ΔS° correctly but puts the Celsius temperature, 30 °C, into ΔH° = ΔG° + TΔS°. (D) has the right ΔH° but reports the slope, which is in kJ/(mol·K), as if it were in J/(mol·K).",
+     "n": "9.3.A.5 and 9.2.A.1 (topic 9.3), skill 5.D. Thinking: see ΔG° = ΔH° − TΔS° as a straight line in T, read ΔS° from the slope and ΔH° from any row. Trap: (A), the slope taken as +ΔS°.",
+     "lv": "analyze",
+     "ty": "data",
+     "t": "9.3",
+     "s": "5.D"
+    },
+    {
+     "l": "2",
+     "p": 1,
+     "q": "A classmate extends the trend and says: 'Below about 288 K, ΔG° for dissolving KNO₃ is positive, so at 280 K no KNO₃ at all would dissolve in water.' Which of the following best evaluates the classmate's claim?\n(A) It is correct, because a process with ΔG° > 0 is not thermodynamically favored and so does not take place.\n(B) It is incorrect, because ΔG° becomes more negative as the temperature falls, so more KNO₃ dissolves at 280 K.\n(C) It is incorrect, because ΔG° > 0 means only that Ksp < 1; at 280 K, Ksp ≈ 0.66, and s is still about 0.8 M.\n(D) It is incorrect, because ΔS° is positive, so dissolving KNO₃ is thermodynamically favored at every temperature.",
+     "a": "(C). At 280 K, ΔG° = 34.0 kJ/mol − (280 K)(0.118 kJ/(mol·K)) = +0.96 kJ/mol, so Ksp = e^(−ΔG°/RT) = e^(−960/(8.314 × 280)) = 0.66 and s = √0.66 ≈ 0.81 M. A positive ΔG° means that K < 1, so reactants are favored compared with the standard state of 1 M ions; it does not mean that nothing dissolves. A saturated solution at 280 K still holds a good deal of KNO₃. (A) reads 'not thermodynamically favored under standard conditions' as 'does not happen at all'; a small K is not zero. (B) reads the table backwards: ΔG° rises as T falls. (D) ignores ΔH°: with ΔH° > 0 and ΔS° > 0 the process is favored under standard conditions only above ΔH°/ΔS° = 288 K, as the classmate correctly says.",
+     "n": "9.5.A.1, 9.5.A.3 and 9.5.A.4 (topic 9.5), skill 6.D. Thinking: turn a positive ΔG° into a K below 1, and a K below 1 into a solubility that is small but not zero. Trap: (A), 'not favored' read as 'does not occur'.",
+     "lv": "evaluate",
+     "ty": "claim",
+     "t": "9.5",
+     "s": "6.D"
+    },
+    {
+     "l": "3",
+     "p": 1,
+     "q": "In trial 3 the student read the volume of the hot solution, but she left the test tube unstoppered, and some water evaporated before crystals appeared. How does this error affect the value of ΔG° she reports for trial 3?\n(A) It is too negative, because the Ksp she calculates is larger than the true Ksp at that temperature.\n(B) It is unaffected, because ΔG° depends only on the temperature and not on the concentration.\n(C) It is too positive, because evaporating water absorbs heat, so crystals appear at too low a temperature.\n(D) It is too positive, because the s she calculates is lower than the true [K⁺] when crystals appear.",
+     "a": "(D). The temperature she records is the true saturation temperature of the solution actually in the tube, but after evaporation that solution is more concentrated than 5.00 g of KNO₃ in the volume she read. Her s, and so her Ksp = s², is too small for that temperature, and ΔG° = −RT ln Ksp comes out less negative, that is, too positive. (A) gets the direction of the concentration error backwards: less water means a higher true concentration. (B) is true of the true ΔG°, which is fixed by the temperature, but she calculates ΔG° from a measured Ksp, and that measurement is wrong. (C) has the right direction for the wrong reason: the temperature at which a solution saturates depends on its concentration, not on how it was cooled, and a more concentrated solution saturates at a higher temperature, not a lower one.",
+     "n": "9.5.A.2 (topic 9.5), skill 6.G. Thinking: follow the error through s, then Ksp, then −RT ln Ksp, while keeping the measured temperature as correct. Trap: (A), the direction of the concentration error reversed.",
+     "lv": "evaluate",
+     "ty": "error",
+     "t": "9.5",
+     "s": "6.G"
+    },
+    {
+     "l": "4",
+     "p": 1,
+     "q": "The student then studies a salt Y made of small ions with charges 2+ and 2−. Y dissolves with the release of heat, and its Ksp is 2.6 × 10⁻⁵ at 290 K and 1.0 × 10⁻⁵ at 330 K. Which of the following gives the sign of ΔS° for dissolving Y with a justification consistent with the data?\n(A) Negative; ΔG° rises from +25.4 to +31.6 kJ/mol as T rises, and water is held in ordered shells around the ions.\n(B) Negative; Ksp falls as the temperature rises, and a Ksp can fall with temperature only when ΔS° < 0.\n(C) Positive; the ions leave the ordered crystal lattice and spread out through the whole solution.\n(D) Negative; dissolving Y releases heat, and an exothermic process always lowers the entropy of the system.",
+     "a": "(A). ΔG° = −RT ln Ksp gives +25.4 kJ/mol at 290 K and +31.6 kJ/mol at 330 K. Because ΔG° = ΔH° − TΔS°, ΔG° can rise with T only if ΔS° < 0 (here about −150 J/(mol·K)). At the particulate level, small ions with 2+ and 2− charges hold nearby water molecules tightly and in fixed orientations, and that ordering of the solvent outweighs the dispersal of the ions. (B) has the right sign for a wrong reason: K falls with rising temperature for every exothermic process, whatever the sign of ΔS°, so the Ksp trend alone cannot fix the sign of ΔS°. (C) counts only the dispersal of the ions and ignores the solvent, which the ΔG° values show dominates here. (D) ties the signs of ΔH° and ΔS° together, but they are independent: many exothermic reactions, such as the burning of a hydrocarbon into more moles of gas, have ΔS° > 0.",
+     "n": "9.6.A.1 and 9.3.A.5 (topic 9.6), skill 6.C. Thinking: turn two K values into two ΔG° values, read the sign of ΔS° from how ΔG° changes with T, then explain it by the ordering of water around small, highly charged ions. Trap: (B), the right sign from a trend that ΔH° alone explains.",
+     "lv": "analyze",
+     "ty": "predict",
+     "t": "9.6",
+     "s": "6.C"
+    }
+   ]
+  },
+  {
+   "stem": "Questions 5-7 refer to the following.\n\nNitric acid is made industrially by first oxidizing ammonia:\n4 NH₃(g) + 5 O₂(g) → 4 NO(g) + 6 H₂O(g)\nA mixture of ammonia and air is passed over a hot platinum-rhodium gauze at about 1100 K, where the reaction is complete within a few milliseconds. A mixture of ammonia and air kept in a closed flask at 25 °C shows no detectable NO after several weeks. Standard data at 298 K:\nSubstance · ΔH°f (kJ/mol) · S° (J/(mol·K))\nNH₃(g) · −46.1 · 192.5\nO₂(g) · 0 · 205.0\nNO(g) · +90.3 · 210.8\nH₂O(g) · −241.8 · 188.8\nH₂O(l) · −285.8 · 69.9",
+   "parts": [
+    {
+     "l": "5",
+     "p": 1,
+     "q": "A student calculates ΔS° for the reaction as written and reports +1206 J/(mol·K). Which mistake accounts for the student's value?\n(A) Leaving out the coefficients and using one mole of each substance\n(B) Using S° of H₂O(l) instead of S° of H₂O(g) for the water that forms\n(C) Taking S° of O₂(g) as zero, as ΔH°f is zero for an element\n(D) Subtracting the entropies of the products from those of the reactants",
+     "a": "(C). The correct value is ΔS° = [4(210.8) + 6(188.8)] − [4(192.5) + 5(205.0)] = 1976.0 − 1795.0 = +181.0 J/(mol·K). Leaving out the 5(205.0) = 1025.0 J/(mol·K) for O₂ gives 1976.0 − 770.0 = +1206.0 J/(mol·K), the student's value. Unlike ΔH°f, the absolute entropy of an element is not zero: every substance above 0 K has a positive S°. (A) gives 210.8 + 188.8 − 192.5 − 205.0 = +2.1 J/(mol·K). (B) gives 4(210.8) + 6(69.9) − 1795.0 = −532.4 J/(mol·K). (D) gives −181.0 J/(mol·K). None of these is +1206.",
+     "n": "9.2.A.1 (topic 9.2), skill 5.F. Thinking: work the calculation forward under each suspected slip and match the reported number. Trap: (A) or (D), picked on a hunch without testing them against +1206.",
+     "lv": "evaluate",
+     "ty": "error",
+     "t": "9.2",
+     "s": "5.F"
+    },
+    {
+     "l": "6",
+     "p": 1,
+     "q": "Suppose the reaction were carried out so that the water forms as H₂O(l) instead of H₂O(g). Which prediction about ΔS° for the new reaction, with its reason, is correct?\n(A) ΔS° becomes negative, because the products now hold fewer moles of gas than the reactants.\n(B) ΔS° stays positive but is smaller, because only the phase of one product has changed.\n(C) ΔS° becomes negative, because condensing the water releases heat to the surroundings.\n(D) ΔS° becomes more positive, because molecules of liquid water form hydrogen bonds to each other.",
+     "a": "(A). With liquid water, the gases go from 4 + 5 = 9 mol of reactants to only 4 mol of NO. Most of the matter ends up far less dispersed, and ΔS° = 4(210.8) + 6(69.9) − 1795.0 = −532.4 J/(mol·K). (B) underestimates the change: condensing 6 mol of water lowers the entropy of the products by 6(188.8 − 69.9) = 713.4 J/(mol·K), much more than the +181.0 J/(mol·K) of the original reaction. (C) has the right sign for the wrong reason: the heat released changes the entropy of the surroundings, but ΔS° of the reaction counts only the dispersal of the reacting matter itself. (D) reverses the effect: hydrogen bonds hold molecules close together and restrict their motion, which lowers entropy.",
+     "n": "9.1.A.1 (topic 9.1), skill 6.C. Thinking: count moles of gas on each side after the change of phase, and tie the sign to the dispersal of matter. Trap: (C), the right sign justified by heat flow.",
+     "lv": "analyze",
+     "ty": "predict",
+     "t": "9.1",
+     "s": "6.C"
+    },
+    {
+     "l": "7",
+     "p": 1,
+     "q": "A student says: 'The flask at 25 °C shows that the oxidation of ammonia is not thermodynamically favored at room temperature. The hot gauze makes it favored.' Which best evaluates the student's claim?\n(A) It is correct: because ΔS° > 0, the reaction becomes thermodynamically favored only at high temperature.\n(B) It is incorrect: ΔG° ≈ −959 kJ/mol at 298 K, so the reaction is favored but has a high activation energy.\n(C) It is incorrect: the flask at 25 °C is at equilibrium, and the hot gauze shifts the equilibrium toward NO.\n(D) It is incorrect: ΔG° < 0 at 298 K, but K is so small that no measurable NO forms at equilibrium.",
+     "a": "(B). ΔH° = 4(90.3) + 6(−241.8) − 4(−46.1) = −905.2 kJ/mol, and with ΔS° = +0.1810 kJ/(mol·K), ΔG° = −905.2 − (298)(0.1810) = −959.1 kJ/mol. With ΔH° < 0 and ΔS° > 0, the reaction is favored at every temperature. A favored reaction that does not proceed is under kinetic control: its activation energy is high. The hot catalyst gives a path of lower activation energy, and the high temperature gives more collisions enough energy; neither changes ΔG°. (A) looks only at ΔS° and ignores the negative ΔH°, which makes the reaction favored at every temperature. (C) mistakes 'no change' for equilibrium: K = e^(959,100/(8.314 × 298)) ≈ 10¹⁶⁸, so a mixture with no NO is nowhere near equilibrium, and a catalyst never shifts an equilibrium. (D) contradicts itself: ΔG° < 0 means K > 1, here enormously so.",
+     "n": "9.4.A.1 and 9.4.A.2 (topic 9.4), skill 6.E. Thinking: compute ΔG° to show the reaction is favored, then explain the lack of reaction by kinetics, not thermodynamics. Trap: (C), no visible change read as equilibrium.",
+     "lv": "evaluate",
+     "ty": "claim",
+     "t": "9.4",
+     "s": "6.E"
+    }
+   ]
+  },
+  {
+   "stem": "Questions 8-9 refer to the following.\n\nA reusable hand warmer is a sealed plastic pouch that holds a supersaturated solution of sodium acetate in water and a small metal disk. Clicking the disk starts crystallization: within seconds, solid sodium acetate trihydrate forms throughout the pouch, and the pouch warms to about 54 °C.\nNa⁺(aq) + CH₃COO⁻(aq) + 3 H₂O(l) → NaCH₃COO·3H₂O(s)\nTo reuse the pouch, it is held in boiling water until every crystal has dissolved, then cooled to room temperature, where it stays liquid for months until the disk is clicked again.",
+   "parts": [
+    {
+     "l": "8",
+     "p": 1,
+     "q": "A student claims: 'Because this crystallization is thermodynamically favored at 25 °C, its entropy change, ΔS for the process as written at 25 °C, must be positive.' Which best evaluates the claim?\n(A) It is correct, because every thermodynamically favored process increases the entropy of the system.\n(B) It is correct, because the heat released makes the particles move faster, and that disperses energy.\n(C) It is incorrect, because the process releases heat, and every exothermic process has ΔS < 0.\n(D) It is incorrect: ions and water are locked into a solid, so ΔS < 0, and a negative ΔH makes ΔG < 0.",
+     "a": "(D). Dissolved ions that move freely and liquid water molecules become fixed in the lattice of a crystal, so the matter is far less dispersed and ΔS < 0. The process is still favored because it is strongly exothermic: in ΔG = ΔH − TΔS, the negative ΔH outweighs the positive −TΔS at 25 °C. (A) is false: a favored process can lower the entropy of the system when ΔH is negative enough, as freezing water below 0 °C does. (B) confuses the process with its surroundings: ΔS at constant temperature counts the change in the arrangement of the reacting particles, and the heat released leaves the system. (C) has the right sign for a wrong reason: the signs of ΔH and ΔS are independent, and many exothermic processes, such as burning a fuel into more moles of gas, have ΔS > 0.",
+     "n": "9.1.A.1 and 9.3.A.4 (topic 9.1), skill 6.C. Thinking: read the sign of ΔS from the particles, then reconcile a negative ΔS with a favored process through ΔH. Trap: (A), 'favored' taken to require ΔS > 0.",
+     "lv": "evaluate",
+     "ty": "claim",
+     "t": "9.1",
+     "s": "6.C"
+    },
+    {
+     "l": "9",
+     "p": 1,
+     "q": "In boiling water the crystals dissolve completely, but at 25 °C the solid remains in the pouch. Which best explains why crystallization is favored at 25 °C but not at 100 °C?\n(A) At 100 °C the ions move too fast to stick to a growing crystal, so crystallization becomes too slow to see.\n(B) ΔH and ΔS for crystallization are both negative, so at 100 °C the −TΔS term is large enough to make ΔG > 0.\n(C) ΔH for crystallization becomes positive at 100 °C, because the pouch then absorbs heat from the boiling water.\n(D) ΔS for crystallization becomes positive at 100 °C, because the particles have more energy at the higher temperature.",
+     "a": "(B). Crystallization releases heat (ΔH < 0) and orders the particles (ΔS < 0). In ΔG = ΔH − TΔS, the term −TΔS is positive and grows with temperature; at 25 °C the negative ΔH wins and ΔG < 0, while at 100 °C −TΔS outweighs ΔH and ΔG > 0, so the reverse process, dissolving, is favored. (A) offers a rate argument for a thermodynamic observation: a slow crystallization could not make crystals that already exist dissolve completely. (C) confuses ΔH, a property of the process, with the direction of heat flow from the bath; ΔH for crystallization stays negative. (D) would make crystallization more favored, not less: a positive ΔS makes −TΔS negative.",
+     "n": "9.3.A.4 and 9.3.A.6 (topic 9.3), skill 6.D. Thinking: infer the signs of ΔH and ΔS from the observations, then use ΔG = ΔH − TΔS to explain the temperature switch. Trap: (A), a kinetic answer to a thermodynamic question.",
+     "lv": "apply",
+     "ty": "cause",
+     "t": "9.3",
+     "s": "6.D"
+    }
+   ]
+  },
+  {
+   "stem": "Questions 10-12 refer to the following.\n\nCells move phosphate groups from one molecule to another. The table gives ΔG° at 298 K, under the standard conditions biochemists use (pH 7), for the hydrolysis of four phosphate compounds, each written as compound + H₂O → product + Pᵢ, where Pᵢ is inorganic phosphate.\nCompound hydrolyzed · Product · ΔG° (kJ/mol)\nPhosphoenolpyruvate · Pyruvate · −61.9\nPhosphocreatine · Creatine · −43.0\nATP · ADP · −30.5\nGlucose 6-phosphate · Glucose · −13.8\nA transfer such as phosphocreatine + ADP → creatine + ATP is the sum of the hydrolysis of phosphocreatine and the reverse of the hydrolysis of ATP. In a cell, an enzyme carries out each transfer through an intermediate shared by the two reactions. Use R = 8.314 J/(mol·K).",
+   "parts": [
+    {
+     "l": "10",
+     "p": 1,
+     "q": "During a sprint, muscle cells regenerate ATP by the transfer phosphocreatine + ADP → creatine + ATP. What is the equilibrium constant for this transfer at 298 K?\n(A) 1.6 × 10²\n(B) 6.4 × 10⁻³\n(C) 7.7 × 10¹²\n(D) 1.0",
+     "a": "(A). ΔG° = −43.0 kJ/mol + 30.5 kJ/mol = −12.5 kJ/mol, since the ATP hydrolysis is reversed. Then K = e^(−ΔG°/RT) = e^(12,500/(8.314 × 298)) = e^(5.05) = 1.6 × 10². (B) keeps the sign of ΔG° positive, giving e^(−5.05). (C) adds the two magnitudes, −43.0 − 30.5 = −73.5 kJ/mol, forgetting to reverse the ATP reaction. (D) puts ΔG° in kJ/mol while R is in J/(mol·K), so the exponent is only 0.005.",
+     "n": "9.5.A.2 and 9.7.A.2 (topic 9.5), skill 5.F. Thinking: build the transfer from a forward and a reversed hydrolysis, then turn ΔG° into K. Trap: (C), both ΔG° values added without reversing one.",
+     "lv": "apply",
+     "ty": "transfer",
+     "t": "9.5",
+     "s": "5.F"
+    },
+    {
+     "l": "11",
+     "p": 1,
+     "q": "Glucose + Pᵢ → glucose 6-phosphate + H₂O is thermodynamically unfavored (ΔG° = +13.8 kJ/mol). A student claims: 'If ATP is added to a glucose solution with no enzyme present, glucose 6-phosphate will form, because the sum of this reaction and ATP hydrolysis has ΔG° = −16.7 kJ/mol.' Which best evaluates the claim?\n(A) It is correct: free energy released by any reaction in a solution can drive any other reaction in it.\n(B) It is incorrect: the enzyme is needed because it makes ΔG° for the phosphorylation of glucose negative.\n(C) It is correct: a negative ΔG° for the sum means K > 1, so the product forms, though slowly with no enzyme.\n(D) It is incorrect: with no shared intermediate the reactions are not coupled, and ATP hydrolysis alone gives off heat.",
+     "a": "(D). Coupling works only when the two reactions share an intermediate, here a phosphorylated enzyme complex, so that the favored step cannot happen without the unfavored one. With no enzyme, any ATP that reacts is simply hydrolyzed to ADP and Pᵢ, and its free energy is released as heat. Glucose + Pᵢ on its own still has K = e^(−13,800/(8.314 × 298)) = 3.8 × 10⁻³. (A) treats free energy as a shared pool; two reactions in the same beaker are independent unless they are linked by a common species. (B) gives the enzyme a thermodynamic role: a catalyst changes the path and the rate, not ΔG°. (C) applies K to an overall equation that nothing links: with time the ATP would simply hydrolyze, leaving glucose 6-phosphate at the tiny level set by its own K.",
+     "n": "9.7.A.2 (topic 9.7), skill 4.D. Thinking: see that adding equations on paper couples them only when a shared intermediate links them in the flask. Trap: (C), K > 1 for a sum that no mechanism connects.",
+     "lv": "evaluate",
+     "ty": "claim",
+     "t": "9.7",
+     "s": "4.D"
+    },
+    {
+     "l": "12",
+     "p": 1,
+     "q": "A biology text says: 'ATP stores energy because energy is released when its high-energy phosphate bond is broken.' Which best evaluates the statement, in light of the data and of what is known about bond enthalpies?\n(A) It is accurate: ΔG° for the hydrolysis of ATP is negative, so breaking the P-O bond is exothermic.\n(B) It is accurate: the P-O bond in ATP is weak, and breaking a weak bond releases energy.\n(C) It is inaccurate: breaking any bond absorbs energy; hydrolysis is favored by the bonds and interactions formed.\n(D) It is inaccurate: breaking the bond absorbs energy, so ATP hydrolysis happens only with an energy input.",
+     "a": "(C). Breaking a bond always requires energy, since bond enthalpies are positive. ΔG° = −30.5 kJ/mol belongs to the whole reaction: bonds broken in ATP and water, bonds formed in ADP and Pᵢ, and the changes in hydration and entropy. The products are more stable overall, and that, not the breaking of one bond, is why hydrolysis is favored. The table also shows that ATP is not special: phosphocreatine and phosphoenolpyruvate release more free energy on hydrolysis. (A) credits the free energy of the whole reaction to one bond-breaking step. (B) is wrong because breaking a weak bond absorbs less energy than breaking a strong one, but it still absorbs energy. (D) starts from a true statement but contradicts the data: ΔG° < 0, so hydrolysis is favored with no energy input.",
+     "n": "9.7.A.2 (topic 9.7) with 6.7 (bond enthalpies), skill 6.D. Thinking: separate the energy of one bond-breaking step from the free energy of the whole reaction. Trap: (D), the right physics carried to the wrong conclusion.",
+     "lv": "evaluate",
+     "ty": "synthesis",
+     "t": "9.7",
+     "s": "6.D"
+    }
+   ]
+  }
+ ],
+ "fr": []
+}
